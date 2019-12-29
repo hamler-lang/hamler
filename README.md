@@ -5,9 +5,9 @@
 
 ## Why Hamler?
 
-- Functional programming
-- Compile-time type checking and type inference
-- Embrace the Erlang VM
+- A Functional programming language;
+- Compile-time type checking and type inference;
+- Running on the Erlang's VM
 
 ## Features
 
@@ -128,7 +128,8 @@ A type is a set of values.
 | ---------------- | ------------- | ----------- |
 | Bool             | True \| False |             |
 | Atom ??          | 'Atom'        |             |
-| Char             | ?             |             |
+| Char ??          | ?             |             |
+| Int ??           | 1, 2, -10     |             |
 | Integer (Number) | 1, 2, -10     |             |
 | Float            | 3.14          |             |
 | Double           | ?             |             |
@@ -156,9 +157,7 @@ A type is a set of values.
 1 : 2 : 3 : [] -- cons
 ```
 
-### Dict(Map)
-
-###Enum, Range
+### Enum, Range
 
 ```haskell
 {- Enumerations, Range -}
@@ -168,11 +167,65 @@ A type is a set of values.
 ['a' .. 'z']
 ```
 
+### Binaries/Bitstrings
 
+```erlang
+<<1,2,3>>
+<<1:16,2:4,3:4>>
+```
+
+### Maps (Dict)
+
+TODO: ...
+
+### Record
+
+```haskell
+{name = "John", age = 12}
+```
 
 
 
 ### User-defined Types
+
+```haskell
+-- type synonym
+type Name = String
+n = "Miles" :: Name
+
+-- sum type
+type Color = Red | Green | Blue
+c = Blue
+
+-- pattern match sum type
+case c of
+  Red -> "red"
+  Green -> "green"
+  Blue -> "blue"
+  _ -> "unknown"
+
+-- product type
+type Pair = Pair Int Int
+p = Pair 3 4
+
+-- record product type
+type Person = Person {
+  name :: String
+  age :: Int
+  address :: String
+}
+person = Person {name = "Miles", age = 50, address = "NY"}
+
+-- generic type ??
+type TwosomeType a b = Twosome a b
+p = Twosome ("pi", 3.14)
+
+-- recursive type
+type Tree = Leaf Int | Node Tree Tree
+
+```
+
+
 
 ### Algebraic Data Types
 
@@ -224,7 +277,7 @@ fun x -> fun y -> (x + y) div 2
 
 ### Guards
 
-### 
+###
 
 ## Operators
 
@@ -321,7 +374,7 @@ main = printLn "hello world"
 ## Reserved Words
 
 ```haskell
-case class do else export if import in let of module then type where 
+case class do else export if import in let of module then type where
 ```
 
 ## Author
