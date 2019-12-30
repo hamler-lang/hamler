@@ -47,24 +47,45 @@ let b = 2
 let s = "hello"
 ```
 
-## Types
+## Data Types
 
 A type is a set of values.
 
-### Basic Types
+| Type              | Values        | Description  |
+| ----------------- | ------------- | ------------ |
+| None              | None          | null         |
+| Bool              | True \| False | Boolean type |
+| Atom ??           | 'Atom'        |              |
+| Char ??           | ?             |              |
+| Int ??            | 1, 2, -10     | Integer type |
+| Integer (Number)  | 1, 2, -10     |              |
+| Float             | 3.14          | Float type   |
+| Double            | ?             |              |
+| String            | "hello"       |              |
+| Tuple             |               |              |
+| List              |               |              |
+| Enum, Range       |               |              |
+| Binary/Bitstrings |               |              |
+| Map               |               |              |
+| Record            |               |              |
 
-| Type             | Values        | Description  |
-| ---------------- | ------------- | ------------ |
-| None             | None          | null         |
-| Bool             | True \| False | Boolean type |
-| Atom ??          | 'Atom'        |              |
-| Char ??          | ?             |              |
-| Int ??           | 1, 2, -10     | Integer type |
-| Integer (Number) | 1, 2, -10     |              |
-| Float            | 3.14          | Float type   |
-| Double           | ?             |              |
-| String           | "hello"       |              |
-|                  |               |              |
+### Numbers
+
+```haskell
+{- Integer -}
+1,2,-10
+{- binary, octal, and hex literals -}
+0b101010
+0o52
+0x2a
+```
+
+### Strings
+
+```haskell
+"Hello, World!"
+printf "foo %s %d %.2f" "bar" 7 3.1415
+```
 
 ### Tuples
 
@@ -110,7 +131,7 @@ TODO: ...
 {name = "John", age = 12}
 ```
 
-### User-defined Types
+## User-defined Types
 
 ```haskell
 -- type synonym
@@ -140,35 +161,26 @@ type Person = Person {
 }
 person = Person {name = "Miles", age = 50, address = "NY"}
 
--- generic type ??
-type TwosomeType a b = Twosome a b
-p = Twosome ("pi", 3.14)
+-- generic type (maybe for example)
+type Maybe a = Just a | None
 
 -- recursive type
 type Tree = Leaf Int | Node Tree Tree
+
 ```
-
-### Algebraic Data Types
-
-```haskell
--- Maybe
-type Maybe a = Just a | None
-list = [Just(3), None, Just(-4)]
-```
-
-
 
 ## Functions
 
-A function is a mapping from input to output.
+A function is an arrow between types.
 
 ### Function Definition
 
 ```haskell
 {- Functions -}
-
 sum :: Int -> Int -> Int
 sum a b = a + b
+-- or let...
+let sum a b = a + b
 ```
 
 ### Function Application
@@ -178,9 +190,33 @@ sum 1 2
 sum 1 (2 + 3)
 ```
 
-### High-order Function
+### Function Composition
+
+```haskell
+f x = x + 2
+g x = x * 3
+z = f (g 4) -- 14
+```
+
+### High-order Functions
+
+```haskell
+apply :: (a -> a) -> a -> a  
+apply f x = f x
+```
+
+### Recursive Function
+
+```haskell
+factorial n = if n == 0 then 1 else n * factorial(n-1)
+```
 
 ### Currying and Partial Application
+
+```haskell
+plus2 = (+) 2
+plus2 3 -- 5
+```
 
 ### Lambda (Anonymous Function)
 
@@ -342,12 +378,16 @@ The library which is always imported.
 |          |         |
 |          |         |
 
+List
+
 ### Math
 
 ```haskell
 sqrt power exp log sin cos tan asin acos atan atan2
 truncate round floor ceiling
 ```
+
+### Date and Time
 
 
 
