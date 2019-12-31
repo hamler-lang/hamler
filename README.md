@@ -51,33 +51,50 @@ let s = "hello"
 
 A type is a set of values.
 
-| Type              | Values        | Description  |
-| ----------------- | ------------- | ------------ |
-| None              | None          | null         |
-| Bool              | True \| False | Boolean type |
-| Atom ??           | 'Atom'        |              |
-| Char ??           | ?             |              |
-| Int ??            | 1, 2, -10     | Integer type |
-| Integer (Number)  | 1, 2, -10     |              |
-| Float             | 3.14          | Float type   |
-| Double            | ?             |              |
-| String            | "hello"       |              |
-| Tuple             |               |              |
-| List              |               |              |
-| Enum, Range       |               |              |
-| Binary/Bitstrings |               |              |
-| Map               |               |              |
-| Record            |               |              |
+| Type              | Values        | Description                   |
+| ----------------- | ------------- | ----------------------------- |
+| None              | None          | null                          |
+| Bool              | True \| False | Boolean type                  |
+| Atom(Symbol)      | :atom         |                               |
+| Char              | 'c', 'x'      |                               |
+| Int(Integer)      | 1, 2, -10     | Integer type                  |
+| Num(Number)       | 1, 2, -10     |                               |
+| Float(Double)     | 3.14          | Float type                    |
+| String            | "hello"       | String is a list of character |
+| Tuple             |               |                               |
+| List              |               |                               |
+| Enum, Range       |               |                               |
+| Binary/Bitstrings |               |                               |
+| Map(Dict)         |               |                               |
+| Record            |               |                               |
+| Fun               |               | Function                      |
+| Port              |               | Erlang Port                   |
+| Pid               |               | Erlang Pid                    |
+| Ref               |               | Erlang Reference              |
 
-### Numbers
+### Bool
 
 ```haskell
-{- Integer -}
+True | False
+```
+
+### Number
+
+Two types of numeric literals: integers and floats.
+
+```haskell
+-- Integer
 1,2,-10
-{- binary, octal, and hex literals -}
+
+-- binary, octal, and hex literals
 0b101010
 0o52
 0x2a
+
+-- floats and doubles
+2.3
+2.3e-3
+0.0023
 ```
 
 ### Strings
@@ -101,6 +118,8 @@ printf "foo %s %d %.2f" "bar" 7 3.1415
 {- List --}
 [] -- empty list
 [1,2,3] -- List Integer
+[H|T] = L -- Cons
+[1|[2|[3|[]]]]
 1 : 2 : 3 : [] -- cons
 ```
 
@@ -114,22 +133,31 @@ printf "foo %s %d %.2f" "bar" 7 3.1415
 ['a'..'z']
 ```
 
-### Binaries/Bitstrings
+### Bit Strings/Binaries
 
 ```erlang
 <<1,2,3>>
+<<"ABC">>
 <<1:16,2:4,3:4>>
 ```
 
-### Maps (Dict)
+### Maps
 
-TODO: ...
+{key1 = val1, key2 = val2, ...}
 
-### Record
+### Record(Struct)
 
 ```haskell
 {name = "John", age = 12}
 ```
+
+### Port
+
+Erlang port identifier identifies an Erlang port.
+
+### Pid
+
+Erlang process identifier, pid, identifies a process.
 
 ## User-defined Types
 
@@ -201,14 +229,16 @@ z = f (g 4) -- 14
 ### High-order Functions
 
 ```haskell
-apply :: (a -> a) -> a -> a  
+apply :: (a -> a) -> a -> a
 apply f x = f x
 ```
 
 ### Recursive Function
 
 ```haskell
-factorial n = if n == 0 then 1 else n * factorial(n-1)
+fact n = if n == 0 then 1 else n * fact(n-1)
+-- tail recursive
+loop N = loop (N - 1)
 ```
 
 ### Currying and Partial Application
@@ -223,8 +253,6 @@ plus2 3 -- 5
 ```erlang
 fun x -> fun y -> (x + y) div 2
 ```
-
-
 
 ## Expressions
 
@@ -251,8 +279,6 @@ z = x * y
         y = 2 * x
 ```
 
-
-
 ### case .. of
 
 ```haskell
@@ -272,6 +298,13 @@ case rgb of Red -> "red"; _ -> "not red"
 ```haskell
 -- if then else
 if x > 0 then x else -x
+
+-- indent
+if x > 0
+  then print "pos"
+  else if x < 0
+    then print "neg"
+    else print "zero"
 ```
 
 ### List Comprehension
@@ -283,6 +316,10 @@ if x > 0 then x else -x
 ```
 
 ### Pattern Matching
+
+```haskell
+(x, y) = (1, 2)
+```
 
 ### Guards
 
@@ -420,7 +457,7 @@ main = printLn "hello world"
 ## Reserved Words
 
 ```haskell
-and andalso case class do else export if fun import in let of module not orelse then type where
+and andalso begin case class do else end export if fun import in let of module not orelse then type where
 ```
 
 ## Author
