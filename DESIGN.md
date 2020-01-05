@@ -67,6 +67,9 @@ Golang Erlang Haskell Scala
 - https://en.wikipedia.org/wiki/Tail_recursive_parser
 - http://eprints.nottingham.ac.uk/221/1/parsing.pdf
 - https://wiki.haskell.org/Parsec
+- https://en.wikipedia.org/wiki/Category_theory
+- https://en.wikipedia.org/wiki/Backus–Naur_form
+- https://en.wikipedia.org/wiki/Lambda_calculus
 
 ## Author
 
