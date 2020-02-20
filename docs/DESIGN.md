@@ -7,6 +7,12 @@ Hamler Source Code -> Hamler Compiler -> Core Erlang -> BEAM VM Bytecode
 
 ## The Compiler
 
+Lexical Analysis
+Parsing
+Semantic Analysis
+Optimization
+Code Generation
+
 ```
 Source Code --Scanning(Lexical Analyze)--> Tokens --Parsing--> Initial AST --Type Checking/Type Inference--> Final AST --Transforming--> Core Erlang
 ```

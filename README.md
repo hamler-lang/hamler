@@ -1,13 +1,13 @@
 
 # The Hamler Programming Language
 
-`Hamler` is a functional programming language inspired by Haskell and Stardard ML, and running on Erlang VM.
+`Hamler` is a functional programming language inspired by Haskell and Stardard ML, that compiles to Core Erlang.
 
 ## Why Hamler?
 
 - A Functional programming language;
-- Compile-time type checking and type inference;
-- Running on the Erlang's VM
+- With compile-time type checking and type inference(?);
+- Compiles to Core Erlang, and running on the Erlang VM
 
 ## Features
 
@@ -47,7 +47,7 @@ let b = 2
 let s = "hello"
 ```
 
-## Data Types
+## Basic Types
 
 A type is a set of values.
 
@@ -58,8 +58,8 @@ A type is a set of values.
 | Atom(Symbol)      | :atom         |                               |
 | Char              | 'c', 'x'      |                               |
 | Int(Integer)      | 1, 2, -10     | Integer type                  |
-| Num(Number)       | 1, 2, -10     |                               |
 | Float(Double)     | 3.14          | Float type                    |
+| Num(Number)       | Int \| Float  |                               |
 | String            | "hello"       | String is a list of character |
 | Tuple             |               |                               |
 | List              |               |                               |
@@ -72,29 +72,36 @@ A type is a set of values.
 | Pid               |               | Erlang Pid                    |
 | Ref               |               | Erlang Reference              |
 
-### Bool
+### Booleans
 
-```haskell
+h``haskell
 True | False
 ```
 
-### Number
+### Numbers
 
 Two types of numeric literals: integers and floats.
 
-```haskell
+​```haskell
 -- Integer
 1,2,-10
 
 -- binary, octal, and hex literals
-0b101010
-0o52
-0x2a
+0x1, 0X1, 0x2a, 0X2A
+0o1, 0O1, 0o52, 0O52
+0b10, 0B10
 
 -- floats and doubles
+1.0, 1e10
 2.3
 2.3e-3
 0.0023
+```
+
+### Atoms
+
+```
+:atom, :ok, :error
 ```
 
 ### Strings
@@ -102,35 +109,16 @@ Two types of numeric literals: integers and floats.
 ```haskell
 "Hello, World!"
 printf "foo %s %d %.2f" "bar" 7 3.1415
-```
 
-### Tuples
+-- Multi-line Strings?
+s = "My long \
+\string"
 
-```haskell
-{- Tuple -}
-(1, "a", True)
-(1,"a")
-```
+-- Escape Codes
+"\r\n ..."
 
-### Lists
-
-```haskell
-{- List --}
-[] -- empty list
-[1,2,3] -- List Integer
-[H|T] = L -- Cons
-[1|[2|[3|[]]]]
-1 : 2 : 3 : [] -- cons
-```
-
-### Enum, Range
-
-```haskell
-{- Enumerations, Range -}
-
-[1..10]
-[1,3..100]
-['a'..'z']
+-- ++ to concat strings
+"Hello " ++ " World"
 ```
 
 ### Bit Strings/Binaries
@@ -141,21 +129,69 @@ printf "foo %s %d %.2f" "bar" 7 3.1415
 <<1:16,2:4,3:4>>
 ```
 
-### Maps
+### Tuples
 
-{key1 = val1, key2 = val2, ...}
-
-### Record(Struct)
+A tuple is a sequence of values of different types:
 
 ```haskell
-{name = "John", age = 12}
+{- Tuple -}
+(1, "a", True)
+(1,"a")
 ```
 
-### Port
+### Lists
+
+A list is sequence of values of the same type:
+
+```haskell
+{- List --}
+[] -- empty list
+[1,2,3] -- List Integer
+[H|T] = L -- Cons
+[1|[2|[3|[]]]]
+1 : 2 : 3 : [] -- cons
+```
+
+### Enumerations, Range
+
+```haskell
+{- Enumerations, Range -}
+[1..10]
+[1,3..100]
+['a'..'z']
+```
+
+### Maps
+
+```
+m = #{"f" => 1, "t" => 2}
+1 = m["f"]
+2 = m["t"]
+m2 = (m["f"] = 3)
+```
+
+### Records
+
+```haskell
+
+-- declare a Person record
+type Person = Person {name :: String, age :: Int}
+
+-- or
+type Person = {name :: String, age :: Int}
+
+-- create a Person record
+p = Person {name = "John", age = 12}
+
+-- update a Person record
+p1 = p {name = "Miles", age = 20}
+```
+
+### Ports
 
 Erlang port identifier identifies an Erlang port.
 
-### Pid
+### PIDs
 
 Erlang process identifier, pid, identifies a process.
 
@@ -191,6 +227,7 @@ person = Person {name = "Miles", age = 50, address = "NY"}
 
 -- generic type (maybe for example)
 type Maybe a = Just a | None
+type Result val err = Ok Val | Error err
 
 -- recursive type
 type Tree = Leaf Int | Node Tree Tree
@@ -199,7 +236,7 @@ type Tree = Leaf Int | Node Tree Tree
 
 ## Functions
 
-A function is an arrow between types.
+A function is a mapping from values of one type to values of another type.
 
 ### Function Definition
 
@@ -226,7 +263,7 @@ g x = x * 3
 z = f (g 4) -- 14
 ```
 
-### High-order Functions
+### High-Order Functions
 
 ```haskell
 apply :: (a -> a) -> a -> a
@@ -238,7 +275,8 @@ apply f x = f x
 ```haskell
 fact n = if n == 0 then 1 else n * fact(n-1)
 -- tail recursive
-loop N = loop (N - 1)
+loop 0 = 0
+loop n = loop (n - 1)
 ```
 
 ### Currying and Partial Application
@@ -248,10 +286,25 @@ plus2 = (+) 2
 plus2 3 -- 5
 ```
 
+### Polymorphic Functions
+
+```haskell
+length :: [a] -> Int
+zip :: [a] -> [b] -> [(a,b)]
+```
+
 ### Lambda (Anonymous Function)
 
 ```erlang
 fun x -> fun y -> (x + y) div 2
+multBy n = fun m -> n * m
+```
+
+### Guarded Equations
+
+```haskell
+abs n | n > 0     = n
+      | otherwise = -n
 ```
 
 ## Expressions
@@ -269,14 +322,6 @@ let absn = if n < 0 then -n else n
 z = let x = 3
         y = 2 * x
     in x * y
-```
-
-### where
-
-```haskell
-z = x * y
-  where x = 3
-        y = 2 * x
 ```
 
 ### case .. of
@@ -309,6 +354,21 @@ if x > 0
 
 ### List Comprehension
 
+A list comprehension consists of four types of elements: *generators*, *guards*, *local bindings*, and *targets*.
+
+```haskell
+squares = [x * x | x <- [1..]]
+
+-- multiple generators
+[(x,y) | x <- [1,2,3], y <- [4,5]]
+
+-- dependent generators
+[(x,y) | x <- [1..3], y <- [x..3]]
+
+-- guards
+[x | x <- [1..10], even x]
+```
+
 ```haskell
 {- List Comprehensions -}
 
@@ -319,9 +379,22 @@ if x > 0
 
 ```haskell
 (x, y) = (1, 2)
+
+-- function declare via pattern matching
+allEmpty [] = True
+allEmpty _ = False
 ```
 
 ### Guards
+
+```haskell
+which n
+  | n == 0 = "zero!"
+  | even n = "even!"
+  | otherwise = "odd!"
+```
+
+
 
 ### Statement terminator
 
@@ -335,15 +408,15 @@ begin *expr* ; *…* end
 
 ### Arithmetic Operators
 
-| Operator | Name     | Example |
-| -------- | -------- | ------- |
-| +        | Add      |         |
-| -        | Subtract |         |
-| *        | Multiply |         |
-| /        | Divide   |         |
-| div      |          | div 7 3 |
-| rem      | Remain   | rem 7 3 |
-|          |          |         |
+| Operator | Name             | Example |
+| -------- | ---------------- | ------- |
+| +        | Add              |         |
+| -        | Subtract         |         |
+| *        | Multiply         |         |
+| /        | Divide           |         |
+| div      | Integer Division | div 7 3 |
+| rem      | Remain           | rem 7 3 |
+|          |                  |         |
 
 ### Logical Operators
 
@@ -351,7 +424,6 @@ begin *expr* ; *…* end
 | -------- | -------- |
 | &&, and  | And      |
 | \|\|, or | Or       |
-| xor      | Xor      |
 | not      | Not      |
 | andalso  | And also |
 | orelse   | Or else  |
@@ -386,16 +458,51 @@ begin *expr* ; *…* end
 
 ## Modules
 
+A module is a compilation unit which exports types, functions, and other modules.
+
+### Module Declaration
+
+A module name must start with a capital letter.
+
+```haskell
+-- Declare a module and export all the types and functions
+module MyMod
+
+-- Declare a module and export some types or functions
+module MyMod (Maybe, add)
+
+type Maybe a = Just a | None
+
+add :: Num -> Num -> Num
+add x y = x + y
+```
+
 ### Main
 
 ```haskell
 -- Main
-main = putStrLn "Hello World"
+main = println "Hello World"
 ```
 
 ### Export
 
 ### Import
+
+```haskell
+import Data.List
+import Data.Map (keys, values)
+
+List.nth 1 [1..10]
+keys {:key = "val"}
+
+-- Qualified Imports
+import Data.Set as Set
+import Data.Map as M
+
+M.get :key {:key = "val"}
+```
+
+
 
 ## Libraries
 
@@ -426,8 +533,6 @@ truncate round floor ceiling
 
 ### Date and Time
 
-
-
 ## Effects
 
 TODO: How to handle side effects Monad??
@@ -441,12 +546,7 @@ TODO...
 ### Hello World
 
 ```haskell
-module Example export (add) where
-
-type Bool = True | False
-
-let a = 1
-let b = 2
+module Example (add)
 
 add :: Int -> Int -> Int
 add x y = x + y
@@ -457,7 +557,7 @@ main = printLn "hello world"
 ## Reserved Words
 
 ```haskell
-and andalso begin case class do else end export if fun import in let of module not orelse then type where
+and andalso begin case class do else end export if fun import in let of module not orelse then type
 ```
 
 ## Author
