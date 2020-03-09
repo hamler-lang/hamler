@@ -2,6 +2,22 @@
 
 The specification is derived from [Haskell Syntax Reference](https://www.haskell.org/onlinereport/haskell2010/haskellch10.html#x17-17500010)
 
+## Modules
+
+```haskell
+module ModuleName where
+module ModuleName (export1, export2) where
+```
+
+## Imports
+
+```haskell
+import Module
+import Module (export1, export2)
+import Module hiding (export1, export2)
+import Module as M
+```
+
 ## Notational Conventions
 
 These notational conventions are used for presenting syntax:

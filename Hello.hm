@@ -1,0 +1,8 @@
+module Hello (add, sub) where
+
+import X (hi)
+
+add x y = x + y
+
+sub a b = a - b
+

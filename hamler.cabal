@@ -1,45 +1,67 @@
-cabal-version:       >=1.10
-
 name:                hamler
-version:             0.1.0.0
--- synopsis:
--- description:
--- bug-reports:
+version:             0.0.1
 license:             BSD3
 license-file:        LICENSE
+build-type:          Simple
 author:              Feng Lee
-maintainer:          feng@emqx.io
+maintainer:          Feng Lee <feng at emqx.io>
+stability:           experimental
+category:            Compiler, Language
+copyright:           Copyright (c) 2020 EMQ Technologies Co., Ltd.
+synopsis:            The Hamler Programming Language
+description:         Hamler is a functional programming language inspired by
+                     Haskell and Stardard ML, that compiles to Core Erlang.
 homepage:            https://github.com/hamler-lang/hamler
 bug-reports:         https://github.com/hamler-lang/hamler/issues
-copyright:           Copyright (c) 2020 EMQ Technologies Co., Ltd.
-category:            Compiler, Language
-build-type:          Simple
-extra-source-files:  CHANGELOG.md
+cabal-version:       >=1.10
+
+extra-source-files:  README.md
+                     CHANGELOG.md
 
 source-repository head
     type:     git
-    location: git://github.com/hamler-lang/hamler.git
+    location: https://github.com/hamler-lang/hamler.git
 
 library
-  exposed-modules:     Hamler
+  build-tools:       happy >= 1.19
 
-  other-modules:       Hamler.Parser
-                     , Hamler.Parser.Lexer
-  -- other-extensions:
-  build-depends:       base >=4.12 && <4.13
-                     , text
-                     , megaparsec
-  hs-source-dirs:      src
-  default-language:    Haskell2010
+  exposed-modules:   Hamler,
+                     Hamler.Compiler,
+                     Hamler.AST.Lexer,
+                     Hamler.AST.Pretty,
+                     Hamler.AST.Extension,
+                     Hamler.AST.Build,
+                     Hamler.AST.SrcLoc,
+                     Hamler.AST.Syntax,
+                     Hamler.AST.Fixity,
+                     Hamler.AST.ExactPrint,
+                     Hamler.AST.Parser,
+                     Hamler.AST.Comments,
+                     Hamler.CodeGen.GenErl
+
+  other-modules:     Hamler.AST.ExtScheme,
+                     Hamler.AST.ParseMonad,
+                     Hamler.AST.ParseSyntax,
+                     Hamler.AST.ParseUtils,
+                     Hamler.AST.InternalParser
+                     Hamler.AST.Unlit
+
+  build-depends:     array >= 0.1,
+                     pretty >= 1.0,
+                     base >= 4.5 && < 5,
+                     ghc-prim,
+                     semigroups >= 0.18.3,
+                     fail == 4.9.*
+  default-language:  Haskell98
+  hs-source-dirs:    src
+  ghc-options:       -Wall
 
 executable hamler
-  main-is:             Main.hs
-  other-modules:       Hamler
-                     , Hamler.Parser
-                     , Hamler.Parser.Lexer
-  -- other-extensions:
-  build-depends:       base >=4.12 && <4.13
-                     , text
-                     , megaparsec
-  hs-source-dirs:      src
-  default-language:    Haskell2010
+  main-is:           Main.hs
+
+  build-depends:     array >= 0.1,
+                     base >= 4.5 && < 5,
+                     hamler
+  default-language:  Haskell98
+  Hs-source-dirs:    main
+
