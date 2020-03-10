@@ -74,7 +74,7 @@ A type is a set of values.
 
 ### Booleans
 
-h``haskell
+```haskell
 True | False
 ```
 
@@ -82,7 +82,7 @@ True | False
 
 Two types of numeric literals: integers and floats.
 
-​```haskell
+```haskell
 -- Integer
 1,2,-10
 
@@ -149,7 +149,7 @@ A list is sequence of values of the same type:
 [1,2,3] -- List Integer
 [H|T] = L -- Cons
 [1|[2|[3|[]]]]
-1 : 2 : 3 : [] -- cons
+1 : 2 : 3 : [] -- cons?
 ```
 
 ### Enumerations, Range
@@ -165,7 +165,7 @@ A list is sequence of values of the same type:
 
 ```
 m = #{"f" => 1, "t" => 2}
-1 = m["f"]
+1 = m["f"] --???
 2 = m["t"]
 m2 = (m["f"] = 3)
 ```
@@ -185,6 +185,10 @@ p = Person {name = "John", age = 12}
 
 -- update a Person record
 p1 = p {name = "Miles", age = 20}
+
+-- Getters
+let name = p1.name
+let age = p1.age
 ```
 
 ### Ports
@@ -324,6 +328,15 @@ z = let x = 3
     in x * y
 ```
 
+### where
+
+```haskell
+z = x * y
+    where
+      x = 3
+      y = 5
+```
+
 ### case .. of
 
 ```haskell
@@ -393,7 +406,6 @@ which n
   | even n = "even!"
   | otherwise = "odd!"
 ```
-
 
 
 ### Statement terminator
@@ -466,12 +478,12 @@ A module name must start with a capital letter.
 
 ```haskell
 -- Declare a module and export all the types and functions
-module MyMod
+module MyMod where
 
 -- Declare a module and export some types or functions
-module MyMod (Maybe, add)
+module MyMod (Maybe, add) where
 
-type Maybe a = Just a | None
+type Maybe a = Just a | Nothing
 
 add :: Num -> Num -> Num
 add x y = x + y
@@ -497,18 +509,16 @@ keys {:key = "val"}
 
 -- Qualified Imports
 import Data.Set as Set
-import Data.Map as M
+import Data.Map as Map
 
-M.get :key {:key = "val"}
+Map.get :key {:key = "val"}
 ```
-
-
 
 ## Libraries
 
-### Core
+### Prelude
 
-The library which is always imported.
+The module which is always imported.
 
 | Function | Example |
 | -------- | ------- |
@@ -522,7 +532,7 @@ The library which is always imported.
 |          |         |
 |          |         |
 
-List
+### List
 
 ### Math
 
@@ -533,7 +543,7 @@ truncate round floor ceiling
 
 ### Date and Time
 
-## Effects
+## Effect
 
 TODO: How to handle side effects Monad??
 
@@ -546,7 +556,7 @@ TODO...
 ### Hello World
 
 ```haskell
-module Example (add)
+module Example (add) where
 
 add :: Int -> Int -> Int
 add x y = x + y
