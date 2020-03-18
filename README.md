@@ -485,7 +485,7 @@ module MyMod where
 -- Declare a module and export some types or functions
 module MyMod (Maybe(..), add) where
 
-type Maybe a = Just a | Nothing
+data Maybe a = Just a | Nothing
 
 add :: Num -> Num -> Num
 add x y = x + y
