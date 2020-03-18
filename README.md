@@ -17,7 +17,7 @@
 - Currying and Partial Application
 - Pattern Matching
 - Guards, or conditional matches
-- List Comprehension
+- List comprehension
 - Recursion
 - Modules
 
@@ -36,7 +36,7 @@
 {-- Types, Values --}
 True :: Bool
 False :: Bool
-2 :: Integer
+2 :: Int
 1.0 :: Float
 3.14 :: Double
 "hello" :: String
@@ -53,9 +53,9 @@ A type is a set of values.
 
 | Type              | Values        | Description                   |
 | ----------------- | ------------- | ----------------------------- |
-| None              | None          | null                          |
+| None(???)         | None          | null                          |
 | Bool              | True \| False | Boolean type                  |
-| Atom(Symbol)      | :atom         |                               |
+| Atom(Symbol)      | :a, :b        |                               |
 | Char              | 'c', 'x'      |                               |
 | Int(Integer)      | 1, 2, -10     | Integer type                  |
 | Float(Double)     | 3.14          | Float type                    |
@@ -64,8 +64,8 @@ A type is a set of values.
 | Tuple             |               |                               |
 | List              |               |                               |
 | Enum, Range       |               |                               |
-| Binary/Bitstrings |               |                               |
-| Map(Dict)         |               |                               |
+| Binary/Bitstrings |               | Erlang Bitstrings             |
+| Map(Dict)         |               | Erlang Map                    |
 | Record            |               |                               |
 | Fun               |               | Function                      |
 | Port              |               | Erlang Port                   |
@@ -121,7 +121,7 @@ s = "My long \
 "Hello " ++ " World"
 ```
 
-### Bit Strings/Binaries
+### Bitstrings/Binaries
 
 ```erlang
 <<1,2,3>>
@@ -136,7 +136,11 @@ A tuple is a sequence of values of different types:
 ```haskell
 {- Tuple -}
 (1, "a", True)
-(1,"a")
+(1, "a")
+
+-- fst, snd
+fst (1, 'a') -- 1
+snd (1, 'a') -- 'a'
 ```
 
 ### Lists
@@ -146,9 +150,9 @@ A list is sequence of values of the same type:
 ```haskell
 {- List --}
 [] -- empty list
-[1,2,3] -- List Integer
-[H|T] = L -- Cons
-[1|[2|[3|[]]]]
+[1, 2, 3] -- Integer list
+1 : [2, 3] -- Cons
+1 : 2 : 3 : [] -- Cons
 1 : 2 : 3 : [] -- cons?
 ```
 
@@ -157,28 +161,34 @@ A list is sequence of values of the same type:
 ```haskell
 {- Enumerations, Range -}
 [1..10]
-[1,3..100]
+[1, 3..100]
 ['a'..'z']
 ```
 
 ### Maps
 
-```
-m = #{"f" => 1, "t" => 2}
-1 = m["f"] --???
-2 = m["t"]
-m2 = (m["f"] = 3)
+```haskell
+-- New map
+m = #{"foo" => "bar", "bar" => "foo"}
+-- Match Map
+#{"foo" := a, "bar" := b} = m
+-- get, put
+Map.get "foo" m -- a = "bar"
+Map.get "bar" m -- b = "foo"
+m1 = Map.put "key" "val"
+-- keys, values
+let keys = Map.keys m
+let values = Map.values m
 ```
 
 ### Records
 
 ```haskell
-
 -- declare a Person record
-type Person = Person {name :: String, age :: Int}
+data Person = Person {name :: String, age :: Int}
 
 -- or
-type Person = {name :: String, age :: Int}
+data Person = {name :: String, age :: Int}
 
 -- create a Person record
 p = Person {name = "John", age = 12}
@@ -186,7 +196,7 @@ p = Person {name = "John", age = 12}
 -- update a Person record
 p1 = p {name = "Miles", age = 20}
 
--- Getters
+-- getters
 let name = p1.name
 let age = p1.age
 ```
@@ -206,8 +216,8 @@ Erlang process identifier, pid, identifies a process.
 type Name = String
 n = "Miles" :: Name
 
--- sum type
-type Color = Red | Green | Blue
+-- sum datatype
+data Color = Red | Green | Blue
 c = Blue
 
 -- pattern match sum type
@@ -217,25 +227,24 @@ case c of
   Blue -> "blue"
   _ -> "unknown"
 
--- product type
-type Pair = Pair Int Int
+-- product datatype
+data Pair = Pair Int Int
 p = Pair 3 4
 
--- record product type
-type Person = Person {
+-- record product datatype
+data Person = Person {
   name :: String
   age :: Int
   address :: String
 }
 person = Person {name = "Miles", age = 50, address = "NY"}
 
--- generic type (maybe for example)
-type Maybe a = Just a | None
-type Result val err = Ok Val | Error err
+-- generic datatype (maybe for example)
+data Maybe a = Just a | None
+data Result val err = Ok Val | Error err
 
--- recursive type
-type Tree = Leaf Int | Node Tree Tree
-
+-- recursive datatype
+data Tree = Leaf Int | Node Tree Tree
 ```
 
 ## Functions
@@ -300,8 +309,8 @@ zip :: [a] -> [b] -> [(a,b)]
 ### Lambda (Anonymous Function)
 
 ```erlang
-fun x -> fun y -> (x + y) div 2
-multBy n = fun m -> n * m
+\x -> \y -> (x + y) div 2
+multBy n = \m -> n * m
 ```
 
 ### Guarded Equations
@@ -365,7 +374,7 @@ if x > 0
     else print "zero"
 ```
 
-### List Comprehension
+### List comprehension
 
 A list comprehension consists of four types of elements: *generators*, *guards*, *local bindings*, and *targets*.
 
@@ -407,14 +416,13 @@ which n
   | otherwise = "odd!"
 ```
 
-
 ### Statement terminator
 
-*next line has equal or less indentation, or* ;
+*TODO: next line has equal or less indentation, or* ;
 
 ### Blocks
 
-begin *expr* ; *…* end
+TODO: begin *expr* ; *…* end
 
 ## Operators
 
@@ -450,9 +458,6 @@ begin *expr* ; *…* end
 | >        | Great       |
 | <=       | Less Equal  |
 | >=       | Great Equal |
-|          |             |
-|          |             |
-|          |             |
 
 ### Bit Operators
 
@@ -464,9 +469,6 @@ begin *expr* ; *…* end
 | bxor  | Bit xor         |
 | bsl   | Bit shift left  |
 | bsr   | Bit shift right |
-|       |                 |
-|       |                 |
-|       |                 |
 
 ## Modules
 
@@ -481,7 +483,7 @@ A module name must start with a capital letter.
 module MyMod where
 
 -- Declare a module and export some types or functions
-module MyMod (Maybe, add) where
+module MyMod (Maybe(..), add) where
 
 type Maybe a = Just a | Nothing
 
@@ -493,6 +495,8 @@ add x y = x + y
 
 ```haskell
 -- Main
+module Main (main) where
+
 main = println "Hello World"
 ```
 
@@ -504,14 +508,15 @@ main = println "Hello World"
 import Data.List
 import Data.Map (keys, values)
 
-List.nth 1 [1..10]
-keys {:key = "val"}
+nth 1 [1..10]
+keys #{"key" => "val"} -- ["key"]
+values #{"key" => "val"} -- ["val"]
 
 -- Qualified Imports
 import Data.Set as Set
 import Data.Map as Map
 
-Map.get :key {:key = "val"}
+Map.get "foo" #{"foo" => "bar"}
 ```
 
 ## Libraries
@@ -525,14 +530,10 @@ The module which is always imported.
 | min      | min 1 2 |
 | max      | max 1 2 |
 |          |         |
-|          |         |
-|          |         |
-|          |         |
-|          |         |
-|          |         |
-|          |         |
 
 ### List
+
+TODO
 
 ### Math
 
@@ -545,7 +546,7 @@ truncate round floor ceiling
 
 ## Effect
 
-TODO: How to handle side effects Monad??
+TODO: How to handle side effects? Monad??
 
 ## IO
 
@@ -567,7 +568,7 @@ main = printLn "hello world"
 ## Reserved Words
 
 ```haskell
-and andalso begin case class do else end export if fun import in let of module not orelse then type
+and andalso band bor bxor bnot bsl bsr begin case class data do else end export if import in let of module not orelse then type
 ```
 
 ## Author
