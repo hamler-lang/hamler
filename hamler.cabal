@@ -38,18 +38,18 @@ library
                      Hamler.AST.Parser,
                      Hamler.AST.Comments,
                      Hamler.CodeGen.GenErl,
-                     Hamler.CodeGen.CoreErl
+                     Hamler.CodeGen.CoreErl,
+                     -- Core Erlang Generator
+                     Hamler.CodeGen.CoreErl.Syntax,
+                     Hamler.CodeGen.CoreErl.Parser,
+                     Hamler.CodeGen.CoreErl.Pretty
 
   other-modules:     Hamler.AST.ExtScheme,
                      Hamler.AST.ParseMonad,
                      Hamler.AST.ParseSyntax,
                      Hamler.AST.ParseUtils,
                      Hamler.AST.InternalParser
-                     Hamler.AST.Unlit,
-                     -- Core Erlang Generator
-                     Hamler.CodeGen.CoreErl.Syntax,
-                     Hamler.CodeGen.CoreErl.Parser,
-                     Hamler.CodeGen.CoreErl.Pretty
+                     Hamler.AST.Unlit
 
   build-depends:     array >= 0.1,
                      pretty >= 1.1,

@@ -2,8 +2,12 @@
 ## Hamler Design
 
 ```
-Hamler Source Code -> Hamler Compiler -> Core Erlang -> BEAM VM Bytecode
+Hamler Source Code -> CoreErlang Code -> Beam Binary
 ```
+
+- Hamler Source Code : Purescript
+- CoreErlang Syntax: https://github.com/erlang/otp/blob/master/lib/compiler/src/cerl.erl
+- rebar3 to compile CoreErlang to Beam
 
 ## The Compiler
 
