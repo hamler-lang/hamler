@@ -13,6 +13,8 @@
 -----------------------------------------------------------------------------
 module Language.Hamler where
 
+import Prelude
+
 hello :: IO ()
 hello = putStrLn "Hello, Hamler!"
 

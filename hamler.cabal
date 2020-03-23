@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 333791bdbc8b848e3c0b692faf0b2788f56fb2d762b7d6b5a784042faf42aaa6
+-- hash: 0848d962a3f73e7e815147d7783f1a838831a8c979cefb28ff647fea65afe031
 
 name:           hamler
 version:        0.0.1
@@ -59,7 +59,6 @@ library
     , containers
     , directory >=1.2.3
     , filepath
-    , hamler
     , monad-control >=1.0.0.0 && <1.1
     , mtl >=2.1.0 && <2.3.0
     , parsec >=3.1.10

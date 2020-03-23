@@ -22,3 +22,4 @@ cabal.project.local~
 .ghc.environment.*
 dist/
 result
+*.lock
