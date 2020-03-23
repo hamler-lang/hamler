@@ -1,23 +1,16 @@
-.PHONY: build run repl shell shell-pure external-shell
+package = hamler
+stack_yaml = STACK_YAML="stack.yaml"
+stack = $(stack_yaml) stack
+
+all: build
 
 build:
-	nix-build release.nix
+	$(stack) build
 
-run: build
-	result/bin/hamler
+install:
+	$(stack) install
 
-repl:
-	nix-shell --pure shell.nix --run \
-		"cabal repl lib:hamler"
+test:
+	$(stack) test --fast $(package)
 
-shell:
-	nix-shell shell.nix
-
-shell-pure:
-	nix-shell --pure shell.nix
-
-external-shell:
-	nix-shell external.nix
-
-cab2nix:
-	nix-shell --pure -p cabal2nix --run "cabal2nix ." > default.nix
+.PHONY : build install test

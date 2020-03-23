@@ -1,6 +1,6 @@
 module Main where
 
-import Hamler
+import Language.Hamler
 
 main = hello
 

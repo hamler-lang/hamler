@@ -1,0 +1,19 @@
+resolver: lts-13.26
+pvp-bounds: upper
+packages:
+- '.'
+
+extra-deps:
+- happy-1.19.9
+- language-javascript-0.7.0.0
+- network-3.0.1.1
+- these-1.0.1
+- semialign-1
+- git: git@github.com:hamler-lang/CoreErlang.git
+  commit: dd9f950a407b370d6bfb9c35477170c39041d9a9
+- git: git@github.com:hamler-lang/purescript.git
+  commit: 4dd32c48a372bb8a5250140d19af8aa18a6358d7
+flags:
+  these:
+    assoc: false
+    quickcheck: false

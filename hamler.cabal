@@ -1,73 +1,170 @@
-name:                hamler
-version:             0.0.1
-license:             BSD3
-license-file:        LICENSE
-build-type:          Simple
-author:              Feng Lee
-maintainer:          Feng Lee <feng at emqx.io>
-stability:           experimental
-category:            Compiler, Language
-copyright:           Copyright (c) 2020 EMQ Technologies Co., Ltd.
-synopsis:            The Hamler Programming Language
-description:         Hamler is a functional programming language inspired by
-                     Haskell and Stardard ML, that compiles to Core Erlang.
-homepage:            https://github.com/hamler-lang/hamler
-bug-reports:         https://github.com/hamler-lang/hamler/issues
-cabal-version:       >=1.10
+cabal-version: 1.12
 
-extra-source-files:  README.md
-                     CHANGELOG.md
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 333791bdbc8b848e3c0b692faf0b2788f56fb2d762b7d6b5a784042faf42aaa6
+
+name:           hamler
+version:        0.0.1
+synopsis:       The Hamler Programming Language
+description:    Hamler is a functional programming language inspired by Haskell and Stardard ML, that compiles to Core Erlang.
+category:       Language, Compiler
+stability:      experimental
+homepage:       http://www.hamler.io/
+bug-reports:    https://github.com/hamler-lang/hamler/issues
+author:         Feng Lee <feng@emqx.io>
+maintainer:     Feng Lee <feng@emqx.io>
+copyright:      (c) 2013-17 Phil Freeman, (c) 2014-19 Gary Burgess, (c) other contributors (see CONTRIBUTORS.md)
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    stack.yaml
 
 source-repository head
-    type:     git
-    location: https://github.com/hamler-lang/hamler.git
+  type: git
+  location: https://github.com/hamler-lang/hamler
+
+flag release
+  description: Mark this build as a release build: prevents inclusion of extra info e.g. commit SHA in --version output)
+
+  manual: False
+  default: False
 
 library
-  build-tools:       happy >= 1.19
-
-  exposed-modules:   Hamler,
-                     Hamler.Compiler,
-                     Hamler.AST.Lexer,
-                     Hamler.AST.Pretty,
-                     Hamler.AST.Extension,
-                     Hamler.AST.Build,
-                     Hamler.AST.SrcLoc,
-                     Hamler.AST.Syntax,
-                     Hamler.AST.Fixity,
-                     Hamler.AST.ExactPrint,
-                     Hamler.AST.Parser,
-                     Hamler.AST.Comments,
-                     Hamler.CodeGen.GenErl,
-                     Hamler.CodeGen.CoreErl,
-                     -- Core Erlang Generator
-                     Hamler.CodeGen.CoreErl.Syntax,
-                     Hamler.CodeGen.CoreErl.Parser,
-                     Hamler.CodeGen.CoreErl.Pretty
-
-  other-modules:     Hamler.AST.ExtScheme,
-                     Hamler.AST.ParseMonad,
-                     Hamler.AST.ParseSyntax,
-                     Hamler.AST.ParseUtils,
-                     Hamler.AST.InternalParser
-                     Hamler.AST.Unlit
-
-  build-depends:     array >= 0.1,
-                     pretty >= 1.1,
-                     base >= 4.5 && < 5,
-                     parsec >=3.1,
-                     ghc-prim,
-                     semigroups >= 0.18.3,
-                     fail == 4.9.*
-  default-language:  Haskell98
-  hs-source-dirs:    src
-  ghc-options:       -Wall
+  exposed-modules:
+      Language.Hamler
+  other-modules:
+      Paths_hamler
+  hs-source-dirs:
+      src
+  default-extensions: ConstraintKinds DataKinds DeriveFunctor DeriveFoldable DeriveTraversable DeriveGeneric DerivingStrategies EmptyDataDecls FlexibleContexts KindSignatures LambdaCase MultiParamTypeClasses NoImplicitPrelude PatternGuards PatternSynonyms RankNTypes RecordWildCards OverloadedStrings ScopedTypeVariables TupleSections ViewPatterns
+  ghc-options: -Wall -O2
+  build-tools:
+      happy ==1.19.9
+  build-depends:
+      Cabal >=2.2 && <3.0
+    , Glob >=0.9 && <0.10
+    , aeson >=1.0 && <1.5
+    , aeson-better-errors >=0.8
+    , aeson-pretty
+    , ansi-terminal >=0.7.1 && <0.9
+    , base >=4.11 && <4.13
+    , base-compat >=0.6.0
+    , boxes >=0.1.4 && <0.2.0
+    , bytestring
+    , containers
+    , directory >=1.2.3
+    , filepath
+    , hamler
+    , monad-control >=1.0.0.0 && <1.1
+    , mtl >=2.1.0 && <2.3.0
+    , parsec >=3.1.10
+    , pattern-arrows >=0.0.2 && <0.1
+    , pretty >=1.1
+    , process >=1.2.0 && <1.7
+    , protolude >=0.1.6 && <0.2.4
+    , text
+    , time
+    , transformers >=0.3.0 && <0.6
+    , transformers-base >=0.4.0 && <0.5
+    , transformers-compat >=0.3.0
+    , utf8-string >=1 && <2
+  default-language: Haskell2010
 
 executable hamler
-  main-is:           Main.hs
+  main-is: Main.hs
+  other-modules:
+      Paths_hamler
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -O2
+  build-tools:
+      happy ==1.19.9
+  build-depends:
+      Cabal >=2.2 && <3.0
+    , Glob >=0.9 && <0.10
+    , aeson >=1.0 && <1.5
+    , aeson-better-errors >=0.8
+    , aeson-pretty
+    , ansi-terminal >=0.7.1 && <0.9
+    , ansi-wl-pprint
+    , base >=4.11 && <4.13
+    , base-compat >=0.6.0
+    , boxes >=0.1.4 && <0.2.0
+    , bytestring
+    , containers
+    , directory >=1.2.3
+    , filepath
+    , hamler
+    , monad-control >=1.0.0.0 && <1.1
+    , mtl >=2.1.0 && <2.3.0
+    , optparse-applicative >=0.13.0
+    , parsec >=3.1.10
+    , pattern-arrows >=0.0.2 && <0.1
+    , pretty >=1.1
+    , process >=1.2.0 && <1.7
+    , protolude >=0.1.6 && <0.2.4
+    , text
+    , time
+    , transformers >=0.3.0 && <0.6
+    , transformers-base >=0.4.0 && <0.5
+    , transformers-compat >=0.3.0
+    , utf8-string >=1 && <2
+  if flag(release)
+    cpp-options: -DRELEASE
+  else
+    build-depends:
+        gitrev >=1.2.0 && <1.4
+  default-language: Haskell2010
 
-  build-depends:     array >= 0.1,
-                     base >= 4.5 && < 5,
-                     hamler
-  default-language:  Haskell98
-  Hs-source-dirs:    main
-
+test-suite tests
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Paths_hamler
+  hs-source-dirs:
+      tests
+  default-extensions: NoImplicitPrelude LambdaCase OverloadedStrings
+  ghc-options: -Wall
+  build-tools:
+      happy ==1.19.9
+  build-depends:
+      Cabal >=2.2 && <3.0
+    , Glob >=0.9 && <0.10
+    , HUnit
+    , aeson >=1.0 && <1.5
+    , aeson-better-errors >=0.8
+    , aeson-pretty
+    , ansi-terminal >=0.7.1 && <0.9
+    , base >=4.11 && <4.13
+    , base-compat >=0.6.0
+    , boxes >=0.1.4 && <0.2.0
+    , bytestring
+    , containers
+    , directory >=1.2.3
+    , filepath
+    , hamler
+    , hspec
+    , hspec-discover
+    , monad-control >=1.0.0.0 && <1.1
+    , mtl >=2.1.0 && <2.3.0
+    , parsec >=3.1.10
+    , pattern-arrows >=0.0.2 && <0.1
+    , pretty >=1.1
+    , process >=1.2.0 && <1.7
+    , protolude >=0.1.6 && <0.2.4
+    , tasty
+    , tasty-golden
+    , tasty-hspec
+    , tasty-quickcheck
+    , text
+    , time
+    , transformers >=0.3.0 && <0.6
+    , transformers-base >=0.4.0 && <0.5
+    , transformers-compat >=0.3.0
+    , utf8-string >=1 && <2
+  default-language: Haskell2010
