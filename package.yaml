@@ -26,6 +26,8 @@ dependencies:
   - containers
   - directory >=1.2.3
   - filepath
+  - purescript
+  - CoreErlang
   - Glob >=0.9 && <0.10
   - monad-control >=1.0.0.0 && <1.1
   - mtl >=2.1.0 && <2.3.0
