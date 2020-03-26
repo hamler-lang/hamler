@@ -1,5 +1,6 @@
 module Language.CodeGen where
 
+import           Control.Monad
 import           Control.Monad.Trans.Except
 import           Language.CoreErlang.Syntax
 import qualified Language.PureScript.CoreFn   as C
@@ -23,8 +24,13 @@ corelit2expr (C.ArrayLiteral xs) = do
   res <- mapM corexpr2expr xs
   -- 完全没懂是什么意思。。。。。。。
   return $ List $ L $ [Exprs $ Ann undefined undefined]
-corelit2expr x = undefined
-
+corelit2expr (C.ObjectLiteral xs) = do
+  res <- forM xs $ \(k,v) -> do
+    rk <_ corexpr2expr k
+    rv <- corexpr2expr v
+    return (rk,rv)
+  return $ EMap $ Map $ undefined res
+---- 看不懂 CoreErlang 中的 Exprs 表达什么意思
 
 
 
