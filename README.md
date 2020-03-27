@@ -150,10 +150,13 @@ A list is sequence of values of the same type:
 ```haskell
 {- List --}
 [] -- empty list
-[1, 2, 3] -- Integer list
-1 : [2, 3] -- Cons
-1 : 2 : 3 : [] -- Cons
-1 : 2 : 3 : [] -- cons?
+[1,2,3] -- Integer list
+[x:xs] -- Cons operator
+[1:[2,3]] -- Cons
+[1:[2:[3:[]]]] -- Cons
+
+[x:_]  -- List pattern
+[_:xs] -- List pattern
 ```
 
 ### Enumerations, Range
