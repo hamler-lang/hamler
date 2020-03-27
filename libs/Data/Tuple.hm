@@ -1,0 +1,30 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Tuple
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee <feng@emqx.io>
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The tuple data types.
+--
+-----------------------------------------------------------------------------
+module Data.Tuple
+  ( fst
+  , snd
+  , swap
+  )  where
+
+-- | Extract the first element of a pair.
+fst :: (a,b) -> a
+fst (x, _) = x
+
+-- | Extract the second element of a pair.
+snd :: (a,b) -> b
+snd (_, y) = y
+
+-- | Swap the elements of a pair.
+swap :: (a,b) -> (b,a)
+swap (x,y) = (y,x)
