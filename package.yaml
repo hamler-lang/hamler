@@ -98,6 +98,7 @@ tests:
       - hspec-discover
       - HUnit
       - tasty
+      - hamler
       - tasty-golden
       - tasty-hspec
       - tasty-quickcheck
