@@ -9,8 +9,8 @@ extra-deps:
 - network-3.0.1.1
 - these-1.0.1
 - semialign-1
-- git: git@github.com:hamler-lang/CoreErlang.git
-  commit: 7c3a79fb1910f3cd0e97d3397c0081bbee252dee
+- git: git@github.com:Yang123321/CoreErlang.git
+  commit: f30da9091de165def2ece4d830ee583524f9e37f
 - git: git@github.com:hamler-lang/purescript.git
   commit: 4dd32c48a372bb8a5250140d19af8aa18a6358d7
 flags:
