@@ -1,6 +1,43 @@
-module 'main' ['f'/2, 'z'/1] attributes []
+module 'main' ['T'/5, 'G'/2, 'ng'/0, 'f'/2, 'double'/1, 't'/0,
+               'f1'/0, 'f2'/0, 'f3'/0, 'f4'/1]
+    attributes []
+'T'/5 =
+    fun(_0, _1, _2, _3, _4) ->
+        call 'maps':'put'
+        ('part', _4,
+         call 'maps':'put'
+         ('fun', _3,
+          call 'maps':'put'
+          ('position', _2,
+           call 'maps':'put'
+           ('name', _1, call 'maps':'put' ('age', _0, ~{}~)))))
+'G'/2 =
+    fun(_0, _1) ->
+        call 'maps':'put' ('y', _1, call 'maps':'put' ('x', _0, ~{}~))
+'ng'/0 =
+    fun() -> apply 'G'/2(1, 20)
 'f'/2 =
-    fun(_0, _1) -> call "erlang":"+" (_0, call "erlang":"+" (_1, 2))
-'z'/1 =
-    fun(_0) -> apply apply f(_0)(_0)
+    fun(_0, _1) -> apply _0(apply _0(_1))
+'double'/1 =
+    fun(_0) -> call 'erlang':'*' (_0, 2)
+'t'/0 =
+    fun() -> apply 'T'/5(1, "yang", "hangzou", 'f'/2, 'ng'/0)
+'f1'/0 =
+    fun() ->
+        apply call 'maps':'get' ('fun', apply 't'/0())('double'/1, 4)
+'f2'/0 =
+    fun() -> call 'maps':'get' ('position', apply 't'/0())
+'f3'/0 =
+    fun() ->
+        call 'maps':'get'
+        ('y', apply call 'maps':'get' ('part', apply 't'/0())())
+'f4'/1 =
+    fun(_0) ->
+        case 'IfThenElse' of
+            'IfThenElse' when call 'erlang':'>' (_0, 10) ->
+                call 'maps':'get' ('age', apply 't'/0())
+            'IfThenElse' when 'true' ->
+                call 'maps':'get'
+                ('x', apply call 'maps':'get' ('part', apply 't'/0())())
+        end
 end

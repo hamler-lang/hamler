@@ -98,6 +98,7 @@ tests:
       - HUnit
       - tasty
       - hamler
+      - shelly
       - tasty-golden
       - tasty-hspec
       - tasty-quickcheck

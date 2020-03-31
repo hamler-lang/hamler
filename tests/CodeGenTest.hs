@@ -1,7 +1,7 @@
 module CodeGenTest where
 
 import           Data.Map                         as M
-import           Data.Text                        (Text, unpack)
+import           Data.Text                        (Text, unpack,pack)
 import qualified Data.Text.IO                     as TIO
 import           Language.CodeGen
 import           Language.CoreErlang.Pretty
@@ -14,7 +14,7 @@ import           Language.PureScript.CST.Parser
 import           Language.PureScript.Names
 import           Language.PureScript.PSString
 import           Prelude
-
+import           Shelly
 
 t :: IO ()
 t = do
@@ -22,6 +22,10 @@ t = do
   let Right r = parse res
   -- print r
   putStr $  P.prettyPrint $ aM2Em $ convertModule "test" r
+  TIO.writeFile "tests/data/main.core"
+    (pack $ P.prettyPrint $ aM2Em $ convertModule "test" r)
+  r <- shelly $ run "erlc" ["+time","tests/data/main.core"]
+  print "finish erlc"
 
 
 
