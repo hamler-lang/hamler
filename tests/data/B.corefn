@@ -1,0 +1,835 @@
+* Building project in /Users/hk/purescript/my-proj1
+Compiling A
+[ "SourceSpan
+          { spanName = "src/A.purs"
+          , spanStart = SourcePos
+              { sourcePosLine = 1
+              , sourcePosColumn = 1
+              }
+          , spanEnd = SourcePos
+              { sourcePosLine = 192
+              , sourcePosColumn = 15
+              }
+          } "
+, "[]"
+, "ModuleName
+          [ ProperName { runProperName = "A" } ]"
+, ""src/A.purs" "
+, "[
+          (
+              ( SourceSpan
+                  { spanName = "src/A.purs"
+                  , spanStart = SourcePos
+                      { sourcePosLine = 1
+                      , sourcePosColumn = 1
+                      }
+                  , spanEnd = SourcePos
+                      { sourcePosLine = 192
+                      , sourcePosColumn = 15
+                      }
+                  }
+              , []
+              , Nothing
+              , Nothing
+              )
+          , ModuleName
+              [ ProperName { runProperName = "A" } ]
+          )
+      ,
+          (
+              ( SourceSpan
+                  { spanName = "src/A.purs"
+                  , spanStart = SourcePos
+                      { sourcePosLine = 3
+                      , sourcePosColumn = 1
+                      }
+                  , spanEnd = SourcePos
+                      { sourcePosLine = 3
+                      , sourcePosColumn = 15
+                      }
+                  }
+              , []
+              , Nothing
+              , Nothing
+              )
+          , ModuleName
+              [ ProperName { runProperName = "Prelude" } ]
+          )
+      ,
+          (
+              ( SourceSpan
+                  { spanName = "src/A.purs"
+                  , spanStart = SourcePos
+                      { sourcePosLine = 1
+                      , sourcePosColumn = 1
+                      }
+                  , spanEnd = SourcePos
+                      { sourcePosLine = 192
+                      , sourcePosColumn = 15
+                      }
+                  }
+              , []
+              , Nothing
+              , Nothing
+              )
+          , ModuleName
+              [ ProperName { runProperName = "Prim" } ]
+          )
+      ] "
+, "[ Ident "append"
+      , Ident "empty"
+      , Ident "identity"
+      , Ident "constant"
+      , Ident "apply"
+      , Ident "boolean"
+      , Ident "integer"
+      , Ident "number"
+      , Ident "character"
+      , Ident "string"
+      , Ident "array"
+      , Ident "record"
+      , Ident "nonEmpty"
+      , Ident "getName"
+      , Ident "switch"
+      , Ident "not"
+      , Ident "letIdentity"
+      , Ident "whereIdentity"
+      , Ident "Tagged"
+      , Ident "Semigroup"
+      , Ident "Monoid"
+      , Ident "partial"
+      , Ident "named"
+      , Ident "mutualA"
+      , Ident "mutualB"
+      , Ident "UnitC"
+      , Ident "unit"
+      , Ident "Off"
+      , Ident "On"
+      , Ident "C"
+      , Ident "intT"
+      , Ident "Tuple"
+      , Ident "tuple"
+      , Ident "Nothing"
+      , Ident "Just"
+      , Ident "just"
+      , Ident "Left"
+      , Ident "Right"
+      , Ident "right"
+      , Ident "Nil"
+      , Ident "Cons"
+      , Ident "numbers"
+      , Ident "negativeOne"
+      , Ident "negate"
+      , Ident "perform"
+      , Ident "bind"
+      , Ident "discard"
+      , Ident "semigroupInt"
+      ] "
+, "[]"
+, "[ NonRec " " ( Ident "UnitC" )
+          ( Constructor " "
+              ( ProperName { runProperName = "UnitT" } )
+              ( ProperName { runProperName = "UnitC" } ) []
+          )
+      , NonRec " " ( Ident "Tuple" )
+          ( Constructor " "
+              ( ProperName { runProperName = "Tuple" } )
+              ( ProperName { runProperName = "Tuple" } )
+              [ Ident "value0"
+              , Ident "value1"
+              ]
+          )
+      , NonRec " " ( Ident "Off" )
+          ( Constructor " "
+              ( ProperName { runProperName = "Toggle" } )
+              ( ProperName { runProperName = "Off" } ) []
+          )
+      , NonRec " " ( Ident "On" )
+          ( Constructor " "
+              ( ProperName { runProperName = "Toggle" } )
+              ( ProperName { runProperName = "On" } ) []
+          )
+      , NonRec " " ( Ident "Tagged" )
+          ( Abs " Newtype " ( Ident "x" )
+              ( Var " "
+                  ( Qualified Nothing ( Ident "x" ) )
+              )
+          )
+      , NonRec " " ( Ident "C" )
+          ( Constructor " "
+              ( ProperName { runProperName = "T" } )
+              ( ProperName { runProperName = "C" } ) [ Ident "value0" ]
+          )
+      , NonRec " " ( Ident "Nothing" )
+          ( Constructor " "
+              ( ProperName { runProperName = "Maybe" } )
+              ( ProperName { runProperName = "Nothing" } ) []
+          )
+      , NonRec " " ( Ident "Just" )
+          ( Constructor " "
+              ( ProperName { runProperName = "Maybe" } )
+              ( ProperName { runProperName = "Just" } ) [ Ident "value0" ]
+          )
+      , NonRec " " ( Ident "Nil" )
+          ( Constructor " "
+              ( ProperName { runProperName = "List" } )
+              ( ProperName { runProperName = "Nil" } ) []
+          )
+      , NonRec " " ( Ident "Cons" )
+          ( Constructor " "
+              ( ProperName { runProperName = "List" } )
+              ( ProperName { runProperName = "Cons" } )
+              [ Ident "value0"
+              , Ident "value1"
+              ]
+          )
+      , NonRec " " ( Ident "Left" )
+          ( Constructor " "
+              ( ProperName { runProperName = "Either" } )
+              ( ProperName { runProperName = "Left" } ) [ Ident "value0" ]
+          )
+      , NonRec " " ( Ident "Right" )
+          ( Constructor " "
+              ( ProperName { runProperName = "Either" } )
+              ( ProperName { runProperName = "Right" } ) [ Ident "value0" ]
+          )
+      , NonRec " " ( Ident "Semigroup" )
+          ( Abs " TypeClassConstructor " ( Ident "append" )
+              ( Literal " "
+                  ( ObjectLiteral
+                      [
+                          ( "append"
+                          , Var " "
+                              ( Qualified Nothing ( Ident "append" ) )
+                          )
+                      ]
+                  )
+              )
+          )
+      , NonRec " " ( Ident "Monoid" )
+          ( Abs " TypeClassConstructor " ( Ident "Semigroup0" )
+              ( Abs " " ( Ident "empty" )
+                  ( Literal " "
+                      ( ObjectLiteral
+                          [
+                              ( "Semigroup0"
+                              , Var " "
+                                  ( Qualified Nothing ( Ident "Semigroup0" ) )
+                              )
+                          ,
+                              ( "empty"
+                              , Var " "
+                                  ( Qualified Nothing ( Ident "empty" ) )
+                              )
+                          ]
+                      )
+                  )
+              )
+          )
+      , NonRec " " ( Ident "unit" )
+          ( Var "x []"
+              ( Qualified
+                  ( Just
+                      ( ModuleName
+                          [ ProperName { runProperName = "A" } ]
+                      )
+                  ) ( Ident "UnitC" )
+              )
+          )
+      , NonRec " " ( Ident "tuple" )
+          ( Abs " " ( Ident "x" )
+              ( Abs " " ( Ident "y" )
+                  ( App " "
+                      ( App " "
+                          ( Var "x [Ident "value0",Ident "value1"]"
+                              ( Qualified
+                                  ( Just
+                                      ( ModuleName
+                                          [ ProperName { runProperName = "A" } ]
+                                      )
+                                  ) ( Ident "Tuple" )
+                              )
+                          )
+                          ( Var " "
+                              ( Qualified Nothing ( Ident "x" ) )
+                          )
+                      )
+                      ( Var " "
+                          ( Qualified Nothing ( Ident "y" ) )
+                      )
+                  )
+              )
+          )
+      , NonRec " " ( Ident "switch" )
+          ( Abs " " ( Ident "x" )
+              ( Case " "
+                  [ Var " "
+                      ( Qualified Nothing ( Ident "x" ) )
+                  , Var " "
+                      ( Qualified Nothing ( Ident "x" ) )
+                  ]
+                  [ CaseAlternative
+                      { caseAlternativeBinders =
+                          [ LiteralBinder " "
+                              ( NumericLiteral ( Left 0 ) )
+                          , LiteralBinder " "
+                              ( NumericLiteral ( Left 0 ) )
+                          ]
+                      , caseAlternativeResult = Right
+                          ( Literal " "
+                              ( NumericLiteral ( Left 0 ) )
+                          )
+                      }
+                  , CaseAlternative
+                      { caseAlternativeBinders =
+                          [ LiteralBinder " "
+                              ( NumericLiteral ( Left 1 ) )
+                          , VarBinder " " ( Ident "z" )
+                          ]
+                      , caseAlternativeResult = Right
+                          ( Var " "
+                              ( Qualified Nothing ( Ident "z" ) )
+                          )
+                      }
+                  , CaseAlternative
+                      { caseAlternativeBinders =
+                          [ VarBinder " " ( Ident "y" )
+                          , LiteralBinder " "
+                              ( NumericLiteral ( Left 1 ) )
+                          ]
+                      , caseAlternativeResult = Right
+                          ( Var " "
+                              ( Qualified Nothing ( Ident "y" ) )
+                          )
+                      }
+                  , CaseAlternative
+                      { caseAlternativeBinders =
+                          [ NullBinder " "
+                          , NullBinder " "
+                          ]
+                      , caseAlternativeResult = Right
+                          ( Var " "
+                              ( Qualified Nothing ( Ident "x" ) )
+                          )
+                      }
+                  ]
+              )
+          )
+      , NonRec " " ( Ident "string" )
+          ( Literal " " ( StringLiteral "thran" ) )
+      , NonRec " " ( Ident "semigroupInt" )
+          ( App " "
+              ( Var " TypeClassConstructor "
+                  ( Qualified
+                      ( Just
+                          ( ModuleName
+                              [ ProperName { runProperName = "A" } ]
+                          )
+                      ) ( Ident "Semigroup" )
+                  )
+              )
+              ( Abs " " ( GenIdent Nothing 1 )
+                  ( Abs " " ( GenIdent Nothing 2 )
+                      ( Literal " "
+                          ( NumericLiteral ( Left 0 ) )
+                      )
+                  )
+              )
+          )
+      , NonRec " " ( Ident "right" )
+          ( Abs " " ( Ident "x" )
+              ( App " "
+                  ( Var "+ [Ident "value0"]"
+                      ( Qualified
+                          ( Just
+                              ( ModuleName
+                                  [ ProperName { runProperName = "A" } ]
+                              )
+                          ) ( Ident "Right" )
+                      )
+                  )
+                  ( Var " "
+                      ( Qualified Nothing ( Ident "x" ) )
+                  )
+              )
+          )
+      , NonRec " " ( Ident "record" )
+          ( Literal " " ( ObjectLiteral [] ) )
+      , NonRec " " ( Ident "partial" )
+          ( Abs " "
+              ( GenIdent ( Just "dictPartial" ) 5 )
+              ( Abs " " ( GenIdent Nothing 0 )
+                  ( Let " "
+                      [ NonRec " " UnusedIdent
+                          ( Abs " "
+                              ( GenIdent ( Just "dictPartial" ) 6 )
+                              ( Abs " " ( Ident "$4" )
+                                  ( Var " "
+                                      ( Qualified Nothing ( Ident "$4" ) )
+                                  )
+                              )
+                          )
+                      ]
+                      ( App " "
+                          ( App " "
+                              ( Var " " ( Qualified Nothing UnusedIdent ) )
+                              ( Var " "
+                                  ( Qualified
+                                      ( Just
+                                          ( ModuleName
+                                              [ ProperName { runProperName = "Prim" } ]
+                                          )
+                                      ) ( Ident "undefined" )
+                                  )
+                              )
+                          )
+                          ( Case " "
+                              [ Var " "
+                                  ( Qualified Nothing ( GenIdent Nothing 0 ) )
+                              ]
+                              [ CaseAlternative
+                                  { caseAlternativeBinders =
+                                      [ LiteralBinder " "
+                                          ( NumericLiteral ( Left 0 ) )
+                                      ]
+                                  , caseAlternativeResult = Right
+                                      ( Literal " "
+                                          ( NumericLiteral ( Left 0 ) )
+                                      )
+                                  }
+                              ]
+                          )
+                      )
+                  )
+              )
+          )
+      , NonRec " " ( Ident "numbers" )
+          ( App " "
+              ( App " "
+                  ( Var "+ [Ident "value0",Ident "value1"]"
+                      ( Qualified
+                          ( Just
+                              ( ModuleName
+                                  [ ProperName { runProperName = "A" } ]
+                              )
+                          ) ( Ident "Cons" )
+                      )
+                  )
+                  ( Literal " "
+                      ( NumericLiteral ( Left 1 ) )
+                  )
+              )
+              ( App " "
+                  ( App " "
+                      ( Var "+ [Ident "value0",Ident "value1"]"
+                          ( Qualified
+                              ( Just
+                                  ( ModuleName
+                                      [ ProperName { runProperName = "A" } ]
+                                  )
+                              ) ( Ident "Cons" )
+                          )
+                      )
+                      ( Literal " "
+                          ( NumericLiteral ( Left 2 ) )
+                      )
+                  )
+                  ( Var "+ []"
+                      ( Qualified
+                          ( Just
+                              ( ModuleName
+                                  [ ProperName { runProperName = "A" } ]
+                              )
+                          ) ( Ident "Nil" )
+                      )
+                  )
+              )
+          )
+      , NonRec " " ( Ident "number" )
+          ( Literal " "
+              ( NumericLiteral ( Right 1.2 ) )
+          )
+      , NonRec " " ( Ident "not" )
+          ( Abs " " ( Ident "x" )
+              ( Case " "
+                  [ Var " "
+                      ( Qualified Nothing ( Ident "x" ) )
+                  ]
+                  [ CaseAlternative
+                      { caseAlternativeBinders =
+                          [ LiteralBinder " " ( BooleanLiteral True ) ]
+                      , caseAlternativeResult = Right
+                          ( Literal " " ( BooleanLiteral False ) )
+                      }
+                  , CaseAlternative
+                      { caseAlternativeBinders = [ NullBinder " " ]
+                      , caseAlternativeResult = Right
+                          ( Literal " " ( BooleanLiteral True ) )
+                      }
+                  ]
+              )
+          )
+      , NonRec " " ( Ident "nonEmpty" )
+          ( Literal " "
+              ( ObjectLiteral
+                  [
+                      ( "name"
+                      , Literal " " ( StringLiteral "thran" )
+                      )
+                  ]
+              )
+          )
+      , NonRec " " ( Ident "negate" )
+          ( Abs " " ( Ident "x" )
+              ( Var " "
+                  ( Qualified Nothing ( Ident "x" ) )
+              )
+          )
+      , NonRec " " ( Ident "negativeOne" )
+          ( App " "
+              ( Var " "
+                  ( Qualified
+                      ( Just
+                          ( ModuleName
+                              [ ProperName { runProperName = "A" } ]
+                          )
+                      ) ( Ident "negate" )
+                  )
+              )
+              ( Literal " "
+                  ( NumericLiteral ( Left 1 ) )
+              )
+          )
+      , NonRec " " ( Ident "named" )
+          ( Abs " " ( Ident "x" )
+              ( Case " "
+                  [ Var " "
+                      ( Qualified Nothing ( Ident "x" ) )
+                  ]
+                  [ CaseAlternative
+                      { caseAlternativeBinders =
+                          [ NamedBinder " " ( Ident "y" ) ( NullBinder " " ) ]
+                      , caseAlternativeResult = Right
+                          ( Var " "
+                              ( Qualified Nothing ( Ident "y" ) )
+                          )
+                      }
+                  ]
+              )
+          )
+      , Rec
+          [
+              (
+                  ( " "
+                  , Ident "mutualB"
+                  )
+              , Abs " " ( Ident "x" )
+                  ( App " "
+                      ( Var " "
+                          ( Qualified
+                              ( Just
+                                  ( ModuleName
+                                      [ ProperName { runProperName = "A" } ]
+                                  )
+                              ) ( Ident "mutualA" )
+                          )
+                      )
+                      ( Var " "
+                          ( Qualified Nothing ( Ident "x" ) )
+                      )
+                  )
+              )
+          ,
+              (
+                  ( " "
+                  , Ident "mutualA"
+                  )
+              , Abs " " ( Ident "x" )
+                  ( App " "
+                      ( Var " "
+                          ( Qualified
+                              ( Just
+                                  ( ModuleName
+                                      [ ProperName { runProperName = "A" } ]
+                                  )
+                              ) ( Ident "mutualB" )
+                          )
+                      )
+                      ( Var " "
+                          ( Qualified Nothing ( Ident "x" ) )
+                      )
+                  )
+              )
+          ]
+      , NonRec " " ( Ident "just" )
+          ( Abs " " ( Ident "x" )
+              ( App " "
+                  ( Var "+ [Ident "value0"]"
+                      ( Qualified
+                          ( Just
+                              ( ModuleName
+                                  [ ProperName { runProperName = "A" } ]
+                              )
+                          ) ( Ident "Just" )
+                      )
+                  )
+                  ( Var " "
+                      ( Qualified Nothing ( Ident "x" ) )
+                  )
+              )
+          )
+      , NonRec " " ( Ident "integer" )
+          ( Literal " "
+              ( NumericLiteral ( Left 7 ) )
+          )
+      , NonRec " " ( Ident "intT" )
+          ( App " "
+              ( Var "x [Ident "value0"]"
+                  ( Qualified
+                      ( Just
+                          ( ModuleName
+                              [ ProperName { runProperName = "A" } ]
+                          )
+                      ) ( Ident "C" )
+                  )
+              )
+              ( Literal " "
+                  ( NumericLiteral ( Left 0 ) )
+              )
+          )
+      , NonRec " " ( Ident "identity" )
+          ( Abs " " ( Ident "x" )
+              ( Var " "
+                  ( Qualified Nothing ( Ident "x" ) )
+              )
+          )
+      , NonRec " " ( Ident "letIdentity" )
+          ( Let " "
+              [ NonRec " " ( Ident "g" )
+                  ( Var " "
+                      ( Qualified
+                          ( Just
+                              ( ModuleName
+                                  [ ProperName { runProperName = "A" } ]
+                              )
+                          ) ( Ident "identity" )
+                      )
+                  )
+              , NonRec " " ( Ident "f" )
+                  ( Var " "
+                      ( Qualified
+                          ( Just
+                              ( ModuleName
+                                  [ ProperName { runProperName = "A" } ]
+                              )
+                          ) ( Ident "identity" )
+                      )
+                  )
+              ]
+              ( App " "
+                  ( Var " "
+                      ( Qualified Nothing ( Ident "g" ) )
+                  )
+                  ( Var " "
+                      ( Qualified Nothing ( Ident "f" ) )
+                  )
+              )
+          )
+      , NonRec " " ( Ident "whereIdentity" )
+          ( Let " Where "
+              [ NonRec " " ( Ident "g" )
+                  ( Var " "
+                      ( Qualified
+                          ( Just
+                              ( ModuleName
+                                  [ ProperName { runProperName = "A" } ]
+                              )
+                          ) ( Ident "identity" )
+                      )
+                  )
+              , NonRec " " ( Ident "f" )
+                  ( Var " "
+                      ( Qualified
+                          ( Just
+                              ( ModuleName
+                                  [ ProperName { runProperName = "A" } ]
+                              )
+                          ) ( Ident "identity" )
+                      )
+                  )
+              ]
+              ( App " "
+                  ( Var " "
+                      ( Qualified Nothing ( Ident "g" ) )
+                  )
+                  ( Var " "
+                      ( Qualified Nothing ( Ident "f" ) )
+                  )
+              )
+          )
+      , NonRec " " ( Ident "getName" )
+          ( Abs " " ( Ident "person" )
+              ( Accessor " " "name"
+                  ( Var " "
+                      ( Qualified Nothing ( Ident "person" ) )
+                  )
+              )
+          )
+      , NonRec " " ( Ident "empty" )
+          ( Abs " " ( Ident "dict" )
+              ( Accessor " " "empty"
+                  ( Var " "
+                      ( Qualified Nothing ( Ident "dict" ) )
+                  )
+              )
+          )
+      , NonRec " " ( Ident "constant" )
+          ( Abs " " ( Ident "x" )
+              ( Abs " " ( Ident "y" )
+                  ( Var " "
+                      ( Qualified Nothing ( Ident "x" ) )
+                  )
+              )
+          )
+      , NonRec " " ( Ident "character" )
+          ( Literal " " ( CharLiteral 't' ) )
+      , NonRec " " ( Ident "boolean" )
+          ( Literal " " ( BooleanLiteral True ) )
+      , NonRec " " ( Ident "bind" )
+          ( Abs " " ( Ident "x" )
+              ( Abs " " ( Ident "f" )
+                  ( App " "
+                      ( Var " "
+                          ( Qualified Nothing ( Ident "f" ) )
+                      )
+                      ( Var " "
+                          ( Qualified Nothing ( Ident "x" ) )
+                      )
+                  )
+              )
+          )
+      , NonRec " " ( Ident "discard" )
+          ( Var " "
+              ( Qualified
+                  ( Just
+                      ( ModuleName
+                          [ ProperName { runProperName = "A" } ]
+                      )
+                  ) ( Ident "bind" )
+              )
+          )
+      , NonRec " " ( Ident "perform" )
+          ( Abs " " ( Ident "effect" )
+              ( Abs " " ( Ident "query" )
+                  ( App " "
+                      ( App " "
+                          ( Var " "
+                              ( Qualified
+                                  ( Just
+                                      ( ModuleName
+                                          [ ProperName { runProperName = "A" } ]
+                                      )
+                                  ) ( Ident "discard" )
+                              )
+                          )
+                          ( Var " "
+                              ( Qualified Nothing ( Ident "effect" ) )
+                          )
+                      )
+                      ( Abs " " UnusedIdent
+                          ( App " "
+                              ( App " "
+                                  ( Var " "
+                                      ( Qualified
+                                          ( Just
+                                              ( ModuleName
+                                                  [ ProperName { runProperName = "A" } ]
+                                              )
+                                          ) ( Ident "bind" )
+                                      )
+                                  )
+                                  ( Var " "
+                                      ( Qualified Nothing ( Ident "query" ) )
+                                  )
+                              )
+                              ( Abs " " ( Ident "result" )
+                                  ( App " "
+                                      ( App " "
+                                          ( Var " "
+                                              ( Qualified
+                                                  ( Just
+                                                      ( ModuleName
+                                                          [ ProperName { runProperName = "A" } ]
+                                                      )
+                                                  ) ( Ident "discard" )
+                                              )
+                                          )
+                                          ( Var " "
+                                              ( Qualified Nothing ( Ident "effect" ) )
+                                          )
+                                      )
+                                      ( Abs " " UnusedIdent
+                                          ( App " "
+                                              ( App " "
+                                                  ( Var " "
+                                                      ( Qualified
+                                                          ( Just
+                                                              ( ModuleName
+                                                                  [ ProperName { runProperName = "A" } ]
+                                                              )
+                                                          ) ( Ident "bind" )
+                                                      )
+                                                  )
+                                                  ( Var " "
+                                                      ( Qualified Nothing ( Ident "query" ) )
+                                                  )
+                                              )
+                                              ( Abs " " UnusedIdent
+                                                  ( Var " "
+                                                      ( Qualified Nothing ( Ident "result" ) )
+                                                  )
+                                              )
+                                          )
+                                      )
+                                  )
+                              )
+                          )
+                      )
+                  )
+              )
+          )
+      , NonRec " " ( Ident "array" )
+          ( Literal " "
+              ( ArrayLiteral
+                  [ Literal " "
+                      ( NumericLiteral ( Left 1 ) )
+                  , Literal " "
+                      ( NumericLiteral ( Left 2 ) )
+                  , Literal " "
+                      ( NumericLiteral ( Left 3 ) )
+                  ]
+              )
+          )
+      , NonRec " " ( Ident "apply" )
+          ( Abs " " ( Ident "f" )
+              ( Abs " " ( Ident "x" )
+                  ( App " "
+                      ( Var " "
+                          ( Qualified Nothing ( Ident "f" ) )
+                      )
+                      ( Var " "
+                          ( Qualified Nothing ( Ident "x" ) )
+                      )
+                  )
+              )
+          )
+      , NonRec " " ( Ident "append" )
+          ( Abs " " ( Ident "dict" )
+              ( Accessor " " "append"
+                  ( Var " "
+                      ( Qualified Nothing ( Ident "dict" ) )
+                  )
+              )
+          )
+      ] "
+]

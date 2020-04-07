@@ -22,4 +22,6 @@ cabal.project.local~
 .ghc.environment.*
 dist/
 result
-*.lock
+*.beam
+TAGS
+.DS_Store

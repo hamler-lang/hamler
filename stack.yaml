@@ -10,7 +10,7 @@ extra-deps:
 - these-1.0.1
 - semialign-1
 - git: git@github.com:hamler-lang/CoreErlang.git
-  commit: 7c3a79fb1910f3cd0e97d3397c0081bbee252dee
+  commit: a12462c3170130d4e808bb912e3938166ccda204
 - git: git@github.com:hamler-lang/purescript.git
   commit: 4dd32c48a372bb8a5250140d19af8aa18a6358d7
 flags:

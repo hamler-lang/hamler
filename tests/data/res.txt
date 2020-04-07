@@ -1,0 +1,64 @@
+M 
+    ( T 
+        [ 
+            ( "age" 
+            , N
+            ) 
+        , 
+            ( "part" 
+            , M 
+                ( T 
+                    [ 
+                        ( "partx" 
+                        , N
+                        ) 
+                    , 
+                        ( "party" 
+                        , M 
+                            ( T 
+                                [ 
+                                    ( "partyx" 
+                                    , N
+                                    ) 
+                                , 
+                                    ( "partyy" 
+                                    , N
+                                    ) 
+                                ] 
+                            )
+                        ) 
+                    , 
+                        ( "partz" 
+                        , M 
+                            ( T 
+                                [ 
+                                    ( "partzx" 
+                                    , N
+                                    ) 
+                                , 
+                                    ( "partzy" 
+                                    , M 
+                                        ( T 
+                                            [ 
+                                                ( "partzyx" 
+                                                , N
+                                                ) 
+                                            , 
+                                                ( "partzyy" 
+                                                , N
+                                                ) 
+                                            ] 
+                                        )
+                                    ) 
+                                ] 
+                            )
+                        ) 
+                    ] 
+                )
+            ) 
+        , 
+            ( "fun" 
+            , N
+            ) 
+        ] 
+    )

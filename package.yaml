@@ -24,16 +24,27 @@ dependencies:
   - bytestring
   - Cabal >= 2.2 && <3.0
   - containers
+  - CoreErlang
   - directory >=1.2.3
   - filepath
   - Glob >=0.9 && <0.10
+  - language-javascript
+  - lens
+  - lifted-async >=0.10.0.3 && <0.10.1
+  - lifted-base >=0.2.3 && <0.2.4
   - monad-control >=1.0.0.0 && <1.1
   - mtl >=2.1.0 && <2.3.0
   - parsec >=3.1.10
   - pattern-arrows >=0.0.2 && <0.1
   - pretty >= 1.1
+  - pretty-simple
   - process >=1.2.0 && <1.7
   - protolude >=0.1.6 && <0.2.4
+  - purescript
+  - safe >=0.3.9 && <0.4
+  - semigroups >=0.16.2 && <0.19
+  - semialign >=1 && <1.1
+  - sourcemap >=0.1.6
   - text
   - time
   - transformers >=0.3.0 && <0.6
@@ -45,7 +56,8 @@ build-tools:
 
 library:
   source-dirs: src
-  ghc-options: -Wall -O2
+  ## ghc-options: -Wall -O2
+  ghc-options: -O2
   # other-modules:
   default-extensions:
     - ConstraintKinds
@@ -93,14 +105,19 @@ tests:
     source-dirs: tests
     ghc-options: -Wall
     dependencies:
+      - aeson
+      - ansi-terminal
       - hamler
       - hspec
       - hspec-discover
       - HUnit
+      - optparse-applicative
+      - shelly
+      - sourcemap
       - tasty
       - tasty-golden
       - tasty-hspec
-      - tasty-quickcheck
+      - tasty-quickcheck    
     default-extensions:
       - NoImplicitPrelude
       - LambdaCase

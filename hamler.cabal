@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 0848d962a3f73e7e815147d7783f1a838831a8c979cefb28ff647fea65afe031
+-- hash: dfaaa1bb5d45bd06f3ae719d6807a362c6579571a69f6e05466d2d9c41757ae7
 
 name:           hamler
 version:        0.0.1
@@ -37,16 +37,22 @@ flag release
 library
   exposed-modules:
       Language.Hamler
+      Language.Hamler.CodeGen
+      Language.Hamler.Make
+      Language.Hamler.Make.Actions
+      Language.Hamler.Make.BuildPlan
+      Language.Hamler.Prelude
   other-modules:
       Paths_hamler
   hs-source-dirs:
       src
   default-extensions: ConstraintKinds DataKinds DeriveFunctor DeriveFoldable DeriveTraversable DeriveGeneric DerivingStrategies EmptyDataDecls FlexibleContexts KindSignatures LambdaCase MultiParamTypeClasses NoImplicitPrelude PatternGuards PatternSynonyms RankNTypes RecordWildCards OverloadedStrings ScopedTypeVariables TupleSections ViewPatterns
-  ghc-options: -Wall -O2
+  ghc-options: -O2
   build-tools:
       happy ==1.19.9
   build-depends:
       Cabal >=2.2 && <3.0
+    , CoreErlang
     , Glob >=0.9 && <0.10
     , aeson >=1.0 && <1.5
     , aeson-better-errors >=0.8
@@ -59,13 +65,23 @@ library
     , containers
     , directory >=1.2.3
     , filepath
+    , language-javascript
+    , lens
+    , lifted-async >=0.10.0.3 && <0.10.1
+    , lifted-base >=0.2.3 && <0.2.4
     , monad-control >=1.0.0.0 && <1.1
     , mtl >=2.1.0 && <2.3.0
     , parsec >=3.1.10
     , pattern-arrows >=0.0.2 && <0.1
     , pretty >=1.1
+    , pretty-simple
     , process >=1.2.0 && <1.7
     , protolude >=0.1.6 && <0.2.4
+    , purescript
+    , safe >=0.3.9 && <0.4
+    , semialign >=1 && <1.1
+    , semigroups >=0.16.2 && <0.19
+    , sourcemap >=0.1.6
     , text
     , time
     , transformers >=0.3.0 && <0.6
@@ -77,6 +93,8 @@ library
 executable hamler
   main-is: Main.hs
   other-modules:
+      Compile
+      Version
       Paths_hamler
   hs-source-dirs:
       app
@@ -85,6 +103,7 @@ executable hamler
       happy ==1.19.9
   build-depends:
       Cabal >=2.2 && <3.0
+    , CoreErlang
     , Glob >=0.9 && <0.10
     , aeson >=1.0 && <1.5
     , aeson-better-errors >=0.8
@@ -99,14 +118,24 @@ executable hamler
     , directory >=1.2.3
     , filepath
     , hamler
+    , language-javascript
+    , lens
+    , lifted-async >=0.10.0.3 && <0.10.1
+    , lifted-base >=0.2.3 && <0.2.4
     , monad-control >=1.0.0.0 && <1.1
     , mtl >=2.1.0 && <2.3.0
     , optparse-applicative >=0.13.0
     , parsec >=3.1.10
     , pattern-arrows >=0.0.2 && <0.1
     , pretty >=1.1
+    , pretty-simple
     , process >=1.2.0 && <1.7
     , protolude >=0.1.6 && <0.2.4
+    , purescript
+    , safe >=0.3.9 && <0.4
+    , semialign >=1 && <1.1
+    , semigroups >=0.16.2 && <0.19
+    , sourcemap >=0.1.6
     , text
     , time
     , transformers >=0.3.0 && <0.6
@@ -124,6 +153,8 @@ test-suite tests
   type: exitcode-stdio-1.0
   main-is: Main.hs
   other-modules:
+      CodeGenTest
+      CompileTest
       Paths_hamler
   hs-source-dirs:
       tests
@@ -133,12 +164,13 @@ test-suite tests
       happy ==1.19.9
   build-depends:
       Cabal >=2.2 && <3.0
+    , CoreErlang
     , Glob >=0.9 && <0.10
     , HUnit
-    , aeson >=1.0 && <1.5
+    , aeson
     , aeson-better-errors >=0.8
     , aeson-pretty
-    , ansi-terminal >=0.7.1 && <0.9
+    , ansi-terminal
     , base >=4.11 && <4.13
     , base-compat >=0.6.0
     , boxes >=0.1.4 && <0.2.0
@@ -149,13 +181,25 @@ test-suite tests
     , hamler
     , hspec
     , hspec-discover
+    , language-javascript
+    , lens
+    , lifted-async >=0.10.0.3 && <0.10.1
+    , lifted-base >=0.2.3 && <0.2.4
     , monad-control >=1.0.0.0 && <1.1
     , mtl >=2.1.0 && <2.3.0
+    , optparse-applicative
     , parsec >=3.1.10
     , pattern-arrows >=0.0.2 && <0.1
     , pretty >=1.1
+    , pretty-simple
     , process >=1.2.0 && <1.7
     , protolude >=0.1.6 && <0.2.4
+    , purescript
+    , safe >=0.3.9 && <0.4
+    , semialign >=1 && <1.1
+    , semigroups >=0.16.2 && <0.19
+    , shelly
+    , sourcemap
     , tasty
     , tasty-golden
     , tasty-hspec

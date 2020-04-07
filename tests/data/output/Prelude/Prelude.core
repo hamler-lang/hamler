@@ -1,0 +1,5 @@
+module 'Prelude' ['Prelude.apply'/2]
+    attributes []
+'Prelude.apply'/2 =
+    fun(_0, _1) -> apply _0(_1)
+end

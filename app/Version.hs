@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Language.Hamler
+-- Module      :  Version
 -- Copyright   :  (c) Feng Lee 2020
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -8,22 +8,10 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Hamler Programming Language.
+-- Version...
 --
 -----------------------------------------------------------------------------
-module Language.Hamler
-  ( hello
-  , version
-  ) where
+module Version where
 
-import Prelude
-import Data.Version (Version)
-
-import qualified Paths_hamler as Paths
-
-hello :: IO ()
-hello = putStrLn "Hello, Hamler!"
-
-version :: Version
-version = Paths.version
-
+versionString :: String
+versionString = "0.0.1"

@@ -1,0 +1,130 @@
+module 'Main' ['Main.Nil'/0, 'Main.List'/2, 'Main.reverse'/1,
+               'Main.createN'/1, 'Main.createN2'/1, 'Main.fib'/1,
+               'Main.fibList'/1, 'Main.tife'/0, 'Main.list'/0]
+    attributes []
+'Main.Nil'/0 =
+    fun() -> {}
+'Main.List'/2 =
+    fun(_0, _1) -> {_0, _1}
+'Main.zipWith'/3 =
+    fun(_0, _1, _2) ->
+        case <_0, _1, _2> of
+            <_3, {}, _4> when 'true' ->
+                _4
+            <_5, _6, {}> when 'true' ->
+                _6
+            <_7, {_8, _9}, {_10, _11}> when 'true' ->
+                apply 'Main.List'/2(apply _7(_8, _10),
+                                    apply 'Main.zipWith'/3(_7, _9, _11))
+        end
+'Main.tail'/1 =
+    fun(_0) ->
+        case <_0> of
+            <{}> when 'true' ->
+                apply 'Main.Nil'/0()
+            <{_1, _2}> when 'true' ->
+                _2
+        end
+'Main.reverse0'/2 =
+    fun(_0, _1) ->
+        case <_0, _1> of
+            <{}, _2> when 'true' ->
+                _2
+            <{_3, _4}, _5> when 'true' ->
+                apply 'Main.reverse0'/2(_4, apply 'Main.List'/2(_3, _5))
+        end
+'Main.reverse'/1 =
+    fun(_0) -> apply 'Main.reverse0'/2(_0, apply 'Main.Nil'/0())
+'Main.map'/2 =
+    fun(_0, _1) ->
+        case <_0, _1> of
+            <_2, {}> when 'true' ->
+                apply 'Main.Nil'/0()
+            <_3, {_4, _5}> when 'true' ->
+                apply 'Main.List'/2(apply _3(_4), apply 'Main.map'/2(_3, _5))
+        end
+'Main.list'/0 =
+    fun() -> [1, 2, 3, 4, 5]
+'Main.ife'/1 =
+    fun(_0) ->
+        case <_0> of
+            <_1> when 'true' ->
+                <case apply fun(_0, _1) -> call 'erlang':'>' (_0, _1)(_1, 8) of
+                     'true' when 'true' ->
+                         4
+                     'false' when 'true' ->
+                         case apply fun(_0, _1) -> call 'erlang':'>' (_0, _1)(_1, 6) of
+                             'true' when 'true' ->
+                                 3
+                             'false' when 'true' ->
+                                 case apply fun(_0, _1) -> call 'erlang':'>' (_0, _1)(_1, 4) of
+                                     'true' when 'true' ->
+                                         2
+                                     'false' when 'true' ->
+                                         case
+                                         apply fun(_0, _1) -> call 'erlang':'>' (_0, _1)(_1, 2)
+                                         of  'true' when 'true' ->
+                                                 1
+                                             'false' when 'true' ->
+                                                 case 'true' of
+                                                     'true' when 'true' ->
+                                                         _1
+                                                     'false' when 'true' ->
+                                                         []
+                                                 end
+                                         end
+                                 end
+                         end
+                 end>
+        end
+'Main.fib'/1 =
+    fun(_0) ->
+        case <_0> of
+            <1> when 'true' ->
+                1
+            <2> when 'true' ->
+                1
+            <_1> when 'true' ->
+                apply fun(_0, _1) ->
+                          call 'erlang':'+' (_0, _1)(apply 'Main.fib'/1(apply fun(_0, _1) ->
+                                                                                  call 'erlang':'-'
+                                                                                  (_0, _1)(_1, 1)),
+                                                     apply 'Main.fib'/1(apply fun(_0, _1) ->
+                                                                                  call 'erlang':'-'
+                                                                                  (_0, _1)(_1, 2)))
+        end
+'Main.create'/1 =
+    fun(_0) ->
+        case <_0> of
+            <0> when 'true' ->
+                apply 'Main.Nil'/0()
+            <_1> when 'true' ->
+                apply 'Main.List'/2(_1,
+                                    apply 'Main.create'/1(apply fun(_0, _1) ->
+                                                                    call 'erlang':'-' (_0, _1)(_1,
+                                                                                               1)))
+        end
+'Main.createN'/1 =
+    fun(_0) -> apply 'Main.reverse'/1(apply 'Main.create'/1(_0))
+'Main.fibList'/1 =
+    fun(_0) ->
+        apply fun(_0, _1) ->
+                  call 'Prelude':'Prelude.apply' (_0, _1)(fun(_1) ->
+                                                              apply 'Main.map'/2('Main.fib'/1, _1),
+                                                          apply 'Main.createN'/1(_0))
+'Main.tife'/0 =
+    fun() ->
+        apply 'Main.map'/2('Main.ife'/1, apply 'Main.createN'/1(40))
+'Main.con'/2 =
+    fun(_0, _1) ->
+        case <_0, _1> of
+            <{}, _2> when 'true' ->
+                _2
+            <{_3, _4}, _5> when 'true' ->
+                apply 'Main.List'/2(_3, apply 'Main.con'/2(_4, _5))
+        end
+'Main.createN2'/1 =
+    fun(_0) ->
+        apply 'Main.con'/2(apply 'Main.createN'/1(_0),
+                           apply 'Main.createN'/1(_0))
+end
