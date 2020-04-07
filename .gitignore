@@ -25,3 +25,4 @@ result
 *.beam
 TAGS
 .DS_Store
+output/
