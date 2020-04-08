@@ -29,6 +29,7 @@ import           Debug.Trace
 import           Language.CoreErlang                as E
 import qualified Language.PureScript.AST.Literals   as L
 import           Language.PureScript.CoreFn         as C
+import qualified Data.Text.IO as TIO
 import           Language.PureScript.CoreFn.Binders
 import           Language.PureScript.Names
 import           Language.PureScript.PSString
@@ -58,4 +59,26 @@ plist =fmap (\(a,b,c) -> createT a b c )
        , ("greaterThan",">",2)
        , ("lessThan","<",2)
        ]
+
+funDef = FunDef (Constr $ FunName (Atom "test1" , 2)) (Constr $ makeFunErlang 2 "+")
+funDef1 = FunDef (Constr $ FunName (Atom "test2" , 2)) (Constr $ makeFunErlang 2 "-")
+tModule = E.Module (Atom "Main") [ FunName (Atom "test1" , 2)
+                                 , FunName (Atom "test2" , 2)
+                                 ] [] [ funDef
+                                      , funDef1
+                                      ]
+
+t= TIO.writeFile ("tests/data/Main.core") (pack $ E.prettyPrint tModule)
+
+t1 = TIO.readFile ("tests/data/Main.core")
+
+t3 = do
+  con <- t1
+  case E.parseModule $ unpack con of
+    Left e -> print e
+    Right m -> print m
+
+
+
+
 

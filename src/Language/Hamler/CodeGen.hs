@@ -51,14 +51,15 @@ data GState = GState
   , _localVar       :: M.Map Text Int
   , _letMap         :: M.Map Text (Int,E.Expr)
   , _binderVarIndex :: Int
+  , _args           :: Int
   } deriving (Show)
 
 makeLenses ''GState
 
-emptyGState = GState (ModuleName []) (M.fromList plist ) M.empty M.empty M.empty 0
+emptyGState = GState (ModuleName []) (M.fromList plist ) M.empty M.empty M.empty 0 0
 
-runTranslate :: Translate a -> (((Either MError a), GState), MLog)
-runTranslate translate = runWriter $ runStateT (runExceptT translate) emptyGState
+runTranslate :: [(Text,(Int,E.Expr))] -> Translate a -> (((Either MError a), GState), MLog)
+runTranslate plist translate = runWriter $ runStateT (runExceptT translate) (emptyGState & ffiFun .~ (M.fromList plist))
 
 -- | CoreFn Module to CoreErlang AST
 moduleToErl :: C.Module C.Ann -> Translate E.Module
@@ -70,11 +71,20 @@ moduleToErl C.Module{..} = do --undefined
   exports <- forM moduleExports $ \ident -> do
     let name = showQualified runIdent $ mkQualified ident (gs ^. gsmoduleName)
     case M.lookup name (gs ^. globalVar) of
-      Just args ->return $  FunName (Atom $ unpack name, toInteger args)
+      Just args ->return $ (Nothing, FunName (Atom $ unpack name, toInteger args))
       Nothing -> case M.lookup name (gs ^. ffiFun) of
-        Just (args,_) -> return $  FunName (Atom $ unpack name, toInteger args)
+        Just (args,e) -> return $ ( Just (FunDef (Constr $ FunName (Atom $ unpack name, toInteger args) ) (Constr $ e ))
+                                  , FunName (Atom $ unpack name, toInteger args))
         Nothing -> error "error of export var!"
-  return $ E.Module (Atom $ unpack $ runModuleName moduleName) exports [] funDecls
+  return $ E.Module (Atom $ unpack $ runModuleName moduleName)
+                    (fmap snd  exports)
+                    []
+                    (funDecls <> (fmap (getJust . fst) $ Prelude.filter (isJust .fst)  exports ))
+
+isJust Nothing = False
+isJust (Just _) = True
+
+getJust (Just x) = x
 
 -- | CoreFn Bind to CoreErlang FunDef
 bindToErl :: C.Bind C.Ann -> Translate [FunDef]
@@ -143,13 +153,11 @@ exprToErl (ObjectUpdate _ e xs) = do
 exprToErl t@(Abs _ i e) = do
   -- | 备份局部变量表，以备使用和恢复
   gs <- get
-
   let (xs,e') = expend [] t
       xs' = runIdent <$> reverse xs
       allVar = M.size (gs ^. localVar)
       iks = zip  xs' [allVar..]
       vars = fmap (\(_,i) -> E.Var $ Constr ("_" <> show i)) iks
-
   -- | 将变量列表iks插入局部变量表，如果有同名的插入操作会覆盖掉原变量，
   -- 这样在这个表达式中实现局部作用域
   modify (\x -> x & localVar %~ mapInsertList iks)
@@ -168,7 +176,10 @@ exprToErl t@(Abs _ i e) = do
         expend s exp                = (s,exp)
 exprToErl t@(C.App _ _ _) = do
   let (e',xs) = expend t []
+  gs <- get
+  modify (\x -> x & args .~ (length xs))
   e'' <- exprToErl e'
+  modify (\x -> x & args .~ (gs ^. args))
   xs' <- mapM exprToErl xs
 -- | 解决下面的问题
 --g x y = k
@@ -208,16 +219,12 @@ exprToErl (C.Var _  qi) = do
                              $ E.FunName (Atom (unpack name),0) ) []
           x -> return $ E.Fun $ E.FunName (Atom (unpack name), toInteger x)
         Nothing -> case M.lookup name (gs ^. ffiFun) of
-          Just (0,e) -> undefined
+          Just (0,e) -> return $ E.App (Expr $ Constr e) []
           Just (_,e) -> return e
           Nothing    -> case qi of
             Qualified (Just mn) ident ->do
               let mn' =unpack $ runModuleName mn
-              return $ Lam [E.Var $ Constr $ "_0", E.Var $ Constr $ "_1"]
-                       (Expr $ Constr $ ModCall ( Expr $ Constr $ Lit  $ LAtom  $ Atom mn'
-                                                , Expr $ Constr $ Lit $ LAtom $ Atom $ unpack name)
-                        [ Expr $ Constr $ EVar $  E.Var $ Constr $ "_0"
-                        , Expr $ Constr $ EVar $ E.Var $ Constr $ "_1"])
+              return $  cLambda (gs ^. args) mn' (unpack name)
             Qualified Nothing ident -> error $ show gs ++ show qi
 exprToErl (C.Let _ bs e) = do
   mapM bindToLetFunDef bs
@@ -231,6 +238,16 @@ exprToErl (C.Case _ es alts) = do
   alts' <- mapM altToErl alts
   put gs
   return $ E.Case (E.Exprs $ Constr $ fmap Constr es') alts'
+
+cLambda :: Int -> String -> String -> E.Expr
+cLambda n s1 s2 = Lam (fmap cv [0..n-1])
+                      (Expr $ Constr $ ModCall (ce s1 ,ce s2)
+                                               (fmap cb [0..n-1]))
+  where cv i = E.Var $ Constr $ "_" ++ show i
+        ce s = Expr $ Constr $ Lit $ LAtom $ Atom s
+        cb i = Expr $ Constr $ EVar $ E.Var $ Constr $ "_" ++ show i
+
+
 
 -- | CoreFn Alt to CoreErlang Alt
 altToErl :: CaseAlternative C.Ann -> Translate (E.Ann E.Alt)

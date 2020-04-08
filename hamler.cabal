@@ -98,7 +98,7 @@ executable hamler
       Paths_hamler
   hs-source-dirs:
       app
-  ghc-options: -Wall -O2
+  ghc-options:  -O2
   build-tools:
       happy ==1.19.9
   build-depends:
@@ -159,7 +159,6 @@ test-suite tests
   hs-source-dirs:
       tests
   default-extensions: NoImplicitPrelude LambdaCase OverloadedStrings
-  ghc-options: -Wall
   build-tools:
       happy ==1.19.9
   build-depends:
