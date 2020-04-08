@@ -1,3 +1,17 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Language.Hamler.Prelude
+-- Copyright   :  (c) Feng Lee 2020
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The experimental prelude module.
+--
+-----------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards   #-}
 {-# LANGUAGE TemplateHaskell   #-}
