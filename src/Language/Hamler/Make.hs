@@ -1,7 +1,6 @@
+-- The Make module is copied from purescript compiler.
 module Language.Hamler.Make
-  (
-  -- * Make API
-  rebuildModule
+  ( rebuildModule
   , make
   , inferForeignModules
   , module Monad

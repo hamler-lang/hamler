@@ -1,3 +1,4 @@
+-- The module is copied from purescript compiler.
 module Language.Hamler.Make.Actions
   ( MakeActions(..)
   , RebuildPolicy(..)

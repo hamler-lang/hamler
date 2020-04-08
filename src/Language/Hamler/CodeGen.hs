@@ -5,10 +5,11 @@
 -- License     :  BSD-style (see the LICENSE file)
 --
 -- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- Generate CoreErlang IR from Purescript source code.
+-- Generate CoreErlang AST from Purescript source code.
 --
 -----------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
@@ -56,10 +57,10 @@ makeLenses ''GState
 
 emptyGState = GState (ModuleName []) (M.fromList plist ) M.empty M.empty M.empty 0
 
-runTranslate :: Translate a -> (((Either MError a),GState), MLog)
+runTranslate :: Translate a -> (((Either MError a), GState), MLog)
 runTranslate translate = runWriter $ runStateT (runExceptT translate) emptyGState
 
--- | Purescript CoreFn to CoreErlang AST
+-- | CoreFn Module to CoreErlang AST
 moduleToErl :: C.Module C.Ann -> Translate E.Module
 moduleToErl C.Module{..} = do --undefined
   modify (\x -> x & gsmoduleName .~ moduleName)
@@ -75,7 +76,7 @@ moduleToErl C.Module{..} = do --undefined
         Nothing -> error "error of export var!"
   return $ E.Module (Atom $ unpack $ runModuleName moduleName) exports [] funDecls
 
--- | Purescript Bind to CoreErlang FunDef
+-- | CoreFn Bind to CoreErlang FunDef
 bindToErl :: C.Bind C.Ann -> Translate [FunDef]
 bindToErl (NonRec _ ident e) = do -- undefined
   e' <- exprToErl e

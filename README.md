@@ -576,5 +576,6 @@ and andalso band bor bxor bnot bsl bsr begin case class data do else end export 
 
 ## Author
 
-Feng Lee <feng@emqx.io>
+- Feng Lee <feng@emqx.io>
+- Yang Miao <yangm@emqx.io>
 
