@@ -51,19 +51,24 @@ data GState = GState
   , _localVar       :: M.Map Text Int
   , _letMap         :: M.Map Text (Int,E.Expr)
   , _binderVarIndex :: Int
-  , _args           :: Int
+  , _modInfoMap     :: M.Map Text (M.Map Text Int)
   } deriving (Show)
 
 makeLenses ''GState
 
-emptyGState = GState (ModuleName []) (M.fromList plist ) M.empty M.empty M.empty 0 0
+emptyGState = GState (ModuleName []) (M.fromList plist ) M.empty M.empty M.empty 0 M.empty
 
-runTranslate :: [(Text,(Int,E.Expr))] -> Translate a -> (((Either MError a), GState), MLog)
-runTranslate plist translate = runWriter $ runStateT (runExceptT translate) (emptyGState & ffiFun .~ (M.fromList plist))
+runTranslate :: (M.Map Text (M.Map Text Int)) ->
+                [(Text,(Int,E.Expr))] ->
+                Translate a ->
+                (((Either MError a), GState), MLog)
+runTranslate modinfos plist translate =
+  runWriter $ runStateT (runExceptT translate)
+                       ((emptyGState & ffiFun .~ (M.fromList plist)) & modInfoMap .~ modinfos)
 
 -- | CoreFn Module to CoreErlang AST
 moduleToErl :: C.Module C.Ann -> Translate E.Module
-moduleToErl C.Module{..} = do --undefined
+moduleToErl C.Module{..} = do
   modify (\x -> x & gsmoduleName .~ moduleName)
   funDecls <- concat <$>  mapM bindToErl moduleDecls
   gs <- get
@@ -73,8 +78,11 @@ moduleToErl C.Module{..} = do --undefined
     case M.lookup name (gs ^. globalVar) of
       Just args ->return $ (Nothing, FunName (Atom $ unpack name, toInteger args))
       Nothing -> case M.lookup name (gs ^. ffiFun) of
-        Just (args,e) -> return $ ( Just (FunDef (Constr $ FunName (Atom $ unpack name, toInteger args) ) (Constr $ e ))
-                                  , FunName (Atom $ unpack name, toInteger args))
+        Just (args,e) -> return $ ( Just (FunDef (Constr $ FunName (Atom $ unpack name, toInteger args))
+                                                                    (Constr $ e)
+                                         )
+                                  , FunName (Atom $ unpack name, toInteger args)
+                                  )
         Nothing -> error "error of export var!"
   return $ E.Module (Atom $ unpack $ runModuleName moduleName)
                     (fmap snd  exports)
@@ -88,7 +96,7 @@ getJust (Just x) = x
 
 -- | CoreFn Bind to CoreErlang FunDef
 bindToErl :: C.Bind C.Ann -> Translate [FunDef]
-bindToErl (NonRec _ ident e) = do -- undefined
+bindToErl (NonRec _ ident e) = do
   e' <- exprToErl e
   gs <- get
   let name = showQualified runIdent $ mkQualified ident (gs ^. gsmoduleName)
@@ -96,8 +104,7 @@ bindToErl (NonRec _ ident e) = do -- undefined
   case e' of
     Lam vrs _ -> do
       modify (\x-> x & globalVar %~ M.insert name (length vrs) )
-      return $ [FunDef (Constr $ FunName (Atom $ unpack name, toInteger
-                                          $ length vrs)) (Constr e')]
+      return $ [FunDef (Constr $ FunName (Atom $ unpack name, toInteger $ length vrs)) (Constr e')]
     x -> do
       modify (\x-> x & globalVar %~ M.insert name 0)
       return $ [FunDef (Constr $ FunName (Atom $ unpack name, 0))
@@ -110,7 +117,6 @@ bindToErl (C.Rec xs) = do
   concat <$> mapM (\((_,a),b) -> bindToErl (NonRec undefined a b)) xs
   where expend s (Abs _ ident expr) = expend (ident:s) expr
         expend s exp                = (s,exp)
-        -- | 这里可能出现参数数量错误问题
         getArgNum s = length $ fst $ expend [] s
         mkname gs ident = showQualified runIdent $ mkQualified ident (gs ^. gsmoduleName)
 
@@ -124,21 +130,21 @@ bindToLetFunDef (NonRec _ ident e) = do -- undefined
     Lam vrs _ -> do
       modify (\x-> x & letMap %~ M.insert name (length vrs,e') )
     x -> do
-      modify (\x-> x & letMap %~ M.insert name (0,
-                   Lam [] (Expr $ Constr $ e')
-                                               ))
+      modify (\x-> x & letMap %~ M.insert name (0, Lam [] (Expr $ Constr $ e')))
 bindToLetFunDef x = error $ L.unpack $ pShow x
 
 -- | CoreFn Expr to CoreErlang Expr
 exprToErl :: C.Expr C.Ann -> Translate E.Expr
 exprToErl (Literal _ l) = literalToErl l
-exprToErl (Constructor _ p c ids) = do
+exprToErl (Constructor _ _ c@(ProperName p) ids) = do
   let args = length ids
+      popName = unpack p
+      popAtom = Expr $ Constr $ Lit $ LAtom $ Atom $ popName
       -- | Tuple for constructor
       cvar i =  E.Var $ Constr ("_" <> show i)
       vars = fmap cvar [0..args-1]
       ckv i =  Expr $ Constr $ EVar $ cvar i
-      cm = Tuple $ fmap ckv [0..args-1]
+      cm = Tuple $ popAtom : fmap ckv [0..args-1]
   return $ Lam vars (Expr $ Constr $ cm)
 exprToErl (Accessor _ pps e) = do
   e' <- exprToErl e
@@ -151,41 +157,29 @@ exprToErl (ObjectUpdate _ e xs) = do
           [ppsToAtomExprs k ,Expr $ Constr v',Expr $ Constr m]
   foldM foldFun e' xs
 exprToErl t@(Abs _ i e) = do
-  -- | 备份局部变量表，以备使用和恢复
   gs <- get
   let (xs,e') = expend [] t
       xs' = runIdent <$> reverse xs
       allVar = M.size (gs ^. localVar)
       iks = zip  xs' [allVar..]
       vars = fmap (\(_,i) -> E.Var $ Constr ("_" <> show i)) iks
-  -- | 将变量列表iks插入局部变量表，如果有同名的插入操作会覆盖掉原变量，
-  -- 这样在这个表达式中实现局部作用域
   modify (\x -> x & localVar %~ mapInsertList iks)
-  -- | 计算表达式
   e'' <- exprToErl e'
   case e'' of
     Lam cv ce -> do
       put gs
       return $ Lam (vars <> cv)  ce
     _ -> do
-      -- | 恢复局部变量表
       put gs
-      -- | 返回结果
       return $ Lam vars (Expr $ Constr e'')
   where expend s (Abs _ ident expr) = expend (ident:s) expr
         expend s exp                = (s,exp)
 exprToErl t@(C.App _ _ _) = do
   let (e',xs) = expend t []
   gs <- get
-  modify (\x -> x & args .~ (length xs))
   e'' <- exprToErl e'
-  modify (\x -> x & args .~ (gs ^. args))
   xs' <- mapM exprToErl xs
--- | 解决下面的问题
---g x y = k
---  where k x a b c d y = y
---t = (g 1 2) 1 2 3 4 5 6
--- 确定参数的数量再处理
+  -- 确定参数的数量再处理
   case e'' of
     (E.Fun (E.FunName (Atom name,args))) -> do
       case args == (fromIntegral $  length xs') of  -- 参数等于需要的时候
@@ -194,14 +188,35 @@ exprToErl t@(C.App _ _ _) = do
           then  do  -- 参数多于需要的时候
           let (xs1,xs2) = Prelude.splitAt (fromIntegral args) xs'
           return $ E.App (Expr $ Constr $ E.App (Expr $ Constr e'') $ fmap (Expr . Constr) xs1)
-                     (fmap (Expr . Constr) xs2)
+                         (fmap (Expr . Constr) xs2)
           else do  -- 参数少于需要的时候
           gs <- get
           let detal = args - (fromIntegral $ length xs')
               allVar = M.size $ gs ^. localVar
               vars = fmap (\i -> E.Var $ Constr ("_" <> show i)) [allVar .. allVar + fromIntegral detal-1]
           return $ Lam vars $ Expr $ Constr $ E.App (Expr $ Constr e'')
-                                                     ((fmap (Expr . Constr) xs') <> (fmap (Expr . Constr . EVar) vars))
+                                                    ((fmap (Expr . Constr) xs') <>
+                                                     (fmap (Expr . Constr . EVar) vars))
+    m@(E.ModCall ((Expr ( Constr ( Lit ( LAtom ( Atom s1))))) , s2) mcxs) -> do
+      gs <- get
+      let mn = unpack $ runModuleName $ gs ^. gsmoduleName
+      if s1 == mn
+        then return m
+        else do
+        let args = length mcxs
+        if args == (length xs')
+          then return $ E.ModCall (Expr $ Constr $ Lit $ LAtom $ Atom s1,s2) $ fmap (Expr . Constr) xs'
+          else if (length xs' > args)
+           then do
+              let (xs1,xs2) = Prelude.splitAt (fromIntegral args) xs'
+                  ttt =  E.ModCall (Expr $ Constr $ Lit $ LAtom $ Atom s1,s2) $ fmap (Expr . Constr) xs1
+              return $ E.App (Expr $ Constr $ ttt) (fmap (Expr . Constr) xs2)
+           else do
+              let detal = args - (length xs')
+                  allVar = M.size $ gs ^. localVar
+                  vars = fmap (\i -> E.Var $ Constr ("_" <> show i)) [allVar .. allVar + fromIntegral detal-1]
+                  ttt t =E.Expr $ Constr $ E.ModCall (Expr $ Constr $ Lit $ LAtom $ Atom s1,s2) $  t
+              return $ Lam vars $ ttt ( fmap (Expr . Constr) xs' <> fmap (Expr . Constr . EVar) vars )
     _ -> return $ E.App (Expr $ Constr e'') $ fmap (Expr . Constr) xs'
   where expend (C.App _ l r) s = expend l (r:s)
         expend e s             = (e ,s)
@@ -215,16 +230,21 @@ exprToErl (C.Var _  qi) = do
       Just (_,e) -> return e
       Nothing -> case M.lookup name (gs ^. globalVar) of
         Just a-> case a of
-          0 -> return $ E.App (Expr $ Constr $ E.Fun
-                             $ E.FunName (Atom (unpack name),0) ) []
+          0 -> return $ E.App (Expr $ Constr $ E.Fun $ E.FunName (Atom (unpack name),0) ) []
           x -> return $ E.Fun $ E.FunName (Atom (unpack name), toInteger x)
         Nothing -> case M.lookup name (gs ^. ffiFun) of
           Just (0,e) -> return $ E.App (Expr $ Constr e) []
           Just (_,e) -> return e
           Nothing    -> case qi of
             Qualified (Just mn) ident ->do
-              let mn' =unpack $ runModuleName mn
-              return $  cLambda (gs ^. args) mn' (unpack name)
+              let mn' = runModuleName mn
+                  funName = showQualified runIdent qi
+                  res = do
+                    r1 <- M.lookup mn' (gs ^. modInfoMap)
+                    M.lookup funName r1
+              case res of
+                Nothing -> error $ show gs ++ show qi
+                Just i ->return $ cModCall i (unpack mn') (unpack name)
             Qualified Nothing ident -> error $ show gs ++ show qi
 exprToErl (C.Let _ bs e) = do
   mapM bindToLetFunDef bs
@@ -239,12 +259,9 @@ exprToErl (C.Case _ es alts) = do
   put gs
   return $ E.Case (E.Exprs $ Constr $ fmap Constr es') alts'
 
-cLambda :: Int -> String -> String -> E.Expr
-cLambda n s1 s2 = Lam (fmap cv [0..n-1])
-                      (Expr $ Constr $ ModCall (ce s1 ,ce s2)
-                                               (fmap cb [0..n-1]))
-  where cv i = E.Var $ Constr $ "_" ++ show i
-        ce s = Expr $ Constr $ Lit $ LAtom $ Atom s
+cModCall :: Int -> String -> String -> E.Expr
+cModCall n s1 s2 = ModCall (ce s1 ,ce s2) (fmap cb [0..n-1])
+  where ce s = Expr $ Constr $ Lit $ LAtom $ Atom s
         cb i = Expr $ Constr $ EVar $ E.Var $ Constr $ "_" ++ show i
 
 
@@ -254,18 +271,17 @@ altToErl :: CaseAlternative C.Ann -> Translate (E.Ann E.Alt)
 altToErl (CaseAlternative bs res) = do
   pats <- mapM binderToPat bs
   let guard = Guard $ Expr $ Constr $ Lit $ LAtom $ Atom "true"
-      Right expr = res
   case res of
     Right expr -> do
       expr' <- exprToErl expr
       return $ Constr $ E.Alt (Pats $ Constr $ fmap Constr $ pats)
-                          guard
-                          (Expr $ Constr $ expr')
+                              guard
+                              (Expr $ Constr $ expr')
     Left xs -> do
       xs' <- guardToErl xs
       return $ Constr $ E.Alt (Pats $ Constr $ fmap Constr $ pats)
-                          guard
-                          (Exprs $ Constr [xs'])
+                              guard
+                              (Exprs $ Constr [xs'])
 
 guardToErl :: [(C.Guard C.Ann , C.Expr C.Ann)] -> Translate (E.Ann E.Expr)
 guardToErl [] = do
@@ -318,9 +334,11 @@ binderToPat (VarBinder _ i) = do
   modify (\x -> x & localVar  %~ M.insert (runIdent i) index)
   modify (\x -> x & binderVarIndex %~ (+1))
   return $ PVar $ E.Var $ Constr $ ("_" <> show index)
-binderToPat (ConstructorBinder _ _ qi bs) = do
+binderToPat (ConstructorBinder _ _ qi@(Qualified _ (ProperName p)) bs) = do
+  let popName = unpack p
+      popAtom = PLit $ LAtom $ Atom $ popName
   bs' <-  mapM (binderToPat) bs
-  return $ PTuple $  fmap (\(i,v) ->(v)) $ zip [0..] bs'
+  return $ PTuple $ popAtom : (fmap (\(i,v) ->(v)) $ zip [0..] bs')
 binderToPat (NamedBinder _ i b) = do
   gs <- get
   let index = gs ^. binderVarIndex

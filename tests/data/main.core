@@ -1,6 +1,0 @@
-module 'Main' ['test1'/2, 'test2'/2] attributes []
-'test1'/2 =
-    fun(_0, _1) -> call 'erlang':'+' (_0, _1)
-'test2'/2 =
-    fun(_0, _1) -> call 'erlang':'-' (_0, _1)
-end

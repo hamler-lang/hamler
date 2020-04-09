@@ -170,37 +170,42 @@ buildMakeActions outputDir filePathMap foreigns usePrefix =
     when (S.member Docs codegenTargets) $ for_ Docs.Prim.primModules $ \docsMod@Docs.Module{..} ->
       writeJSONFile (outputFilename modName "docs.json") docsMod
 
+  readModuleInfo :: ModuleName -> SupplyT Make (Text, M.Map Text Int)   -- (Text,[(Text,Int)])
+  readModuleInfo mn = do
+    let mn' = runModuleName mn
+    con <-lift $ makeIO "read module infor" $ TIO.readFile (outputDir </>  (unpack mn' <>  ".info"))
+    lift $  makeIO "print moduleInfo" $ print con
+    let list = read (unpack con) :: [(String,Int)]
+    return $ (mn', M.fromList $  fmap (\(a,b) -> (pack a ,b)) list)
+
+ 
   codegen :: CF.Module CF.Ann -> Docs.Module -> ExternsFile -> SupplyT Make ()
   codegen m docs exts = do
     let mn = CF.moduleName m
     lift $ makeIO "print foreigns" $ print foreigns
     lift $ makeIO "print foreigns" $ print (CF.moduleImports m )
-    case M.lookup mn foreigns of
-      Nothing -> do
-        let ((erl,gs),log) = runTranslate [] $  moduleToErl m
-        case erl of
-          Left e -> lift $ makeIO "print error" $ print e
-          Right e -> do
-            lift $ makeIO "print error" $ putStr $ CE.prettyPrint e
-            let mn' = runModuleName mn
-            lift $ makeIO "Write core erlang file" $ TIO.writeFile
-              (outputDir </>  (unpack mn' <>  (".core")))
-              (pack $ CE.prettyPrint e)
+    efundefs' <- case M.lookup mn foreigns of
+      Nothing -> do return []
       Just fp -> do
         con <-lift $ makeIO "read Main.core" $ TIO.readFile fp
         let Right (CE.Constr ( CE.Module (CE.Atom ename) eexports _ efundefs )) = CE.parseModule $ unpack con
             ff (CE.FunDef (CE.Constr (CE.FunName (CE.Atom n,i))) (CE.Constr expr) ) = (pack $ ename <> "." <> n , (fromIntegral i,expr))
-            efundefs' = fmap ff efundefs
-            ((erl,gs),log) = runTranslate efundefs' $  moduleToErl m
-        lift $ makeIO "print" $ print efundefs'
-        case erl of
-          Left e -> lift $ makeIO "print error" $ print e
-          Right e -> do
-            lift $ makeIO "print error" $ putStr $ CE.prettyPrint e
-            let mn' = runModuleName mn
-            lift $ makeIO "Write core erlang file" $ TIO.writeFile
-              (outputDir </>  (unpack mn' <>  (".core")))
-              (pack $ CE.prettyPrint e)
+        return $ fmap ff efundefs
+    let mods =filter (/= ModuleName [ProperName "Prim"]) $  fmap snd $ CF.moduleImports m
+    modInfoList <- mapM readModuleInfo mods
+    let modInfoMap = M.fromList  modInfoList
+    let ((erl,gs),log) = runTranslate modInfoMap efundefs' $  moduleToErl m
+    case erl of
+      Left e -> lift $ makeIO "print error" $ print e
+      Right e@(CE.Module _ exports _ _) -> do
+        lift $ makeIO "print error" $ putStr $ CE.prettyPrint e
+        let mn' = runModuleName mn
+        lift $ makeIO "Write core erlang file" $ TIO.writeFile
+          (outputDir </>  (unpack mn' <>  (".core")))
+          (pack $ CE.prettyPrint e)
+        lift $ makeIO "write module information " $ TIO.writeFile
+          (outputDir </>  (unpack mn' <>  ".info"))
+          (pack $ show $  fmap (\(CE.FunName (CE.Atom s1,i) ) -> (s1,i)) exports )
 
 
   ffiCodegen :: CF.Module CF.Ann -> Make ()
