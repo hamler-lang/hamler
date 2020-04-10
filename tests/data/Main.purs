@@ -1,7 +1,7 @@
 module Main  where
 
 import Prelude
-
+import List as L
 
 t = 1 + 1
 t1 = 1 * 1
@@ -93,6 +93,14 @@ d1 = dealResult "hello" 20
 d2 = dealResult "world" 1
 
 d3 = notEq 1 2
+
+listp :: L.List Person
+listp = L.replicate 5 person
+
+listp1 = L.map personMoveUp listp
+
+add1 = L.map (\x -> x + 1) (L.replicate 5 1)
+res1 = L.filter (\x -> x > 5) (L.createN 10)
 
 
 
