@@ -97,6 +97,7 @@ getJust (Just x) = x
 -- | CoreFn Bind to CoreErlang FunDef
 bindToErl :: C.Bind C.Ann -> Translate [FunDef]
 bindToErl (NonRec _ ident e) = do
+  modify (\x -> x & binderVarIndex .~  100)
   e' <- exprToErl e
   gs <- get
   let name = showQualified runIdent $ mkQualified ident (gs ^. gsmoduleName)
@@ -110,6 +111,7 @@ bindToErl (NonRec _ ident e) = do
       return $ [FunDef (Constr $ FunName (Atom $ unpack name, 0))
          (Constr $ Lam [] (Expr $ Constr $ e'))]
 bindToErl (C.Rec xs) = do
+  modify (\x -> x & binderVarIndex .~  100)
   -- | 需要确定所有循环引用函数的名字和参数数量
   gs <- get
   let ns = fmap (\((_,a),b) -> (mkname gs a,getArgNum b)) xs
@@ -122,10 +124,10 @@ bindToErl (C.Rec xs) = do
 
 bindToLetFunDef :: C.Bind C.Ann -> Translate ()
 bindToLetFunDef (NonRec _ ident e) = do -- undefined
+  modify (\x -> x & binderVarIndex .~  100)
   e' <- exprToErl e
   gs <- get
   let name = runIdent ident
-  -- | 处理顶层绑定时的各种情况
   case e' of
     Lam vrs _ -> do
       modify (\x-> x & letMap %~ M.insert name (length vrs,e') )
@@ -253,10 +255,7 @@ exprToErl (C.Let _ bs e) = do
 exprToErl (C.Case _ es alts) = do
   gs <- get
   es' <- mapM exprToErl es
-  let allVars = M.size $ gs ^. localVar
-  modify (\x -> x & binderVarIndex .~ allVars)
   alts' <- mapM altToErl alts
-  put gs
   return $ E.Case (E.Exprs $ Constr $ fmap Constr es') alts'
 
 cModCall :: Int -> String -> String -> E.Expr
