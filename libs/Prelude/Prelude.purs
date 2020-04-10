@@ -54,6 +54,18 @@ otherwise = true
 
 infix 4 eq as ==
 
+infixr 3 conj as &&
+infixr 2 disj as ||
+
+conj :: Boolean -> Boolean -> Boolean
+conj true true = true
+conj _ _ = false
+
+disj :: Boolean -> Boolean -> Boolean
+disj false false = false
+disj _ _ = true
+
+
 notEq :: forall a. Eq a => a -> a -> Boolean
 notEq x y = (x==y) == false
 
@@ -106,100 +118,20 @@ foreign import numGreaterThanOrEq :: Number -> Number -> Boolean
 
 
 
+flip :: forall a b c. (a -> b -> c) -> b -> a -> c
+flip f b a = f a b
 
 
+const :: forall a b. a -> b -> a
+const a _ = a
+
+apply :: forall a b. (a -> b) -> a -> b
+apply f x = f x
+
+infixr 0 apply as $
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
--- div = intDiv
--- mod = intMod
--- foreign import intDiv :: Int -> Int -> Int
--- foreign import intMod :: Int -> Int -> Int
-
--- --bool
--- infixr 3 conj as &&
--- infixr 2 disj as ||
-
--- conj :: Boolean -> Boolean -> Boolean
--- conj true true = true
--- conj _ _ = false
-
--- disj :: Boolean -> Boolean -> Boolean
--- disj false false = false
--- disj _ _ = true
-
--- otherwise :: Boolean
--- otherwise = true
-
--- class Eq a where
---   eq :: a -> a -> Boolean
-
--- infix 4 eq as ==
-
--- notEq :: forall a. Eq a => a -> a -> Boolean
--- notEq x y = (x == y) == false
-
--- instance eqBoolean :: Eq Boolean where
---   eq = eqBooleanImpl
-
--- instance eqInt :: Eq Int where
---   eq = eqIntImpl
-
--- instance eqNumber :: Eq Number where
---   eq = eqNumberImpl
-
--- instance eqChar :: Eq Char where
---   eq = eqCharImpl
-
--- instance eqString :: Eq String where
---   eq = eqStringImpl
-
--- foreign import eqBooleanImpl :: Boolean -> Boolean -> Boolean
--- foreign import eqIntImpl :: Int -> Int -> Boolean
--- foreign import eqNumberImpl :: Number -> Number -> Boolean
--- foreign import eqCharImpl :: Char -> Char -> Boolean
--- foreign import eqStringImpl :: String -> String -> Boolean
-
---------------------------
---------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+identity :: forall a .a -> a
+identity x = x
 
 

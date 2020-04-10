@@ -92,7 +92,7 @@ dealResult x y = dr (test2 x y)
 d1 = dealResult "hello" 20
 d2 = dealResult "world" 1
 
-
+d3 = notEq 1 2
 
 
 

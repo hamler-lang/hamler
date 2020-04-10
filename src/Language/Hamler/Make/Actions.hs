@@ -174,7 +174,6 @@ buildMakeActions outputDir filePathMap foreigns usePrefix =
   readModuleInfo mn = do
     let mn' = runModuleName mn
     con <-lift $ makeIO "read module infor" $ TIO.readFile (outputDir </>  (unpack mn' <>  ".info"))
-    lift $  makeIO "print moduleInfo" $ print con
     let list = read (unpack con) :: [(String,Int)]
     return $ (mn', M.fromList $  fmap (\(a,b) -> (pack a ,b)) list)
 
@@ -182,8 +181,6 @@ buildMakeActions outputDir filePathMap foreigns usePrefix =
   codegen :: CF.Module CF.Ann -> Docs.Module -> ExternsFile -> SupplyT Make ()
   codegen m docs exts = do
     let mn = CF.moduleName m
-    lift $ makeIO "print foreigns" $ print foreigns
-    lift $ makeIO "print foreigns" $ print (CF.moduleImports m )
     efundefs' <- case M.lookup mn foreigns of
       Nothing -> do return []
       Just fp -> do
@@ -191,7 +188,7 @@ buildMakeActions outputDir filePathMap foreigns usePrefix =
         let Right (CE.Constr ( CE.Module (CE.Atom ename) eexports _ efundefs )) = CE.parseModule $ unpack con
             ff (CE.FunDef (CE.Constr (CE.FunName (CE.Atom n,i))) (CE.Constr expr) ) = (pack $ ename <> "." <> n , (fromIntegral i,expr))
         return $ fmap ff efundefs
-    let mods =filter (/= ModuleName [ProperName "Prim"]) $  fmap snd $ CF.moduleImports m
+    let mods = filter (/= mn) $  filter (/= ModuleName [ProperName "Prim"]) $  fmap snd $ CF.moduleImports m
     modInfoList <- mapM readModuleInfo mods
     let modInfoMap = M.fromList  modInfoList
     let ((erl,gs),log) = runTranslate modInfoMap efundefs' $  moduleToErl m
