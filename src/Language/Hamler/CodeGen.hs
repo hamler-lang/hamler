@@ -112,7 +112,6 @@ bindToErl (NonRec _ ident e) = do
          (Constr $ Lam [] (Expr $ Constr $ e'))]
 bindToErl (C.Rec xs) = do
   modify (\x -> x & binderVarIndex .~  100)
-  -- | 需要确定所有循环引用函数的名字和参数数量
   gs <- get
   let ns = fmap (\((_,a),b) -> (mkname gs a,getArgNum b)) xs
   modify (\x -> x & globalVar %~ mapInsertList ns)
@@ -123,8 +122,7 @@ bindToErl (C.Rec xs) = do
         mkname gs ident = showQualified runIdent $ mkQualified ident (gs ^. gsmoduleName)
 
 bindToLetFunDef :: C.Bind C.Ann -> Translate ()
-bindToLetFunDef (NonRec _ ident e) = do -- undefined
-  modify (\x -> x & binderVarIndex .~  100)
+bindToLetFunDef (NonRec _ ident e) = do
   e' <- exprToErl e
   gs <- get
   let name = runIdent ident
@@ -181,17 +179,16 @@ exprToErl t@(C.App _ _ _) = do
   gs <- get
   e'' <- exprToErl e'
   xs' <- mapM exprToErl xs
-  -- 确定参数的数量再处理
   case e'' of
     (E.Fun (E.FunName (Atom name,args))) -> do
-      case args == (fromIntegral $  length xs') of  -- 参数等于需要的时候
+      case args == (fromIntegral $  length xs') of
         True ->return $  E.App (Expr $ Constr e'') (fmap (Expr . Constr) xs')
         False -> if (fromIntegral $ length xs') > args
-          then  do  -- 参数多于需要的时候
+          then  do
           let (xs1,xs2) = Prelude.splitAt (fromIntegral args) xs'
           return $ E.App (Expr $ Constr $ E.App (Expr $ Constr e'') $ fmap (Expr . Constr) xs1)
                          (fmap (Expr . Constr) xs2)
-          else do  -- 参数少于需要的时候
+          else do
           gs <- get
           let detal = args - (fromIntegral $ length xs')
               allVar = M.size $ gs ^. localVar
