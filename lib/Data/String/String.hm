@@ -1,9 +1,24 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.String
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The String Data Type.
+--
+-----------------------------------------------------------------------------
 module Data.String where
-
-infixl 6 connect as ++
 
 import Data.Maybe
 
+infixl 6 connect as ++
+
+-- TODO: rename the connect?
 foreign import connect :: String -> String -> String
 foreign import take    :: Int -> String -> Maybe String
 foreign import reverse :: String -> String

@@ -1,7 +1,22 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Array
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Array DataType.
+--
+-----------------------------------------------------------------------------
 module Data.Array where
 
 import Data.Maybe
 import Data.Ord
+
 foreign import singleton :: forall a.a -> Array a
 foreign import range     :: Int -> Int -> Array Int
 foreign import replicate :: forall a.Int -> a -> Array a
@@ -22,6 +37,4 @@ foreign import filter    :: forall a. (a -> Boolean) -> Array a -> Array a
 foreign import sort      :: forall a. Ord a => Array a -> Array a
 foreign import take      :: forall a. Int -> Array a -> Array a
 foreign import map       :: forall a b.(a -> b) -> Array a -> Array b
-
-
 

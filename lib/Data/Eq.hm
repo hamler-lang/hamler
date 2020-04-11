@@ -1,21 +1,40 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Eq
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Eq Typeclass.
+--
+-----------------------------------------------------------------------------
 module Data.Eq where
+
+import Data.Base (Integer, Float)
 
 class Eq a where
   eq :: a -> a -> Boolean
 
-
-instance eqBoolean :: Eq Boolean where
+instance Eq Boolean where
   eq = boolEq
-instance eqInt :: Eq Int where
+instance Eq Char where
+  eq = charEq
+instance Eq Integer where
   eq = intEq
-instance eqNumber :: Eq Number where
-  eq = numberEq
+instance Eq Float where
+  eq = floatEq
+instance Eq Number where
+  eq = numEq
 
-foreign import boolEq :: Boolean -> Boolean -> Boolean
-foreign import intEq :: Int -> Int -> Boolean
-foreign import numberEq :: Number -> Number -> Boolean
-
-
+foreign import boolEq  :: Boolean -> Boolean -> Boolean
+foreign import charEq  :: Char -> Char -> Boolean
+foreign import intEq   :: Integer -> Integer -> Boolean
+foreign import floatEq :: Float -> Float -> Boolean
+foreign import numEq   :: Number -> Number -> Boolean
 
 otherwise :: Boolean
 otherwise = true
@@ -35,3 +54,4 @@ conj _ _ = false
 disj :: Boolean -> Boolean -> Boolean
 disj false false = false
 disj _ _ = true
+

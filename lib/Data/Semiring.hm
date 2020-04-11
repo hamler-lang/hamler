@@ -1,3 +1,17 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Semiring
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Semiring Typeclass.
+--
+-----------------------------------------------------------------------------
 module Data.Semiring where
 
 class Semiring a where
@@ -8,7 +22,6 @@ class Semiring a where
 
 infixl 6 add as +
 infixl 7 mul as *
-
 
 instance semiringInt :: Semiring Int where
   add = intAdd
@@ -26,8 +39,4 @@ foreign import intAdd :: Int -> Int -> Int
 foreign import intMul :: Int -> Int -> Int
 foreign import numAdd :: Number -> Number -> Number
 foreign import numMul :: Number -> Number -> Number
-
-
-
-
 

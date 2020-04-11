@@ -1,7 +1,55 @@
-module 'Data.Ring' ['intSub'/2,'numSub'/2] attributes []
+module 'Ring' ['charSub'/2,
+	       'floatSub'/2,
+	       'intSub'/2,
+	       'module_info'/0,
+	       'module_info'/1,
+	       'numSub'/2]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[82|[105|[110|[103|[46|[101|[114|[108]]]]]]]],1}],
+		%% Line 23
+		'spec' =
+		    %% Line 23
+		    [{{'charSub',2},[{'type',23,'fun',[{'type',23,'product',[{'type',23,'char',[]}|[{'type',23,'char',[]}]]}|[{'type',23,'char',[]}]]}]}],
+		%% Line 26
+		'spec' =
+		    %% Line 26
+		    [{{'intSub',2},[{'type',26,'fun',[{'type',26,'product',[{'type',26,'integer',[]}|[{'type',26,'integer',[]}]]}|[{'type',26,'integer',[]}]]}]}],
+		%% Line 29
+		'spec' =
+		    %% Line 29
+		    [{{'floatSub',2},[{'type',29,'fun',[{'type',29,'product',[{'type',29,'float',[]}|[{'type',29,'float',[]}]]}|[{'type',29,'float',[]}]]}]}],
+		%% Line 32
+		'spec' =
+		    %% Line 32
+		    [{{'numSub',2},[{'type',32,'fun',[{'type',32,'product',[{'type',32,'number',[]}|[{'type',32,'number',[]}]]}|[{'type',32,'number',[]}]]}]}]]
+'charSub'/2 =
+    %% Line 24
+    fun (_0,_1) ->
+	call 'erlang':'-'
+	    (_0, _1)
 'intSub'/2 =
-    fun(_0, _1) -> call 'erlang':'-' (_0, _1)
+    %% Line 27
+    fun (_0,_1) ->
+	call 'erlang':'-'
+	    (_0, _1)
+'floatSub'/2 =
+    %% Line 30
+    fun (_0,_1) ->
+	call 'erlang':'-'
+	    (_0, _1)
 'numSub'/2 =
-    fun(_0, _1) -> call 'erlang':'-' (_0, _1)
-
+    %% Line 33
+    fun (_0,_1) ->
+	call 'erlang':'-'
+	    (_0, _1)
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Ring')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Ring', _0)
 end
