@@ -9,20 +9,23 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Tuple Data.
+-- The Tuple DataType.
 --
 -----------------------------------------------------------------------------
 module Data.Tuple where
 
-data Tuple a b = Tuple a b
+data Tuple :: Type
 
-fst :: forall a b. Tuple a b -> a
-fst (Tuple a _) = a
+fst :: forall a b. (a, b) -> a
+fst (a, _) = a
 
-snd :: forall a b. Tuple a b -> b
-snd (Tuple _ b) = b
+snd :: forall a b. (a, b) -> b
+snd (_, b) = b
 
-swap :: forall a b. Tuple a b -> Tuple b a
-swap (Tuple a b) = Tuple b a
+swap :: forall a b. (a, b) -> (b, a)
+swap (a, b) = (b, a)
 
+foreign import elem :: forall a. Integer -> Tuple -> a
+foreign import setElem :: forall a. Integer -> a -> Tuple -> Tuple
+foreign import size :: forall a. Tuple -> Integer
 
