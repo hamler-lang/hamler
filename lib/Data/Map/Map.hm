@@ -24,7 +24,7 @@ foreign import isEmpty :: forall k v.Ord k => Map k v -> Boolean
 foreign import insert  :: forall k v.Ord k => k -> v -> Map k v -> Map k v
 foreign import lookup  :: forall k v.Ord k => k -> Map k v -> Maybe v
 foreign import delete  :: forall k v.Ord k => k -> Map k v -> Map k v
-foreign import update  :: forall k v.Ord k => (v -> Maybe v) -> k -> Map k v -> Map k v
+foreign import updateWith :: forall k v.Ord k => k -> (v -> Maybe v) -> Map k v -> Map k v
 foreign import size    :: forall k v.Ord k => Map k v -> Int
 foreign import filter  :: forall k v.Ord k => (v -> Boolean) -> Map k v -> Map k v
 
