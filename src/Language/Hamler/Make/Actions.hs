@@ -4,7 +4,6 @@ module Language.Hamler.Make.Actions
   , RebuildPolicy(..)
   , ProgressMessage(..)
   , buildMakeActions
-  , checkForeignDecls
   ) where
 
 import           Prelude
@@ -171,66 +170,43 @@ buildMakeActions outputDir filePathMap foreigns usePrefix =
     when (S.member Docs codegenTargets) $ for_ Docs.Prim.primModules $ \docsMod@Docs.Module{..} ->
       writeJSONFile (outputFilename modName "docs.json") docsMod
 
+  readModuleInfo :: ModuleName -> SupplyT Make (Text, M.Map Text Int)   -- (Text,[(Text,Int)])
+  readModuleInfo mn = do
+    let mn' = runModuleName mn
+    con <-lift $ makeIO "read module infor" $ TIO.readFile (outputDir </>  (unpack mn' <>  ".info"))
+    let list = read (unpack con) :: [(String,Int)]
+    return $ (mn', M.fromList $  fmap (\(a,b) -> (pack a ,b)) list)
+
+ 
   codegen :: CF.Module CF.Ann -> Docs.Module -> ExternsFile -> SupplyT Make ()
   codegen m docs exts = do
     let mn = CF.moduleName m
-    lift $ writeJSONFile (outputFilename mn "externs.json") exts
-    codegenTargets <- lift $ asks optionsCodegenTargets
-    when (S.member CoreFn codegenTargets) $ do
-      let coreFnFile = targetFilename mn CoreFn
-          json = CFJ.moduleToJSON Paths.version m
-          ((erl,gs),log) = runTranslate $ moduleToErl m
-      lift $ writeJSONFile coreFnFile json
-      case erl of
-        Left e -> lift $ makeIO "print error" $ print e
-        Right e -> do
-          lift $ makeIO "print error" $ putStr $ CE.prettyPrint e
-          let mn' = runModuleName mn
-          lift $ makeIO "Write core erlang file" $ TIO.writeFile
-            ("output/" <> unpack mn' <> "/" <> unpack mn' <> ".core")
-            (pack $ CE.prettyPrint e)
-    when (S.member Docs codegenTargets) $ do
-      lift $ writeJSONFile (outputFilename mn "docs.json") docs
+    efundefs' <- case M.lookup mn foreigns of
+      Nothing -> do return []
+      Just fp -> do
+        con <-lift $ makeIO "read Main.core" $ TIO.readFile fp
+        let Right (CE.Constr ( CE.Module (CE.Atom ename) eexports _ efundefs )) = CE.parseModule $ unpack con
+            ff (CE.FunDef (CE.Constr (CE.FunName (CE.Atom n,i))) (CE.Constr expr) ) = (pack $ ename <> "." <> n , (fromIntegral i,expr))
+        return $ fmap ff efundefs
+    let mods = filter (/= mn) $  filter (/= ModuleName [ProperName "Prim"]) $  fmap snd $ CF.moduleImports m
+    modInfoList <- mapM readModuleInfo mods
+    let modInfoMap = M.fromList  modInfoList
+    let ((erl,gs),log) = runTranslate modInfoMap efundefs' $  moduleToErl m
+    case erl of
+      Left e -> lift $ makeIO "print error" $ print e
+      Right e@(CE.Module _ exports _ _) -> do
+        lift $ makeIO "print error" $ putStr $ CE.prettyPrint e
+        let mn' = runModuleName mn
+        lift $ makeIO "Write core erlang file" $ TIO.writeFile
+          (outputDir </>  (unpack mn' <>  (".core")))
+          (pack $ CE.prettyPrint e)
+        lift $ makeIO "write module information " $ TIO.writeFile
+          (outputDir </>  (unpack mn' <>  ".info"))
+          (pack $ show $  fmap (\(CE.FunName (CE.Atom s1,i) ) -> (s1,i)) exports )
+
 
   ffiCodegen :: CF.Module CF.Ann -> Make ()
-  ffiCodegen m = do
-    codegenTargets <- asks optionsCodegenTargets
-    when (S.member JS codegenTargets) $ do
-      let mn = CF.moduleName m
-      case mn `M.lookup` foreigns of
-        Just path
-          | not $ requiresForeign m ->
-              tell $ errorMessage' (CF.moduleSourceSpan m) $ UnnecessaryFFIModule mn path
-          | otherwise ->
-              checkForeignDecls m path
-        Nothing | requiresForeign m -> throwError . errorMessage' (CF.moduleSourceSpan m) $ MissingFFIModule mn
-                | otherwise -> return ()
-      for_ (mn `M.lookup` foreigns) $ \path ->
-        copyFile path (outputFilename mn "foreign.js")
-
-  genSourceMap :: String -> String -> Int -> [SMap] -> Make ()
-  genSourceMap dir mapFile extraLines mappings = do
-    let pathToDir = iterate (".." </>) ".." !! length (splitPath $ normalise outputDir)
-        sourceFile = case mappings of
-                      (SMap file _ _ : _) -> Just $ pathToDir </> makeRelative dir (T.unpack file)
-                      _ -> Nothing
-    let rawMapping = SourceMapping { smFile = "index.js", smSourceRoot = Nothing, smMappings =
-      map (\(SMap _ orig gen) -> Mapping {
-          mapOriginal = Just $ convertPos $ add 0 (-1) orig
-        , mapSourceFile = sourceFile
-        , mapGenerated = convertPos $ add (extraLines+1) 0 gen
-        , mapName = Nothing
-        }) mappings
-    }
-    let mapping = generate rawMapping
-    writeJSONFile mapFile mapping
-    where
-    add :: Int -> Int -> SourcePos -> SourcePos
-    add n m (SourcePos n' m') = SourcePos (n+n') (m+m')
-
-    convertPos :: SourcePos -> Pos
-    convertPos SourcePos { sourcePosLine = l, sourcePosColumn = c } =
-      Pos { posLine = fromIntegral l, posColumn = fromIntegral c }
+  ffiCodegen m = return ()
 
   requiresForeign :: CF.Module a -> Bool
   requiresForeign = not . null . CF.moduleForeign
@@ -246,58 +222,4 @@ buildMakeActions outputDir filePathMap foreigns usePrefix =
 
   cacheDbFile = outputDir </> "cache-db.json"
 
--- | Check that the declarations in a given PureScript module match with those
--- in its corresponding foreign module.
-checkForeignDecls :: CF.Module ann -> FilePath -> Make ()
-checkForeignDecls m path = do
-  jsStr <- T.unpack <$> readTextFile path
-  js <- either (errorParsingModule . Bundle.UnableToParseModule) pure $ JS.parse jsStr path
-
-  foreignIdentsStrs <- either errorParsingModule pure $ getExps js
-  foreignIdents <- either
-                     errorInvalidForeignIdentifiers
-                     (pure . S.fromList)
-                     (parseIdents foreignIdentsStrs)
-  let importedIdents = S.fromList (CF.moduleForeign m)
-
-  let unusedFFI = foreignIdents S.\\ importedIdents
-  unless (null unusedFFI) $
-    tell . errorMessage' modSS . UnusedFFIImplementations mname $
-      S.toList unusedFFI
-
-  let missingFFI = importedIdents S.\\ foreignIdents
-  unless (null missingFFI) $
-    throwError . errorMessage' modSS . MissingFFIImplementations mname $
-      S.toList missingFFI
-
-  where
-  mname = CF.moduleName m
-  modSS = CF.moduleSourceSpan m
-
-  errorParsingModule :: Bundle.ErrorMessage -> Make a
-  errorParsingModule = throwError . errorMessage' modSS . ErrorParsingFFIModule path . Just
-
-  getExps :: JS.JSAST -> Either Bundle.ErrorMessage [String]
-  getExps = Bundle.getExportedIdentifiers (T.unpack (runModuleName mname))
-
-  errorInvalidForeignIdentifiers :: [String] -> Make a
-  errorInvalidForeignIdentifiers =
-    throwError . mconcat . map (errorMessage . InvalidFFIIdentifier mname . T.pack)
-
-  parseIdents :: [String] -> Either [String] [Ident]
-  parseIdents strs =
-    case partitionEithers (map parseIdent strs) of
-      ([], idents) ->
-        Right idents
-      (errs, _) ->
-        Left errs
-
-  -- We ignore the error message here, just being told it's an invalid
-  -- identifier should be enough.
-  parseIdent :: String -> Either String Ident
-  parseIdent str =
-    bimap (const str) (Ident . CST.getIdent . CST.nameValue)
-      . CST.runTokenParser CST.parseIdent
-      . CST.lex
-      $ T.pack str
 

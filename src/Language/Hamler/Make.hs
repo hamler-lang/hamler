@@ -47,6 +47,7 @@ import           System.FilePath (replaceExtension)
 import           Language.Hamler.Make.BuildPlan
 import qualified Language.Hamler.Make.BuildPlan as BuildPlan
 import           Language.Hamler.Make.Actions as Actions
+import Debug.Trace
 
 -- | Rebuild a single module.
 --
@@ -237,8 +238,11 @@ inferForeignModules =
     inferForeignModule :: Either RebuildPolicy FilePath -> m (Maybe FilePath)
     inferForeignModule (Left _) = return Nothing
     inferForeignModule (Right path) = do
-      let jsFile = replaceExtension path "js"
-      exists <- liftIO $ doesFileExist jsFile
+      let coreFile = replaceExtension path "core"
+      exists <- liftIO $ doesFileExist coreFile
+      liftIO $ print coreFile
       if exists
-        then return (Just jsFile)
+        then do
+        liftIO $ print "file is exist"
+        return (Just $  coreFile)
         else return Nothing
