@@ -4,11 +4,11 @@ class Eq a where
   eq :: a -> a -> Boolean
 
 
-instance eqBoolean :: Eq Boolean where
+instance Eq Boolean where
   eq = boolEq
-instance eqInt :: Eq Int where
+instance Eq Int where
   eq = intEq
-instance eqNumber :: Eq Number where
+instance Eq Number where
   eq = numberEq
 
 foreign import boolEq :: Boolean -> Boolean -> Boolean

@@ -2,15 +2,15 @@ module Data.Ring where
 
 import Data.Semiring
 
-class Semiring a <= Ring a where
+class Semiring a => Ring a where
   sub :: a -> a -> a
 
 infixl 6 sub as -
 
-instance ringInt :: Ring Int where
+instance Ring Int where
   sub = intSub
 
-instance ringNumber :: Ring Number where
+instance Ring Number where
   sub = numSub
 
 foreign import intSub :: Int -> Int -> Int
