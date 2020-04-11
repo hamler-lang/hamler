@@ -1,3 +1,17 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Mabye
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Maybe Data Type.
+--
+-----------------------------------------------------------------------------
 module Data.Maybe where
 
 import Data.Base
@@ -8,7 +22,6 @@ maybe :: forall a b. b -> (a -> b) -> Maybe a -> b
 maybe b _ Nothing = b
 maybe _ f (Just a) = f a
 
-
 fromMaybe :: forall a. a -> Maybe a -> a
 fromMaybe a = maybe a identity
 
@@ -17,7 +30,4 @@ isJust = maybe false (const true)
 
 isNothing :: forall a. Maybe a -> Boolean
 isNothing = maybe true (const false)
-
-
-
 

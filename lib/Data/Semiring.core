@@ -1,10 +1,75 @@
-module 'Data.Semiring' ['intAdd'/2, 'intMul'/2,'numAdd'/2,'numMul'/2] attributes []
+module 'Semiring' ['floatAdd'/2,
+		   'floatMul'/2,
+		   'intAdd'/2,
+		   'intMul'/2,
+		   'module_info'/0,
+		   'module_info'/1,
+		   'numAdd'/2,
+		   'numMul'/2]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[83|[101|[109|[105|[114|[105|[110|[103|[46|[101|[114|[108]]]]]]]]]]]],1}],
+		%% Line 26
+		'spec' =
+		    %% Line 26
+		    [{{'intAdd',2},[{'type',26,'fun',[{'type',26,'product',[{'type',26,'integer',[]}|[{'type',26,'integer',[]}]]}|[{'type',26,'integer',[]}]]}]}],
+		%% Line 30
+		'spec' =
+		    %% Line 30
+		    [{{'intMul',2},[{'type',30,'fun',[{'type',30,'product',[{'type',30,'integer',[]}|[{'type',30,'integer',[]}]]}|[{'type',30,'integer',[]}]]}]}],
+		%% Line 34
+		'spec' =
+		    %% Line 34
+		    [{{'floatAdd',2},[{'type',34,'fun',[{'type',34,'product',[{'type',34,'float',[]}|[{'type',34,'float',[]}]]}|[{'type',34,'float',[]}]]}]}],
+		%% Line 38
+		'spec' =
+		    %% Line 38
+		    [{{'floatMul',2},[{'type',38,'fun',[{'type',38,'product',[{'type',38,'number',[]}|[{'type',38,'number',[]}]]}|[{'type',38,'number',[]}]]}]}],
+		%% Line 42
+		'spec' =
+		    %% Line 42
+		    [{{'numAdd',2},[{'type',42,'fun',[{'type',42,'product',[{'type',42,'number',[]}|[{'type',42,'number',[]}]]}|[{'type',42,'number',[]}]]}]}],
+		%% Line 46
+		'spec' =
+		    %% Line 46
+		    [{{'numMul',2},[{'type',46,'fun',[{'type',46,'product',[{'type',46,'number',[]}|[{'type',46,'number',[]}]]}|[{'type',46,'number',[]}]]}]}]]
 'intAdd'/2 =
-    fun(_0, _1) -> call 'erlang':'+' (_0, _1)
+    %% Line 27
+    fun (_0,_1) ->
+	call 'erlang':'+'
+	    (_0, _1)
 'intMul'/2 =
-    fun(_0, _1) -> call 'erlang':'*' (_0, _1)
+    %% Line 31
+    fun (_0,_1) ->
+	call 'erlang':'*'
+	    (_0, _1)
+'floatAdd'/2 =
+    %% Line 35
+    fun (_0,_1) ->
+	call 'erlang':'+'
+	    (_0, _1)
+'floatMul'/2 =
+    %% Line 39
+    fun (_0,_1) ->
+	call 'erlang':'*'
+	    (_0, _1)
 'numAdd'/2 =
-    fun(_0, _1) -> call 'erlang':'+' (_0, _1)
+    %% Line 43
+    fun (_0,_1) ->
+	call 'erlang':'+'
+	    (_0, _1)
 'numMul'/2 =
-    fun(_0, _1) -> call 'erlang':'*' (_0, _1)
+    %% Line 47
+    fun (_0,_1) ->
+	call 'erlang':'*'
+	    (_0, _1)
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Semiring')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Semiring', _0)
 end

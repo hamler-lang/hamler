@@ -1,10 +1,25 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.List
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The List DataType.
+--
+-----------------------------------------------------------------------------
 module Data.List where
 
-import Data.Semiring
-import Data.Ring
+import Data.Eq
 import Data.Maybe
 import Data.Ord
-import Data.Eq
+import Data.Ring
+import Data.Semiring
+
 infixr 6 Cons as :
 
 data List a = Nil | Cons a (List a)
@@ -131,8 +146,6 @@ t10 = replicate 10 "nice"
 t11 = take 5 t10
 t12 = drop 8 t10
 --------------------------------
-
-
 
 
 

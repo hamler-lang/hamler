@@ -1,4 +1,18 @@
-module Map where
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Map
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Map Data Type.
+--
+-----------------------------------------------------------------------------
+module Data.Map where
 
 import Data.Maybe
 import Data.Ord
@@ -13,9 +27,4 @@ foreign import delete  :: forall k v.Ord k => k -> Map k v -> Map k v
 foreign import update  :: forall k v.Ord k => (v -> Maybe v) -> k -> Map k v -> Map k v
 foreign import size    :: forall k v.Ord k => Map k v -> Int
 foreign import filter  :: forall k v.Ord k => (v -> Boolean) -> Map k v -> Map k v
-
-
-
-
-
 

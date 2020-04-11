@@ -1,7 +1,20 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Tuple
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Tuple Data.
+--
+-----------------------------------------------------------------------------
 module Data.Tuple where
 
 data Tuple a b = Tuple a b
-
 
 fst :: forall a b. Tuple a b -> a
 fst (Tuple a _) = a

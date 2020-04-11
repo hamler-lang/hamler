@@ -1,8 +1,23 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Ord
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Ord Typeclass.
+--
+-----------------------------------------------------------------------------
 module Data.Ord where
 
+import Data.Base (Integer, Float)
 import Data.Eq
 
-class Eq a <=  Ord a where
+class Eq a => Ord a where
   lessThan :: a -> a -> Boolean
   greaterThan :: a -> a -> Boolean
   lessThanOrEq :: a -> a -> Boolean
@@ -13,7 +28,29 @@ infixl 4 lessThanOrEq as <=
 infixl 4 greaterThan as >
 infixl 4 greaterThanOrEq as >=
 
-instance ordInt :: Ord Int where
+instance Ord Boolean where
+  lessThan = boolLessThan
+  greaterThan = boolGreaterThan
+  lessThanOrEq = boolLessThanOrEq
+  greaterThanOrEq = boolGreaterThanOrEq
+
+foreign import boolLessThan :: Boolean -> Boolean -> Boolean
+foreign import boolGreaterThan :: Boolean -> Boolean -> Boolean
+foreign import boolLessThanOrEq :: Boolean -> Boolean -> Boolean
+foreign import boolGreaterThanOrEq :: Boolean -> Boolean -> Boolean
+
+instance Ord Char where
+  lessThan = charLessThan
+  greaterThan = charGreaterThan
+  lessThanOrEq = charLessThanOrEq
+  greaterThanOrEq = charGreaterThanOrEq
+
+foreign import charLessThan :: Char -> Char -> Boolean
+foreign import charGreaterThan :: Char -> Char -> Boolean
+foreign import charLessThanOrEq :: Char -> Char -> Boolean
+foreign import charGreaterThanOrEq :: Char -> Char -> Boolean
+
+instance Ord Integer where
   lessThan = intLessThan
   greaterThan = intGreaterThan
   lessThanOrEq = intLessThanOrEq
@@ -24,8 +61,13 @@ foreign import intGreaterThan :: Int -> Int -> Boolean
 foreign import intLessThanOrEq :: Int -> Int -> Boolean
 foreign import intGreaterThanOrEq :: Int -> Int -> Boolean
 
+instance Ord Float where
+  lessThan = floatLessThan
+  greaterThan = floatGreaterThan
+  lessThanOrEq = floatLessThanOrEq
+  greaterThanOrEq = floatGreaterThanOrEq
 
-instance ordNumber :: Ord Number where
+instance Ord Number where
   lessThan = numLessThan
   greaterThan = numGreaterThan
   lessThanOrEq = numLessThanOrEq
@@ -35,3 +77,4 @@ foreign import numLessThan :: Number -> Number -> Boolean
 foreign import numGreaterThan :: Number -> Number -> Boolean
 foreign import numLessThanOrEq :: Number -> Number -> Boolean
 foreign import numGreaterThanOrEq :: Number -> Number -> Boolean
+
