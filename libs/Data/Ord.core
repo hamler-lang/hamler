@@ -1,0 +1,21 @@
+module 'Data.Ord' ['intLessThan'/2,'intLessThanOrEq'/2,'intGreaterThan'/2,'intGreaterThanOrEq'/2,'numLessThan'/2,'numLessThanOrEq'/2,'numGreaterThan'/2,'numGreaterThanOrEq'/2 ] attributes []
+ 
+'intLessThan'/2 =
+    fun(_0, _1) -> call 'erlang':'<' (_0, _1)
+'intLessThanOrEq'/2 =
+    fun(_0, _1) -> call 'erlang':'=<' (_0, _1)
+'intGreaterThan'/2 =
+    fun(_0, _1) -> call 'erlang':'>' (_0, _1)
+'intGreaterThanOrEq'/2 =
+    fun(_0, _1) -> call 'erlang':'>=' (_0, _1)
+
+'numLessThan'/2 =
+    fun(_0, _1) -> call 'erlang':'<' (_0, _1)
+'numLessThanOrEq'/2 =
+    fun(_0, _1) -> call 'erlang':'=<' (_0, _1)
+'numGreaterThan'/2 =
+    fun(_0, _1) -> call 'erlang':'>' (_0, _1)
+'numGreaterThanOrEq'/2 =
+    fun(_0, _1) -> call 'erlang':'>=' (_0, _1)
+
+end

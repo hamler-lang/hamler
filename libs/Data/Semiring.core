@@ -1,0 +1,10 @@
+module 'Data.Semiring' ['intAdd'/2, 'intMul'/2,'numAdd'/2,'numMul'/2] attributes []
+'intAdd'/2 =
+    fun(_0, _1) -> call 'erlang':'+' (_0, _1)
+'intMul'/2 =
+    fun(_0, _1) -> call 'erlang':'*' (_0, _1)
+'numAdd'/2 =
+    fun(_0, _1) -> call 'erlang':'+' (_0, _1)
+'numMul'/2 =
+    fun(_0, _1) -> call 'erlang':'*' (_0, _1)
+end

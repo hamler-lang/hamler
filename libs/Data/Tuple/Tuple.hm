@@ -1,4 +1,4 @@
-module Tuple where
+module Data.Tuple where
 
 data Tuple a b = Tuple a b
 

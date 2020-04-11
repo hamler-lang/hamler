@@ -1,0 +1,37 @@
+module Data.Eq where
+
+class Eq a where
+  eq :: a -> a -> Boolean
+
+
+instance eqBoolean :: Eq Boolean where
+  eq = boolEq
+instance eqInt :: Eq Int where
+  eq = intEq
+instance eqNumber :: Eq Number where
+  eq = numberEq
+
+foreign import boolEq :: Boolean -> Boolean -> Boolean
+foreign import intEq :: Int -> Int -> Boolean
+foreign import numberEq :: Number -> Number -> Boolean
+
+
+
+otherwise :: Boolean
+otherwise = true
+
+notEq :: forall a. Eq a => a -> a -> Boolean
+notEq x y = (x==y) == false
+
+infix 4 eq as ==
+
+infixr 3 conj as &&
+infixr 2 disj as ||
+
+conj :: Boolean -> Boolean -> Boolean
+conj true true = true
+conj _ _ = false
+
+disj :: Boolean -> Boolean -> Boolean
+disj false false = false
+disj _ _ = true
