@@ -1,0 +1,27 @@
+module Prelude
+  ( module Data.List
+  , module Data.Eq
+  , module Data.Ord
+  , module Data.Ring
+  , module Data.Semiring
+  , module Data.Base
+  , module Data.Maybe
+  )where
+
+
+import Data.List (map)
+import Data.Eq
+import Data.Ord
+import Data.Ring
+import Data.Semiring
+import Data.Base
+import Data.Maybe
+
+class Show a where
+  show :: a -> String
+
+
+
+
+
+

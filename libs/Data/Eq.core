@@ -1,0 +1,8 @@
+module 'Data.Eq' ['boolEq'/2,'intEq'/2,'numberEq'/2 ] attributes []
+'boolEq'/2 =
+    fun(_0, _1) -> call 'erlang':'==' (_0, _1)
+'intEq'/2 =
+    fun(_0, _1) -> call 'erlang':'==' (_0, _1)
+'numberEq'/2 =
+    fun(_0, _1) -> call 'erlang':'==' (_0, _1)
+end

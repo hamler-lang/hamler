@@ -1,6 +1,6 @@
-module Maybe where
+module Data.Maybe where
 
-import Prelude
+import Data.Base
 
 data Maybe a = Nothing | Just a
 

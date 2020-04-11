@@ -1,7 +1,10 @@
-module List where
+module Data.List where
 
-import Prelude
-import Maybe
+import Data.Semiring
+import Data.Ring
+import Data.Maybe
+import Data.Ord
+import Data.Eq
 infixr 6 Cons as :
 
 data List a = Nil | Cons a (List a)
@@ -92,9 +95,9 @@ all f Nil = true
 all f (x:xs) = f x && all f xs
 
 replicate :: forall a. Int -> a -> List a
-replicate i a | i < 0 = Nil
-              | i == 0 =Nil
+replicate i a | i <= 0 =Nil
               | otherwise = a : replicate (i-1) a
+replicate i a = Nil
 
 take :: forall a. Int -> List a -> List a
 take _ Nil = Nil

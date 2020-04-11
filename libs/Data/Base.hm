@@ -1,0 +1,19 @@
+module Data.Base where
+
+flip :: forall a b c. (a -> b -> c) -> b -> a -> c
+flip f b a = f a b
+
+
+const :: forall a b. a -> b -> a
+const a _ = a
+
+apply :: forall a b. (a -> b) -> a -> b
+apply f x = f x
+
+infixr 0 apply as $
+
+
+identity :: forall a .a -> a
+identity x = x
+
+

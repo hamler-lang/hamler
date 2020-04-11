@@ -1,0 +1,7 @@
+module 'Data.Ring' ['intSub'/2,'numSub'/2] attributes []
+'intSub'/2 =
+    fun(_0, _1) -> call 'erlang':'-' (_0, _1)
+'numSub'/2 =
+    fun(_0, _1) -> call 'erlang':'-' (_0, _1)
+
+end

@@ -1,0 +1,37 @@
+module Data.Ord where
+
+import Data.Eq
+
+class Eq a <=  Ord a where
+  lessThan :: a -> a -> Boolean
+  greaterThan :: a -> a -> Boolean
+  lessThanOrEq :: a -> a -> Boolean
+  greaterThanOrEq :: a -> a -> Boolean
+
+infixl 4 lessThan as <
+infixl 4 lessThanOrEq as <=
+infixl 4 greaterThan as >
+infixl 4 greaterThanOrEq as >=
+
+instance ordInt :: Ord Int where
+  lessThan = intLessThan
+  greaterThan = intGreaterThan
+  lessThanOrEq = intLessThanOrEq
+  greaterThanOrEq = intGreaterThanOrEq
+
+foreign import intLessThan :: Int -> Int -> Boolean
+foreign import intGreaterThan :: Int -> Int -> Boolean
+foreign import intLessThanOrEq :: Int -> Int -> Boolean
+foreign import intGreaterThanOrEq :: Int -> Int -> Boolean
+
+
+instance ordNumber :: Ord Number where
+  lessThan = numLessThan
+  greaterThan = numGreaterThan
+  lessThanOrEq = numLessThanOrEq
+  greaterThanOrEq = numGreaterThanOrEq
+
+foreign import numLessThan :: Number -> Number -> Boolean
+foreign import numGreaterThan :: Number -> Number -> Boolean
+foreign import numLessThanOrEq :: Number -> Number -> Boolean
+foreign import numGreaterThanOrEq :: Number -> Number -> Boolean
