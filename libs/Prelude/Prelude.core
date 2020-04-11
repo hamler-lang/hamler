@@ -23,7 +23,7 @@ module 'Prelude' ['intAdd'/2, 'intMul'/2,'numAdd'/2,'numMul'/2,'intSub'/2,'numSu
 'intLessThan'/2 =
     fun(_0, _1) -> call 'erlang':'<' (_0, _1)
 'intLessThanOrEq'/2 =
-    fun(_0, _1) -> call 'erlang':'<=' (_0, _1)
+    fun(_0, _1) -> call 'erlang':'=<' (_0, _1)
 'intGreaterThan'/2 =
     fun(_0, _1) -> call 'erlang':'>' (_0, _1)
 'intGreaterThanOrEq'/2 =
@@ -32,7 +32,7 @@ module 'Prelude' ['intAdd'/2, 'intMul'/2,'numAdd'/2,'numMul'/2,'intSub'/2,'numSu
 'numLessThan'/2 =
     fun(_0, _1) -> call 'erlang':'<' (_0, _1)
 'numLessThanOrEq'/2 =
-    fun(_0, _1) -> call 'erlang':'<=' (_0, _1)
+    fun(_0, _1) -> call 'erlang':'=<' (_0, _1)
 'numGreaterThan'/2 =
     fun(_0, _1) -> call 'erlang':'>' (_0, _1)
 'numGreaterThanOrEq'/2 =
