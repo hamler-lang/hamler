@@ -16,7 +16,7 @@ module Data.Base where
 
 type Integer = Int
 
-data Float :: Type
+foreign import data Float :: Type
 
 flip :: forall a b c. (a -> b -> c) -> b -> a -> c
 flip f b a = f a b
