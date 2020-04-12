@@ -2,7 +2,6 @@ module Main  where
 
 import Prelude
 
-
 t = 1 + 1
 t1 = 1 * 1
 t2 = 1.111 * 8.75
@@ -30,6 +29,9 @@ data Person = P { name :: String
                 , postiont :: Position
                 }
 type NewName = String
+
+dealPerson :: Person -> Number
+dealPerson (P p) = p.postiont.x + p.postiont.y
 
 rename :: NewName -> Person -> Person
 rename nm (P p) = P (p{name = nm})
@@ -75,6 +77,7 @@ test1 x | x > 100 = 100
         | x > 65 = 60
         | otherwise = 20
 
+test1 x = x
 
 data Result = RI Int
             | RS String
@@ -92,28 +95,13 @@ dealResult x y = dr (test2 x y)
 d1 = dealResult "hello" 20
 d2 = dealResult "world" 1
 
-d3 = false || false || false || true
+d3 = notEq 1 2
 
+listp :: L.List Person
+listp = L.replicate 5 person
 
+listp1 = L.map personMoveUp listp
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+add1 = L.map (\x -> x + 1) (L.replicate 5 1)
+res1 = L.filter (\x -> x > 5) (L.createN 10)
+res2 = L.map (\x -> dealPerson x) (L.replicate 5 person)
