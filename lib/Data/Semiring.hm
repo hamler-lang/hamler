@@ -23,13 +23,13 @@ class Semiring a where
 infixl 6 add as +
 infixl 7 mul as *
 
-instance semiringInt :: Semiring Int where
+instance Semiring Int where
   add = intAdd
   zero = 0
   mul = intMul
   one = 1
 
-instance semiringNumber :: Semiring Number where
+instance Semiring Number where
   add = numAdd
   zero = 0.0
   mul = numMul
