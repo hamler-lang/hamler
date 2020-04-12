@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Prelude
+-- Module      :  System.Environment
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,27 +9,9 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Prelude Module.
+-- The System Environment.
 --
 -----------------------------------------------------------------------------
-module Prelude
-  ( module Data.Base
-  , module Data.Eq
-  , module Data.List
-  , module Data.Maybe
-  , module Data.Ord
-  , module Data.Ring
-  , module Data.Semiring
-  ) where
+module Environment where
 
-import Data.Base
-import Data.Eq
-import Data.List (map)
-import Data.Maybe
-import Data.Ord
-import Data.Ring
-import Data.Semiring
-
-class Show a where
-  show :: a -> String
-
+-- TODO: ...
