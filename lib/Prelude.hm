@@ -23,13 +23,13 @@ class Semiring a where
 infixl 6 add as +
 infixl 7 mul as *
 
-instance semiringInt :: Semiring Int where
+instance Semiring Int where
   add = intAdd
   zero = 0
   mul = intMul
   one = 1
 
-instance semiringNumber :: Semiring Number where
+instance Semiring Number where
   add = numAdd
   zero = 0.0
   mul = numMul
@@ -45,10 +45,10 @@ class Semiring a => Ring a where
 
 infixl 6 sub as -
 
-instance ringInt :: Ring Int where
+instance Ring Int where
   sub = intSub
 
-instance ringNumber :: Ring Number where
+instance Ring Number where
   sub = numSub
 
 foreign import intSub :: Int -> Int -> Int
@@ -79,18 +79,18 @@ infixl 4 lessThanOrEq as <=
 infixl 4 greaterThan as >
 infixl 4 greaterThanOrEq as >=
 
-instance eqBoolean :: Eq Boolean where
+instance Eq Boolean where
   eq = boolEq
-instance eqInt :: Eq Int where
+instance Eq Int where
   eq = intEq
-instance eqNumber :: Eq Number where
+instance Eq Number where
   eq = numberEq
 
 foreign import boolEq :: Boolean -> Boolean -> Boolean
 foreign import intEq :: Int -> Int -> Boolean
 foreign import numberEq :: Number -> Number -> Boolean
 
-instance ordInt :: Ord Int where
+instance Ord Int where
   lessThan = intLessThan
   greaterThan = intGreaterThan
   lessThanOrEq = intLessThanOrEq
@@ -104,7 +104,7 @@ foreign import intGreaterThanOrEq :: Int -> Int -> Boolean
 
 
 
-instance ordNumber :: Ord Number where
+instance Ord Number where
   lessThan = numLessThan
   greaterThan = numGreaterThan
   lessThanOrEq = numLessThanOrEq
