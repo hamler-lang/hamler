@@ -40,7 +40,7 @@ foreign import intMul :: Int -> Int -> Int
 foreign import numAdd :: Number -> Number -> Number
 foreign import numMul :: Number -> Number -> Number
 
-class Semiring a <= Ring a where
+class Semiring a => Ring a where
   sub :: a -> a -> a
 
 infixl 6 sub as -
