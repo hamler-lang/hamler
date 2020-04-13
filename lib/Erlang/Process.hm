@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Erlang
--- Copyright   :  (c) Feng Lee 2020
+-- Module      :  Erlang.Process
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
 -- Maintainer  :  Feng Lee, feng@emqx.io
@@ -9,11 +9,16 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The core erlang module.
+-- The Erlang Process Module.
 --
 -----------------------------------------------------------------------------
-module Erlang ( module Erl ) where
+module Erlang.Process where
 
-import Erlang.Base as Erl
-import Erlang.Process as Erl
+import Erlang.Base
+
+-- | An erlang process id.
+foreign import data Pid :: Type
+
+-- | An erlang process monad?
+foreign import data Process :: Type
 

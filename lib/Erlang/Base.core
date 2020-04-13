@@ -1,0 +1,25 @@
+module 'Base' ['makeRef'/0,
+	       'module_info'/0,
+	       'module_info'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[66|[97|[115|[101|[46|[101|[114|[108]]]]]]]],1}],
+		%% Line 19
+		'spec' =
+		    %% Line 19
+		    [{{'makeRef',0},[{'type',19,'fun',[{'type',19,'product',[]}|[{'type',19,'reference',[]}]]}]}]]
+'makeRef'/0 =
+    %% Line 20
+    fun () ->
+	call 'erlang':'make_ref'
+	    ()
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Base')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Base', _0)
+end
