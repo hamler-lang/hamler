@@ -16,6 +16,8 @@ module Data.Eq where
 
 import Data.Base (Integer, Float)
 
+infix 4 eq as ==
+
 class Eq a where
   eq :: a -> a -> Boolean
 
@@ -36,22 +38,6 @@ foreign import intEq   :: Integer -> Integer -> Boolean
 foreign import floatEq :: Float -> Float -> Boolean
 foreign import numEq   :: Number -> Number -> Boolean
 
-otherwise :: Boolean
-otherwise = true
-
 notEq :: forall a. Eq a => a -> a -> Boolean
 notEq x y = (x==y) == false
-
-infix 4 eq as ==
-
-infixr 3 conj as &&
-infixr 2 disj as ||
-
-conj :: Boolean -> Boolean -> Boolean
-conj true true = true
-conj _ _ = false
-
-disj :: Boolean -> Boolean -> Boolean
-disj false false = false
-disj _ _ = true
 
