@@ -36,7 +36,7 @@
 {-- Types, Values --}
 True :: Bool
 False :: Bool
-2 :: Int
+2 :: Integer
 1.0 :: Float
 3.14 :: Double
 "hello" :: String
@@ -53,13 +53,12 @@ A type is a set of values.
 
 | Type              | Values        | Description                   |
 | ----------------- | ------------- | ----------------------------- |
-| None(???)         | None          | null                          |
 | Bool              | True \| False | Boolean type                  |
 | Atom(Symbol)      | :a, :b        |                               |
 | Char              | 'c', 'x'      |                               |
-| Int(Integer)      | 1, 2, -10     | Integer type                  |
+| Integer(Int)      | 1, 2, -10     | Integer type                  |
 | Float(Double)     | 3.14          | Float type                    |
-| Num(Number)       | Int \| Float  |                               |
+| Number(Num)       | 1, 3.14, -2   | Integer \| Float type         |
 | String            | "hello"       | String is a list of character |
 | Tuple             |               |                               |
 | List              |               |                               |
