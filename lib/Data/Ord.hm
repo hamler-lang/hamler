@@ -50,7 +50,7 @@ foreign import charGreaterThan :: Char -> Char -> Boolean
 foreign import charLessThanOrEq :: Char -> Char -> Boolean
 foreign import charGreaterThanOrEq :: Char -> Char -> Boolean
 
-instance Ord Integer where
+instance Ord Int where
   lessThan = intLessThan
   greaterThan = intGreaterThan
   lessThanOrEq = intLessThanOrEq
@@ -61,11 +61,11 @@ foreign import intGreaterThan :: Int -> Int -> Boolean
 foreign import intLessThanOrEq :: Int -> Int -> Boolean
 foreign import intGreaterThanOrEq :: Int -> Int -> Boolean
 
-instance Ord Float where
-  lessThan = floatLessThan
-  greaterThan = floatGreaterThan
-  lessThanOrEq = floatLessThanOrEq
-  greaterThanOrEq = floatGreaterThanOrEq
+-- instance Ord Float where
+  -- lessThan = floatLessThan
+  -- greaterThan = floatGreaterThan
+  -- lessThanOrEq = floatLessThanOrEq
+  -- greaterThanOrEq = floatGreaterThanOrEq
 
 instance Ord Number where
   lessThan = numLessThan
