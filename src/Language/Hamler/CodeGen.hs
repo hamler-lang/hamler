@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Language.Hamler.CodeGen
--- Copyright   :  (c) Feng Lee 2020
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
 -- Maintainer  :  Feng Lee, feng@emqx.io
@@ -306,7 +306,7 @@ literalToErl (StringLiteral s)          = return $ Lit $ LString $ decodePPS s
 literalToErl (CharLiteral c)            = return $ Lit $ LChar c
 literalToErl (BooleanLiteral True)      = return $ Lit $ LAtom (Atom "true")
 literalToErl (BooleanLiteral False)     = return $ Lit $ LAtom (Atom "false")
-literalToErl (ArrayLiteral xs)          = do
+literalToErl (ListLiteral xs)           = do
   xs' <- mapM exprToErl xs
   return $ E.List (L $ fmap (Expr . Constr) xs')
 literalToErl (ObjectLiteral xs)         = do
@@ -350,7 +350,7 @@ literalBinderToPat (StringLiteral s)          = return $ PLit $ LString $ decode
 literalBinderToPat (CharLiteral c)            = return $ PLit $ LChar c
 literalBinderToPat (BooleanLiteral True)      = return $ PLit $ LAtom (Atom "true")
 literalBinderToPat (BooleanLiteral False)     = return $ PLit $ LAtom (Atom "false")
-literalBinderToPat (ArrayLiteral xs)          = do
+literalBinderToPat (ListLiteral xs)           = do
   xs' <- mapM binderToPat xs
   return $ E.PList (L xs')
 literalBinderToPat (ObjectLiteral xs)         = do
