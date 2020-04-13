@@ -25,7 +25,7 @@ instance Eq Boolean where
   eq = boolEq
 instance Eq Char where
   eq = charEq
-instance Eq Integer where
+instance Eq Int where
   eq = intEq
 instance Eq Float where
   eq = floatEq
@@ -34,7 +34,7 @@ instance Eq Number where
 
 foreign import boolEq  :: Boolean -> Boolean -> Boolean
 foreign import charEq  :: Char -> Char -> Boolean
-foreign import intEq   :: Integer -> Integer -> Boolean
+foreign import intEq   :: Int -> Int -> Boolean
 foreign import floatEq :: Float -> Float -> Boolean
 foreign import numEq   :: Number -> Number -> Boolean
 
