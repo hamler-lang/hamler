@@ -309,6 +309,10 @@ literalToErl (BooleanLiteral False)     = return $ Lit $ LAtom (Atom "false")
 literalToErl (ListLiteral xs)           = do
   xs' <- mapM exprToErl xs
   return $ E.List (L $ fmap (Expr . Constr) xs')
+literalToErl (TupleLiteral a b)           = do
+  a' <- exprToErl a
+  b' <- exprToErl b
+  return $ Tuple [Expr $ Constr a' , Expr $ Constr $ b']
 literalToErl (ObjectLiteral xs)         = do
   xs' <- forM xs $ \(pps,e) -> do
     e' <- exprToErl e
@@ -353,6 +357,10 @@ literalBinderToPat (BooleanLiteral False)     = return $ PLit $ LAtom (Atom "fal
 literalBinderToPat (ListLiteral xs)           = do
   xs' <- mapM binderToPat xs
   return $ E.PList (L xs')
+literalBinderToPat (TupleLiteral a b)           = do
+  a' <- binderToPat a
+  b' <- binderToPat b
+  return $ E.PTuple [a',b']
 literalBinderToPat (ObjectLiteral xs)         = do
   xs' <- forM xs $ \(pps,e) -> do
     e' <- binderToPat e
