@@ -182,7 +182,7 @@ command = pure $ do
   let tpath = dir <> "/ebin"
   cfs <- findFile1 ".core" tpath
   forM_ cfs $ \fp -> do
-    SS.shelly $ SS.command "erlc" ["-o" ,"/Users/hk/github/test/ebin"] [T.pack $ tpath <> "/" <> fp]
+    SS.shelly $ SS.command "erlc" ["-o" ,tpath] [T.pack $ tpath <> "/" <> fp]
     SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
 
   ifs <- findFile1 ".info" tpath
