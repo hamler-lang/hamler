@@ -1,0 +1,55 @@
+module 'String' ['append'/2,
+		 'connect'/2,
+		 'module_info'/0,
+		 'module_info'/1,
+		 'reverse'/1,
+		 'strlen'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[83|[116|[114|[105|[110|[103|[46|[101|[114|[108]]]]]]]]]],1}],
+		%% Line 24
+		'spec' =
+		    %% Line 24
+		    [{{'connect',2},[{'type',24,'fun',[{'type',24,'product',[{'type',24,'string',[]}|[{'type',24,'string',[]}]]}|[{'type',24,'string',[]}]]}]}],
+		%% Line 28
+		'spec' =
+		    %% Line 28
+		    [{{'reverse',1},[{'type',28,'fun',[{'type',28,'product',[{'type',28,'string',[]}]}|[{'type',28,'string',[]}]]}]}],
+		%% Line 31
+		'spec' =
+		    %% Line 31
+		    [{{'append',2},[{'type',31,'fun',[{'type',31,'product',[{'type',31,'string',[]}|[{'type',31,'string',[]}]]}|[{'type',31,'string',[]}]]}]}],
+		%% Line 34
+		'spec' =
+		    %% Line 34
+		    [{{'strlen',1},[{'type',34,'fun',[{'type',34,'product',[{'type',34,'string',[]}]}|[{'type',34,'integer',[]}]]}]}]]
+'connect'/2 =
+    %% Line 25
+    fun (_0,_1) ->
+	call 'erlang':'++'
+	    (_0, _1)
+'reverse'/1 =
+    %% Line 29
+    fun (_0) ->
+	call 'lists':'reverse'
+	    (_0)
+'append'/2 =
+    %% Line 32
+    fun (_0,_1) ->
+	call 'lists':'append'
+	    (_0, _1)
+'strlen'/1 =
+    %% Line 35
+    fun (_0) ->
+	call 'string':'len'
+	    (_0)
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('String')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('String', _0)
+end

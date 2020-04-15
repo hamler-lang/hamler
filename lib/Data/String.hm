@@ -18,9 +18,10 @@ import Data.Maybe (Maybe)
 
 infixl 6 connect as ++
 
+length = strlen
+
 -- TODO: rename the connect?
 foreign import connect :: String -> String -> String
-foreign import take    :: Integer -> String -> Maybe String
 foreign import reverse :: String -> String
 foreign import append  :: String -> String -> String
-foreign import length  :: String -> Integer
+foreign import strlen  :: String -> Integer
