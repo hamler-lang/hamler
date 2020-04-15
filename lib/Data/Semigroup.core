@@ -19,6 +19,7 @@ module 'Semigroup' ['listAppend'/2,
     fun (_0,_1) ->
 	apply 'listAppend'/2
 	    (_0, _1)
+
 'listAppend'/2 =
     %% Line 27
     fun (_0,_1) ->
