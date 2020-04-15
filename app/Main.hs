@@ -11,6 +11,7 @@ import           Data.Foldable (fold)
 import qualified Options.Applicative as Opts
 import           System.Environment (getArgs)
 import qualified System.IO as IO
+import qualified Data.Text as T
 import qualified Text.PrettyPrint.ANSI.Leijen as Doc
 import           Version (versionString)
 
@@ -18,9 +19,8 @@ main :: IO ()
 main = do
     IO.hSetEncoding IO.stdout IO.utf8
     IO.hSetEncoding IO.stderr IO.utf8
-    -- cmd <- Opts.handleParseResult . execParserPure opts =<< getArgs
-    Compile.tempBuild
-    -- cmd
+    cmd <- Opts.handleParseResult . execParserPure opts =<< getArgs
+    cmd
   where
     opts        = Opts.info (versionInfo <*> Opts.helper <*> commands) infoModList
     infoModList = Opts.fullDesc <> headerInfo <> footerInfo
@@ -53,8 +53,16 @@ main = do
     commands :: Opts.Parser (IO ())
     commands =
       (Opts.subparser . fold)
-        [ Opts.command "compile"
+        [ Opts.command "build"
             (Opts.info Compile.command
-              (Opts.progDesc "Compile PureScript source files"))
+              (Opts.progDesc "Compile hamler source files"))
+
+        ,  Opts.command "init"
+            (Opts.info Compile.initProject
+              (Opts.progDesc "init hamler project"))
+
+        ,  Opts.command "run"
+            (Opts.info Compile.runProject
+              (Opts.progDesc "run hamler project"))
         ]
 
