@@ -40,10 +40,10 @@ instance Show Float where
 
 instance Show Number where
   show = showNum
--}
 
 instance Show Char where
   show c = showChar c
+-}
 
 instance Show String where
   show s = s
