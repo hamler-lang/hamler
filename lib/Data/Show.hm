@@ -35,13 +35,13 @@ instance Show Integer where
   show = showInt
 
 instance Show Float where
-  show = showFloat
+  show f = showFloat f
 
 instance Show Number where
   show = showNum
 
 instance Show Char where
-  show = showChar
+  show c = showChar c
 
 instance Show String where
   show s = s
