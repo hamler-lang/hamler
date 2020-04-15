@@ -28,8 +28,8 @@ import Data.Base (Number)
 import Data.Eq (class Eq, (/=))
 import Data.Ordering (Ordering(..))
 import Data.Ring (class Ring, zero, one, negate)
-import Data.Unit (Unit)
-import Data.Void (Void)
+-- import Data.Unit (Unit)
+-- import Data.Void (Void)
 
 class Eq a => Ord a where
   compare :: a -> a -> Ordering
@@ -49,13 +49,13 @@ instance Ord Float where
 {-
 instance Ord Number where
   compare = compNum LT EQ GT
--}
 
 instance Ord Unit where
   compare _ _ = EQ
 
 instance Ord Void where
   compare _ _ = EQ
+-}
 
 foreign import compBool
   :: Ordering

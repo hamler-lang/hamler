@@ -21,8 +21,8 @@ module Data.Eq
   ) where
 
 import Data.Base (Number)
-import Data.Unit (Unit)
-import Data.Void (Void)
+-- import Data.Unit (Unit)
+-- import Data.Void (Void)
 
 infix 4 eq as ==
 infix 4 notEq as /=
@@ -45,13 +45,13 @@ instance Eq Float where
 {-
 instance Eq Number where
   eq = numEq
--}
 
 instance Eq Unit where
   eq _ _ = true
 
 instance Eq Void where
   eq _ _ = true
+-}
 
 foreign import boolEq  :: Boolean -> Boolean -> Boolean
 foreign import charEq  :: Char -> Char -> Boolean

@@ -24,8 +24,6 @@ module Prelude
   , module Data.Semigroup
   , module Data.Semiring
   , module Data.Show
-  , module Data.Unit
-  , module Data.Void
   ) where
 
 import Data.Base
@@ -40,5 +38,4 @@ import Data.Ring
 import Data.Semigroup
 import Data.Semiring
 import Data.Show
-import Data.Unit
-import Data.Void
+
