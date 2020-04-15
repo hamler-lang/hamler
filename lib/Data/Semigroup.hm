@@ -36,20 +36,20 @@ infixr 5 append as <>
 instance Semigroup String where
   append = stringAppend
 
+{-
 instance Semigroup (List a) where
   append = listAppend
 
-{-
 instance Semigroup Unit where
   append _ _ = unit
 
 instance Semigroup Void where
   append _ = absurd
--}
 
 instance Semigroup s' => Semigroup (s -> s') where
   append f g x = f x <> g x
+-}
 
 foreign import stringAppend :: String -> String -> String
-foreign import listAppend :: forall a. List a -> List a -> List a
+-- foreign import listAppend :: forall a. List a -> List a -> List a
 
