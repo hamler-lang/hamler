@@ -1,0 +1,35 @@
+module 'Semigroup' ['listAppend'/2,
+		    'module_info'/0,
+		    'module_info'/1,
+		    'stringAppend'/2]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[83|[101|[109|[105|[103|[114|[111|[117|[112|[46|[101|[114|[108]]]]]]]]]]]]],1}],
+		%% Line 22
+		'spec' =
+		    %% Line 22
+		    [{{'stringAppend',2},[{'type',22,'fun',[{'type',22,'product',[{'type',22,'string',[]}|[{'type',22,'string',[]}]]}|[{'type',22,'string',[]}]]}]}],
+		%% Line 26
+		'spec' =
+		    %% Line 26
+		    [{{'listAppend',2},[{'type',26,'fun',[{'type',26,'product',[{'type',26,'list',[]}|[{'type',26,'list',[]}]]}|[{'type',26,'list',[]}]]}]}]]
+'stringAppend'/2 =
+    %% Line 23
+    fun (_0,_1) ->
+	apply 'listAppend'/2
+	    (_0, _1)
+'listAppend'/2 =
+    %% Line 27
+    fun (_0,_1) ->
+	call 'lists':'append'
+	    (_0, _1)
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Semigroup')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Semigroup', _0)
+end
