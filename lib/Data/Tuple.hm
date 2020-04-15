@@ -14,6 +14,7 @@
 -----------------------------------------------------------------------------
 module Data.Tuple where
 
+{-
 fst :: forall a b. (a, b) -> a
 fst (a, _) = a
 
@@ -28,6 +29,7 @@ curry f x y =  f (x, y)
 
 uncurry :: forall a b c. (a -> b -> c) -> ((a, b) -> c)
 uncurry f p =  f (fst p) (snd p)
+-}
 
 foreign import elem :: forall a. Integer -> Tuple -> a
 foreign import setElem :: forall a. Integer -> a -> Tuple -> Tuple

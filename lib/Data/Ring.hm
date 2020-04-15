@@ -30,10 +30,12 @@ instance Ring Integer where
 instance Ring Float where
   sub = floatSub
 
+{-
 instance Ring Number where
   sub = numSub
+-}
 
 foreign import charSub :: Char -> Char -> Char
-foreign import intSub :: Int -> Int -> Int
+foreign import intSub :: Integer -> Integer -> Integer
 foreign import floatSub :: Float -> Float -> Float
-foreign import numSub :: Number -> Number -> Number
+-- foreign import numSub :: Number -> Number -> Number

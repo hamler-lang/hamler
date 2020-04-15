@@ -14,13 +14,13 @@
 -----------------------------------------------------------------------------
 module Data.String where
 
-import Data.Maybe
+import Data.Maybe (Maybe)
 
 infixl 6 connect as ++
 
 -- TODO: rename the connect?
 foreign import connect :: String -> String -> String
-foreign import take    :: Int -> String -> Maybe String
+foreign import take    :: Integer -> String -> Maybe String
 foreign import reverse :: String -> String
 foreign import append  :: String -> String -> String
-foreign import length  :: String -> Int
+foreign import length  :: String -> Integer
