@@ -46,8 +46,10 @@ instance Ord Integer where
 instance Ord Float where
   compare = compFloat LT EQ GT
 
+{-
 instance Ord Number where
   compare = compNum LT EQ GT
+-}
 
 instance Ord Unit where
   compare _ _ = EQ
@@ -87,6 +89,7 @@ foreign import compFloat
   -> Float
   -> Ordering
 
+{-
 foreign import compNum
   :: Ordering
   -> Ordering
@@ -94,6 +97,7 @@ foreign import compNum
   -> Number
   -> Number
   -> Ordering
+-}
 
 foreign import ordString
   :: Ordering

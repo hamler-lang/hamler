@@ -37,8 +37,10 @@ instance Show Integer where
 instance Show Float where
   show f = showFloat f
 
+{-
 instance Show Number where
   show = showNum
+-}
 
 instance Show Char where
   show c = showChar c
@@ -48,5 +50,5 @@ instance Show String where
 
 foreign import showInt :: Integer -> String
 foreign import showFloat :: Float -> String
-foreign import showNum :: Number -> String
+-- foreign import showNum :: Number -> String
 foreign import showChar :: Char -> String
