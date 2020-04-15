@@ -14,6 +14,8 @@
 -----------------------------------------------------------------------------
 module Data.Maybe where
 
+import Data.Base (const, identity)
+
 data Maybe a = Nothing | Just a
 
 maybe :: forall a b. b -> (a -> b) -> Maybe a -> b

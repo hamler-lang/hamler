@@ -47,6 +47,6 @@ instance Show String where
   show s = s
 
 foreign import showInt :: Integer -> String
-foreign import showFloat :: Number -> String
+foreign import showFloat :: Float -> String
 foreign import showNum :: Number -> String
 foreign import showChar :: Char -> String

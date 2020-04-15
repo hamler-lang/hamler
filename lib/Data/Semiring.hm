@@ -31,7 +31,7 @@ instance Semiring Integer where
   mul = intMul
   one = 1
 
-instance Semiring Number where
+instance Semiring Float where
   add = numAdd
   zero = 0.0
   mul = numMul
