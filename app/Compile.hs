@@ -3,7 +3,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-module Compile (command,initProject,tempBuild) where
+module Compile (command,initProject,tempBuild,runProject) where
 
 import           Control.Applicative
 import           Control.Monad
@@ -74,7 +74,7 @@ compile PSCMakeOptions{..} = do
     -- P.make makeActions (map snd ms)
     make makeActions (map snd ms)
   printWarningsAndErrors (P.optionsVerboseErrors pscmOpts) pscmJSONErrors makeWarnings makeErrors
-  exitSuccess
+  -- exitSuccess
 
 warnFileTypeNotFound :: String -> IO ()
 warnFileTypeNotFound = hPutStrLn stderr . ("hamler compile: No files found using pattern: " ++)
@@ -165,8 +165,56 @@ pscMakeOptions = PSCMakeOptions <$> many inputFile
                                 <*> (not <$> noPrefix)
                                 <*> jsonErrors
 
+
 command :: Opts.Parser (IO ())
-command = compile <$> (Opts.helper <*> pscMakeOptions)
+command = pure $ do
+  dir <- getCurrentDirectory
+  fps1 <- gethmFiles (dir <> "/.deps/hamler/lib")
+  fps2 <- gethmFiles (dir <> "/src")
+  let fps = fps1 <> fps2
+  compile (PSCMakeOptions { pscmInput      = fps
+                          , pscmOutputDir  = dir <>  "/ebin"
+                          , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
+                          , pscmUsePrefix  = False
+                          , pscmJSONErrors = False
+                          }
+          )
+  let tpath = dir <> "/ebin"
+  cfs <- findFile1 ".core" tpath
+  forM_ cfs $ \fp -> do
+    SS.shelly $ SS.command "erlc" ["-o" ,"/Users/hk/github/test/ebin"] [T.pack $ tpath <> "/" <> fp]
+    SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
+
+  ifs <- findFile1 ".info" tpath
+  forM_ ifs $ \fp -> do
+    SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
+
+  -- erl -pa ebin -noshell -s Main main -s init stop
+  -- SS.shelly $ SS.run "erl" ["-pa",T.pack (tpath), "-noshell","-s" ,"Main","Main.main","-s","init","stop" ]
+  exitSuccess
+
+
+runProject :: Opts.Parser (IO ())
+runProject  =pure $ do
+  dir <- getCurrentDirectory
+  let tpath = dir <> "/ebin"
+  SS.shelly $ SS.run "erl" ["-pa",T.pack (tpath), "-noshell","-s" ,"Main","Main.main","-s","init","stop" ]
+  return ()
+
+
+
+-- | isFile  ".core" "Main.core"   -> True
+isFile :: String -> String -> Bool
+isFile st fp= let l = length st
+                  s = take l $ reverse fp
+              in reverse st == s
+
+
+findFile1 :: String -> FilePath -> IO [FilePath]
+findFile1 base fp = do
+  fs <- listDirectory fp
+  return $ filter (isFile base) fs
+
 
 dictlist :: [FilePath]
 dictlist =["ebin","src","test",".deps"]
@@ -175,36 +223,23 @@ helloHamler :: String
 helloHamler = concat [
           "module Main where\n"
         , "\n"
+        , "import System.IO\n"
+        , "\n"
         , "main :: String\n"
-        , "main = "
-        , "hello hamler\n"
+        , "main = print "
+        , "\"hello hamler! Great world!!\"\n"
         ]
 
 liblink = "https://github.com/hamler-lang/hamler.git"
 
-initProject :: IO ()
-initProject  = do
+initProject :: Opts.Parser (IO ())
+initProject  =pure $ do
   base <- getCurrentDirectory
   let dictlist' = fmap (\x -> base <> "/" <> x) dictlist
   mapM createDirectory dictlist'
   writeFile "src/Main.hm" helloHamler
   SS.shelly $ SS.run "git" ["clone",liblink,".deps/hamler"]
   print "hamler init finish!"
-
-
-tempBuild :: IO ()
-tempBuild = do
-  dir <- getCurrentDirectory
-  print (dir <> "/" <> "lib")
-  fps <- gethmFiles (dir <> "/" <> "lib")
-  print fps
-  compile (PSCMakeOptions { pscmInput      = fps
-                          , pscmOutputDir  = dir <> "/" <> "tests/data/output"
-                          , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
-                          , pscmUsePrefix  = False
-                          , pscmJSONErrors = False
-                          }
-          )
 
 
 ishmFile :: String -> Bool
