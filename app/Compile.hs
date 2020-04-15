@@ -3,7 +3,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-module Compile (command,initProject,tempBuild,runProject) where
+module Compile (command,initProject,runProject) where
 
 import           Control.Applicative
 import           Control.Monad
