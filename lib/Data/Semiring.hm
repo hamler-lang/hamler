@@ -28,9 +28,9 @@ infixl 7 mul as *
 -- TODO: remove?....
 instance Semiring Char where
   add = charAdd
-  zero = 0
+  zero = 0 :: Char
   mul = charMul
-  one = 1
+  one = 1 :: Char
 
 instance Semiring Integer where
   add = intAdd
