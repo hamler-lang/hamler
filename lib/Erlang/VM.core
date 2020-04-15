@@ -1,0 +1,25 @@
+module 'VM' ['module_info'/0,
+	     'module_info'/1,
+	     'otpRelease'/0]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[86|[77|[46|[101|[114|[108]]]]]],1}],
+		%% Line 19
+		'spec' =
+		    %% Line 19
+		    [{{'otpRelease',0},[{'type',19,'fun',[{'type',19,'product',[]}|[{'type',19,'string',[]}]]}]}]]
+'otpRelease'/0 =
+    %% Line 20
+    fun () ->
+	call 'erlang':'system_info'
+	    ('otp_release')
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('VM')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('VM', _0)
+end
