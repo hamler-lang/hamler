@@ -16,8 +16,6 @@ module Data.Show
   ( class Show, show
   ) where
 
-import Data.Base (Number)
-
 -- | The `Show` type class represents those types which can be converted into
 -- | a human-readable `String` representation.
 -- |

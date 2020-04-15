@@ -14,8 +14,6 @@
 -----------------------------------------------------------------------------
 module Data.String where
 
-import Data.Maybe (Maybe)
-
 infixl 6 connect as ++
 
 length = strlen

@@ -24,8 +24,8 @@ module Data.Ord
   , module Data.Ordering
   ) where
 
-import Data.Base (Number)
-import Data.Eq (class Eq, (/=))
+-- import Data.Base (Number)
+import Data.Eq (class Eq)
 import Data.Ordering (Ordering(..))
 -- import Data.Ring (class Ring, zero, one, negate)
 -- import Data.Unit (Unit)

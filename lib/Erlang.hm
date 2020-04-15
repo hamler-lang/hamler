@@ -15,5 +15,5 @@
 module Erlang ( module Erl ) where
 
 import Erlang.Base as Erl
-import Erlang.Process as Erl
+import Erlang.Process (Pid, Process) as Erl
 

@@ -14,7 +14,7 @@
 -----------------------------------------------------------------------------
 module Erlang.Process where
 
-import Erlang.Base
+-- import Erlang.Base
 
 -- | An erlang process id.
 foreign import data Pid :: Type
