@@ -17,7 +17,7 @@ module 'Semigroup' ['listAppend'/2,
 'stringAppend'/2 =
     %% Line 23
     fun (_0,_1) ->
-	apply 'listAppend'/2
+	call 'lists':'append'
 	    (_0, _1)
 'listAppend'/2 =
     %% Line 27

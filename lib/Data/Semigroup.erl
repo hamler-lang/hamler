@@ -20,7 +20,7 @@
 
 %% stringAppend :: String -> String -> String
 -spec(stringAppend(string(), string()) -> string()).
-stringAppend(S1, S2) -> listAppend(S1, S2).
+stringAppend(S1, S2) -> lists:append(S1, S2).
 
 %% listAppend :: forall a. List a -> List a -> List a
 -spec(listAppend(list(), list()) -> list()).
