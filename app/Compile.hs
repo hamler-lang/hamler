@@ -230,6 +230,17 @@ helloHamler = concat [
         , "\"hello hamler! Great world!!\"\n"
         ]
 
+makeFile :: String
+makeFile = concat [ ".PHONY : build run\n"
+                  , "all: build\n"
+                  , "build:\n"
+                  , "\thamler build\n"
+                  , "run:\n"
+                  , "\thamler run\n"
+                  ]
+
+
+
 liblink = "https://github.com/hamler-lang/hamler.git"
 
 initProject :: Opts.Parser (IO ())
@@ -238,6 +249,7 @@ initProject  =pure $ do
   let dictlist' = fmap (\x -> base <> "/" <> x) dictlist
   mapM createDirectory dictlist'
   writeFile "src/Main.hm" helloHamler
+  writeFile "Makefile" makeFile
   SS.shelly $ SS.run "git" ["clone",liblink,".deps/hamler"]
   print "hamler init finish!"
 
