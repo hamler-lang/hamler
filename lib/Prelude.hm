@@ -31,7 +31,7 @@ import Data.Bits
 import Data.Bool ((&&), (||))
 import Data.Either
 import Data.Eq
-import Data.List (map)
+import Data.List -- (map)
 import Data.Maybe (Maybe)
 import Data.Ord
 import Data.Ring

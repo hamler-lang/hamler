@@ -14,6 +14,7 @@
 -----------------------------------------------------------------------------
 module Data.List where
 
+{-
 import Data.Eq
 import Data.Maybe
 import Data.Ord
@@ -146,6 +147,5 @@ t10 = replicate 10 "nice"
 t11 = take 5 t10
 t12 = drop 8 t10
 --------------------------------
-
-
+-}
 
