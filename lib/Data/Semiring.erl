@@ -14,13 +14,19 @@
 %%---------------------------------------------------------------------------
 -module('Semiring').
 
--export([ intAdd/2
+-export([ charAdd/2
+        , charMul/2
+         intAdd/2
         , intMul/2
         , floatAdd/2
         , floatMul/2
         , numAdd/2
         , numMul/2
         ]).
+
+charAdd(C1, C2) -> C1 + C2.
+
+charMul(C1, C2) -> C1 * C2.
 
 %% intAdd :: Int -> Int -> Int
 -spec(intAdd(integer(), integer()) -> integer()).
