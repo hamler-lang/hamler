@@ -14,17 +14,14 @@
 -----------------------------------------------------------------------------
 module Data.Base where
 
--- | An alias for `Boolean`
-type Bool = Boolean
-
 -- | An alias for `Integer`
 type Int = Integer
 
 -- | An alias for `Float`
 type Double = Float
 
--- | `Number` is the sum type of Integer and Float
-data Number = Integer | Float
+-- |TODO: `Number` should be the sum type of Integer and Float
+type Number = Float
 
 -- | An alias for `Number`
 type Num = Number

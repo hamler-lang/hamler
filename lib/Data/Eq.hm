@@ -12,32 +12,50 @@
 -- The Eq Typeclass.
 --
 -----------------------------------------------------------------------------
-module Data.Eq where
+module Data.Eq
+  ( class Eq
+  , eq
+  , (==)
+  , notEq
+  , (/=)
+  ) where
 
-import Data.Base (Integer, Float)
+import Data.Base (Number)
+import Data.Unit (Unit)
+import Data.Void (Void)
 
 infix 4 eq as ==
+infix 4 notEq as /=
 
 class Eq a where
   eq :: a -> a -> Boolean
 
 instance Eq Boolean where
   eq = boolEq
+
 instance Eq Char where
   eq = charEq
-instance Eq Int where
+
+instance Eq Integer where
   eq = intEq
+
 instance Eq Float where
   eq = floatEq
+
 instance Eq Number where
   eq = numEq
 
+instance Eq Unit where
+  eq _ _ = true
+
+instance Eq Void where
+  eq _ _ = true
+
 foreign import boolEq  :: Boolean -> Boolean -> Boolean
 foreign import charEq  :: Char -> Char -> Boolean
-foreign import intEq   :: Int -> Int -> Boolean
+foreign import intEq   :: Integer -> Integer -> Boolean
 foreign import floatEq :: Float -> Float -> Boolean
 foreign import numEq   :: Number -> Number -> Boolean
 
 notEq :: forall a. Eq a => a -> a -> Boolean
-notEq x y = (x==y) == false
-
+notEq x y = (x == y) == false

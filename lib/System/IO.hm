@@ -1,0 +1,4 @@
+
+module System.IO where
+
+foreign import print :: String -> String

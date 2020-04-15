@@ -9,11 +9,35 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Bitwise Operators.
+-- Bitwise Operators:
+--
+-- | BitOp | Name            |
+-- | ----- | --------------- |
+-- | band  | Bit and         |
+-- | bor   | Bit or          |
+-- | bnot  | Bit not         |
+-- | bxor  | Bit xor         |
+-- | bsl   | Bit shift left  |
+-- | bsr   | Bit shift right |
 --
 -----------------------------------------------------------------------------
+module Data.Bits where
 
-module Bits where
+-- | Bit and
+foreign import band :: Integer -> Integer -> Integer
 
--- TODO: ...
+-- | Bit or
+foreign import bor  :: Integer -> Integer -> Integer
+
+-- | Bit not
+foreign import bnot :: Integer -> Integer
+
+-- | Bit xor
+foreign import bxor :: Integer -> Integer -> Integer
+
+-- | Bit shift left
+foreign import bsl  :: Integer -> Integer -> Integer
+
+-- | Bit shift right
+foreign import bsr  :: Integer -> Integer -> Integer
 

@@ -12,69 +12,172 @@
 -- The Ord Typeclass.
 --
 -----------------------------------------------------------------------------
-module Data.Ord where
+module Data.Ord
+  ( class Ord, compare
+  , lessThan, (<)
+  , lessThanOrEq, (<=)
+  , greaterThan, (>)
+  , greaterThanOrEq, (>=)
+  , comparing
+  , min, max
+  , between
+  , module Data.Ordering
+  ) where
 
-import Data.Base (Integer, Float)
-import Data.Eq
+import Data.Base (Number)
+import Data.Eq (class Eq, (/=))
+import Data.Ordering (Ordering(..))
+import Data.Ring (class Ring, zero, one, negate)
+import Data.Unit (Unit)
+import Data.Void (Void)
 
 class Eq a => Ord a where
-  lessThan :: a -> a -> Boolean
-  greaterThan :: a -> a -> Boolean
-  lessThanOrEq :: a -> a -> Boolean
-  greaterThanOrEq :: a -> a -> Boolean
+  compare :: a -> a -> Ordering
+
+instance Ord Boolean where
+  compare = compBool LT EQ GT
+
+instance Ord Char where
+  compare = compChar LT EQ GT
+
+instance Ord Integer where
+  compare = compInt LT EQ GT
+
+instance Ord Float where
+  compare = compFloat LT EQ GT
+
+instance Ord Number where
+  compare = compNum LT EQ GT
+
+instance Ord Unit where
+  compare _ _ = EQ
+
+instance Ord Void where
+  compare _ _ = EQ
+
+foreign import compBool
+  :: Ordering
+  -> Ordering
+  -> Ordering
+  -> Boolean
+  -> Boolean
+  -> Ordering
+
+foreign import compChar
+  :: Ordering
+  -> Ordering
+  -> Ordering
+  -> Char
+  -> Char
+  -> Ordering
+
+foreign import compInt
+  :: Ordering
+  -> Ordering
+  -> Ordering
+  -> Integer
+  -> Integer
+  -> Ordering
+
+foreign import compFloat
+  :: Ordering
+  -> Ordering
+  -> Ordering
+  -> Float
+  -> Float
+  -> Ordering
+
+foreign import compNum
+  :: Ordering
+  -> Ordering
+  -> Ordering
+  -> Number
+  -> Number
+  -> Ordering
+
+foreign import ordString
+  :: Ordering
+  -> Ordering
+  -> Ordering
+  -> String
+  -> String
+  -> Ordering
+
+-- | Test whether one value is _strictly less than_ another.
+lessThan :: forall a. Ord a => a -> a -> Boolean
+lessThan a1 a2 = case a1 `compare` a2 of
+  LT -> true
+  _ -> false
+
+-- | Test whether one value is _strictly greater than_ another.
+greaterThan :: forall a. Ord a => a -> a -> Boolean
+greaterThan a1 a2 = case a1 `compare` a2 of
+  GT -> true
+  _ -> false
+
+-- | Test whether one value is _non-strictly less than_ another.
+lessThanOrEq :: forall a. Ord a => a -> a -> Boolean
+lessThanOrEq a1 a2 = case a1 `compare` a2 of
+  GT -> false
+  _ -> true
+
+-- | Test whether one value is _non-strictly greater than_ another.
+greaterThanOrEq :: forall a. Ord a => a -> a -> Boolean
+greaterThanOrEq a1 a2 = case a1 `compare` a2 of
+  LT -> false
+  _ -> true
 
 infixl 4 lessThan as <
 infixl 4 lessThanOrEq as <=
 infixl 4 greaterThan as >
 infixl 4 greaterThanOrEq as >=
 
-instance Ord Boolean where
-  lessThan = boolLessThan
-  greaterThan = boolGreaterThan
-  lessThanOrEq = boolLessThanOrEq
-  greaterThanOrEq = boolGreaterThanOrEq
+-- | Compares two values by mapping them to a type with an `Ord` instance.
+comparing :: forall a b. Ord b => (a -> b) -> (a -> a -> Ordering)
+comparing f x y = compare (f x) (f y)
 
-foreign import boolLessThan :: Boolean -> Boolean -> Boolean
-foreign import boolGreaterThan :: Boolean -> Boolean -> Boolean
-foreign import boolLessThanOrEq :: Boolean -> Boolean -> Boolean
-foreign import boolGreaterThanOrEq :: Boolean -> Boolean -> Boolean
+-- | Take the minimum of two values. If they are considered equal, the first
+-- | argument is chosen.
+min :: forall a. Ord a => a -> a -> a
+min x y =
+  case compare x y of
+    LT -> x
+    EQ -> x
+    GT -> y
 
-instance Ord Char where
-  lessThan = charLessThan
-  greaterThan = charGreaterThan
-  lessThanOrEq = charLessThanOrEq
-  greaterThanOrEq = charGreaterThanOrEq
+-- | Take the maximum of two values. If they are considered equal, the first
+-- | argument is chosen.
+max :: forall a. Ord a => a -> a -> a
+max x y =
+  case compare x y of
+    LT -> y
+    EQ -> x
+    GT -> x
 
-foreign import charLessThan :: Char -> Char -> Boolean
-foreign import charGreaterThan :: Char -> Char -> Boolean
-foreign import charLessThanOrEq :: Char -> Char -> Boolean
-foreign import charGreaterThanOrEq :: Char -> Char -> Boolean
+-- | Clamp a value between a minimum and a maximum. For example:
+-- |
+-- | ``` purescript
+-- | let f = clamp 0 10
+-- | f (-5) == 0
+-- | f 5    == 5
+-- | f 15   == 10
+-- | ```
+clamp :: forall a. Ord a => a -> a -> a -> a
+clamp low hi x = min hi (max low x)
 
-instance Ord Int where
-  lessThan = intLessThan
-  greaterThan = intGreaterThan
-  lessThanOrEq = intLessThanOrEq
-  greaterThanOrEq = intGreaterThanOrEq
-
-foreign import intLessThan :: Int -> Int -> Boolean
-foreign import intGreaterThan :: Int -> Int -> Boolean
-foreign import intLessThanOrEq :: Int -> Int -> Boolean
-foreign import intGreaterThanOrEq :: Int -> Int -> Boolean
-
--- instance Ord Float where
-  -- lessThan = floatLessThan
-  -- greaterThan = floatGreaterThan
-  -- lessThanOrEq = floatLessThanOrEq
-  -- greaterThanOrEq = floatGreaterThanOrEq
-
-instance Ord Number where
-  lessThan = numLessThan
-  greaterThan = numGreaterThan
-  lessThanOrEq = numLessThanOrEq
-  greaterThanOrEq = numGreaterThanOrEq
-
-foreign import numLessThan :: Number -> Number -> Boolean
-foreign import numGreaterThan :: Number -> Number -> Boolean
-foreign import numLessThanOrEq :: Number -> Number -> Boolean
-foreign import numGreaterThanOrEq :: Number -> Number -> Boolean
-
+-- | Test whether a value is between a minimum and a maximum (inclusive).
+-- | For example:
+-- |
+-- | ``` purescript
+-- | let f = between 0 10
+-- | f 0    == true
+-- | f (-5) == false
+-- | f 5    == true
+-- | f 10   == true
+-- | f 15   == false
+-- | ```
+between :: forall a. Ord a => a -> a -> a -> Boolean
+between low hi x
+  | x < low = false
+  | x > hi = false
+  | true = true

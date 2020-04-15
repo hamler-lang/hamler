@@ -14,8 +14,6 @@
 -----------------------------------------------------------------------------
 module Data.Tuple where
 
-foreign import data Tuple :: Type
-
 fst :: forall a b. (a, b) -> a
 fst (a, _) = a
 
@@ -25,15 +23,12 @@ snd (_, b) = b
 swap :: forall a b. (a, b) -> (b, a)
 swap (a, b) = (b, a)
 
-{- TODO:
-curry :: ((a, b) -> c) -> a -> b -> c
+curry :: forall a b c. ((a, b) -> c) -> a -> b -> c
 curry f x y =  f (x, y)
 
-uncurry :: (a -> b -> c) -> ((a, b) -> c)
+uncurry :: forall a b c. (a -> b -> c) -> ((a, b) -> c)
 uncurry f p =  f (fst p) (snd p)
--}
 
 foreign import elem :: forall a. Integer -> Tuple -> a
 foreign import setElem :: forall a. Integer -> a -> Tuple -> Tuple
 foreign import size :: forall a. Tuple -> Integer
-

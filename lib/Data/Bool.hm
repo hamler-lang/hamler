@@ -1,0 +1,37 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Bool
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Bool DataType.
+--
+-----------------------------------------------------------------------------
+module Data.Bool where
+
+-- | An alias for `Boolean`
+type Bool = Boolean
+
+infixr 3 conj as &&
+infixr 2 disj as ||
+
+conj :: Bool -> Bool -> Bool
+conj true true = true
+conj _ _ = false
+
+disj :: Bool -> Bool -> Bool
+disj false false = false
+disj _ _ = true
+
+not :: Bool -> Bool
+not true  = false
+not false = true
+
+-- | An alias for `true', which is used for guards.
+otherwise :: Bool
+otherwise = true

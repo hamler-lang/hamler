@@ -27,4 +27,3 @@ foreign import delete  :: forall k v.Ord k => k -> Map k v -> Map k v
 foreign import updateWith :: forall k v.Ord k => k -> (v -> Maybe v) -> Map k v -> Map k v
 foreign import size    :: forall k v.Ord k => Map k v -> Int
 foreign import filter  :: forall k v.Ord k => (v -> Boolean) -> Map k v -> Map k v
-

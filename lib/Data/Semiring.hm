@@ -14,6 +14,8 @@
 -----------------------------------------------------------------------------
 module Data.Semiring where
 
+import Data.Base (Number)
+
 class Semiring a where
   add  :: a -> a -> a
   zero :: a
@@ -23,7 +25,7 @@ class Semiring a where
 infixl 6 add as +
 infixl 7 mul as *
 
-instance Semiring Int where
+instance Semiring Integer where
   add = intAdd
   zero = 0
   mul = intMul
@@ -35,8 +37,7 @@ instance Semiring Number where
   mul = numMul
   one = 1.0
 
-foreign import intAdd :: Int -> Int -> Int
-foreign import intMul :: Int -> Int -> Int
+foreign import intAdd :: Integer -> Integer -> Integer
+foreign import intMul :: Integer -> Integer -> Integer
 foreign import numAdd :: Number -> Number -> Number
 foreign import numMul :: Number -> Number -> Number
-

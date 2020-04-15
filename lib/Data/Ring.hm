@@ -37,4 +37,3 @@ foreign import charSub :: Char -> Char -> Char
 foreign import intSub :: Int -> Int -> Int
 foreign import floatSub :: Float -> Float -> Float
 foreign import numSub :: Number -> Number -> Number
-

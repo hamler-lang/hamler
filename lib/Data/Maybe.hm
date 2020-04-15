@@ -14,8 +14,6 @@
 -----------------------------------------------------------------------------
 module Data.Maybe where
 
-import Data.Base
-
 data Maybe a = Nothing | Just a
 
 maybe :: forall a b. b -> (a -> b) -> Maybe a -> b
@@ -30,4 +28,3 @@ isJust = maybe false (const true)
 
 isNothing :: forall a. Maybe a -> Boolean
 isNothing = maybe true (const false)
-

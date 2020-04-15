@@ -1,0 +1,75 @@
+module 'Bits' ['band'/2,
+	       'bnot'/1,
+	       'bor'/2,
+	       'bsl'/2,
+	       'bsr'/2,
+	       'bxor'/2,
+	       'module_info'/0,
+	       'module_info'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[66|[105|[116|[115|[46|[101|[114|[108]]]]]]]],1}],
+		%% Line 25
+		'spec' =
+		    %% Line 25
+		    [{{'band',2},[{'type',25,'fun',[{'type',25,'product',[{'type',25,'integer',[]}|[{'type',25,'integer',[]}]]}|[{'type',25,'integer',[]}]]}]}],
+		%% Line 28
+		'spec' =
+		    %% Line 28
+		    [{{'bor',2},[{'type',28,'fun',[{'type',28,'product',[{'type',28,'integer',[]}|[{'type',28,'integer',[]}]]}|[{'type',28,'integer',[]}]]}]}],
+		%% Line 31
+		'spec' =
+		    %% Line 31
+		    [{{'bnot',1},[{'type',31,'fun',[{'type',31,'product',[{'type',31,'integer',[]}]}|[{'type',31,'integer',[]}]]}]}],
+		%% Line 34
+		'spec' =
+		    %% Line 34
+		    [{{'bxor',2},[{'type',34,'fun',[{'type',34,'product',[{'type',34,'integer',[]}|[{'type',34,'integer',[]}]]}|[{'type',34,'integer',[]}]]}]}],
+		%% Line 37
+		'spec' =
+		    %% Line 37
+		    [{{'bsl',2},[{'type',37,'fun',[{'type',37,'product',[{'type',37,'integer',[]}|[{'type',37,'integer',[]}]]}|[{'type',37,'integer',[]}]]}]}],
+		%% Line 40
+		'spec' =
+		    %% Line 40
+		    [{{'bsr',2},[{'type',40,'fun',[{'type',40,'product',[{'type',40,'integer',[]}|[{'type',40,'integer',[]}]]}|[{'type',40,'integer',[]}]]}]}]]
+'band'/2 =
+    %% Line 26
+    fun (_0,_1) ->
+	call 'erlang':'band'
+	    (_0, _1)
+'bor'/2 =
+    %% Line 29
+    fun (_0,_1) ->
+	call 'erlang':'bor'
+	    (_0, _1)
+'bnot'/1 =
+    %% Line 32
+    fun (_0) ->
+	call 'erlang':'bnot'
+	    (_0)
+'bxor'/2 =
+    %% Line 35
+    fun (_0,_1) ->
+	call 'erlang':'bxor'
+	    (_0, _1)
+'bsl'/2 =
+    %% Line 38
+    fun (_0,_1) ->
+	call 'erlang':'bsl'
+	    (_0, _1)
+'bsr'/2 =
+    %% Line 41
+    fun (_0,_1) ->
+	call 'erlang':'bsr'
+	    (_0, _1)
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Bits')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Bits', _0)
+end

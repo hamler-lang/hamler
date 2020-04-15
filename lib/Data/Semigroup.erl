@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Tuple
+%% Module      :  Semigroup
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,21 +9,19 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Tuple FFI Module.
+%% The Semigroup Module.
 %%
 %%---------------------------------------------------------------------------
--module('Tuple').
+-module('Semigroup').
 
--export([ elem/2
-        , setElem/3
-        , size/1
+-export([ stringAppend/2
+        , listAppend/2
         ]).
 
--spec(elem(integer(), tuple()) -> any()).
-elem(I, Tup) -> element(I, Tup).
+%% stringAppend :: String -> String -> String
+-spec(stringAppend(string(), string()) -> string()).
+stringAppend(S1, S2) -> listAppend(S1, S2).
 
--spec(setElem(integer(), any(), tuple()) -> tuple()).
-setElem(I, El, Tup) -> setelement(I, El, Tup).
-
--spec(size(tuple()) -> integer()).
-size(Tup) -> tuple_size(Tup).
+%% listAppend :: forall a. List a -> List a -> List a
+-spec(listAppend(list(), list()) -> list()).
+listAppend(L1, L2) -> lists:append(L1, L2).

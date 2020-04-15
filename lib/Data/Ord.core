@@ -1,319 +1,231 @@
-module 'Data.Ord' ['boolGreaterThan'/2,
-		   'boolGreaterThanOrEq'/2,
-		   'boolLessThan'/2,
-		   'boolLessThanOrEq'/2,
-		   'charGreaterThan'/2,
-		   'charGreaterThanOrEq'/2,
-		   'charLessThan'/2,
-		   'charLessThanOrEq'/2,
-		   'floatGreaterThan'/2,
-		   'floatGreaterThanOrEq'/2,
-		   'floatLessThan'/2,
-		   'floatLessThanOrEq'/2,
-		   'intGreaterThan'/2,
-		   'intGreaterThanOrEq'/2,
-		   'intLessThan'/2,
-		   'intLessThanOrEq'/2,
-		   'module_info'/0,
-		   'module_info'/1,
-		   'numGreaterThan'/2,
-		   'numGreaterThanOrEq'/2,
-		   'numLessThan'/2,
-		   'numLessThanOrEq'/2]
+module 'Ord' ['compBool'/5,
+	      'compChar'/5,
+	      'compFloat'/5,
+	      'compInt'/5,
+	      'compNum'/5,
+	      'compString'/5,
+	      'module_info'/0,
+	      'module_info'/1]
     attributes [%% Line 1
 		'file' =
 		    %% Line 1
 		    [{[79|[114|[100|[46|[101|[114|[108]]]]]]],1}],
-		%% Line 52
-		'spec' =
-		    %% Line 52
-		    [{{'boolLessThan',2},[{'type',52,'fun',[{'type',52,'product',[{'type',52,'boolean',[]}|[{'type',52,'boolean',[]}]]}|[{'type',52,'boolean',[]}]]}]}],
-		%% Line 55
-		'spec' =
-		    %% Line 55
-		    [{{'boolGreaterThan',2},[{'type',55,'fun',[{'type',55,'product',[{'type',55,'boolean',[]}|[{'type',55,'boolean',[]}]]}|[{'type',55,'boolean',[]}]]}]}],
-		%% Line 58
-		'spec' =
-		    %% Line 58
-		    [{{'boolLessThanOrEq',2},[{'type',58,'fun',[{'type',58,'product',[{'type',58,'boolean',[]}|[{'type',58,'boolean',[]}]]}|[{'type',58,'boolean',[]}]]}]}],
-		%% Line 61
-		'spec' =
-		    %% Line 61
-		    [{{'boolGreaterThanOrEq',2},[{'type',61,'fun',[{'type',61,'product',[{'type',61,'boolean',[]}|[{'type',61,'boolean',[]}]]}|[{'type',61,'boolean',[]}]]}]}],
-		%% Line 68
-		'spec' =
-		    %% Line 68
-		    [{{'charLessThan',2},[{'type',68,'fun',[{'type',68,'product',[{'type',68,'char',[]}|[{'type',68,'char',[]}]]}|[{'type',68,'boolean',[]}]]}]}],
-		%% Line 71
-		'spec' =
-		    %% Line 71
-		    [{{'charGreaterThan',2},[{'type',71,'fun',[{'type',71,'product',[{'type',71,'char',[]}|[{'type',71,'char',[]}]]}|[{'type',71,'boolean',[]}]]}]}],
-		%% Line 74
-		'spec' =
-		    %% Line 74
-		    [{{'charLessThanOrEq',2},[{'type',74,'fun',[{'type',74,'product',[{'type',74,'char',[]}|[{'type',74,'char',[]}]]}|[{'type',74,'boolean',[]}]]}]}],
-		%% Line 77
-		'spec' =
-		    %% Line 77
-		    [{{'charGreaterThanOrEq',2},[{'type',77,'fun',[{'type',77,'product',[{'type',77,'char',[]}|[{'type',77,'char',[]}]]}|[{'type',77,'boolean',[]}]]}]}],
-		%% Line 84
-		'spec' =
-		    %% Line 84
-		    [{{'intLessThan',2},[{'type',84,'fun',[{'type',84,'product',[{'type',84,'integer',[]}|[{'type',84,'integer',[]}]]}|[{'type',84,'boolean',[]}]]}]}],
-		%% Line 87
-		'spec' =
-		    %% Line 87
-		    [{{'intGreaterThan',2},[{'type',87,'fun',[{'type',87,'product',[{'type',87,'integer',[]}|[{'type',87,'integer',[]}]]}|[{'type',87,'boolean',[]}]]}]}],
-		%% Line 90
-		'spec' =
-		    %% Line 90
-		    [{{'intLessThanOrEq',2},[{'type',90,'fun',[{'type',90,'product',[{'type',90,'integer',[]}|[{'type',90,'integer',[]}]]}|[{'type',90,'boolean',[]}]]}]}],
-		%% Line 93
-		'spec' =
-		    %% Line 93
-		    [{{'intGreaterThanOrEq',2},[{'type',93,'fun',[{'type',93,'product',[{'type',93,'integer',[]}|[{'type',93,'integer',[]}]]}|[{'type',93,'boolean',[]}]]}]}],
-		%% Line 100
-		'spec' =
-		    %% Line 100
-		    [{{'floatLessThan',2},[{'type',100,'fun',[{'type',100,'product',[{'type',100,'float',[]}|[{'type',100,'float',[]}]]}|[{'type',100,'boolean',[]}]]}]}],
-		%% Line 103
-		'spec' =
-		    %% Line 103
-		    [{{'floatGreaterThan',2},[{'type',103,'fun',[{'type',103,'product',[{'type',103,'float',[]}|[{'type',103,'float',[]}]]}|[{'type',103,'boolean',[]}]]}]}],
-		%% Line 106
-		'spec' =
-		    %% Line 106
-		    [{{'floatLessThanOrEq',2},[{'type',106,'fun',[{'type',106,'product',[{'type',106,'float',[]}|[{'type',106,'float',[]}]]}|[{'type',106,'boolean',[]}]]}]}],
-		%% Line 109
-		'spec' =
-		    %% Line 109
-		    [{{'floatGreaterThanOrEq',2},[{'type',109,'fun',[{'type',109,'product',[{'type',109,'float',[]}|[{'type',109,'float',[]}]]}|[{'type',109,'boolean',[]}]]}]}],
-		%% Line 116
-		'spec' =
-		    %% Line 116
-		    [{{'numLessThan',2},[{'type',116,'fun',[{'type',116,'product',[{'type',116,'number',[]}|[{'type',116,'number',[]}]]}|[{'type',116,'boolean',[]}]]}]}],
-		%% Line 119
-		'spec' =
-		    %% Line 119
-		    [{{'numGreaterThan',2},[{'type',119,'fun',[{'type',119,'product',[{'type',119,'number',[]}|[{'type',119,'number',[]}]]}|[{'type',119,'boolean',[]}]]}]}],
-		%% Line 122
-		'spec' =
-		    %% Line 122
-		    [{{'numLessThanOrEq',2},[{'type',122,'fun',[{'type',122,'product',[{'type',122,'number',[]}|[{'type',122,'number',[]}]]}|[{'type',122,'boolean',[]}]]}]}],
-		%% Line 125
-		'spec' =
-		    %% Line 125
-		    [{{'numGreaterThanOrEq',2},[{'type',125,'fun',[{'type',125,'product',[{'type',125,'number',[]}|[{'type',125,'number',[]}]]}|[{'type',125,'boolean',[]}]]}]}],
-		%% Line 132
+		%% Line 43
 		'compile' =
-		    %% Line 132
-		    [{'inline',[{'lessThan',2}|[{'greaterThan',2}|[{'lessThanOrEq',2}|[{'greaterThanOrEq',2}]]]]}]]
-'boolLessThan'/2 =
-    %% Line 53
-    fun (_0,_1) ->
-	%% Line 138
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '<'
-					       -| ['compiler_generated'] )
-	      (_0, _1)
+		    %% Line 43
+		    [{'inline',[{'comp',5}]}]]
+'compBool'/5 =
+    %% Line 25
+    fun (_0,_1,_2,_3,_4) ->
+	%% Line 45
+	( case <> of
+	    ( <>
+		  when ( call ( 'erlang'
+			     -| ['compiler_generated'] ):( '>'
+							   -| ['compiler_generated'] )
+			  (_3,
+			   _4)
+		      -| ['compiler_generated'] ) ->
+		  _1
+	      -| ['compiler_generated'] )
+	    %% Line 46
+	    ( <>
+		  when ( call ( 'erlang'
+			     -| ['compiler_generated'] ):( '<'
+							   -| ['compiler_generated'] )
+			  (_3,
+			   _4)
+		      -| ['compiler_generated'] ) ->
+		  _0
+	      -| ['compiler_generated'] )
+	    %% Line 47
+	    ( <> when ( 'true'
+			-| ['compiler_generated'] ) ->
+		  _2
+	      -| ['compiler_generated'] )
+	  end
 	  -| ['compiler_generated'] )
-'boolGreaterThan'/2 =
-    %% Line 56
-    fun (_0,_1) ->
-	%% Line 139
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '>'
-					       -| ['compiler_generated'] )
-	      (_0, _1)
+'compChar'/5 =
+    %% Line 28
+    fun (_0,_1,_2,_3,_4) ->
+	%% Line 45
+	( case <> of
+	    ( <>
+		  when ( call ( 'erlang'
+			     -| ['compiler_generated'] ):( '>'
+							   -| ['compiler_generated'] )
+			  (_3,
+			   _4)
+		      -| ['compiler_generated'] ) ->
+		  _1
+	      -| ['compiler_generated'] )
+	    %% Line 46
+	    ( <>
+		  when ( call ( 'erlang'
+			     -| ['compiler_generated'] ):( '<'
+							   -| ['compiler_generated'] )
+			  (_3,
+			   _4)
+		      -| ['compiler_generated'] ) ->
+		  _0
+	      -| ['compiler_generated'] )
+	    %% Line 47
+	    ( <> when ( 'true'
+			-| ['compiler_generated'] ) ->
+		  _2
+	      -| ['compiler_generated'] )
+	  end
 	  -| ['compiler_generated'] )
-'boolLessThanOrEq'/2 =
-    %% Line 59
-    fun (_0,_1) ->
-	%% Line 140
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '=<'
-					       -| ['compiler_generated'] )
-	      (_0, _1)
+'compInt'/5 =
+    %% Line 31
+    fun (_0,_1,_2,_3,_4) ->
+	%% Line 45
+	( case <> of
+	    ( <>
+		  when ( call ( 'erlang'
+			     -| ['compiler_generated'] ):( '>'
+							   -| ['compiler_generated'] )
+			  (_3,
+			   _4)
+		      -| ['compiler_generated'] ) ->
+		  _1
+	      -| ['compiler_generated'] )
+	    %% Line 46
+	    ( <>
+		  when ( call ( 'erlang'
+			     -| ['compiler_generated'] ):( '<'
+							   -| ['compiler_generated'] )
+			  (_3,
+			   _4)
+		      -| ['compiler_generated'] ) ->
+		  _0
+	      -| ['compiler_generated'] )
+	    %% Line 47
+	    ( <> when ( 'true'
+			-| ['compiler_generated'] ) ->
+		  _2
+	      -| ['compiler_generated'] )
+	  end
 	  -| ['compiler_generated'] )
-'boolGreaterThanOrEq'/2 =
-    %% Line 62
-    fun (_0,_1) ->
-	%% Line 141
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '>='
-					       -| ['compiler_generated'] )
-	      (_0, _1)
+'compFloat'/5 =
+    %% Line 34
+    fun (_0,_1,_2,_3,_4) ->
+	%% Line 45
+	( case <> of
+	    ( <>
+		  when ( call ( 'erlang'
+			     -| ['compiler_generated'] ):( '>'
+							   -| ['compiler_generated'] )
+			  (_3,
+			   _4)
+		      -| ['compiler_generated'] ) ->
+		  _1
+	      -| ['compiler_generated'] )
+	    %% Line 46
+	    ( <>
+		  when ( call ( 'erlang'
+			     -| ['compiler_generated'] ):( '<'
+							   -| ['compiler_generated'] )
+			  (_3,
+			   _4)
+		      -| ['compiler_generated'] ) ->
+		  _0
+	      -| ['compiler_generated'] )
+	    %% Line 47
+	    ( <> when ( 'true'
+			-| ['compiler_generated'] ) ->
+		  _2
+	      -| ['compiler_generated'] )
+	  end
 	  -| ['compiler_generated'] )
-'charLessThan'/2 =
-    %% Line 69
-    fun (_0,_1) ->
-	%% Line 138
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '<'
-					       -| ['compiler_generated'] )
-	      (_0, _1)
+'compNum'/5 =
+    %% Line 37
+    fun (_0,_1,_2,_3,_4) ->
+	%% Line 45
+	( case <> of
+	    ( <>
+		  when ( call ( 'erlang'
+			     -| ['compiler_generated'] ):( '>'
+							   -| ['compiler_generated'] )
+			  (_3,
+			   _4)
+		      -| ['compiler_generated'] ) ->
+		  _1
+	      -| ['compiler_generated'] )
+	    %% Line 46
+	    ( <>
+		  when ( call ( 'erlang'
+			     -| ['compiler_generated'] ):( '<'
+							   -| ['compiler_generated'] )
+			  (_3,
+			   _4)
+		      -| ['compiler_generated'] ) ->
+		  _0
+	      -| ['compiler_generated'] )
+	    %% Line 47
+	    ( <> when ( 'true'
+			-| ['compiler_generated'] ) ->
+		  _2
+	      -| ['compiler_generated'] )
+	  end
 	  -| ['compiler_generated'] )
-'charGreaterThan'/2 =
-    %% Line 72
-    fun (_0,_1) ->
-	%% Line 139
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '>'
-					       -| ['compiler_generated'] )
-	      (_0, _1)
+'compString'/5 =
+    %% Line 40
+    fun (_0,_1,_2,_3,_4) ->
+	%% Line 45
+	( case <> of
+	    ( <>
+		  when ( call ( 'erlang'
+			     -| ['compiler_generated'] ):( '>'
+							   -| ['compiler_generated'] )
+			  (_3,
+			   _4)
+		      -| ['compiler_generated'] ) ->
+		  _1
+	      -| ['compiler_generated'] )
+	    %% Line 46
+	    ( <>
+		  when ( call ( 'erlang'
+			     -| ['compiler_generated'] ):( '<'
+							   -| ['compiler_generated'] )
+			  (_3,
+			   _4)
+		      -| ['compiler_generated'] ) ->
+		  _0
+	      -| ['compiler_generated'] )
+	    %% Line 47
+	    ( <> when ( 'true'
+			-| ['compiler_generated'] ) ->
+		  _2
+	      -| ['compiler_generated'] )
+	  end
 	  -| ['compiler_generated'] )
-'charLessThanOrEq'/2 =
-    %% Line 75
-    fun (_0,_1) ->
-	%% Line 140
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '=<'
-					       -| ['compiler_generated'] )
-	      (_0, _1)
-	  -| ['compiler_generated'] )
-'charGreaterThanOrEq'/2 =
-    %% Line 78
-    fun (_0,_1) ->
-	%% Line 141
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '>='
-					       -| ['compiler_generated'] )
-	      (_0, _1)
-	  -| ['compiler_generated'] )
-'intLessThan'/2 =
-    %% Line 85
-    fun (_0,_1) ->
-	%% Line 138
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '<'
-					       -| ['compiler_generated'] )
-	      (_0, _1)
-	  -| ['compiler_generated'] )
-'intGreaterThan'/2 =
-    %% Line 88
-    fun (_0,_1) ->
-	%% Line 139
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '>'
-					       -| ['compiler_generated'] )
-	      (_0, _1)
-	  -| ['compiler_generated'] )
-'intLessThanOrEq'/2 =
-    %% Line 91
-    fun (_0,_1) ->
-	%% Line 140
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '=<'
-					       -| ['compiler_generated'] )
-	      (_0, _1)
-	  -| ['compiler_generated'] )
-'intGreaterThanOrEq'/2 =
-    %% Line 94
-    fun (_0,_1) ->
-	%% Line 141
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '>='
-					       -| ['compiler_generated'] )
-	      (_0, _1)
-	  -| ['compiler_generated'] )
-'floatLessThan'/2 =
-    %% Line 101
-    fun (_0,_1) ->
-	%% Line 138
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '<'
-					       -| ['compiler_generated'] )
-	      (_0, _1)
-	  -| ['compiler_generated'] )
-'floatGreaterThan'/2 =
-    %% Line 104
-    fun (_0,_1) ->
-	%% Line 139
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '>'
-					       -| ['compiler_generated'] )
-	      (_0, _1)
-	  -| ['compiler_generated'] )
-'floatLessThanOrEq'/2 =
-    %% Line 107
-    fun (_0,_1) ->
-	%% Line 140
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '=<'
-					       -| ['compiler_generated'] )
-	      (_0, _1)
-	  -| ['compiler_generated'] )
-'floatGreaterThanOrEq'/2 =
-    %% Line 110
-    fun (_0,_1) ->
-	%% Line 141
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '>='
-					       -| ['compiler_generated'] )
-	      (_0, _1)
-	  -| ['compiler_generated'] )
-'numLessThan'/2 =
-    %% Line 117
-    fun (_0,_1) ->
-	%% Line 138
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '<'
-					       -| ['compiler_generated'] )
-	      (_0, _1)
-	  -| ['compiler_generated'] )
-'numGreaterThan'/2 =
-    %% Line 120
-    fun (_0,_1) ->
-	%% Line 139
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '>'
-					       -| ['compiler_generated'] )
-	      (_0, _1)
-	  -| ['compiler_generated'] )
-'numLessThanOrEq'/2 =
-    %% Line 123
-    fun (_0,_1) ->
-	%% Line 140
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '=<'
-					       -| ['compiler_generated'] )
-	      (_0, _1)
-	  -| ['compiler_generated'] )
-'numGreaterThanOrEq'/2 =
-    %% Line 126
-    fun (_0,_1) ->
-	%% Line 139
-	( call ( 'erlang'
-		 -| ['compiler_generated'] ):( '>'
-					       -| ['compiler_generated'] )
-	      (_0, _1)
-	  -| ['compiler_generated'] )
-'lessThan'/2 =
-    %% Line 138
-    fun (_0,_1) ->
-	call 'erlang':'<'
-	    (_0, _1)
-'greaterThan'/2 =
-    %% Line 139
-    fun (_0,_1) ->
-	call 'erlang':'>'
-	    (_0, _1)
-'lessThanOrEq'/2 =
-    %% Line 140
-    fun (_0,_1) ->
-	call 'erlang':'=<'
-	    (_0, _1)
-'greaterThanOrEq'/2 =
-    %% Line 141
-    fun (_0,_1) ->
-	call 'erlang':'>='
-	    (_0, _1)
+'comp'/5 =
+    %% Line 44
+    fun (_0,_1,_2,_3,_4) ->
+	%% Line 45
+	case <> of
+	  <>
+	      when call 'erlang':'>'
+		    (_3,
+		     _4) ->
+	      _1
+	  %% Line 46
+	  <>
+	      when call 'erlang':'<'
+		    (_3,
+		     _4) ->
+	      _0
+	  %% Line 47
+	  <> when 'true' ->
+	      _2
+	end
 'module_info'/0 =
     fun () ->
 	call 'erlang':'get_module_info'
-	    ('Data.Ord')
+	    ('Ord')
 'module_info'/1 =
     fun (_0) ->
 	call 'erlang':'get_module_info'
-	    ('Data.Ord', _0)
+	    ('Ord', _0)
 end

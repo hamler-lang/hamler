@@ -1,0 +1,22 @@
+module 'IO' ['module_info'/0,
+	     'module_info'/1,
+	     'print'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[73|[79|[46|[101|[114|[108]]]]]],1}]]
+'print'/1 =
+    %% Line 5
+    fun (_0) ->
+	do  call 'io':'format'
+		([126|[115]], [_0|[]])
+	    _0
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('IO')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('IO', _0)
+end

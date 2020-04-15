@@ -1,0 +1,53 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Semigroup
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Semigroup Typeclass.
+--
+-----------------------------------------------------------------------------
+module Data.Semigroup
+  ( class Semigroup
+  , append, (<>)
+  ) where
+
+import Data.Unit (Unit, unit)
+import Data.Void (Void, absurd)
+
+-- | The `Semigroup` type class identifies an associative operation on a type.
+-- |
+-- | Instances are required to satisfy the following law:
+-- |
+-- | - Associativity: `(x <> y) <> z = x <> (y <> z)`
+-- |
+-- | One example of a `Semigroup` is `String`, with `(<>)` defined as string
+-- | concatenation.
+class Semigroup a where
+  append :: a -> a -> a
+
+infixr 5 append as <>
+
+instance Semigroup String where
+  append = stringAppend
+
+instance Semigroup (List a) where
+  append = listAppend
+
+instance Semigroup Unit where
+  append _ _ = unit
+
+instance Semigroup Void where
+  append _ = absurd
+
+instance Semigroup s' => Semigroup (s -> s') where
+  append f g x = f x <> g x
+
+foreign import stringAppend :: String -> String -> String
+foreign import listAppend :: forall a. List a -> List a -> List a
+

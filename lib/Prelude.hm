@@ -14,22 +14,31 @@
 -----------------------------------------------------------------------------
 module Prelude
   ( module Data.Base
+  , module Data.Bits
+  , module Data.Either
   , module Data.Eq
   , module Data.List
   , module Data.Maybe
   , module Data.Ord
   , module Data.Ring
+  , module Data.Semigroup
   , module Data.Semiring
+  , module Data.Show
+  , module Data.Unit
+  , module Data.Void
   ) where
 
 import Data.Base
+import Data.Bits
+import Data.Bool ((&&), (||))
+import Data.Either
 import Data.Eq
 import Data.List (map)
-import Data.Maybe
+import Data.Maybe (Maybe)
 import Data.Ord
 import Data.Ring
+import Data.Semigroup
 import Data.Semiring
-
-class Show a where
-  show :: a -> String
-
+import Data.Show
+import Data.Unit
+import Data.Void
