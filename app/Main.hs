@@ -18,8 +18,9 @@ main :: IO ()
 main = do
     IO.hSetEncoding IO.stdout IO.utf8
     IO.hSetEncoding IO.stderr IO.utf8
-    cmd <- Opts.handleParseResult . execParserPure opts =<< getArgs
-    cmd
+    -- cmd <- Opts.handleParseResult . execParserPure opts =<< getArgs
+    Compile.tempBuild
+    -- cmd
   where
     opts        = Opts.info (versionInfo <*> Opts.helper <*> commands) infoModList
     infoModList = Opts.fullDesc <> headerInfo <> footerInfo
@@ -54,5 +55,6 @@ main = do
       (Opts.subparser . fold)
         [ Opts.command "compile"
             (Opts.info Compile.command
-              (Opts.progDesc "Compile PureScript source files")) ]
+              (Opts.progDesc "Compile PureScript source files"))
+        ]
 

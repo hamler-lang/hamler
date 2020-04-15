@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: dfaaa1bb5d45bd06f3ae719d6807a362c6579571a69f6e05466d2d9c41757ae7
+-- hash: 027823e80f515167499d31e2f2241c17b77ae8e6bc1cc748081921d70b84be69
 
 name:           hamler
 version:        0.0.1
@@ -81,6 +81,7 @@ library
     , safe >=0.3.9 && <0.4
     , semialign >=1 && <1.1
     , semigroups >=0.16.2 && <0.19
+    , shelly
     , sourcemap >=0.1.6
     , text
     , time
@@ -135,6 +136,7 @@ executable hamler
     , safe >=0.3.9 && <0.4
     , semialign >=1 && <1.1
     , semigroups >=0.16.2 && <0.19
+    , shelly
     , sourcemap >=0.1.6
     , text
     , time
