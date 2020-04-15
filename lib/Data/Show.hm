@@ -34,10 +34,10 @@ instance Show Boolean where
 instance Show Integer where
   show = showInt
 
+{-
 instance Show Float where
   show f = showFloat f
 
-{-
 instance Show Number where
   show = showNum
 -}
