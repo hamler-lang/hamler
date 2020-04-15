@@ -169,7 +169,10 @@ pscMakeOptions = PSCMakeOptions <$> many inputFile
 command :: Opts.Parser (IO ())
 command = pure $ do
   dir <- getCurrentDirectory
-  fps1 <- gethmFiles (dir <> "/.deps/hamler/lib")
+  isExist <- doesDirectoryExist hamlerlib
+  fps1 <- if isExist
+          then gethmFiles hamlerlib
+          else gethmFiles (dir <> "/.deps/hamler/lib")
   fps2 <- gethmFiles (dir <> "/src")
   let fps = fps1 <> fps2
   compile (PSCMakeOptions { pscmInput      = fps
@@ -227,7 +230,7 @@ helloHamler = concat [
         , "\n"
         , "main :: String\n"
         , "main = print "
-        , "\"hello hamler! Great world!!\"\n"
+        , "\"Let there be Hamler, running on Erlang VM!\"\n"
         ]
 
 makeFile :: String
@@ -243,6 +246,8 @@ makeFile = concat [ ".PHONY : build run\n"
 
 liblink = "https://github.com/hamler-lang/hamler.git"
 
+hamlerlib = "/usr/local/lib/hamler/lib"
+
 initProject :: Opts.Parser (IO ())
 initProject  =pure $ do
   base <- getCurrentDirectory
@@ -250,7 +255,12 @@ initProject  =pure $ do
   mapM createDirectory dictlist'
   writeFile "src/Main.hm" helloHamler
   writeFile "Makefile" makeFile
-  SS.shelly $ SS.run "git" ["clone",liblink,".deps/hamler"]
+  isExist <- doesDirectoryExist hamlerlib
+  if isExist
+    then return ()
+    else do
+       SS.shelly $ SS.run "git" ["clone",liblink,".deps/hamler"] 
+       return ()
   print "hamler init finish!"
 
 
