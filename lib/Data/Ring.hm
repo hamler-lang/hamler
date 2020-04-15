@@ -21,9 +21,6 @@ class Semiring a => Ring a where
 
 infixl 6 sub as -
 
-instance Ring Char where
-  sub = charSub
-
 instance Ring Integer where
   sub = intSub
 

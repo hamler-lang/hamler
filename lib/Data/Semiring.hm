@@ -25,13 +25,6 @@ class Semiring a where
 infixl 6 add as +
 infixl 7 mul as *
 
--- TODO: remove?....
-instance Semiring Char where
-  add = charAdd
-  zero = 0 :: Char
-  mul = charMul
-  one = 1 :: Char
-
 instance Semiring Integer where
   add = intAdd
   zero = 0
@@ -44,8 +37,6 @@ instance Semiring Float where
   mul = numMul
   one = 1.0
 
-foreign import charAdd :: Integer -> Integer -> Integer
-foreign import charMul :: Integer -> Integer -> Integer
 foreign import intAdd :: Integer -> Integer -> Integer
 foreign import intMul :: Integer -> Integer -> Integer
 foreign import numAdd :: Number -> Number -> Number

@@ -14,14 +14,10 @@
 %%---------------------------------------------------------------------------
 -module('Ring').
 
--export([ charSub/2
-        , intSub/2
+-export([ intSub/2
         , floatSub/2
         , numSub/2
         ]).
-
--spec(charSub(char(), char()) -> char()).
-charSub(C1, C2) -> C1 - C2.
 
 -spec(intSub(integer(), integer()) -> integer()).
 intSub(I1, I2) -> I1 - I2.

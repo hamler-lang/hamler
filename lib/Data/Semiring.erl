@@ -14,9 +14,7 @@
 %%---------------------------------------------------------------------------
 -module('Semiring').
 
--export([ charAdd/2
-        , charMul/2
-         intAdd/2
+-export([ intAdd/2
         , intMul/2
         , floatAdd/2
         , floatMul/2
