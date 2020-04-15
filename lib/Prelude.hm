@@ -15,9 +15,10 @@
 module Prelude
   ( module Data.Base
   , module Data.Bits
+  , module Data.Bool
   , module Data.Either
   , module Data.Eq
-  , module Data.List
+--  , module Data.List
   , module Data.Maybe
   , module Data.Ord
   , module Data.Ring
@@ -26,16 +27,16 @@ module Prelude
   , module Data.Show
   ) where
 
-import Data.Base
-import Data.Bits
+import Data.Base (apply, const, flip, identity)
+import Data.Bits (band, bnot, bor, bsl, bsr, bxor)
 import Data.Bool ((&&), (||))
-import Data.Either
-import Data.Eq
-import Data.List -- (map)
+import Data.Either (Either(..))
+import Data.Eq (class Eq, eq, notEq, (/=), (==))
+-- import Data.List -- (map)
 import Data.Maybe (Maybe)
-import Data.Ord
-import Data.Ring
-import Data.Semigroup
-import Data.Semiring
-import Data.Show
+import Data.Ord (class Ord, between, compare, comparing, greaterThan, greaterThanOrEq, lessThan, lessThanOrEq, max, min, (<), (<=), (>), (>=))
+import Data.Ring (class Ring, (-))
+import Data.Semigroup (class Semigroup, append, (<>))
+import Data.Semiring (class Semiring, add, mul, one, zero, (*), (+))
+import Data.Show (class Show, show)
 

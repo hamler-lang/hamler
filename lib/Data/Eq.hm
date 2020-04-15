@@ -20,7 +20,7 @@ module Data.Eq
   , (/=)
   ) where
 
-import Data.Base (Number)
+-- import Data.Base (Number)
 -- import Data.Unit (Unit)
 -- import Data.Void (Void)
 

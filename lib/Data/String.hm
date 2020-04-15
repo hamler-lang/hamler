@@ -16,6 +16,7 @@ module Data.String where
 
 infixl 6 connect as ++
 
+length :: String -> Integer
 length = strlen
 
 -- TODO: rename the connect?
