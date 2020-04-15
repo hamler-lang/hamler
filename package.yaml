@@ -29,6 +29,7 @@ dependencies:
   - filepath
   - Glob >=0.9 && <0.10
   - language-javascript
+  - shelly
   - lens
   - lifted-async >=0.10.0.3 && <0.10.1
   - lifted-base >=0.2.3 && <0.2.4

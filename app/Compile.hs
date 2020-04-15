@@ -1,8 +1,9 @@
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-module Compile (command) where
+module Compile (command,initProject,tempBuild) where
 
 import           Control.Applicative
 import           Control.Monad
@@ -24,8 +25,10 @@ import           System.Directory (getCurrentDirectory)
 import           System.FilePath.Glob (glob)
 import           System.IO (hPutStr, hPutStrLn, stderr)
 import           System.IO.UTF8 (readUTF8FilesT)
-
+import           System.Directory
 import           Language.Hamler.Make
+import qualified Shelly as SS
+-- import           Prelude
 
 data PSCMakeOptions = PSCMakeOptions
   { pscmInput        :: [FilePath]
@@ -164,4 +167,75 @@ pscMakeOptions = PSCMakeOptions <$> many inputFile
 
 command :: Opts.Parser (IO ())
 command = compile <$> (Opts.helper <*> pscMakeOptions)
+
+dictlist :: [FilePath]
+dictlist =["ebin","src","test",".deps"]
+
+helloHamler :: String
+helloHamler = concat [
+          "module Main where\n"
+        , "\n"
+        , "main :: String\n"
+        , "main = "
+        , "hello hamler\n"
+        ]
+
+liblink = "https://github.com/hamler-lang/hamler.git"
+
+initProject :: IO ()
+initProject  = do
+  base <- getCurrentDirectory
+  let dictlist' = fmap (\x -> base <> "/" <> x) dictlist
+  mapM createDirectory dictlist'
+  writeFile "src/Main.hm" helloHamler
+  SS.shelly $ SS.run "git" ["clone",liblink,".deps/hamler"]
+  print "hamler init finish!"
+
+
+tempBuild :: IO ()
+tempBuild = do
+  dir <- getCurrentDirectory
+  print (dir <> "/" <> "lib")
+  fps <- gethmFiles (dir <> "/" <> "lib")
+  print fps
+  compile (PSCMakeOptions { pscmInput      = fps
+                          , pscmOutputDir  = dir <> "/" <> "tests/data/output"
+                          , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
+                          , pscmUsePrefix  = False
+                          , pscmJSONErrors = False
+                          }
+          )
+
+
+ishmFile :: String -> Bool
+ishmFile fname = (== "mh.") $ take 3 $ reverse $ fname
+
+gethmFiles :: FilePath -> IO [FilePath]
+gethmFiles basePath = do
+  list <- listDirectory basePath
+  r <- forM list $ \filePath -> do
+    let tp = basePath ++ "/" ++ filePath
+    res <- doesDirectoryExist tp
+    if res
+      then gethmFiles tp
+      else if ishmFile filePath
+              then return [tp]
+                   else return []
+  return $ concat r
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
