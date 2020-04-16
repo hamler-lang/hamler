@@ -3,7 +3,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-module Compile (command,initProject,buildlib,runProject) where
+module Compile (command,initProject,runProject) where
 
 import           Control.Applicative
 import           Control.Monad
@@ -167,8 +167,25 @@ pscMakeOptions = PSCMakeOptions <$> many inputFile
                                 <*> jsonErrors
 
 
+howBuild :: Opts.Parser Bool
+howBuild= Opts.switch $
+     Opts.short 'l'
+  <> Opts.long "libraries"
+  <> Opts.help "build the libraries to ebin"
+
+
 command :: Opts.Parser (IO ())
-command = pure $ do
+command = buildFun <$> howBuild
+
+
+buildFun :: Bool -> IO ()
+buildFun b = if b
+             then buildlib
+             else buildSrc
+
+
+buildSrc :: IO ()
+buildSrc = do
   dir <- getCurrentDirectory
   isExist <- doesDirectoryExist hamlerlib
   fps1 <- if isExist
@@ -214,17 +231,20 @@ cc x = x
 
 
 -- build lib
-buildlib :: Opts.Parser (IO ())
-buildlib = pure $ do
+buildlib :: IO ()
+buildlib = do
   dir <- getCurrentDirectory
-  isExist <- doesDirectoryExist hamlerlib
-  fps1 <- if isExist
-          then gethmFiles hamlerlib
-          else gethmFiles (dir <> "/.deps/hamler/lib")
+  fps1 <- gethmFiles (dir <> "/lib")
   let fps = fps1
       tpath = dir <> "/ebin"
-  removeDirectoryRecursive tpath
-  createDirectory tpath
+  r <- doesDirectoryExist tpath
+  if r
+    then return ()
+    else createDirectory tpath
+  list <- findFile1 ".beam" tpath
+  forM_ list $ \fp -> do
+    SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
+
   compile (PSCMakeOptions { pscmInput      = fps
                           , pscmOutputDir  = dir <>  "/ebin"
                           , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
@@ -240,6 +260,12 @@ buildlib = pure $ do
   ifs <- findFile1 ".info" tpath
   forM_ ifs $ \fp -> do
     SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
+
+  jfs <- findFile1 ".json" tpath
+  forM_ jfs $ \fp -> do
+    SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
+
+
   exitSuccess
 
 
@@ -315,6 +341,7 @@ initProject  =pure $ do
 ishmFile :: String -> Bool
 ishmFile fname = (== "mh.") $ take 3 $ reverse $ fname
 
+
 gethmFiles :: FilePath -> IO [FilePath]
 gethmFiles basePath = do
   list <- listDirectory basePath
@@ -327,20 +354,4 @@ gethmFiles basePath = do
               then return [tp]
                    else return []
   return $ concat r
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
