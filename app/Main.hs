@@ -64,5 +64,9 @@ main = do
         ,  Opts.command "run"
             (Opts.info Compile.runProject
               (Opts.progDesc "run hamler project"))
+
+        ,  Opts.command "buildlib"
+            (Opts.info Compile.buildlib
+              (Opts.progDesc "build hamler lib to ebin"))
         ]
 

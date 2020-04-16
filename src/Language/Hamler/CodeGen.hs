@@ -75,13 +75,14 @@ moduleToErl C.Module{..} = do
   -- | exports
   exports <- forM moduleExports $ \ident -> do
     let name = showQualified runIdent $ mkQualified ident (gs ^. gsmoduleName)
+        wname = runIdent ident
     case M.lookup name (gs ^. globalVar) of
-      Just args ->return $ (Nothing, FunName (Atom $ unpack name, toInteger args))
+      Just args ->return $ (Nothing, FunName (Atom $ unpack wname, toInteger args))
       Nothing -> case M.lookup name (gs ^. ffiFun) of
-        Just (args,e) -> return $ ( Just (FunDef (Constr $ FunName (Atom $ unpack name, toInteger args))
+        Just (args,e) -> return $ ( Just (FunDef (Constr $ FunName (Atom $ unpack wname, toInteger args))
                                                                     (Constr $ e)
                                          )
-                                  , FunName (Atom $ unpack name, toInteger args)
+                                  , FunName (Atom $ unpack wname, toInteger args)
                                   )
         Nothing -> error "error of export var!"
   return $ E.Module (Atom $ unpack $ runModuleName moduleName)
@@ -101,14 +102,15 @@ bindToErl (NonRec _ ident e) = do
   e' <- exprToErl e
   gs <- get
   let name = showQualified runIdent $ mkQualified ident (gs ^. gsmoduleName)
+      wname = runIdent ident
   -- | Handle the top bindings
   case e' of
     Lam vrs _ -> do
       modify (\x-> x & globalVar %~ M.insert name (length vrs) )
-      return $ [FunDef (Constr $ FunName (Atom $ unpack name, toInteger $ length vrs)) (Constr e')]
+      return $ [FunDef (Constr $ FunName (Atom $ unpack wname, toInteger $ length vrs)) (Constr e')]
     x -> do
       modify (\x-> x & globalVar %~ M.insert name 0)
-      return $ [FunDef (Constr $ FunName (Atom $ unpack name, 0))
+      return $ [FunDef (Constr $ FunName (Atom $ unpack wname, 0))
          (Constr $ Lam [] (Expr $ Constr $ e'))]
 bindToErl (C.Rec xs) = do
   modify (\x -> x & binderVarIndex .~  100)
@@ -219,8 +221,9 @@ exprToErl t@(C.App _ _ _) = do
     _ -> return $ E.App (Expr $ Constr e'') $ fmap (Expr . Constr) xs'
   where expend (C.App _ l r) s = expend l (r:s)
         expend e s             = (e ,s)
-exprToErl (C.Var _  qi) = do
+exprToErl (C.Var _  qi@(Qualified _ tema)) = do
   let name = showQualified runIdent qi
+      wname = runIdent tema
   gs <- get
   case M.lookup name (gs ^. localVar) of
     Just i -> return $ E.EVar $ E.Var $  Constr $ "_" <> show i
@@ -229,8 +232,8 @@ exprToErl (C.Var _  qi) = do
       Just (_,e) -> return e
       Nothing -> case M.lookup name (gs ^. globalVar) of
         Just a-> case a of
-          0 -> return $ E.App (Expr $ Constr $ E.Fun $ E.FunName (Atom (unpack name),0) ) []
-          x -> return $ E.Fun $ E.FunName (Atom (unpack name), toInteger x)
+          0 -> return $ E.App (Expr $ Constr $ E.Fun $ E.FunName (Atom (unpack wname),0) ) []
+          x -> return $ E.Fun $ E.FunName (Atom (unpack wname), toInteger x)
         Nothing -> case M.lookup name (gs ^. ffiFun) of
           Just (0,e) -> return $ E.App (Expr $ Constr e) []
           Just (_,e) -> return e
@@ -243,7 +246,7 @@ exprToErl (C.Var _  qi) = do
                     M.lookup funName r1
               case res of
                 Nothing -> error $ show gs ++ show qi
-                Just i ->return $ cModCall i (unpack mn') (unpack name)
+                Just i ->return $ cModCall i (unpack mn') (unpack wname)
             Qualified Nothing ident -> error $ show gs ++ show qi
 exprToErl (C.Let _ bs e) = do
   mapM bindToLetFunDef bs
