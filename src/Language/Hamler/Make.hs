@@ -240,9 +240,6 @@ inferForeignModules =
     inferForeignModule (Right path) = do
       let coreFile = replaceExtension path "core"
       exists <- liftIO $ doesFileExist coreFile
-      liftIO $ print coreFile
       if exists
-        then do
-        liftIO $ print "file is exist"
-        return (Just $  coreFile)
+        then return (Just $  coreFile)
         else return Nothing

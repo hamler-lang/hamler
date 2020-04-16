@@ -198,7 +198,7 @@ buildMakeActions outputDir filePathMap foreigns usePrefix =
     case erl of
       Left e -> lift $ makeIO "print error" $ print e
       Right e@(CE.Module _ exports _ _) -> do
-        lift $ makeIO "print error" $ putStr $ CE.prettyPrint e
+        -- lift $ makeIO "print error" $ putStr $ CE.prettyPrint e
         let mn' = runModuleName mn
         lift $ makeIO "Write core erlang file" $ TIO.writeFile
           (outputDir </>  (unpack mn' <>  (".core")))
