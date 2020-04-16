@@ -24,17 +24,17 @@ main = do
   where
     opts        = Opts.info (versionInfo <*> Opts.helper <*> commands) infoModList
     infoModList = Opts.fullDesc <> headerInfo <> footerInfo
-    headerInfo  = Opts.progDesc "The hamler compiler based on purescript 0.13.6"
+    headerInfo  = Opts.progDesc "The hamler compiler based on purescript v0.13.6"
     footerInfo  = Opts.footerDoc (Just footer)
 
     footer =
       mconcat
         [ para $
             "For help using each individual command, run `hamler COMMAND --help`. " ++
-            "For example, `hamler compile --help` displays options specific to the `compile` command."
+            "For example, `hamler build --help` displays options specific to the `build` command."
         , Doc.hardline
         , Doc.hardline
-        , Doc.text $ "hamler" ++ versionString
+        , Doc.text $ "hamler " ++ versionString
         ]
 
     para :: String -> Doc.Doc
@@ -59,7 +59,7 @@ main = do
 
         ,  Opts.command "init"
             (Opts.info Compile.initProject
-              (Opts.progDesc "init hamler project"))
+              (Opts.progDesc "init a hamler project"))
 
         ,  Opts.command "run"
             (Opts.info Compile.runProject
