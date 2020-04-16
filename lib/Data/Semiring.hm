@@ -14,8 +14,6 @@
 -----------------------------------------------------------------------------
 module Data.Semiring where
 
-import Data.Base (Number)
-
 class Semiring a where
   add  :: a -> a -> a
   zero :: a
@@ -32,12 +30,12 @@ instance Semiring Integer where
   one = 1
 
 instance Semiring Float where
-  add = numAdd
+  add = floatAdd
   zero = 0.0
-  mul = numMul
+  mul = floatMul
   one = 1.0
 
 foreign import intAdd :: Integer -> Integer -> Integer
 foreign import intMul :: Integer -> Integer -> Integer
-foreign import numAdd :: Number -> Number -> Number
-foreign import numMul :: Number -> Number -> Number
+foreign import floatAdd :: Float -> Float -> Float
+foreign import floatMul :: Float -> Float -> Float
