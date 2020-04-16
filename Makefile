@@ -14,6 +14,9 @@ run:
 install:
 	$(stack) install
 
+clib:
+	$(stack) run build -- -l
+
 test:
 	$(stack) test --fast $(package)
 

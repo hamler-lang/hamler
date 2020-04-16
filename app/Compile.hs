@@ -167,8 +167,25 @@ pscMakeOptions = PSCMakeOptions <$> many inputFile
                                 <*> jsonErrors
 
 
+howBuild :: Opts.Parser Bool
+howBuild= Opts.switch $
+     Opts.short 'l'
+  <> Opts.long "libraries"
+  <> Opts.help "build the libraries to ebin"
+
+
 command :: Opts.Parser (IO ())
-command = pure $ do
+command = buildFun <$> howBuild
+
+
+buildFun :: Bool -> IO ()
+buildFun b = if b
+             then buildlib
+             else buildSrc
+
+
+buildSrc :: IO ()
+buildSrc = do
   dir <- getCurrentDirectory
   isExist <- doesDirectoryExist hamlerlib
   fps1 <- if isExist
@@ -214,15 +231,16 @@ cc x = x
 
 
 -- build lib
-buildlib :: Opts.Parser (IO ())
-buildlib = pure $ do
+buildlib :: IO ()
+buildlib = do
   dir <- getCurrentDirectory
-  isExist <- doesDirectoryExist hamlerlib
-  fps1 <- if isExist
-          then gethmFiles hamlerlib
-          else gethmFiles (dir <> "/.deps/hamler/lib")
+  fps1 <- gethmFiles (dir <> "/lib")
   let fps = fps1
       tpath = dir <> "/ebin"
+  r <- doesDirectoryExist tpath
+  if r
+    then return ()
+    else createDirectory tpath
   removeDirectoryRecursive tpath
   createDirectory tpath
   compile (PSCMakeOptions { pscmInput      = fps
