@@ -177,9 +177,9 @@ buildMakeActions outputDir filePathMap foreigns usePrefix =
     let mn' = runModuleName mn
     con <-lift $ makeIO "read module infor" $ TIO.readFile (outputDir </>  (unpack mn' <>  ".info"))
     let list = read (unpack con) :: [(String,Int)]
-    return $ (mn', M.fromList $  fmap (\(a,b) -> (pack a ,b)) list)
+    return $ (mn', M.fromList $  fmap (\(a,b) -> (pack (unpack mn' <> "." <> a) ,b)) list)
 
- 
+
   codegen :: CF.Module CF.Ann -> Docs.Module -> ExternsFile -> SupplyT Make ()
   codegen m docs exts = do
     let mn = CF.moduleName m

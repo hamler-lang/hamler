@@ -3,7 +3,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-module Compile (command,initProject,runProject) where
+module Compile (command,initProject,buildlib,runProject) where
 
 import           Control.Applicative
 import           Control.Monad
@@ -28,6 +28,7 @@ import           System.IO.UTF8 (readUTF8FilesT)
 import           System.Directory
 import           Language.Hamler.Make
 import qualified Shelly as SS
+import qualified Data.List as LL
 -- import           Prelude
 
 data PSCMakeOptions = PSCMakeOptions
@@ -175,6 +176,7 @@ command = pure $ do
           else gethmFiles (dir <> "/.deps/hamler/lib")
   fps2 <- gethmFiles (dir <> "/src")
   let fps = fps1 <> fps2
+      fps2' = fmap hmToCore fps2
   compile (PSCMakeOptions { pscmInput      = fps
                           , pscmOutputDir  = dir <>  "/ebin"
                           , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
@@ -184,6 +186,51 @@ command = pure $ do
           )
   let tpath = dir <> "/ebin"
   cfs <- findFile1 ".core" tpath
+  forM_ (filter (`elem` fps2') cfs) $ \fp -> do
+    SS.shelly $ SS.command "erlc" ["-o" ,T.pack tpath] [T.pack $ tpath <> "/" <> fp]
+    SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
+
+  ifs <- findFile1 ".info" tpath
+  forM_ ifs $ \fp -> do
+    SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
+    return ()
+
+  ifs <- findFile1 ".core" tpath
+  forM_ ifs $ \fp -> do
+    SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
+    return ()
+
+
+  exitSuccess
+
+hmToCore :: FilePath -> FilePath
+hmToCore fp =reverse $ concat $ LL.intersperse "." $ LL.takeWhile (/="crs") $ words $ fmap cc $  ("eroc" <> (drop 2 $ reverse fp))
+
+cc :: Char -> Char
+cc ('/')= ' '
+cc x = x
+
+
+-- build lib
+buildlib :: Opts.Parser (IO ())
+buildlib = pure $ do
+  dir <- getCurrentDirectory
+  isExist <- doesDirectoryExist hamlerlib
+  fps1 <- if isExist
+          then gethmFiles hamlerlib
+          else gethmFiles (dir <> "/.deps/hamler/lib")
+  let fps = fps1
+      tpath = dir <> "/ebin"
+  removeDirectoryRecursive tpath
+  createDirectory tpath
+  compile (PSCMakeOptions { pscmInput      = fps
+                          , pscmOutputDir  = dir <>  "/ebin"
+                          , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
+                          , pscmUsePrefix  = False
+                          , pscmJSONErrors = False
+                          }
+          )
+  cfs <- findFile1 ".core" tpath
   forM_ cfs $ \fp -> do
     SS.shelly $ SS.command "erlc" ["-o" ,T.pack tpath] [T.pack $ tpath <> "/" <> fp]
     SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
@@ -191,17 +238,16 @@ command = pure $ do
   ifs <- findFile1 ".info" tpath
   forM_ ifs $ \fp -> do
     SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
-
-  -- erl -pa ebin -noshell -s Main main -s init stop
-  -- SS.shelly $ SS.run "erl" ["-pa",T.pack (tpath), "-noshell","-s" ,"Main","Main.main","-s","init","stop" ]
   exitSuccess
+
+
 
 
 runProject :: Opts.Parser (IO ())
 runProject  =pure $ do
   dir <- getCurrentDirectory
   let tpath = dir <> "/ebin"
-  SS.shelly $ SS.run "erl" ["-pa",T.pack (tpath), "-noshell","-s" ,"Main","Main.main","-s","init","stop" ]
+  SS.shelly $ SS.run "erl" ["-pa",T.pack (tpath), "-noshell","-s" ,"Main","main","-s","init","stop" ]
   return ()
 
 
