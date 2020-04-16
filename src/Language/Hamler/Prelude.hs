@@ -81,4 +81,35 @@ t3 = do
 
 
 
+moduleInfo0 :: String -> FunDef
+moduleInfo0 s = FunDef (Constr $ FunName (Atom "module_info" , 0))
+                       (Constr $ Lam []
+                          (Expr $ Constr $ ModCall ( Expr $ Constr $ Lit $ LAtom $ Atom "erlang"
+                                   , Expr $ Constr $ Lit $ LAtom $ Atom "get_module_info"
+                                   ) [(Expr $ Constr $ Lit $ LAtom $ Atom s)]
+                          )
+                       )
 
+
+moduleInfo1 :: String -> FunDef
+moduleInfo1 s = FunDef (Constr $ FunName (Atom "module_info" , 1))
+                       ( Constr $ Lam [E.Var $ Constr $ "_0"]
+                          (Expr $ Constr $  ModCall ( Expr $ Constr $ Lit $ LAtom $ Atom "erlang"
+                                   , Expr $ Constr $ Lit $ LAtom $ Atom "get_module_info"
+                                   ) [ Expr $ Constr $ Lit $ LAtom $ Atom s
+                                     , Expr $ Constr $ EVar $ E.Var $ Constr $ "_0"]
+                          )
+                       )
+
+mm1 = FunName (Atom "module_info" , 1)
+mm0 = FunName (Atom "module_info" , 0)
+
+
+-- 'module_info'/0 =
+--     fun () ->
+--  call 'erlang':'get_module_info'
+--      ('Ring')
+-- 'module_info'/1 =
+--     fun (_0) ->
+--  call 'erlang':'get_module_info'
+--      ('Ring', _0)
