@@ -15,4 +15,4 @@
 module Version where
 
 versionString :: String
-versionString = "v0.0.1"
+versionString = "0.0.2"

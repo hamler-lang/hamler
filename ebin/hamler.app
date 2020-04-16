@@ -1,6 +1,6 @@
 {application, hamler,
  [{description, "Libraries of the Hamler Programming Language"},
-  {vsn, "0.0.1"},
+  {vsn, "0.0.2"},
   {modules, ['Data.Base',
              'Data.Bits',
              'Data.Bool',
