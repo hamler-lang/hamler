@@ -177,6 +177,9 @@ command = pure $ do
   fps2 <- gethmFiles (dir <> "/src")
   let fps = fps1 <> fps2
       fps2' = fmap hmToCore fps2
+  let tpath = dir <> "/ebin"
+  removeDirectoryRecursive tpath
+  createDirectory tpath
   compile (PSCMakeOptions { pscmInput      = fps
                           , pscmOutputDir  = dir <>  "/ebin"
                           , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
@@ -184,7 +187,6 @@ command = pure $ do
                           , pscmJSONErrors = False
                           }
           )
-  let tpath = dir <> "/ebin"
   cfs <- findFile1 ".core" tpath
   forM_ (filter (`elem` fps2') cfs) $ \fp -> do
     SS.shelly $ SS.command "erlc" ["-o" ,T.pack tpath] [T.pack $ tpath <> "/" <> fp]
