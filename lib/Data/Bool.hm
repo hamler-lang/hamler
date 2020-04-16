@@ -17,16 +17,16 @@ module Data.Bool where
 -- | An alias for `Boolean`
 type Bool = Boolean
 
-infixr 3 conj as &&
-infixr 2 disj as ||
+infixr 3 and as &&
+infixr 2 or as ||
 
-conj :: Bool -> Bool -> Bool
-conj true true = true
-conj _ _ = false
+and :: Bool -> Bool -> Bool
+and true true  = true
+and _    _     = false
 
-disj :: Bool -> Bool -> Bool
-disj false false = false
-disj _ _ = true
+or :: Bool -> Bool -> Bool
+or false false = false
+or _     _     = true
 
 not :: Bool -> Bool
 not true  = false
