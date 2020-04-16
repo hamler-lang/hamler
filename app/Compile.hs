@@ -241,8 +241,10 @@ buildlib = do
   if r
     then return ()
     else createDirectory tpath
-  removeDirectoryRecursive tpath
-  createDirectory tpath
+  list <- findFile1 ".beam" tpath
+  forM_ list $ \fp -> do
+    SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
+
   compile (PSCMakeOptions { pscmInput      = fps
                           , pscmOutputDir  = dir <>  "/ebin"
                           , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
@@ -258,6 +260,12 @@ buildlib = do
   ifs <- findFile1 ".info" tpath
   forM_ ifs $ \fp -> do
     SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
+
+  jfs <- findFile1 ".json" tpath
+  forM_ jfs $ \fp -> do
+    SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
+
+
   exitSuccess
 
 
@@ -332,6 +340,7 @@ initProject  =pure $ do
 
 ishmFile :: String -> Bool
 ishmFile fname = (== "mh.") $ take 3 $ reverse $ fname
+
 
 gethmFiles :: FilePath -> IO [FilePath]
 gethmFiles basePath = do
