@@ -9,12 +9,12 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Maybe Data Type.
+-- Define the Maybe DataType.
 --
 -----------------------------------------------------------------------------
 module Data.Maybe where
 
-import Data.Base (const, identity)
+import Data.Function (const, identity)
 
 data Maybe a = Nothing | Just a
 

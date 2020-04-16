@@ -18,6 +18,8 @@ module Prelude
   , module Data.Bool
   , module Data.Either
   , module Data.Eq
+  , module Data.Function
+  , module Data.Int
 --  , module Data.List
   , module Data.Maybe
   , module Data.Ord
@@ -27,12 +29,14 @@ module Prelude
   , module Data.Show
   ) where
 
-import Data.Base (apply, const, flip, identity)
+import Data.Base (Double)
 import Data.Bits (band, bnot, bor, bsl, bsr, bxor)
 import Data.Bool ((&&), (||))
 import Data.Either (Either(..))
 import Data.Eq (class Eq, eq, notEq, (/=), (==))
 -- import Data.List -- (map)
+import Data.Function (apply, const, flip, identity)
+import Data.Int (Int)
 import Data.Maybe (Maybe)
 import Data.Ord (class Ord, between, compare, comparing, greaterThan, greaterThanOrEq, lessThan, lessThanOrEq, max, min, (<), (<=), (>), (>=))
 import Data.Ring (class Ring, (-))

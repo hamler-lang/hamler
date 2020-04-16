@@ -15,7 +15,6 @@
 module Data.Map where
 
 import Data.Maybe (Maybe)
-import Data.Ord (class Ord)
 
 foreign import data Map :: Type -> Type -> Type
 

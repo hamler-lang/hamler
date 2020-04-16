@@ -18,8 +18,6 @@
         , intMul/2
         , floatAdd/2
         , floatMul/2
-        , numAdd/2
-        , numMul/2
         ]).
 
 charAdd(C1, C2) -> C1 + C2.
@@ -39,14 +37,5 @@ intMul(I1, I2) -> I1 * I2.
 floatAdd(F1, F2) -> F1 + F2.
 
 %% floatAdd :: Float -> Float -> Float
--spec(floatMul(number(), number()) -> number()).
+-spec(floatMul(float(), float()) -> number()).
 floatMul(F1, F2) -> F1 * F2.
-
-%% numAdd :: Number -> Number -> Number
--spec(numAdd(number(), number()) -> number()).
-numAdd(N1, N2) -> N1 + N2.
-
-%% numMul :: Number -> Number -> Number
--spec(numMul(number(), number()) -> number()).
-numMul(N1, N2) -> N1 * N2.
-
