@@ -70,7 +70,9 @@ runTranslate modinfos plist translate =
 moduleToErl :: C.Module C.Ann -> Translate E.Module
 moduleToErl C.Module{..} = do
   modify (\x -> x & gsmoduleName .~ moduleName)
+  let tt = unpack $ runModuleName moduleName
   funDecls <- concat <$>  mapM bindToErl moduleDecls
+  let funDecls' = moduleInfo0 tt :moduleInfo1 tt : funDecls
   gs <- get
   -- | exports
   exports <- forM moduleExports $ \ident -> do
@@ -86,9 +88,9 @@ moduleToErl C.Module{..} = do
                                   )
         Nothing -> error "error of export var!"
   return $ E.Module (Atom $ unpack $ runModuleName moduleName)
-                    (fmap snd  exports)
+                    ( mm1:mm0:(fmap snd  exports))
                     []
-                    (funDecls <> (fmap (getJust . fst) $ Prelude.filter (isJust .fst)  exports ))
+                    (funDecls' <> (fmap (getJust . fst) $ Prelude.filter (isJust .fst)  exports ))
 
 isJust Nothing = False
 isJust (Just _) = True
