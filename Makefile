@@ -6,7 +6,7 @@ stack = $(stack_yaml) stack
 all: build
 
 build:
-	$(stack) build
+	$(stack) run build -- -l
 
 run:
 	$(stack) build --fast && $(stack) exec -- $(exe_target)
@@ -14,10 +14,7 @@ run:
 install:
 	$(stack) install
 
-clib:
-	$(stack) run build -- -l
-
 test:
 	$(stack) test --fast $(package)
 
-.PHONY : build install test
+.PHONY : build run install test
