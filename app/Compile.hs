@@ -308,15 +308,13 @@ helloHamler = concat [
         ]
 
 makeFile :: String
-makeFile = concat [ ".PHONY : build run\n"
-                  , "all: build\n"
+makeFile = concat [ ".PHONY : build run\n\n"
+                  , "all: build\n\n"
                   , "build:\n"
-                  , "\thamler build\n"
+                  , "\t@hamler build\n\n"
                   , "run:\n"
-                  , "\thamler run\n"
+                  , "\t@hamler run\n"
                   ]
-
-
 
 liblink = "https://github.com/hamler-lang/hamler.git"
 
@@ -333,14 +331,13 @@ initProject  =pure $ do
   if isExist
     then return ()
     else do
-       SS.shelly $ SS.run "git" ["clone",liblink,".deps/hamler"] 
+       SS.shelly $ SS.run "git" ["clone",liblink,".deps/hamler"]
        return ()
   print "hamler init finish!"
 
 
 ishmFile :: String -> Bool
 ishmFile fname = (== "mh.") $ take 3 $ reverse $ fname
-
 
 gethmFiles :: FilePath -> IO [FilePath]
 gethmFiles basePath = do
