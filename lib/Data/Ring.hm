@@ -38,13 +38,13 @@ instance Division Integer where
 instance Division Float where
   div = floatDiv
 
+rem :: Integer -> Integer -> Integer
+rem = intRem
+
+infixl 7 rem as %
 
 foreign import intSub :: Integer -> Integer -> Integer
 foreign import floatSub :: Float -> Float -> Float
 foreign import intDiv :: Integer -> Integer -> Integer
 foreign import floatDiv :: Float -> Float -> Float
-foreign import rem :: Integer -> Integer -> Integer
-
-
-
-
+foreign import intRem :: Integer -> Integer -> Integer

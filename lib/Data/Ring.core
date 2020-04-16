@@ -1,36 +1,36 @@
-module 'Ring' ['charSub'/2,
+module 'Ring' ['floatDiv'/2,
 	       'floatSub'/2,
+	       'intDiv'/2,
+	       'intRem'/2,
 	       'intSub'/2,
 	       'module_info'/0,
-	       'module_info'/1,
-	       'numSub'/2]
+	       'module_info'/1]
     attributes [%% Line 1
 		'file' =
 		    %% Line 1
 		    [{[82|[105|[110|[103|[46|[101|[114|[108]]]]]]]],1}],
-		%% Line 23
+		%% Line 25
 		'spec' =
-		    %% Line 23
-		    [{{'charSub',2},[{'type',23,'fun',[{'type',23,'product',[{'type',23,'char',[]}|[{'type',23,'char',[]}]]}|[{'type',23,'char',[]}]]}]}],
-		%% Line 26
-		'spec' =
-		    %% Line 26
-		    [{{'intSub',2},[{'type',26,'fun',[{'type',26,'product',[{'type',26,'integer',[]}|[{'type',26,'integer',[]}]]}|[{'type',26,'integer',[]}]]}]}],
+		    %% Line 25
+		    [{{'intSub',2},[{'type',25,'fun',[{'type',25,'product',[{'type',25,'integer',[]}|[{'type',25,'integer',[]}]]}|[{'type',25,'integer',[]}]]}]}],
 		%% Line 29
 		'spec' =
 		    %% Line 29
 		    [{{'floatSub',2},[{'type',29,'fun',[{'type',29,'product',[{'type',29,'float',[]}|[{'type',29,'float',[]}]]}|[{'type',29,'float',[]}]]}]}],
-		%% Line 32
+		%% Line 33
 		'spec' =
-		    %% Line 32
-		    [{{'numSub',2},[{'type',32,'fun',[{'type',32,'product',[{'type',32,'number',[]}|[{'type',32,'number',[]}]]}|[{'type',32,'number',[]}]]}]}]]
-'charSub'/2 =
-    %% Line 24
-    fun (_0,_1) ->
-	call 'erlang':'-'
-	    (_0, _1)
+		    %% Line 33
+		    [{{'intDiv',2},[{'type',33,'fun',[{'type',33,'product',[{'type',33,'integer',[]}|[{'type',33,'integer',[]}]]}|[{'type',33,'integer',[]}]]}]}],
+		%% Line 37
+		'spec' =
+		    %% Line 37
+		    [{{'floatDiv',2},[{'type',37,'fun',[{'type',37,'product',[{'type',37,'float',[]}|[{'type',37,'float',[]}]]}|[{'type',37,'float',[]}]]}]}],
+		%% Line 41
+		'spec' =
+		    %% Line 41
+		    [{{'intRem',2},[{'type',41,'fun',[{'type',41,'product',[{'type',41,'integer',[]}|[{'type',41,'integer',[]}]]}|[{'type',41,'integer',[]}]]}]}]]
 'intSub'/2 =
-    %% Line 27
+    %% Line 26
     fun (_0,_1) ->
 	call 'erlang':'-'
 	    (_0, _1)
@@ -39,10 +39,20 @@ module 'Ring' ['charSub'/2,
     fun (_0,_1) ->
 	call 'erlang':'-'
 	    (_0, _1)
-'numSub'/2 =
-    %% Line 33
+'intDiv'/2 =
+    %% Line 34
     fun (_0,_1) ->
-	call 'erlang':'-'
+	call 'erlang':'div'
+	    (_0, _1)
+'floatDiv'/2 =
+    %% Line 38
+    fun (_0,_1) ->
+	call 'erlang':'/'
+	    (_0, _1)
+'intRem'/2 =
+    %% Line 42
+    fun (_0,_1) ->
+	call 'erlang':'rem'
 	    (_0, _1)
 'module_info'/0 =
     fun () ->
