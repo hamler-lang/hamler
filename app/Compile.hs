@@ -269,7 +269,11 @@ runProject :: Opts.Parser (IO ())
 runProject  =pure $ do
   dir <- getCurrentDirectory
   let tpath = dir <> "/ebin"
-  SS.shelly $ SS.run "erl" ["-pa",T.pack (tpath), "-noshell","-s" ,"Main","main","-s","init","stop" ]
+  isExist <- doesDirectoryExist hamlerlib
+  if isExist
+    then SS.shelly $ SS.setenv "ERL_LIBS" "/usr/local/lib/hamler/"
+    else SS.shelly $ SS.setenv "ERL_LIBS" (T.pack $ dir <> ".deps/hamler")
+  SS.shelly $ SS.run  "erl" ["-pa",T.pack (tpath), "-noshell","-s" ,"Main","main","-s","init","stop" ]
   return ()
 
 -- | isFile  ".core" "Main.core"   -> True
@@ -323,7 +327,8 @@ initProject = pure $ do
   writeFile "Makefile" makeFile
   isExist <- doesDirectoryExist hamlerlib
   if isExist
-    then return ()
+    then do
+       return ()
     else do
        SS.shelly $ SS.run "git" ["clone",liblink,".deps/hamler"]
        return ()
