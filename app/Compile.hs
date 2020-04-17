@@ -177,7 +177,6 @@ howBuild= Opts.switch $
 command :: Opts.Parser (IO ())
 command = buildFun <$> howBuild
 
-
 buildFun :: Bool -> IO ()
 buildFun b = if b
              then buildlib
@@ -218,7 +217,6 @@ buildSrc = do
   forM_ ifs $ \fp -> do
     SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
     return ()
-
 
   exitSuccess
 
@@ -265,11 +263,7 @@ buildlib = do
   forM_ jfs $ \fp -> do
     SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
 
-
   exitSuccess
-
-
-
 
 runProject :: Opts.Parser (IO ())
 runProject  =pure $ do
@@ -277,8 +271,6 @@ runProject  =pure $ do
   let tpath = dir <> "/ebin"
   SS.shelly $ SS.run "erl" ["-pa",T.pack (tpath), "-noshell","-s" ,"Main","main","-s","init","stop" ]
   return ()
-
-
 
 -- | isFile  ".core" "Main.core"   -> True
 isFile :: String -> String -> Bool
@@ -321,11 +313,13 @@ liblink = "https://github.com/hamler-lang/hamler.git"
 hamlerlib = "/usr/local/lib/hamler/lib"
 
 initProject :: Opts.Parser (IO ())
-initProject  =pure $ do
+initProject = pure $ do
   base <- getCurrentDirectory
   let dictlist' = fmap (\x -> base <> "/" <> x) dictlist
   mapM createDirectory dictlist'
+  putStrLn "Generating src/Main.hm..."
   writeFile "src/Main.hm" helloHamler
+  putStrLn "Generating Makefile..."
   writeFile "Makefile" makeFile
   isExist <- doesDirectoryExist hamlerlib
   if isExist
@@ -333,8 +327,6 @@ initProject  =pure $ do
     else do
        SS.shelly $ SS.run "git" ["clone",liblink,".deps/hamler"]
        return ()
-  print "hamler init finish!"
-
 
 ishmFile :: String -> Bool
 ishmFile fname = (== "mh.") $ take 3 $ reverse $ fname
