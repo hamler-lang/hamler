@@ -270,10 +270,11 @@ runProject  =pure $ do
   dir <- getCurrentDirectory
   let tpath = dir <> "/ebin"
   isExist <- doesDirectoryExist hamlerlib
-  if isExist
-    then SS.shelly $ SS.setenv "ERL_LIBS" "/usr/local/lib/hamler/"
-    else SS.shelly $ SS.setenv "ERL_LIBS" (T.pack $ dir <> ".deps/hamler")
-  SS.shelly $ SS.run  "erl" ["-pa",T.pack (tpath), "-noshell","-s" ,"Main","main","-s","init","stop" ]
+  SS.shelly $ do
+    if isExist
+      then SS.setenv "ERL_LIBS" "/usr/local/lib/hamler/"
+      else SS.setenv "ERL_LIBS" (T.pack $ dir <> ".deps/hamler")
+    SS.run  "erl" ["-pa",T.pack (tpath), "-noshell","-s" ,"Main","main","-s","init","stop" ]
   return ()
 
 -- | isFile  ".core" "Main.core"   -> True
