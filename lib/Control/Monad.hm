@@ -1,0 +1,32 @@
+module Monad where
+
+class Functor f where
+  map :: forall a b.(a->b) -> f a -> f b
+class Functor f => Apply f where
+  apply :: forall a b. f (a -> b) -> f a -> f b
+class Apply f => Applicative f where
+  pure :: forall a. a -> f a
+class Apply m => Bind m where
+  bind :: forall a b. m a -> (a -> m b) -> m b
+class (Applicative m,Bind m) => Monad m
+
+
+foreign import data IO :: Type -> Type
+
+instance Functor IO where
+  map f a= apply (pure f) a
+instance Apply IO where
+  apply f a = do
+    f' <- f
+    a' <- a
+    pure (f' a')
+instance Applicative IO where
+  pure = pureE
+instance Bind IO where
+  bind = bindE
+instance Monad IO
+
+foreign import bindE :: forall a b. IO a -> (a -> IO b) -> IO b
+foreign import pureE :: forall a. a -> IO a
+foreign import print :: String -> IO String
+
