@@ -1,12 +1,26 @@
-module 'Monad' ['pureE'/1, 'bindE'/2,'print'/1] attributes []
-'pureE'/1 =
-    fun(_0) -> _0
-'bindE'/2 =
-    fun(_0, _1) -> apply _1(_0)
-'print'/1 =
-    %% Line 5
+module 'Monad' ['bindImpl'/2,
+		'module_info'/0,
+		'module_info'/1,
+		'pureImpl'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[77|[111|[110|[97|[100|[46|[101|[114|[108]]]]]]]]],1}]]
+'pureImpl'/1 =
+    %% Line 6
     fun (_0) ->
-	do  call 'io':'format'
-		([126|[115]], [_0|[]])
-	    _0
+	_0
+'bindImpl'/2 =
+    %% Line 8
+    fun (_0,_1) ->
+	apply _1
+	    (_0)
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Monad')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Monad', _0)
 end
