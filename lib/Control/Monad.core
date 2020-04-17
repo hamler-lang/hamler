@@ -1,0 +1,12 @@
+module 'Monad' ['pureE'/1, 'bindE'/2,'print'/1] attributes []
+'pureE'/1 =
+    fun(_0) -> _0
+'bindE'/2 =
+    fun(_0, _1) -> apply _1(_0)
+'print'/1 =
+    %% Line 5
+    fun (_0) ->
+	do  call 'io':'format'
+		([126|[115]], [_0|[]])
+	    _0
+end
