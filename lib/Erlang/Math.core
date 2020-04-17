@@ -1,0 +1,274 @@
+module 'Math' ['abs'/1,
+	       'acos'/1,
+	       'acosh'/1,
+	       'asin'/1,
+	       'asinh'/1,
+	       'atan'/1,
+	       'atan2'/2,
+	       'atanh'/1,
+	       'ceil'/1,
+	       'cos'/1,
+	       'cosh'/1,
+	       'erf'/1,
+	       'erfc'/1,
+	       'exp'/1,
+	       'floor'/1,
+	       'fmod'/2,
+	       'log'/1,
+	       'log10'/1,
+	       'log2'/1,
+	       'module_info'/0,
+	       'module_info'/1,
+	       'pi'/0,
+	       'pow'/2,
+	       'sin'/1,
+	       'sinh'/1,
+	       'sqrt'/1,
+	       'tan'/1,
+	       'tanh'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[77|[97|[116|[104|[46|[101|[114|[108]]]]]]]],1}],
+		%% Line 45
+		'spec' =
+		    %% Line 45
+		    [{{'abs',1},[{'type',45,'fun',[{'type',45,'product',[{'type',45,'float',[]}]}|[{'type',45,'float',[]}]]}]}],
+		%% Line 48
+		'spec' =
+		    %% Line 48
+		    [{{'acos',1},[{'type',48,'fun',[{'type',48,'product',[{'type',48,'float',[]}]}|[{'type',48,'float',[]}]]}]}],
+		%% Line 51
+		'spec' =
+		    %% Line 51
+		    [{{'acosh',1},[{'type',51,'fun',[{'type',51,'product',[{'type',51,'float',[]}]}|[{'type',51,'float',[]}]]}]}],
+		%% Line 54
+		'spec' =
+		    %% Line 54
+		    [{{'asin',1},[{'type',54,'fun',[{'type',54,'product',[{'type',54,'float',[]}]}|[{'type',54,'float',[]}]]}]}],
+		%% Line 57
+		'spec' =
+		    %% Line 57
+		    [{{'asinh',1},[{'type',57,'fun',[{'type',57,'product',[{'type',57,'float',[]}]}|[{'type',57,'float',[]}]]}]}],
+		%% Line 60
+		'spec' =
+		    %% Line 60
+		    [{{'atan',1},[{'type',60,'fun',[{'type',60,'product',[{'type',60,'float',[]}]}|[{'type',60,'float',[]}]]}]}],
+		%% Line 63
+		'spec' =
+		    %% Line 63
+		    [{{'atan2',2},[{'type',63,'fun',[{'type',63,'product',[{'type',63,'float',[]}|[{'type',63,'float',[]}]]}|[{'type',63,'float',[]}]]}]}],
+		%% Line 66
+		'spec' =
+		    %% Line 66
+		    [{{'atanh',1},[{'type',66,'fun',[{'type',66,'product',[{'type',66,'float',[]}]}|[{'type',66,'float',[]}]]}]}],
+		%% Line 69
+		'spec' =
+		    %% Line 69
+		    [{{'ceil',1},[{'type',69,'fun',[{'type',69,'product',[{'type',69,'float',[]}]}|[{'type',69,'float',[]}]]}]}],
+		%% Line 72
+		'spec' =
+		    %% Line 72
+		    [{{'cos',1},[{'type',72,'fun',[{'type',72,'product',[{'type',72,'float',[]}]}|[{'type',72,'float',[]}]]}]}],
+		%% Line 75
+		'spec' =
+		    %% Line 75
+		    [{{'cosh',1},[{'type',75,'fun',[{'type',75,'product',[{'type',75,'float',[]}]}|[{'type',75,'float',[]}]]}]}],
+		%% Line 78
+		'spec' =
+		    %% Line 78
+		    [{{'erf',1},[{'type',78,'fun',[{'type',78,'product',[{'type',78,'float',[]}]}|[{'type',78,'float',[]}]]}]}],
+		%% Line 81
+		'spec' =
+		    %% Line 81
+		    [{{'erfc',1},[{'type',81,'fun',[{'type',81,'product',[{'type',81,'float',[]}]}|[{'type',81,'float',[]}]]}]}],
+		%% Line 84
+		'spec' =
+		    %% Line 84
+		    [{{'exp',1},[{'type',84,'fun',[{'type',84,'product',[{'type',84,'float',[]}]}|[{'type',84,'float',[]}]]}]}],
+		%% Line 87
+		'spec' =
+		    %% Line 87
+		    [{{'floor',1},[{'type',87,'fun',[{'type',87,'product',[{'type',87,'float',[]}]}|[{'type',87,'float',[]}]]}]}],
+		%% Line 90
+		'spec' =
+		    %% Line 90
+		    [{{'fmod',2},[{'type',90,'fun',[{'type',90,'product',[{'type',90,'float',[]}|[{'type',90,'float',[]}]]}|[{'type',90,'float',[]}]]}]}],
+		%% Line 93
+		'spec' =
+		    %% Line 93
+		    [{{'log',1},[{'type',93,'fun',[{'type',93,'product',[{'type',93,'float',[]}]}|[{'type',93,'float',[]}]]}]}],
+		%% Line 96
+		'spec' =
+		    %% Line 96
+		    [{{'log2',1},[{'type',96,'fun',[{'type',96,'product',[{'type',96,'float',[]}]}|[{'type',96,'float',[]}]]}]}],
+		%% Line 99
+		'spec' =
+		    %% Line 99
+		    [{{'log10',1},[{'type',99,'fun',[{'type',99,'product',[{'type',99,'float',[]}]}|[{'type',99,'float',[]}]]}]}],
+		%% Line 102
+		'spec' =
+		    %% Line 102
+		    [{{'pow',2},[{'type',102,'fun',[{'type',102,'product',[{'type',102,'float',[]}|[{'type',102,'float',[]}]]}|[{'type',102,'float',[]}]]}]}],
+		%% Line 105
+		'spec' =
+		    %% Line 105
+		    [{{'sin',1},[{'type',105,'fun',[{'type',105,'product',[{'type',105,'float',[]}]}|[{'type',105,'float',[]}]]}]}],
+		%% Line 108
+		'spec' =
+		    %% Line 108
+		    [{{'sinh',1},[{'type',108,'fun',[{'type',108,'product',[{'type',108,'float',[]}]}|[{'type',108,'float',[]}]]}]}],
+		%% Line 111
+		'spec' =
+		    %% Line 111
+		    [{{'sqrt',1},[{'type',111,'fun',[{'type',111,'product',[{'type',111,'float',[]}]}|[{'type',111,'float',[]}]]}]}],
+		%% Line 114
+		'spec' =
+		    %% Line 114
+		    [{{'tan',1},[{'type',114,'fun',[{'type',114,'product',[{'type',114,'float',[]}]}|[{'type',114,'float',[]}]]}]}],
+		%% Line 117
+		'spec' =
+		    %% Line 117
+		    [{{'tanh',1},[{'type',117,'fun',[{'type',117,'product',[{'type',117,'float',[]}]}|[{'type',117,'float',[]}]]}]}],
+		%% Line 120
+		'spec' =
+		    %% Line 120
+		    [{{'pi',0},[{'type',120,'fun',[{'type',120,'product',[]}|[{'type',120,'float',[]}]]}]}]]
+'abs'/1 =
+    %% Line 46
+    fun (_0) ->
+	call 'erlang':'abs'
+	    (_0)
+'acos'/1 =
+    %% Line 49
+    fun (_0) ->
+	call 'math':'acos'
+	    (_0)
+'acosh'/1 =
+    %% Line 52
+    fun (_0) ->
+	call 'math':'acosh'
+	    (_0)
+'asin'/1 =
+    %% Line 55
+    fun (_0) ->
+	call 'math':'asin'
+	    (_0)
+'asinh'/1 =
+    %% Line 58
+    fun (_0) ->
+	call 'math':'asinh'
+	    (_0)
+'atan'/1 =
+    %% Line 61
+    fun (_0) ->
+	call 'math':'atan'
+	    (_0)
+'atan2'/2 =
+    %% Line 64
+    fun (_0,_1) ->
+	call 'math':'atan2'
+	    (_0, _1)
+'atanh'/1 =
+    %% Line 67
+    fun (_0) ->
+	call 'math':'atanh'
+	    (_0)
+'ceil'/1 =
+    %% Line 70
+    fun (_0) ->
+	call 'math':'ceil'
+	    (_0)
+'cos'/1 =
+    %% Line 73
+    fun (_0) ->
+	call 'math':'cos'
+	    (_0)
+'cosh'/1 =
+    %% Line 76
+    fun (_0) ->
+	call 'math':'cosh'
+	    (_0)
+'erf'/1 =
+    %% Line 79
+    fun (_0) ->
+	call 'math':'erf'
+	    (_0)
+'erfc'/1 =
+    %% Line 82
+    fun (_0) ->
+	call 'math':'erfc'
+	    (_0)
+'exp'/1 =
+    %% Line 85
+    fun (_0) ->
+	call 'math':'exp'
+	    (_0)
+'floor'/1 =
+    %% Line 88
+    fun (_0) ->
+	call 'math':'floor'
+	    (_0)
+'fmod'/2 =
+    %% Line 91
+    fun (_0,_1) ->
+	call 'math':'fmod'
+	    (_0, _1)
+'log'/1 =
+    %% Line 94
+    fun (_0) ->
+	call 'math':'log'
+	    (_0)
+'log2'/1 =
+    %% Line 97
+    fun (_0) ->
+	call 'math':'log2'
+	    (_0)
+'log10'/1 =
+    %% Line 100
+    fun (_0) ->
+	call 'math':'log10'
+	    (_0)
+'pow'/2 =
+    %% Line 103
+    fun (_0,_1) ->
+	call 'math':'pow'
+	    (_0, _1)
+'sin'/1 =
+    %% Line 106
+    fun (_0) ->
+	call 'math':'sin'
+	    (_0)
+'sinh'/1 =
+    %% Line 109
+    fun (_0) ->
+	call 'math':'sinh'
+	    (_0)
+'sqrt'/1 =
+    %% Line 112
+    fun (_0) ->
+	call 'math':'sqrt'
+	    (_0)
+'tan'/1 =
+    %% Line 115
+    fun (_0) ->
+	call 'math':'tan'
+	    (_0)
+'tanh'/1 =
+    %% Line 118
+    fun (_0) ->
+	call 'math':'tanh'
+	    (_0)
+'pi'/0 =
+    %% Line 121
+    fun () ->
+	3.14159265358979311600e+00
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Math')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Math', _0)
+end
