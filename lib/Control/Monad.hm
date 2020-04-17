@@ -12,7 +12,7 @@
 -- The Monad Module.
 --
 -----------------------------------------------------------------------------
-module Monad where
+module Control.Monad where
 
 class Functor f where
   map :: forall a b.(a->b) -> f a -> f b
