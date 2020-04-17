@@ -27,3 +27,4 @@ TAGS
 .DS_Store
 output/
 stack.yaml.lock
+bin/
