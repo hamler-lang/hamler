@@ -15,6 +15,6 @@
 module Erlang ( module Erl ) where
 
 import Erlang.Base (Binary, Bitstring, Module, Node, Port, Ref, Reference, Timeout, makeRef) as Erl
-import Erlang.Process (Pid, Process) as Erl
-import Erlang.VM (otpRelease) as Erl
+-- import Erlang.Process (Pid, Process) as Erl
+-- import Erlang.VM (otpRelease) as Erl
 

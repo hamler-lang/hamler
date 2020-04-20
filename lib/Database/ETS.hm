@@ -1,0 +1,47 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Database.ETS
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The ETS Database FFI.
+--
+-----------------------------------------------------------------------------
+module Database.ETS where
+
+import Control.Monad (IO)
+
+type Table = String
+
+foreign import data TableId :: Type
+
+data TableType = Set | OrderedSet | Bag | DuplicateBag
+
+data AccessType = Public | Protected | Private
+
+type TableOptions = { ttype :: TableType -- TODO: Rename
+                    , access :: AccessType
+                    , named :: Boolean
+                    , keyPos :: Integer
+                    , compressed :: Boolean
+                    , readConcurrency :: Boolean
+                    , writeConcurrency :: Boolean
+                    }
+
+foreign import new :: Table -> TableOptions -> IO TableId
+
+tNew :: IO TableId
+tNew = new "xtab" { ttype: Set,
+                    access: Public,
+                    named: true,
+                    keyPos: 1,
+                    compressed: true,
+                    readConcurrency : false,
+                    writeConcurrency : false
+                   }
+

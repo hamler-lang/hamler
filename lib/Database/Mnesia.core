@@ -1,0 +1,15 @@
+module 'Mnesia' ['module_info'/0,
+		 'module_info'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[77|[110|[101|[115|[105|[97|[46|[101|[114|[108]]]]]]]]]],1}]]
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Mnesia')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Mnesia', _0)
+end
