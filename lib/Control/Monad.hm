@@ -28,6 +28,8 @@ class Apply m => Bind m where
 
 class (Applicative m, Bind m) => Monad m
 
+infixl 1 bind as >>=
+
 foreign import data IO :: Type -> Type
 
 instance Functor IO where
