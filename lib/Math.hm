@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Erlang.Math
+-- Module      :  Math
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,10 +9,10 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Erlang Math Functions.
+-- The Math Functions
 --
 -----------------------------------------------------------------------------
-module Erlang.Math where
+module Math where
 
 foreign import abs :: Float -> Float
 

@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Data.Base
+-- Module      :  Data.Float
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,11 +9,10 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Base Module.
+-- The Float Module.
 --
 -----------------------------------------------------------------------------
-module Data.Base where
+module Data.Float where
 
 -- | An alias for `Float`
 type Double = Float
-

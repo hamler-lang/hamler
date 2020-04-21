@@ -9,8 +9,13 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Binary DataType.
+-- The Erlang Binary DataType.
 --
 -----------------------------------------------------------------------------
 module Data.Binary where
 
+-- | Erlang Binary: <<_:_*8>>
+foreign import data Binary :: Type
+
+-- | Erlang Bitstring: <<_:_*1>>
+foreign import data BitString :: Type

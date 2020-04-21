@@ -13,12 +13,12 @@
 --
 -----------------------------------------------------------------------------
 module Prelude
-  ( module Control.Process
-  , module Data.Base
+  ( module Data.Binary
   , module Data.Bits
   , module Data.Bool
   , module Data.Either
   , module Data.Eq
+  , module Data.Float
   , module Data.Function
   , module Data.Int
 --  , module Data.List
@@ -31,14 +31,13 @@ module Prelude
   , module Data.Show
   ) where
 
-import Control.Process (Pid, Process)
-
-import Data.Base (Double)
+import Data.Binary (Binary, BitString)
 import Data.Bits (band, bnot, bor, bsl, bsr, bxor)
 import Data.Bool ((&&), (||))
 import Data.Either (Either(..))
 import Data.Eq (class Eq, eq, notEq, (/=), (==))
 -- import Data.List -- (map)
+import Data.Float (Double)
 import Data.Function (apply, const, flip, identity)
 import Data.Int (Int)
 import Data.Maybe (Maybe)
