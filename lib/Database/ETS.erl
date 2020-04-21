@@ -21,16 +21,16 @@ new(Table, Options) ->
     io:format("Options: ~p~n", [Options]),
     ets:new(list_to_atom(Table), parseOpts(Options)).
 
+%%-compile({inline, [parseOpts/1]}).
 parseOpts(#{access := Access,
-            compressed := Compressed,
+            %% compressed := Compressed,
             keyPos := KeyPos,
             readConcurrency := ConRead,
             ttype := Type,
             writeConcurrency := ConWrite
            }) ->
     [access(Access), ttype(Type), named_table, {keypos, KeyPos},
-     {read_concurrency, ConRead}, {write_concurrency, ConWrite},
-     {compressed, Compressed}].
+     {read_concurrency, ConRead}, {write_concurrency, ConWrite}].
 
 %%---------------------------------------------------------------------------
 %% Transform Options

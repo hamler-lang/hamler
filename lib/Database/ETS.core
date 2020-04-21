@@ -29,29 +29,27 @@ module 'ETS' ['module_info'/0,
 		    call 'ets':'new'
 			(_3, _2)
 'parseOpts'/1 =
-    %% Line 24
+    %% Line 25
     fun (_0) ->
 	case _0 of
-	  <~{%% Line 25
-	    'compressed':=Compressed,%% Line 26
-				     'keyPos':=KeyPos,'access':=Access,%% Line 29
-								       'writeConcurrency':=ConWrite,%% Line 27
-												    'readConcurrency':=ConRead,%% Line 28
-															       'ttype':=Type}~> when 'true' ->
+	  <~{%% Line 27
+	    'keyPos':=KeyPos,'access':=Access,%% Line 30
+					      'writeConcurrency':=ConWrite,%% Line 28
+									   'readConcurrency':=ConRead,%% Line 29
+												      'ttype':=Type}~> when 'true' ->
 	      let <_1> =
-		  apply %% Line 31
+		  apply %% Line 32
 			'access'/1
-		      (%% Line 31
+		      (%% Line 32
 		       Access)
 	      in  let <_2> =
-		      apply %% Line 31
+		      apply %% Line 32
 			    'ttype'/1
-			  (%% Line 31
+			  (%% Line 32
 			   Type)
-		  in  %% Line 31
-		      [_1|[_2|['named_table'|[{'keypos',KeyPos}|%% Line 32
-								[{'read_concurrency',ConRead}|[{'write_concurrency',ConWrite}|%% Line 33
-															      [{'compressed',Compressed}|[]]]]]]]]
+		  in  %% Line 32
+		      [_1|[_2|['named_table'|[{'keypos',KeyPos}|%% Line 33
+								[{'read_concurrency',ConRead}|[{'write_concurrency',ConWrite}|[]]]]]]]
 	  ( <_3> when 'true' ->
 		( primop 'match_fail'
 		      ({'function_clause',_3})
