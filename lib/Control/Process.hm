@@ -18,10 +18,18 @@ import Control.Monad
 import Data.Ref (Reference)
 
 type Process = IO
-type Module = String
+
+-- | Erlang Module.
+foreign import data Module :: Type
+
+-- | Erlang Node.
+foreign import data Node :: Type
 
 -- | An erlang process id.
 foreign import data Pid :: Type
+
+-- | Erlang timeout.
+foreign import data Timeout :: Type
 
 -- foreign import spawn ::forall a b.Module -> (a -> Process b) -> a -> Process Pid
 
