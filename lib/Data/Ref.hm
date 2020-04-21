@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Erlang
+-- Module      :  Data.Ref
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,12 +9,19 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The core erlang module.
+-- The Erlang Reference Data Type.
 --
 -----------------------------------------------------------------------------
-module Erlang ( module Erl ) where
+module Data.Ref where
 
-import Erlang.Base (Binary, Bitstring, Module, Node, Port, Ref, Reference, Timeout, makeRef) as Erl
-import Erlang.Process (Pid, Process) as Erl
-import Erlang.VM (otpRelease) as Erl
+-- | An alias for erlang `Reference`
+type Ref = Reference
+
+-- |
+-- Erlang reference is a term that is unique in an Erlang runtime system,
+-- created by calling `make_ref`.
+--
+foreign import data Reference :: Type
+
+foreign import makeRef :: Reference
 

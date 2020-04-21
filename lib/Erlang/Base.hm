@@ -29,17 +29,6 @@ foreign import data Node :: Type
 -- | Erlang Port.
 foreign import data Port :: Type
 
--- |
--- Erlang reference is a term that is unique in an Erlang runtime system,
--- created by calling `make_ref`.
---
-foreign import data Reference :: Type
-
--- | An alias for erlang `Reference`
-type Ref = Reference
-
-foreign import makeRef :: Reference
-
 -- | Erlang timeout.
 foreign import data Timeout :: Type
 
