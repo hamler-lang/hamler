@@ -1,0 +1,106 @@
+module 'ETS' ['module_info'/0,
+	      'module_info'/1,
+	      'new'/2,
+	      'parseOpts'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[69|[84|[83|[46|[101|[114|[108]]]]]]],1}],
+		%% Line 19
+		'spec' =
+		    %% Line 19
+		    [{{'new',2},[{'type',19,'fun',[{'type',19,'product',[{'type',19,'string',[]}|[{'type',19,'map','any'}]]}|[{'type',19,'string',[]}]]}]}]]
+'new'/2 =
+    %% Line 20
+    fun (_0,_1) ->
+	do  %% Line 21
+	    call 'io':'format'
+		([79|[112|[116|[105|[111|[110|[115|[58|[32|[126|[112|[126|[110]]]]]]]]]]]]], [_1|[]])
+	    let <_3> =
+		call %% Line 22
+		     'erlang':%% Line 22
+			      'list_to_atom'
+		    (_0)
+	    in  let <_2> =
+		    apply %% Line 22
+			  'parseOpts'/1
+			(_1)
+		in  %% Line 22
+		    call 'ets':'new'
+			(_3, _2)
+'parseOpts'/1 =
+    %% Line 25
+    fun (_0) ->
+	case _0 of
+	  <~{%% Line 27
+	    'keyPos':=KeyPos,'access':=Access,%% Line 30
+					      'writeConcurrency':=ConWrite,%% Line 28
+									   'readConcurrency':=ConRead,%% Line 29
+												      'ttype':=Type}~> when 'true' ->
+	      let <_1> =
+		  apply %% Line 32
+			'access'/1
+		      (%% Line 32
+		       Access)
+	      in  let <_2> =
+		      apply %% Line 32
+			    'ttype'/1
+			  (%% Line 32
+			   Type)
+		  in  %% Line 32
+		      [_1|[_2|['named_table'|[{'keypos',KeyPos}|%% Line 33
+								[{'read_concurrency',ConRead}|[{'write_concurrency',ConWrite}|[]]]]]]]
+	  ( <_3> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_3})
+		  -| [{'function_name',{'parseOpts',1}}] )
+	    -| ['compiler_generated'] )
+	end
+'access'/1 =
+    %% Line 39
+    fun (_0) ->
+	case _0 of
+	  <{'Public'}> when 'true' ->
+	      'public'
+	  %% Line 40
+	  <{'Protected'}> when 'true' ->
+	      'protected'
+	  %% Line 41
+	  <{'Private'}> when 'true' ->
+	      'private'
+	  ( <_1> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_1})
+		  -| [{'function_name',{'access',1}}] )
+	    -| ['compiler_generated'] )
+	end
+'ttype'/1 =
+    %% Line 43
+    fun (_0) ->
+	case _0 of
+	  <{'Set'}> when 'true' ->
+	      'set'
+	  %% Line 44
+	  <{'OrderedSet'}> when 'true' ->
+	      'ordered_set'
+	  %% Line 45
+	  <{'Bag'}> when 'true' ->
+	      'bag'
+	  %% Line 46
+	  <{'DuplicateBag'}> when 'true' ->
+	      'duplicate_bag'
+	  ( <_1> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_1})
+		  -| [{'function_name',{'ttype',1}}] )
+	    -| ['compiler_generated'] )
+	end
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('ETS')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('ETS', _0)
+end
