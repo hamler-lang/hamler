@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Base
+%% Module      :  Ref
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,9 +9,13 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Erlang Base Module.
+%% The Ref FFI Module.
 %%
 %%---------------------------------------------------------------------------
--module('Base').
+-module('Ref').
 
+-export([makeRef/0]).
+
+-spec(makeRef() -> reference()).
+makeRef() -> erlang:make_ref().
 

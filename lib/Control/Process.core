@@ -1,0 +1,58 @@
+module 'Process' ['link'/1,
+		  'module_info'/0,
+		  'module_info'/1,
+		  'monitor'/1,
+		  'receive'/0,
+		  'send'/2]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[80|[114|[111|[99|[101|[115|[115|[46|[101|[114|[108]]]]]]]]]]],1}],
+		%% Line 23
+		'spec' =
+		    %% Line 23
+		    [{{'send',2},[{'type',23,'fun',[{'type',23,'product',[{'type',23,'pid',[]}|[{'type',23,'term',[]}]]}|[{'type',23,'term',[]}]]}]}],
+		%% Line 26
+		'spec' =
+		    %% Line 26
+		    [{{'receive',0},[{'type',26,'fun',[{'type',26,'product',[]}|[{'type',26,'term',[]}]]}]}],
+		%% Line 29
+		'spec' =
+		    %% Line 29
+		    [{{'link',1},[{'type',29,'fun',[{'type',29,'product',[{'type',29,'pid',[]}]}|[{'type',29,'boolean',[]}]]}]}],
+		%% Line 32
+		'spec' =
+		    %% Line 32
+		    [{{'monitor',1},[{'type',32,'fun',[{'type',32,'product',[{'type',32,'pid',[]}]}|[{'type',32,'reference',[]}]]}]}]]
+'send'/2 =
+    %% Line 24
+    fun (_0,_1) ->
+	call 'erlang':'send'
+	    (_0, _1)
+'receive'/0 =
+    %% Line 27
+    fun () ->
+	receive
+	  <X> when 'true' ->
+	      X
+	after 'infinity' ->
+	  'true'
+'link'/1 =
+    %% Line 30
+    fun (_0) ->
+	call 'erlang':'link'
+	    (_0)
+'monitor'/1 =
+    %% Line 33
+    fun (_0) ->
+	call 'erlang':'monitor'
+	    ('process', _0)
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Process')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Process', _0)
+end
