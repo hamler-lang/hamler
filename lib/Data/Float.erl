@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Math
+%% Module      :  Float
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,10 +9,10 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Erlang Math Module.
+%% The Float FFI Module.
 %%
 %%---------------------------------------------------------------------------
--module('Math').
+-module('Float').
 
 -export([ abs/1
         , acos/1
@@ -119,3 +119,4 @@ tanh(X) -> math:tanh(X).
 
 -spec(pi() -> float()).
 pi() -> 3.1415926535897932.
+

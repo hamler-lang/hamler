@@ -16,3 +16,56 @@ module Data.Float where
 
 -- | An alias for `Float`
 type Double = Float
+
+foreign import abs :: Float -> Float
+
+foreign import acos :: Float -> Float
+
+foreign import acosh :: Float -> Float
+
+foreign import asin :: Float -> Float
+
+foreign import asinh :: Float -> Float
+
+foreign import atan :: Float -> Float
+
+foreign import atan2 :: Float -> Float -> Float
+
+foreign import atanh :: Float -> Float
+
+foreign import ceil :: Float -> Float
+
+foreign import cos :: Float -> Float
+
+foreign import cosh :: Float -> Float
+
+foreign import erf :: Float -> Float
+
+foreign import erfc :: Float -> Float
+
+foreign import exp :: Float -> Float
+
+foreign import floor :: Float -> Float
+
+foreign import fmod :: Float -> Float -> Float
+
+foreign import log :: Float -> Float
+
+foreign import log2 :: Float -> Float
+
+foreign import log10 :: Float -> Float
+
+foreign import pi :: Float
+
+foreign import pow :: Float -> Float -> Float
+
+foreign import sin :: Float -> Float
+
+foreign import sinh :: Float -> Float
+
+foreign import sqrt :: Float -> Float
+
+foreign import tan :: Float -> Float
+
+foreign import tanh :: Float -> Float
+
