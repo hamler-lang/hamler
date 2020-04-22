@@ -20,7 +20,7 @@ import Data.Ref (Reference)
 type Process = IO
 
 -- | Erlang Module.
-foreign import data Module :: Type
+-- foreign import data Module :: Type
 
 -- | Erlang Node.
 foreign import data Node :: Type

@@ -1,0 +1,60 @@
+module 'Foreign' ['ffi'/3,
+		  'ffiIO'/3,
+		  'module_info'/0,
+		  'module_info'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[70|[111|[114|[101|[105|[103|[110|[46|[101|[114|[108]]]]]]]]]]],1}],
+		%% Line 19
+		'spec' =
+		    %% Line 19
+		    [{{'ffi',3},[{'type',19,'fun',[{'type',19,'product',[{'type',19,'string',[]}|[{'type',19,'string',[]}|[{'type',19,'pos_integer',[]}]]]}|[{'type',19,'fun',[]}]]}]}],
+		%% Line 26
+		'spec' =
+		    %% Line 26
+		    [{{'ffiIO',3},[{'type',26,'fun',[{'type',26,'product',[{'type',26,'string',[]}|[{'type',26,'string',[]}|[{'type',26,'pos_integer',[]}]]]}|[{'type',26,'fun',[]}]]}]}],
+		%% Line 30
+		'compile' =
+		    %% Line 30
+		    [{'inline',[{'a',1}]}]]
+'ffi'/3 =
+    %% Line 20
+    fun (_0,_1,_2) ->
+	let <M> =
+	    call %% Line 31
+		 ( 'erlang'
+		   -| ['compiler_generated'] ):%% Line 31
+					       ( 'list_to_existing_atom'
+						 -| ['compiler_generated'] )
+		(_0)
+	in  let <F> =
+		call %% Line 31
+		     ( 'erlang'
+		       -| ['compiler_generated'] ):%% Line 31
+						   ( 'list_to_existing_atom'
+						     -| ['compiler_generated'] )
+		    (_1)
+	    in  %% Line 24
+		call 'erlang':'make_fun'
+		    (M, F, _2)
+'ffiIO'/3 =
+    %% Line 27
+    fun (_0,_1,_2) ->
+	%% Line 28
+	apply 'ffi'/3
+	    (_0, _1, _2)
+'a'/1 =
+    %% Line 31
+    fun (_0) ->
+	call 'erlang':'list_to_existing_atom'
+	    (_0)
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Foreign')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Foreign', _0)
+end
