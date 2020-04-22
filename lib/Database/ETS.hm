@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  ETS
+-- Module      :  Database.ETS
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,10 +9,10 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Erlang ETS Module.
+-- The Erlang ETS Database.
 --
 -----------------------------------------------------------------------------
-module ETS where
+module Database.ETS where
 
 import Control.Monad (IO)
 

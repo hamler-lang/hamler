@@ -1,35 +1,35 @@
-module 'Math' ['abs'/1,
-	       'acos'/1,
-	       'acosh'/1,
-	       'asin'/1,
-	       'asinh'/1,
-	       'atan'/1,
-	       'atan2'/2,
-	       'atanh'/1,
-	       'ceil'/1,
-	       'cos'/1,
-	       'cosh'/1,
-	       'erf'/1,
-	       'erfc'/1,
-	       'exp'/1,
-	       'floor'/1,
-	       'fmod'/2,
-	       'log'/1,
-	       'log10'/1,
-	       'log2'/1,
-	       'module_info'/0,
-	       'module_info'/1,
-	       'pi'/0,
-	       'pow'/2,
-	       'sin'/1,
-	       'sinh'/1,
-	       'sqrt'/1,
-	       'tan'/1,
-	       'tanh'/1]
+module 'Float' ['abs'/1,
+		'acos'/1,
+		'acosh'/1,
+		'asin'/1,
+		'asinh'/1,
+		'atan'/1,
+		'atan2'/2,
+		'atanh'/1,
+		'ceil'/1,
+		'cos'/1,
+		'cosh'/1,
+		'erf'/1,
+		'erfc'/1,
+		'exp'/1,
+		'floor'/1,
+		'fmod'/2,
+		'log'/1,
+		'log10'/1,
+		'log2'/1,
+		'module_info'/0,
+		'module_info'/1,
+		'pi'/0,
+		'pow'/2,
+		'sin'/1,
+		'sinh'/1,
+		'sqrt'/1,
+		'tan'/1,
+		'tanh'/1]
     attributes [%% Line 1
 		'file' =
 		    %% Line 1
-		    [{[77|[97|[116|[104|[46|[101|[114|[108]]]]]]]],1}],
+		    [{[70|[108|[111|[97|[116|[46|[101|[114|[108]]]]]]]]],1}],
 		%% Line 45
 		'spec' =
 		    %% Line 45
@@ -266,9 +266,9 @@ module 'Math' ['abs'/1,
 'module_info'/0 =
     fun () ->
 	call 'erlang':'get_module_info'
-	    ('Math')
+	    ('Float')
 'module_info'/1 =
     fun (_0) ->
 	call 'erlang':'get_module_info'
-	    ('Math', _0)
+	    ('Float', _0)
 end
