@@ -1,0 +1,27 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Foreign
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Foreign FFI Module.
+--
+-----------------------------------------------------------------------------
+module Foreign where
+
+import Control.Monad (IO)
+
+type Module = String
+type Funame = String
+type Arity  = Integer
+
+-- Pure FFI function
+foreign import ffi :: forall a. Module -> Funame -> Arity -> a
+
+-- FFI function with Effect
+foreign import ffiIO :: forall a. Module -> Funame -> Arity -> IO a
