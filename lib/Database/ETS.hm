@@ -39,6 +39,8 @@ foreign import new :: Table -> TableOptions -> IO TableId
 all :: IO (List TableId)
 all = ffiIO "ets" "all" 0
 
+{-
+
 -- | Delete an ETS table
 deleteTable :: TableId -> IO Boolean
 deleteTable = ffiIO "ets" "delete" 1

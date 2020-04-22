@@ -16,18 +16,15 @@
 
 -export([ffi/3, ffiIO/3]).
 
--type(arity() :: non_neg_integer()).
-
 -spec(ffi(string(), string(), arity()) -> fun()).
-ffi(Mod, Fun, Arity) ->
-    M = a(Mod),
-    F = a(Fun),
-    N = Arity,
-    fun M:F/N.
+ffi(Mod, Fun, Arity) when Arity >= 0 ->
+    curry(atom(Mod), atom(Fun), [], Arity).
 
 -spec(ffiIO(string(), string(), arity()) -> fun()).
-ffiIO(Mod, Fun, Arity) ->
-    ffi(Mod, Fun, Arity).
+ffiIO(Mod, Fun, Arity) -> ffi(Mod, Fun, Arity).
 
--compile({inline, [a/1]}).
-a(S) -> list_to_existing_atom(S).
+curry(M, F, A, 0) -> erlang:apply(M, F, A);
+curry(M, F, A, N) -> fun(X) -> curry(M, F, [X|A], N-1) end.
+
+-compile({inline, [atom/1]}).
+atom(S) -> list_to_existing_atom(S).
