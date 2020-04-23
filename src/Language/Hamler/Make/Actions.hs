@@ -191,11 +191,14 @@ buildMakeActions isInline outputDir filePathMap foreigns usePrefix =
       Nothing -> do return []
       Just fp -> do
         con <-lift $ makeIO "read Main.core" $ TIO.readFile fp
-        -- let Right (CE.Constr ( CE.Module (CE.Atom ename) eexports _ efundefs )) = fmap inline $ CE.parseModule $ unpack con
-        let Right (CE.Constr ( CE.Module (CE.Atom ename) eexports _ efundefs )) = fmap (myinline isInline) $ CE.parseModule $ unpack con
-            ff (CE.FunDef (CE.Constr (CE.FunName (CE.Atom n,i))) (CE.Constr expr) ) = (pack $ (unpack $ runModuleName mn) <> "." <> n
-                                                                                      , (fromIntegral i,expr))
-        return $ fmap ff efundefs
+        case fmap (myinline isInline) $ CE.parseModule $ unpack con of
+         Left e -> do
+           lift $ makeIO "read Main.core" $ print ("error of parse core file: ---> " <> fp)
+           lift $ throwError $ MultipleErrors [ErrorMessage [] $ ErrorParsingModule e]
+         Right (CE.Constr ( CE.Module (CE.Atom ename) eexports _ efundefs )) -> do
+            let ff (CE.FunDef (CE.Constr (CE.FunName (CE.Atom n,i))) (CE.Constr expr) )
+                  = (pack $ (unpack $ runModuleName mn) <> "." <> n, (fromIntegral i,expr))
+            return $ fmap ff efundefs
     let mods = filter (/= mn) $  filter (/= ModuleName [ProperName "Prim"]) $  fmap snd $ CF.moduleImports m
     modInfoList <- mapM readModuleInfo mods
     let modInfoMap = M.fromList  modInfoList
@@ -231,3 +234,5 @@ buildMakeActions isInline outputDir filePathMap foreigns usePrefix =
   cacheDbFile = outputDir </> "cache-db.json"
 
 
+-- pErrorMError :: CE.ParseError -> MultipleErrors
+-- pErrorMError 
