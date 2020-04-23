@@ -6,79 +6,79 @@ module 'ETS' ['info'/1,
 		'file' =
 		    %% Line 1
 		    [{[69|[84|[83|[46|[101|[114|[108]]]]]]],1}],
-		%% Line 21
+		%% Line 19
 		'spec' =
-		    %% Line 21
-		    [{{'new',2},[{'type',21,'fun',[{'type',21,'product',[{'type',21,'string',[]}|[{'type',21,'map','any'}]]}|[{'remote_type',21,[{'atom',21,'ets'}|[{'atom',21,'tab'}|[[]]]]}]]}]}],
-		%% Line 25
+		    %% Line 19
+		    [{{'new',2},[{'type',19,'fun',[{'type',19,'product',[{'type',19,'string',[]}|[{'type',19,'map','any'}]]}|[{'remote_type',19,[{'atom',19,'ets'}|[{'atom',19,'tab'}|[[]]]]}]]}]}],
+		%% Line 23
 		'spec' =
-		    %% Line 25
-		    [{{'info',1},[{'type',25,'fun',[{'type',25,'product',[{'remote_type',25,[{'atom',25,'ets'}|[{'atom',25,'tab'}|[[]]]]}]}|[{'type',25,'union',[{'type',25,'tuple',[{'atom',25,'Nothing'}]}|[{'type',25,'tuple',[{'atom',25,'Just'}|[{'type',25,'map','any'}]]}]]}]]}]}]]
+		    %% Line 23
+		    [{{'info',1},[{'type',23,'fun',[{'type',23,'product',[{'remote_type',23,[{'atom',23,'ets'}|[{'atom',23,'tab'}|[[]]]]}]}|[{'type',23,'union',[{'type',23,'tuple',[{'atom',23,'Nothing'}]}|[{'type',23,'tuple',[{'atom',23,'Just'}|[{'type',23,'map','any'}]]}]]}]]}]}]]
 'new'/2 =
-    %% Line 22
+    %% Line 20
     fun (_0,_1) ->
 	let <_3> =
-	    call %% Line 23
-		 'erlang':%% Line 23
+	    call %% Line 21
+		 'erlang':%% Line 21
 			  'list_to_atom'
 		(_0)
 	in  let <_2> =
-		apply %% Line 23
+		apply %% Line 21
 		      'parseOpts'/1
 		    (_1)
-	    in  %% Line 23
+	    in  %% Line 21
 		call 'ets':'new'
 		    (_3, _2)
 'info'/1 =
-    %% Line 26
+    %% Line 24
     fun (_0) ->
-	%% Line 27
+	%% Line 25
 	case call 'ets':'info'
 		 (_0) of
-	  %% Line 28
+	  %% Line 26
 	  <'undefined'> when 'true' ->
 	      {'Nothing'}
-	  %% Line 29
+	  %% Line 27
 	  <Info> when 'true' ->
 	      let <_1> =
-		  apply 'info2Map'/1
-		      (Info)
+		  apply 'info2Map'/2
+		      (Info, ~{}~)
 	      in  {'Just',_1}
 	end
 'parseOpts'/1 =
-    %% Line 32
+    %% Line 30
     fun (_0) ->
 	case _0 of
-	  <~{%% Line 37
-	    'compressed':=Compressed,%% Line 34
-				     'keyPos':=KeyPos,%% Line 33
-						      'access':=Access,%% Line 36
-								       'writeConcurrency':=W,%% Line 35
+	  <~{%% Line 35
+	    'compressed':=Compressed,%% Line 32
+				     'keyPos':=KeyPos,%% Line 31
+						      'access':=Access,%% Line 34
+								       'writeConcurrency':=W,%% Line 33
 											     'readConcurrency':=R,'ttype':=Type}~> when 'true' ->
 	      let <_1> =
-		  apply %% Line 39
+		  apply %% Line 37
 			'ttype'/1
-		      (%% Line 39
+		      (%% Line 37
 		       Type)
 	      in  let <_2> =
-		      apply %% Line 40
+		      apply %% Line 38
 			    'access'/1
-			  (%% Line 40
+			  (%% Line 38
 			   Access)
 		  in  let <Opts> =
-			  [_1|%% Line 40
-			      [_2|%% Line 41
-				  ['named_table'|%% Line 42
-						 [{'keypos',KeyPos}|%% Line 43
-								    [{'read_concurrency',R}|%% Line 44
-											    [{'write_concurrency',W}|%% Line 45
+			  [_1|%% Line 38
+			      [_2|%% Line 39
+				  ['named_table'|%% Line 40
+						 [{'keypos',KeyPos}|%% Line 41
+								    [{'read_concurrency',R}|%% Line 42
+											    [{'write_concurrency',W}|%% Line 43
 														     []]]]]]]
-		      in  %% Line 46
+		      in  %% Line 44
 			  case Compressed of
-			    %% Line 47
+			    %% Line 45
 			    <'true'> when 'true' ->
 				['compressed'|Opts]
-			    %% Line 48
+			    %% Line 46
 			    <'false'> when 'true' ->
 				Opts
 			    ( <_4> when 'true' ->
@@ -92,245 +92,219 @@ module 'ETS' ['info'/1,
 		  -| [{'function_name',{'parseOpts',1}}] )
 	    -| ['compiler_generated'] )
 	end
-'info2Map'/1 =
-    %% Line 51
-    fun (_0) ->
-	apply 'info2Map'/2
-	    (_0, ~{}~)
 'info2Map'/2 =
-    %% Line 53
+    %% Line 49
     fun (_0,_1) ->
 	case <_0,_1> of
 	  <[{'id',Id}|Info],M> when 'true' ->
-	      %% Line 54
-	      case <> of
-		( <>
-		      when call 'erlang':'is_map'
-			    (M) ->
-		      let <_2> =
-			  ~{'id'=>Id|M}~
-		      in  apply 'info2Map'/2
-			      (Info, _2)
-		  -| ['compiler_generated'] )
-		( <> when 'true' ->
-		      ( primop 'match_fail'
-			    ({'badmap',M})
-			-| [{'eval_failure','badmap'}] )
-		  -| ['compiler_generated'] )
-	      end
-	  %% Line 55
+	      let <_2> =
+		  call %% Line 50
+		       'maps':%% Line 50
+			      'put'
+		      (%% Line 50
+		       'id', %% Line 50
+			     Id, %% Line 50
+				 M)
+	      in  %% Line 50
+		  apply 'info2Map'/2
+		      (Info, _2)
+	  %% Line 51
 	  <[{'read_concurrency',R}|Info],M> when 'true' ->
-	      %% Line 56
-	      case <> of
-		( <>
-		      when call 'erlang':'is_map'
-			    (M) ->
-		      let <_3> =
-			  ~{'readConcurrency'=>R|M}~
-		      in  apply 'info2Map'/2
-			      (Info, _3)
-		  -| ['compiler_generated'] )
-		( <> when 'true' ->
-		      ( primop 'match_fail'
-			    ({'badmap',M})
-			-| [{'eval_failure','badmap'}] )
-		  -| ['compiler_generated'] )
-	      end
-	  %% Line 57
+	      let <_3> =
+		  call %% Line 52
+		       'maps':%% Line 52
+			      'put'
+		      (%% Line 52
+		       'readConcurrency', %% Line 52
+					  R, %% Line 52
+					     M)
+	      in  %% Line 52
+		  apply 'info2Map'/2
+		      (Info, _3)
+	  %% Line 53
 	  <[{'write_concurrency',W}|Info],M> when 'true' ->
-	      %% Line 58
-	      case <> of
-		( <>
-		      when call 'erlang':'is_map'
-			    (M) ->
-		      let <_4> =
-			  ~{'writeConcurrency'=>W|M}~
-		      in  apply 'info2Map'/2
-			      (Info, _4)
-		  -| ['compiler_generated'] )
-		( <> when 'true' ->
-		      ( primop 'match_fail'
-			    ({'badmap',M})
-			-| [{'eval_failure','badmap'}] )
-		  -| ['compiler_generated'] )
-	      end
-	  %% Line 59
+	      let <_4> =
+		  call %% Line 54
+		       'maps':%% Line 54
+			      'put'
+		      (%% Line 54
+		       'writeConcurrency', %% Line 54
+					   W, %% Line 54
+					      M)
+	      in  %% Line 54
+		  apply 'info2Map'/2
+		      (Info, _4)
+	  %% Line 55
 	  <[{'compressed',C}|Info],M> when 'true' ->
-	      %% Line 60
-	      case <> of
-		( <>
-		      when call 'erlang':'is_map'
-			    (M) ->
-		      let <_5> =
-			  ~{'compressed'=>C|M}~
-		      in  apply 'info2Map'/2
-			      (Info, _5)
-		  -| ['compiler_generated'] )
-		( <> when 'true' ->
-		      ( primop 'match_fail'
-			    ({'badmap',M})
-			-| [{'eval_failure','badmap'}] )
-		  -| ['compiler_generated'] )
-	      end
-	  %% Line 61
+	      let <_5> =
+		  call %% Line 56
+		       'maps':%% Line 56
+			      'put'
+		      (%% Line 56
+		       'compressed', %% Line 56
+				     C, %% Line 56
+					M)
+	      in  %% Line 56
+		  apply 'info2Map'/2
+		      (Info, _5)
+	  %% Line 57
 	  <[{'memory',Size}|Info],M> when 'true' ->
-	      %% Line 62
-	      case <> of
-		( <>
-		      when call 'erlang':'is_map'
-			    (M) ->
-		      let <_6> =
-			  ~{'memory'=>Size|M}~
-		      in  apply 'info2Map'/2
-			      (Info, _6)
-		  -| ['compiler_generated'] )
-		( <> when 'true' ->
-		      ( primop 'match_fail'
-			    ({'badmap',M})
-			-| [{'eval_failure','badmap'}] )
-		  -| ['compiler_generated'] )
-	      end
-	  %% Line 63
+	      let <_6> =
+		  call %% Line 58
+		       'maps':%% Line 58
+			      'put'
+		      (%% Line 58
+		       'memory', %% Line 58
+				 Size, %% Line 58
+				       M)
+	      in  %% Line 58
+		  apply 'info2Map'/2
+		      (Info, _6)
+	  %% Line 59
 	  <[{'owner',Pid}|Info],M> when 'true' ->
-	      %% Line 64
-	      case <> of
-		( <>
-		      when call 'erlang':'is_map'
-			    (M) ->
-		      let <_7> =
-			  ~{'owner'=>Pid|M}~
-		      in  apply 'info2Map'/2
-			      (Info, _7)
-		  -| ['compiler_generated'] )
-		( <> when 'true' ->
-		      ( primop 'match_fail'
-			    ({'badmap',M})
-			-| [{'eval_failure','badmap'}] )
-		  -| ['compiler_generated'] )
-	      end
-	  %% Line 65
+	      let <_7> =
+		  call %% Line 60
+		       'maps':%% Line 60
+			      'put'
+		      (%% Line 60
+		       'owner', %% Line 60
+				Pid, %% Line 60
+				     M)
+	      in  %% Line 60
+		  apply 'info2Map'/2
+		      (Info, _7)
+	  %% Line 61
 	  <[{'name',Name}|Info],M> when 'true' ->
-	      %% Line 66
-	      case <> of
-		( <>
-		      when call 'erlang':'is_map'
-			    (M) ->
-		      let <_8> =
-			  ~{'name'=>Name|M}~
-		      in  apply 'info2Map'/2
-			      (Info, _8)
-		  -| ['compiler_generated'] )
-		( <> when 'true' ->
-		      ( primop 'match_fail'
-			    ({'badmap',M})
-			-| [{'eval_failure','badmap'}] )
-		  -| ['compiler_generated'] )
-	      end
-	  %% Line 67
+	      let <_8> =
+		  call %% Line 62
+		       'maps':%% Line 62
+			      'put'
+		      (%% Line 62
+		       'name', %% Line 62
+			       Name, %% Line 62
+				     M)
+	      in  %% Line 62
+		  apply 'info2Map'/2
+		      (Info, _8)
+	  %% Line 63
 	  <[{'size',Size}|Info],M> when 'true' ->
-	      %% Line 68
-	      case <> of
-		( <>
-		      when call 'erlang':'is_map'
-			    (M) ->
-		      let <_9> =
-			  ~{'size'=>Size|M}~
-		      in  apply 'info2Map'/2
-			      (Info, _9)
-		  -| ['compiler_generated'] )
-		( <> when 'true' ->
-		      ( primop 'match_fail'
-			    ({'badmap',M})
-			-| [{'eval_failure','badmap'}] )
-		  -| ['compiler_generated'] )
-	      end
-	  %% Line 69
+	      let <_9> =
+		  call %% Line 64
+		       'maps':%% Line 64
+			      'put'
+		      (%% Line 64
+		       'size', %% Line 64
+			       Size, %% Line 64
+				     M)
+	      in  %% Line 64
+		  apply 'info2Map'/2
+		      (Info, _9)
+	  %% Line 65
 	  <[{'node',Node}|Info],M> when 'true' ->
-	      %% Line 70
-	      case <> of
-		( <>
-		      when call 'erlang':'is_map'
-			    (M) ->
-		      let <_10> =
-			  ~{'node'=>Node|M}~
-		      in  apply 'info2Map'/2
-			      (Info, _10)
-		  -| ['compiler_generated'] )
-		( <> when 'true' ->
-		      ( primop 'match_fail'
-			    ({'badmap',M})
-			-| [{'eval_failure','badmap'}] )
-		  -| ['compiler_generated'] )
-	      end
-	  %% Line 71
+	      let <_10> =
+		  call %% Line 66
+		       'maps':%% Line 66
+			      'put'
+		      (%% Line 66
+		       'node', %% Line 66
+			       Node, %% Line 66
+				     M)
+	      in  %% Line 66
+		  apply 'info2Map'/2
+		      (Info, _10)
+	  %% Line 67
 	  <[{'named_table',Bool}|Info],M> when 'true' ->
-	      %% Line 72
-	      case <> of
-		( <>
-		      when call 'erlang':'is_map'
-			    (M) ->
-		      let <_11> =
-			  ~{'namedTable'=>Bool|M}~
-		      in  apply 'info2Map'/2
-			      (Info, _11)
-		  -| ['compiler_generated'] )
-		( <> when 'true' ->
-		      ( primop 'match_fail'
-			    ({'badmap',M})
-			-| [{'eval_failure','badmap'}] )
-		  -| ['compiler_generated'] )
-	      end
-	  %% Line 75
+	      let <_11> =
+		  call %% Line 68
+		       'maps':%% Line 68
+			      'put'
+		      (%% Line 68
+		       'namedTable', %% Line 68
+				     Bool, %% Line 68
+					   M)
+	      in  %% Line 68
+		  apply 'info2Map'/2
+		      (Info, _11)
+	  %% Line 69
+	  <[{'type',Type}|Info],M> when 'true' ->
+	      let <_12> =
+		  apply %% Line 70
+			'ttype'/1
+		      (%% Line 70
+		       Type)
+	      in  let <_13> =
+		      call %% Line 70
+			   'maps':%% Line 70
+				  'put'
+			  (%% Line 70
+			   'ttype', _12, %% Line 70
+					 M)
+		  in  %% Line 70
+		      apply 'info2Map'/2
+			  (Info, _13)
+	  %% Line 71
 	  <[{'keypos',Pos}|Info],M> when 'true' ->
+	      let <_14> =
+		  call %% Line 72
+		       'maps':%% Line 72
+			      'put'
+		      (%% Line 72
+		       'keyPos', %% Line 72
+				 Pos, %% Line 72
+				      M)
+	      in  %% Line 72
+		  apply 'info2Map'/2
+		      (Info, _14)
+	  %% Line 73
+	  <[{'protection',Access}|Info],M> when 'true' ->
+	      let <_15> =
+		  apply %% Line 74
+			'access'/1
+		      (%% Line 74
+		       Access)
+	      in  let <_16> =
+		      call %% Line 74
+			   'maps':%% Line 74
+				  'put'
+			  (%% Line 74
+			   'protection', _15, %% Line 74
+					      M)
+		  in  %% Line 74
+		      apply 'info2Map'/2
+			  (Info, _16)
+	  %% Line 75
+	  <[_19|Info],M> when 'true' ->
 	      %% Line 76
-	      case <> of
-		( <>
-		      when call 'erlang':'is_map'
-			    (M) ->
-		      let <_12> =
-			  ~{'keyPos'=>Pos|M}~
-		      in  apply 'info2Map'/2
-			      (Info, _12)
-		  -| ['compiler_generated'] )
-		( <> when 'true' ->
-		      ( primop 'match_fail'
-			    ({'badmap',M})
-			-| [{'eval_failure','badmap'}] )
-		  -| ['compiler_generated'] )
-	      end
-	  %% Line 79
-	  <[_15|Info],M> when 'true' ->
-	      %% Line 80
 	      apply 'info2Map'/2
 		  (Info, M)
-	  %% Line 81
+	  %% Line 77
 	  <[],M> when 'true' ->
 	      M
-	  ( <_14,_13> when 'true' ->
+	  ( <_18,_17> when 'true' ->
 		( primop 'match_fail'
-		      ({'function_clause',_14,_13})
+		      ({'function_clause',_18,_17})
 		  -| [{'function_name',{'info2Map',2}}] )
 	    -| ['compiler_generated'] )
 	end
 'access'/1 =
-    %% Line 88
+    %% Line 84
     fun (_0) ->
 	case _0 of
 	  <{'Public'}> when 'true' ->
 	      'public'
-	  %% Line 89
+	  %% Line 85
 	  <{'Protected'}> when 'true' ->
 	      'protected'
-	  %% Line 90
+	  %% Line 86
 	  <{'Private'}> when 'true' ->
 	      'private'
-	  %% Line 92
+	  %% Line 88
 	  <'public'> when 'true' ->
 	      {'Public'}
-	  %% Line 93
+	  %% Line 89
 	  <'protected'> when 'true' ->
 	      {'Protected'}
-	  %% Line 94
+	  %% Line 90
 	  <'private'> when 'true' ->
 	      {'Private'}
 	  ( <_1> when 'true' ->
@@ -340,30 +314,30 @@ module 'ETS' ['info'/1,
 	    -| ['compiler_generated'] )
 	end
 'ttype'/1 =
-    %% Line 97
+    %% Line 93
     fun (_0) ->
 	case _0 of
 	  <{'Set'}> when 'true' ->
 	      'set'
-	  %% Line 98
+	  %% Line 94
 	  <{'OrderedSet'}> when 'true' ->
 	      'ordered_set'
-	  %% Line 99
+	  %% Line 95
 	  <{'Bag'}> when 'true' ->
 	      'bag'
-	  %% Line 100
+	  %% Line 96
 	  <{'DuplicateBag'}> when 'true' ->
 	      'duplicate_bag'
-	  %% Line 102
+	  %% Line 98
 	  <'set'> when 'true' ->
 	      {'Set'}
-	  %% Line 103
+	  %% Line 99
 	  <'ordered_set'> when 'true' ->
 	      {'OrderedSet'}
-	  %% Line 104
+	  %% Line 100
 	  <'bag'> when 'true' ->
 	      {'Bag'}
-	  %% Line 105
+	  %% Line 101
 	  <'duplicate_bag'> when 'true' ->
 	      {'DuplicateBag'}
 	  ( <_1> when 'true' ->

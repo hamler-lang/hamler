@@ -14,9 +14,7 @@
 %%---------------------------------------------------------------------------
 -module('ETS').
 
--export([ new/2
-        , info/1
-        ]).
+-export([new/2, info/1]).
 
 -spec(new(string(), map()) -> ets:tab()).
 new(Table, Options) ->
@@ -26,7 +24,7 @@ new(Table, Options) ->
 info(TableId) ->
     case ets:info(TableId) of
         undefined -> {'Nothing'};
-        Info -> {'Just', info2Map(Info)}
+        Info -> {'Just', info2Map(Info, #{})}
     end.
 
 parseOpts(#{ttype := Type,
@@ -48,34 +46,32 @@ parseOpts(#{ttype := Type,
         false -> Opts
     end.
 
-info2Map(Info) -> info2Map(Info, #{}).
-
 info2Map([{id, Id}|Info], M) ->
-    info2Map(Info, M#{id => Id});
+    info2Map(Info, maps:put(id, Id, M));
 info2Map([{read_concurrency, R}|Info], M) ->
-    info2Map(Info, M#{readConcurrency => R});
+    info2Map(Info, maps:put(readConcurrency, R, M));
 info2Map([{write_concurrency, W}|Info], M) ->
-    info2Map(Info, M#{writeConcurrency => W});
+    info2Map(Info, maps:put(writeConcurrency, W, M));
 info2Map([{compressed, C}|Info], M) ->
-    info2Map(Info, M#{compressed => C});
+    info2Map(Info, maps:put(compressed, C, M));
 info2Map([{memory, Size}|Info], M) ->
-    info2Map(Info, M#{memory => Size});
+    info2Map(Info, maps:put(memory, Size, M));
 info2Map([{owner, Pid}|Info], M) ->
-    info2Map(Info, M#{owner => Pid});
+    info2Map(Info, maps:put(owner, Pid, M));
 info2Map([{name, Name}|Info], M) ->
-    info2Map(Info, M#{name => Name});
+    info2Map(Info, maps:put(name, Name, M));
 info2Map([{size, Size}|Info], M) ->
-    info2Map(Info, M#{size => Size});
+    info2Map(Info, maps:put(size, Size, M));
 info2Map([{node, Node}|Info], M) ->
-    info2Map(Info, M#{node => Node});
+    info2Map(Info, maps:put(node, Node, M));
 info2Map([{named_table, Bool}|Info], M) ->
-    info2Map(Info, M#{namedTable => Bool});
+    info2Map(Info, maps:put(namedTable, Bool, M));
 info2Map([{type, Type}|Info], M) ->
-    info2Map(Info, M#{ttype => ttype(Type)});
+    info2Map(Info, maps:put(ttype, ttype(Type), M));
 info2Map([{keypos, Pos}|Info], M) ->
-    info2Map(Info, M#{keyPos => Pos});
+    info2Map(Info, maps:put(keyPos, Pos, M));
 info2Map([{protection, Access}|Info], M) ->
-    info2Map(Info, M#{protection => access(Access)});
+    info2Map(Info, maps:put(protection, access(Access), M));
 info2Map([_|Info], M) ->
     info2Map(Info, M);
 info2Map([], M) -> M.
@@ -84,7 +80,7 @@ info2Map([], M) -> M.
 %% Transform Options
 %%---------------------------------------------------------------------------
 
-%% -compile({inline, [access/1]}).
+%-compile({inline, [access/1]}).
 access({'Public'})    -> public;
 access({'Protected'}) -> protected;
 access({'Private'})   -> private;
@@ -93,7 +89,7 @@ access(public)        -> {'Public'};
 access(protected)     -> {'Protected'};
 access(private)       -> {'Private'}.
 
-%% -compile({inline, [ttype/1]}).
+%-compile({inline, [ttype/1]}).
 ttype({'Set'})          -> set;
 ttype({'OrderedSet'})   -> ordered_set;
 ttype({'Bag'})          -> bag;
