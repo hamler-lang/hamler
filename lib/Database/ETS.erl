@@ -43,8 +43,9 @@ parseOpts(#{ttype := Type,
             {read_concurrency, R},
             {write_concurrency, W}
            ],
-    if Compressed -> [compressed | Opts];
-       true -> Opts
+    case Compressed of
+        true  -> [compressed | Opts];
+        false -> Opts
     end.
 
 info2Map(Info) -> info2Map(Info, #{}).
@@ -83,7 +84,7 @@ info2Map([], M) -> M.
 %% Transform Options
 %%---------------------------------------------------------------------------
 
--compile({inline, [access/1]}).
+%% -compile({inline, [access/1]}).
 access({'Public'})    -> public;
 access({'Protected'}) -> protected;
 access({'Private'})   -> private;
@@ -92,7 +93,7 @@ access(public)        -> {'Public'};
 access(protected)     -> {'Protected'};
 access(private)       -> {'Private'}.
 
--compile({inline, [ttype/1]}).
+%% -compile({inline, [ttype/1]}).
 ttype({'Set'})          -> set;
 ttype({'OrderedSet'})   -> ordered_set;
 ttype({'Bag'})          -> bag;

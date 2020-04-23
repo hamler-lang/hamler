@@ -13,15 +13,7 @@ module 'ETS' ['info'/1,
 		%% Line 25
 		'spec' =
 		    %% Line 25
-		    [{{'info',1},[{'type',25,'fun',[{'type',25,'product',[{'remote_type',25,[{'atom',25,'ets'}|[{'atom',25,'tab'}|[[]]]]}]}|[{'type',25,'union',[{'type',25,'tuple',[{'atom',25,'Nothing'}]}|[{'type',25,'tuple',[{'atom',25,'Just'}|[{'type',25,'map','any'}]]}]]}]]}]}],
-		%% Line 86
-		'compile' =
-		    %% Line 86
-		    [{'inline',[{'access',1}]}],
-		%% Line 95
-		'compile' =
-		    %% Line 95
-		    [{'inline',[{'ttype',1}]}]]
+		    [{{'info',1},[{'type',25,'fun',[{'type',25,'product',[{'remote_type',25,[{'atom',25,'ets'}|[{'atom',25,'tab'}|[[]]]]}]}|[{'type',25,'union',[{'type',25,'tuple',[{'atom',25,'Nothing'}]}|[{'type',25,'tuple',[{'atom',25,'Just'}|[{'type',25,'map','any'}]]}]]}]]}]}]]
 'new'/2 =
     %% Line 22
     fun (_0,_1) ->
@@ -64,131 +56,15 @@ module 'ETS' ['info'/1,
 								       'writeConcurrency':=W,%% Line 35
 											     'readConcurrency':=R,'ttype':=Type}~> when 'true' ->
 	      let <_1> =
-		  case %% Line 39
-		       Type of
-		    %% Line 96
-		    ( <( {'Set'}
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( 'set'
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 97
-		    ( <( {'OrderedSet'}
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( 'ordered_set'
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 98
-		    ( <( {'Bag'}
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( 'bag'
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 99
-		    ( <( {'DuplicateBag'}
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( 'duplicate_bag'
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 101
-		    ( <( 'set'
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( {'Set'}
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 102
-		    ( <( 'ordered_set'
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( {'OrderedSet'}
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 103
-		    ( <( 'bag'
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( {'Bag'}
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 104
-		    ( <( 'duplicate_bag'
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( {'DuplicateBag'}
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    ( <_1> when ( 'true'
-				  -| ['compiler_generated'] ) ->
-			  %% Line 96
-			  ( primop ( 'match_fail'
-				     -| ['compiler_generated'] )
-				(( {( 'function_clause'
-				      -| ['compiler_generated'] ),_1}
-				   -| ['compiler_generated'] ))
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		  end
+		  apply %% Line 39
+			'ttype'/1
+		      (%% Line 39
+		       Type)
 	      in  let <_2> =
-		      case %% Line 40
-			   Access of
-			%% Line 87
-			( <( {'Public'}
-			     -| ['compiler_generated'] )> when ( 'true'
-								 -| ['compiler_generated'] ) ->
-			      ( 'public'
-				-| ['compiler_generated'] )
-			  -| ['compiler_generated'] )
-			%% Line 88
-			( <( {'Protected'}
-			     -| ['compiler_generated'] )> when ( 'true'
-								 -| ['compiler_generated'] ) ->
-			      ( 'protected'
-				-| ['compiler_generated'] )
-			  -| ['compiler_generated'] )
-			%% Line 89
-			( <( {'Private'}
-			     -| ['compiler_generated'] )> when ( 'true'
-								 -| ['compiler_generated'] ) ->
-			      ( 'private'
-				-| ['compiler_generated'] )
-			  -| ['compiler_generated'] )
-			%% Line 91
-			( <( 'public'
-			     -| ['compiler_generated'] )> when ( 'true'
-								 -| ['compiler_generated'] ) ->
-			      ( {'Public'}
-				-| ['compiler_generated'] )
-			  -| ['compiler_generated'] )
-			%% Line 92
-			( <( 'protected'
-			     -| ['compiler_generated'] )> when ( 'true'
-								 -| ['compiler_generated'] ) ->
-			      ( {'Protected'}
-				-| ['compiler_generated'] )
-			  -| ['compiler_generated'] )
-			%% Line 93
-			( <( 'private'
-			     -| ['compiler_generated'] )> when ( 'true'
-								 -| ['compiler_generated'] ) ->
-			      ( {'Private'}
-				-| ['compiler_generated'] )
-			  -| ['compiler_generated'] )
-			( <_7> when ( 'true'
-				      -| ['compiler_generated'] ) ->
-			      %% Line 87
-			      ( primop ( 'match_fail'
-					 -| ['compiler_generated'] )
-				    (( {( 'function_clause'
-					  -| ['compiler_generated'] ),_7}
-				       -| ['compiler_generated'] ))
-				-| ['compiler_generated'] )
-			  -| ['compiler_generated'] )
-		      end
+		      apply %% Line 40
+			    'access'/1
+			  (%% Line 40
+			   Access)
 		  in  let <Opts> =
 			  [_1|%% Line 40
 			      [_2|%% Line 41
@@ -198,34 +74,35 @@ module 'ETS' ['info'/1,
 											    [{'write_concurrency',W}|%% Line 45
 														     []]]]]]]
 		      in  %% Line 46
-			  case <> of
-			    <>
-				when ( call 'erlang':'=:='
-					(Compressed,
-					 'true')
-				    -| ['compiler_generated'] ) ->
-				['compressed'|Opts]
+			  case Compressed of
 			    %% Line 47
-			    <> when 'true' ->
+			    <'true'> when 'true' ->
+				['compressed'|Opts]
+			    %% Line 48
+			    <'false'> when 'true' ->
 				Opts
+			    ( <_4> when 'true' ->
+				  primop 'match_fail'
+				      ({'case_clause',_4})
+			      -| ['compiler_generated'] )
 			  end
-	  ( <_4> when 'true' ->
+	  ( <_5> when 'true' ->
 		( primop 'match_fail'
-		      ({'function_clause',_4})
+		      ({'function_clause',_5})
 		  -| [{'function_name',{'parseOpts',1}}] )
 	    -| ['compiler_generated'] )
 	end
 'info2Map'/1 =
-    %% Line 50
+    %% Line 51
     fun (_0) ->
 	apply 'info2Map'/2
 	    (_0, ~{}~)
 'info2Map'/2 =
-    %% Line 52
+    %% Line 53
     fun (_0,_1) ->
 	case <_0,_1> of
 	  <[{'id',Id}|Info],M> when 'true' ->
-	      %% Line 53
+	      %% Line 54
 	      case <> of
 		( <>
 		      when call 'erlang':'is_map'
@@ -241,9 +118,9 @@ module 'ETS' ['info'/1,
 			-| [{'eval_failure','badmap'}] )
 		  -| ['compiler_generated'] )
 	      end
-	  %% Line 54
+	  %% Line 55
 	  <[{'read_concurrency',R}|Info],M> when 'true' ->
-	      %% Line 55
+	      %% Line 56
 	      case <> of
 		( <>
 		      when call 'erlang':'is_map'
@@ -259,9 +136,9 @@ module 'ETS' ['info'/1,
 			-| [{'eval_failure','badmap'}] )
 		  -| ['compiler_generated'] )
 	      end
-	  %% Line 56
+	  %% Line 57
 	  <[{'write_concurrency',W}|Info],M> when 'true' ->
-	      %% Line 57
+	      %% Line 58
 	      case <> of
 		( <>
 		      when call 'erlang':'is_map'
@@ -277,9 +154,9 @@ module 'ETS' ['info'/1,
 			-| [{'eval_failure','badmap'}] )
 		  -| ['compiler_generated'] )
 	      end
-	  %% Line 58
+	  %% Line 59
 	  <[{'compressed',C}|Info],M> when 'true' ->
-	      %% Line 59
+	      %% Line 60
 	      case <> of
 		( <>
 		      when call 'erlang':'is_map'
@@ -295,9 +172,9 @@ module 'ETS' ['info'/1,
 			-| [{'eval_failure','badmap'}] )
 		  -| ['compiler_generated'] )
 	      end
-	  %% Line 60
+	  %% Line 61
 	  <[{'memory',Size}|Info],M> when 'true' ->
-	      %% Line 61
+	      %% Line 62
 	      case <> of
 		( <>
 		      when call 'erlang':'is_map'
@@ -313,9 +190,9 @@ module 'ETS' ['info'/1,
 			-| [{'eval_failure','badmap'}] )
 		  -| ['compiler_generated'] )
 	      end
-	  %% Line 62
+	  %% Line 63
 	  <[{'owner',Pid}|Info],M> when 'true' ->
-	      %% Line 63
+	      %% Line 64
 	      case <> of
 		( <>
 		      when call 'erlang':'is_map'
@@ -331,9 +208,9 @@ module 'ETS' ['info'/1,
 			-| [{'eval_failure','badmap'}] )
 		  -| ['compiler_generated'] )
 	      end
-	  %% Line 64
+	  %% Line 65
 	  <[{'name',Name}|Info],M> when 'true' ->
-	      %% Line 65
+	      %% Line 66
 	      case <> of
 		( <>
 		      when call 'erlang':'is_map'
@@ -349,9 +226,9 @@ module 'ETS' ['info'/1,
 			-| [{'eval_failure','badmap'}] )
 		  -| ['compiler_generated'] )
 	      end
-	  %% Line 66
+	  %% Line 67
 	  <[{'size',Size}|Info],M> when 'true' ->
-	      %% Line 67
+	      %% Line 68
 	      case <> of
 		( <>
 		      when call 'erlang':'is_map'
@@ -367,9 +244,9 @@ module 'ETS' ['info'/1,
 			-| [{'eval_failure','badmap'}] )
 		  -| ['compiler_generated'] )
 	      end
-	  %% Line 68
+	  %% Line 69
 	  <[{'node',Node}|Info],M> when 'true' ->
-	      %% Line 69
+	      %% Line 70
 	      case <> of
 		( <>
 		      when call 'erlang':'is_map'
@@ -385,9 +262,9 @@ module 'ETS' ['info'/1,
 			-| [{'eval_failure','badmap'}] )
 		  -| ['compiler_generated'] )
 	      end
-	  %% Line 70
+	  %% Line 71
 	  <[{'named_table',Bool}|Info],M> when 'true' ->
-	      %% Line 71
+	      %% Line 72
 	      case <> of
 		( <>
 		      when call 'erlang':'is_map'
@@ -403,105 +280,17 @@ module 'ETS' ['info'/1,
 			-| [{'eval_failure','badmap'}] )
 		  -| ['compiler_generated'] )
 	      end
-	  %% Line 72
-	  <[{'type',Type}|Info],M> when 'true' ->
-	      let <_12> =
-		  case %% Line 73
-		       Type of
-		    %% Line 96
-		    ( <( {'Set'}
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( 'set'
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 97
-		    ( <( {'OrderedSet'}
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( 'ordered_set'
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 98
-		    ( <( {'Bag'}
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( 'bag'
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 99
-		    ( <( {'DuplicateBag'}
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( 'duplicate_bag'
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 101
-		    ( <( 'set'
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( {'Set'}
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 102
-		    ( <( 'ordered_set'
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( {'OrderedSet'}
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 103
-		    ( <( 'bag'
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( {'Bag'}
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 104
-		    ( <( 'duplicate_bag'
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( {'DuplicateBag'}
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    ( <_21> when ( 'true'
-				   -| ['compiler_generated'] ) ->
-			  %% Line 96
-			  ( primop ( 'match_fail'
-				     -| ['compiler_generated'] )
-				(( {( 'function_clause'
-				      -| ['compiler_generated'] ),_21}
-				   -| ['compiler_generated'] ))
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		  end
-	      in  %% Line 73
-		  case <> of
-		    ( <>
-			  when call 'erlang':'is_map'
-				(M) ->
-			  let <_13> =
-			      ~{'ttype'=>_12|M}~
-			  in  apply 'info2Map'/2
-				  (Info, _13)
-		      -| ['compiler_generated'] )
-		    ( <> when 'true' ->
-			  ( primop 'match_fail'
-				({'badmap',M})
-			    -| [{'eval_failure','badmap'}] )
-		      -| ['compiler_generated'] )
-		  end
-	  %% Line 74
+	  %% Line 75
 	  <[{'keypos',Pos}|Info],M> when 'true' ->
-	      %% Line 75
+	      %% Line 76
 	      case <> of
 		( <>
 		      when call 'erlang':'is_map'
 			    (M) ->
-		      let <_14> =
+		      let <_12> =
 			  ~{'keyPos'=>Pos|M}~
 		      in  apply 'info2Map'/2
-			      (Info, _14)
+			      (Info, _12)
 		  -| ['compiler_generated'] )
 		( <> when 'true' ->
 		      ( primop 'match_fail'
@@ -509,113 +298,39 @@ module 'ETS' ['info'/1,
 			-| [{'eval_failure','badmap'}] )
 		  -| ['compiler_generated'] )
 	      end
-	  %% Line 76
-	  <[{'protection',Access}|Info],M> when 'true' ->
-	      let <_15> =
-		  case %% Line 77
-		       Access of
-		    %% Line 87
-		    ( <( {'Public'}
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( 'public'
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 88
-		    ( <( {'Protected'}
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( 'protected'
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 89
-		    ( <( {'Private'}
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( 'private'
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 91
-		    ( <( 'public'
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( {'Public'}
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 92
-		    ( <( 'protected'
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( {'Protected'}
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    %% Line 93
-		    ( <( 'private'
-			 -| ['compiler_generated'] )> when ( 'true'
-							     -| ['compiler_generated'] ) ->
-			  ( {'Private'}
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		    ( <_23> when ( 'true'
-				   -| ['compiler_generated'] ) ->
-			  %% Line 87
-			  ( primop ( 'match_fail'
-				     -| ['compiler_generated'] )
-				(( {( 'function_clause'
-				      -| ['compiler_generated'] ),_23}
-				   -| ['compiler_generated'] ))
-			    -| ['compiler_generated'] )
-		      -| ['compiler_generated'] )
-		  end
-	      in  %% Line 77
-		  case <> of
-		    ( <>
-			  when call 'erlang':'is_map'
-				(M) ->
-			  let <_16> =
-			      ~{'protection'=>_15|M}~
-			  in  apply 'info2Map'/2
-				  (Info, _16)
-		      -| ['compiler_generated'] )
-		    ( <> when 'true' ->
-			  ( primop 'match_fail'
-				({'badmap',M})
-			    -| [{'eval_failure','badmap'}] )
-		      -| ['compiler_generated'] )
-		  end
-	  %% Line 78
-	  <[_19|Info],M> when 'true' ->
-	      %% Line 79
+	  %% Line 79
+	  <[_15|Info],M> when 'true' ->
+	      %% Line 80
 	      apply 'info2Map'/2
 		  (Info, M)
-	  %% Line 80
+	  %% Line 81
 	  <[],M> when 'true' ->
 	      M
-	  ( <_18,_17> when 'true' ->
+	  ( <_14,_13> when 'true' ->
 		( primop 'match_fail'
-		      ({'function_clause',_18,_17})
+		      ({'function_clause',_14,_13})
 		  -| [{'function_name',{'info2Map',2}}] )
 	    -| ['compiler_generated'] )
 	end
 'access'/1 =
-    %% Line 87
+    %% Line 88
     fun (_0) ->
 	case _0 of
 	  <{'Public'}> when 'true' ->
 	      'public'
-	  %% Line 88
+	  %% Line 89
 	  <{'Protected'}> when 'true' ->
 	      'protected'
-	  %% Line 89
+	  %% Line 90
 	  <{'Private'}> when 'true' ->
 	      'private'
-	  %% Line 91
+	  %% Line 92
 	  <'public'> when 'true' ->
 	      {'Public'}
-	  %% Line 92
+	  %% Line 93
 	  <'protected'> when 'true' ->
 	      {'Protected'}
-	  %% Line 93
+	  %% Line 94
 	  <'private'> when 'true' ->
 	      {'Private'}
 	  ( <_1> when 'true' ->
@@ -625,30 +340,30 @@ module 'ETS' ['info'/1,
 	    -| ['compiler_generated'] )
 	end
 'ttype'/1 =
-    %% Line 96
+    %% Line 97
     fun (_0) ->
 	case _0 of
 	  <{'Set'}> when 'true' ->
 	      'set'
-	  %% Line 97
+	  %% Line 98
 	  <{'OrderedSet'}> when 'true' ->
 	      'ordered_set'
-	  %% Line 98
+	  %% Line 99
 	  <{'Bag'}> when 'true' ->
 	      'bag'
-	  %% Line 99
+	  %% Line 100
 	  <{'DuplicateBag'}> when 'true' ->
 	      'duplicate_bag'
-	  %% Line 101
+	  %% Line 102
 	  <'set'> when 'true' ->
 	      {'Set'}
-	  %% Line 102
+	  %% Line 103
 	  <'ordered_set'> when 'true' ->
 	      {'OrderedSet'}
-	  %% Line 103
+	  %% Line 104
 	  <'bag'> when 'true' ->
 	      {'Bag'}
-	  %% Line 104
+	  %% Line 105
 	  <'duplicate_bag'> when 'true' ->
 	      {'DuplicateBag'}
 	  ( <_1> when 'true' ->
