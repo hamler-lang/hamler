@@ -61,16 +61,19 @@ module 'Foreign' ['ffi'/3,
     fun (_0,_1,_2,_3) ->
 	case <_0,_1,_2,_3> of
 	  <M,F,A,0> when 'true' ->
-	      call 'erlang':'apply'
-		  (M, F, A)
+	      let <_4> =
+		  call 'lists':'reverse'
+		      (A)
+	      in  call 'erlang':'apply'
+		      (M, F, _4)
 	  %% Line 27
 	  <M,F,A,N> when 'true' ->
-	      ( fun (_5) ->
-		    let <_4> =
+	      ( fun (_6) ->
+		    let <_5> =
 			call 'erlang':'-'
 			    (N, 1)
 		    in  apply 'curry'/4
-			    (M, F, [_5|A], _4)
+			    (M, F, [_6|A], _5)
 		-| [{'id',{0,0,'-curry/4-fun-0-'}}] )
 	end
 'atom'/1 =
