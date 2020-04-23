@@ -37,6 +37,7 @@ data PSCMakeOptions = PSCMakeOptions
   , pscmOpts         :: P.Options
   , pscmUsePrefix    :: Bool
   , pscmJSONErrors   :: Bool
+  , isInline         :: Bool
   }
 
 -- | Arguments: verbose, use JSON, warnings, errors
@@ -71,7 +72,7 @@ compile PSCMakeOptions{..} = do
     ms <- CST.parseModulesFromFiles id moduleFiles
     let filePathMap = M.fromList $ map (\(fp, pm) -> (P.getModuleName $ CST.resPartial pm, Right fp)) ms
     foreigns <- inferForeignModules filePathMap
-    let makeActions = buildMakeActions pscmOutputDir filePathMap foreigns pscmUsePrefix
+    let makeActions = buildMakeActions isInline pscmOutputDir filePathMap foreigns pscmUsePrefix
     -- P.make makeActions (map snd ms)
     make makeActions (map snd ms)
   printWarningsAndErrors (P.optionsVerboseErrors pscmOpts) pscmJSONErrors makeWarnings makeErrors
@@ -165,6 +166,7 @@ pscMakeOptions = PSCMakeOptions <$> many inputFile
                                 <*> options
                                 <*> (not <$> noPrefix)
                                 <*> jsonErrors
+                                <*> (pure False)
 
 
 howBuild :: Opts.Parser Bool
@@ -174,17 +176,26 @@ howBuild= Opts.switch $
   <> Opts.help "build the libraries to ebin"
 
 
+inline :: Opts.Parser Bool
+inline= Opts.switch $
+     Opts.short 'i'
+  <> Opts.long "inline"
+  <> Opts.help "Determine whether to inline functions when reading .core"
+
+
+
 command :: Opts.Parser (IO ())
-command = buildFun <$> howBuild
+command = buildFun <$> inline
+                   <*> howBuild
 
-buildFun :: Bool -> IO ()
-buildFun b = if b
-             then buildlib
-             else buildSrc
+buildFun ::Bool -> Bool -> IO ()
+buildFun isIn b = if b
+                  then buildlib isIn
+                  else buildSrc isIn
 
-
-buildSrc :: IO ()
-buildSrc = do
+buildSrc :: Bool -> IO ()
+buildSrc bool = do
+  print bool
   dir <- getCurrentDirectory
   isExist <- doesDirectoryExist hamlerlib
   fps1 <- if isExist
@@ -201,6 +212,7 @@ buildSrc = do
                           , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
                           , pscmUsePrefix  = False
                           , pscmJSONErrors = False
+                          , isInline       = bool
                           }
           )
   cfs <- findFile1 ".core" tpath
@@ -229,8 +241,9 @@ cc x = x
 
 
 -- build lib
-buildlib :: IO ()
-buildlib = do
+buildlib :: Bool -> IO ()
+buildlib bool = do
+  print bool
   dir <- getCurrentDirectory
   fps1 <- gethmFiles (dir <> "/lib")
   let fps = fps1
@@ -248,6 +261,7 @@ buildlib = do
                           , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
                           , pscmUsePrefix  = False
                           , pscmJSONErrors = False
+                          , isInline       = bool
                           }
           )
   cfs <- findFile1 ".core" tpath

@@ -52,19 +52,23 @@ data GState = GState
   , _letMap         :: M.Map Text (Int,E.Expr)
   , _binderVarIndex :: Int
   , _modInfoMap     :: M.Map Text (M.Map Text Int)
+  , _isInline       :: Bool
   } deriving (Show)
 
 makeLenses ''GState
 
-emptyGState = GState (ModuleName []) (M.fromList plist ) M.empty M.empty M.empty 0 M.empty
+emptyGState = GState (ModuleName []) (M.fromList plist ) M.empty M.empty M.empty 0 M.empty False
 
-runTranslate :: (M.Map Text (M.Map Text Int)) ->
+runTranslate :: Bool ->
+                (M.Map Text (M.Map Text Int)) ->
                 [(Text,(Int,E.Expr))] ->
                 Translate a ->
                 (((Either MError a), GState), MLog)
-runTranslate modinfos plist translate =
+runTranslate isinline modinfos plist translate =
   runWriter $ runStateT (runExceptT translate)
-                       ((emptyGState & ffiFun .~ (M.fromList plist)) & modInfoMap .~ modinfos)
+                       ((emptyGState & ffiFun .~ (M.fromList plist))
+                                     & modInfoMap .~ modinfos
+                                     & isInline .~ isinline)
 
 -- | CoreFn Module to CoreErlang AST
 moduleToErl :: C.Module C.Ann -> Translate E.Module
@@ -90,15 +94,17 @@ moduleToErl C.Module{..} = do
   return $ E.Module (Atom $ unpack $ runModuleName moduleName)
                     ( mm1:mm0:(fmap snd  exports))
                     []
-                    (funDecls' <> (fmap (\(name,(args,expr)) ->
+                    ( if gs ^. isInline
+                      then  (funDecls' <> (fmap (getJust . fst) $ Prelude.filter (isJust .fst)  exports ))
+                      else (funDecls' <> (fmap (\(name,(args,expr)) ->
                                            FunDef (Constr $ FunName (Atom $ last $ words $ fmap tcc $ unpack name
                                                                   , toInteger args))
                                                   (Constr expr)
                                         )
                                     (M.toList $ gs ^. ffiFun)
                                   )
-                    )
-                    -- (funDecls' <> (fmap (getJust . fst) $ Prelude.filter (isJust .fst)  exports ))
+                           )
+                   )
 
 isJust Nothing  = False
 isJust (Just _) = True
@@ -251,8 +257,9 @@ exprToErl (C.Var _  qi@(Qualified _ tema)) = do
           x -> return $ E.Fun $ E.FunName (Atom (unpack wname), toInteger x)
         Nothing -> case M.lookup name (gs ^. ffiFun) of
           Just (0,e) -> return $ E.App (Expr $ Constr e) []
-          Just (x,e) -> return $ E.Fun $ E.FunName (Atom (unpack wname), toInteger x)
-          -- Just (_,e) -> return e
+          Just (x,e) -> return $ if gs ^. isInline
+                               then e
+                               else E.Fun $ E.FunName (Atom (unpack wname), toInteger x)
           Nothing    -> case qi of
             Qualified (Just mn) ident ->do
               let mn' = runModuleName mn

@@ -112,7 +112,8 @@ data MakeActions m = MakeActions
 
 -- | A set of make actions that read and write modules from the given directory.
 buildMakeActions
-  :: FilePath
+  :: Bool
+  -> FilePath
   -- ^ the output directory
   -> M.Map ModuleName (Either RebuildPolicy FilePath)
   -- ^ a map between module names and paths to the file containing the PureScript module
@@ -121,7 +122,7 @@ buildMakeActions
   -> Bool
   -- ^ Generate a prefix comment?
   -> MakeActions Make
-buildMakeActions outputDir filePathMap foreigns usePrefix =
+buildMakeActions isInline outputDir filePathMap foreigns usePrefix =
     MakeActions getInputTimestampsAndHashes getOutputTimestamp readExterns codegen ffiCodegen progress readCacheDb writeCacheDb outputPrimDocs
   where
 
@@ -179,6 +180,9 @@ buildMakeActions outputDir filePathMap foreigns usePrefix =
     let list = read (unpack con) :: [(String,Int)]
     return $ (mn', M.fromList $  fmap (\(a,b) -> (pack (unpack mn' <> "." <> a) ,b)) list)
 
+  myinline t = if t
+               then inline
+               else id
 
   codegen :: CF.Module CF.Ann -> Docs.Module -> ExternsFile -> SupplyT Make ()
   codegen m docs exts = do
@@ -187,15 +191,18 @@ buildMakeActions outputDir filePathMap foreigns usePrefix =
       Nothing -> do return []
       Just fp -> do
         con <-lift $ makeIO "read Main.core" $ TIO.readFile fp
-        -- let Right (CE.Constr ( CE.Module (CE.Atom ename) eexports _ efundefs )) = fmap inline $ CE.parseModule $ unpack con
-        let Right (CE.Constr ( CE.Module (CE.Atom ename) eexports _ efundefs )) =  CE.parseModule $ unpack con
-            ff (CE.FunDef (CE.Constr (CE.FunName (CE.Atom n,i))) (CE.Constr expr) ) = (pack $ (unpack $ runModuleName mn) <> "." <> n
-                                                                                      , (fromIntegral i,expr))
-        return $ fmap ff efundefs
+        case fmap (myinline isInline) $ CE.parseModule $ unpack con of
+         Left e -> do
+           lift $ makeIO "read Main.core" $ print ("error of parse core file: ---> " <> fp)
+           lift $ throwError $ MultipleErrors [ErrorMessage [] $ ErrorParsingModule e]
+         Right (CE.Constr ( CE.Module (CE.Atom ename) eexports _ efundefs )) -> do
+            let ff (CE.FunDef (CE.Constr (CE.FunName (CE.Atom n,i))) (CE.Constr expr) )
+                  = (pack $ (unpack $ runModuleName mn) <> "." <> n, (fromIntegral i,expr))
+            return $ fmap ff efundefs
     let mods = filter (/= mn) $  filter (/= ModuleName [ProperName "Prim"]) $  fmap snd $ CF.moduleImports m
     modInfoList <- mapM readModuleInfo mods
     let modInfoMap = M.fromList  modInfoList
-    let ((erl,gs),log) = runTranslate modInfoMap efundefs' $  moduleToErl m
+    let ((erl,gs),log) = runTranslate isInline modInfoMap efundefs' $  moduleToErl m
     case erl of
       Left e -> lift $ makeIO "print error" $ print e
       Right e@(CE.Module _ exports _ _) -> do
@@ -227,3 +234,5 @@ buildMakeActions outputDir filePathMap foreigns usePrefix =
   cacheDbFile = outputDir </> "cache-db.json"
 
 
+-- pErrorMError :: CE.ParseError -> MultipleErrors
+-- pErrorMError 
