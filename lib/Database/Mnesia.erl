@@ -13,3 +13,11 @@
 %%
 %%---------------------------------------------------------------------------
 -module('Mnesia').
+
+-export([createTable/2]).
+
+createTable(Name, TabDef) ->
+    mnesia:create_table(list_to_atom(Name), parseTabDef(TabDef)).
+
+parseTabDef(#{}) -> [].
+

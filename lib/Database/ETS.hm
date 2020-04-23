@@ -15,71 +15,102 @@
 module Database.ETS where
 
 import Control.Monad (IO)
-import Foreign (ffiIO)
+import Control.Process (Node, Pid)
+import Data.Maybe (Maybe)
+import Data.Ref (Reference)
+import Foreign
 
 type Table = String
 
 foreign import data TableId :: Type
 
-data TableType = Set | OrderedSet | Bag | DuplicateBag
-
 data AccessType = Public | Protected | Private
 
-type TableOptions = { ttype :: TableType -- TODO: Rename
-                    , access :: AccessType
-                    , named :: Boolean
-                    , keyPos :: Integer
-                    , compressed :: Boolean
-                    , readConcurrency :: Boolean
-                    , writeConcurrency :: Boolean
-                    }
+data TableType = Set | OrderedSet | Bag | DuplicateBag
+
+type TableOptions =
+  { ttype            :: TableType
+  , access           :: AccessType
+  , named            :: Boolean
+  , keyPos           :: Integer
+  , readConcurrency  :: Boolean
+  , writeConcurrency :: Boolean
+  , compressed       :: Boolean
+  }
+
+type TableInfo =
+  { id               :: Reference
+  , name             :: TableId
+  , size             :: Integer
+  , node             :: Node
+  , memory           :: Integer
+  , owner            :: Pid
+  , namedTable       :: Boolean
+  , ttype            :: TableType
+  , keypos           :: Integer
+  , protection       :: AccessType
+  , readConcurrency  :: Boolean
+  , writeConcurrency :: Boolean
+  , compressed       :: Boolean
+  }
 
 foreign import new :: Table -> TableOptions -> IO TableId
 
 all :: IO (List TableId)
-all = ffiIO "ets" "all/0"
-
-{-
+all = ffiIO0 "ets" "all"
 
 -- | Delete an ETS table
 deleteTable :: TableId -> IO Boolean
-deleteTable = ffiIO "ets" "delete" 1
+deleteTable = ffiIO1 "ets" "delete"
 
 -- | Delete a record.
 delete :: forall k. TableId -> k -> IO Boolean
-delete = ffiIO "ets" "delete" 2
+delete = ffiIO2 "ets" "delete"
 
 -- | Delete all records of a table.
 deleteAllObjects :: TableId -> IO Boolean
-deleteAllObjects = ffiIO "ets" "delete_all_objects" 1
+deleteAllObjects = ffiIO1 "ets" "delete_all_objects"
 
-deleteObject :: TableId -> a -> IO Boolean
-deleteObject = ffiIO "ets" "delete_object" 2
+deleteObject :: forall a. TableId -> a -> IO Boolean
+deleteObject = ffiIO2 "ets" "delete_object"
 
 -- | Displays information about all ETS tables on a terminal.
-browse :: IO
-browse = ffiIO "ets" "i" 0
+browse :: IO String
+browse = ffiIO0 "ets" "i"
 
 -- | Browses table Tab on a terminal.
-browseTable :: TableId -> IO
-browseTable = ffiIO "ets" "i" 1
+browseTable :: TableId -> IO String
+browseTable = ffiIO1 "ets" "i"
+
+-- file2tab/1
+-- file2tab/2
+-- first/1
+-- foldl/3
+-- foldr/3
+-- from_dets/2
+-- fun2ms/1
+-- give_away/3
+
+foreign import info :: TableId -> IO (Maybe TableInfo)
+
+-- info/2
+-- init_table/2
+
+insert :: forall o. TableId -> o -> IO Boolean
+insert = ffiIO2 "ets" "insert"
+
+insertObjects :: forall o. TableId -> List o -> IO Boolean
+insertObjects = ffiIO2 "ets" "insert"
+
+insertNew :: forall o. TableId -> o -> IO Boolean
+insertNew = ffiIO2 "ets" "insert_new"
+
+insertNewObjects :: forall o. TableId -> List o -> IO Boolean
+insertNewObjects = ffiIO2 "ets" "insert_new"
 
 {-
-file2tab/1
-file2tab/2
-first/1
-foldl/3
-foldr/3
-from_dets/2
-fun2ms/1
-give_away/3
-info/1
-info/2
-init_table/2
-insert/2
-insert_new/2
-is_compiled_ms/1
-last/1
+-- is_compiled_ms/1
+-- last/1
 lookup/2
 lookup_element/3
 match/1
@@ -123,7 +154,6 @@ update_counter/4
 update_element/3
 whereis/1
 -}
-
 
 tNew :: IO TableId
 tNew = new "xtab" { ttype: Set,

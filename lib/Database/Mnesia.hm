@@ -14,6 +14,12 @@
 -----------------------------------------------------------------------------
 module Database.Mnesia where
 
+import Control.Process (Node)
+
+type TabDef = {ramCopies :: List Node}
+
+foreign import createTable :: String -> TabDef -> IO Boolean
+
 {-
 abort/1
 activate_checkpoint/1
@@ -132,5 +138,4 @@ wread/1
 write/1
 write/3
 write_lock_table/1
-
 -}

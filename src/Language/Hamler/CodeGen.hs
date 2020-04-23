@@ -90,12 +90,25 @@ moduleToErl C.Module{..} = do
   return $ E.Module (Atom $ unpack $ runModuleName moduleName)
                     ( mm1:mm0:(fmap snd  exports))
                     []
-                    (funDecls' <> (fmap (getJust . fst) $ Prelude.filter (isJust .fst)  exports ))
+                    (funDecls' <> (fmap (\(name,(args,expr)) ->
+                                           FunDef (Constr $ FunName (Atom $ last $ words $ fmap tcc $ unpack name
+                                                                  , toInteger args))
+                                                  (Constr expr)
+                                        )
+                                    (M.toList $ gs ^. ffiFun)
+                                  )
+                    )
+                    -- (funDecls' <> (fmap (getJust . fst) $ Prelude.filter (isJust .fst)  exports ))
 
-isJust Nothing = False
+isJust Nothing  = False
 isJust (Just _) = True
 
 getJust (Just x) = x
+
+
+tcc :: Char -> Char
+tcc '.' =' '
+tcc x = x
 
 -- | CoreFn Bind to CoreErlang FunDef
 bindToErl :: C.Bind C.Ann -> Translate [FunDef]
@@ -238,7 +251,8 @@ exprToErl (C.Var _  qi@(Qualified _ tema)) = do
           x -> return $ E.Fun $ E.FunName (Atom (unpack wname), toInteger x)
         Nothing -> case M.lookup name (gs ^. ffiFun) of
           Just (0,e) -> return $ E.App (Expr $ Constr e) []
-          Just (_,e) -> return e
+          Just (x,e) -> return $ E.Fun $ E.FunName (Atom (unpack wname), toInteger x)
+          -- Just (_,e) -> return e
           Nothing    -> case qi of
             Qualified (Just mn) ident ->do
               let mn' = runModuleName mn
@@ -248,7 +262,7 @@ exprToErl (C.Var _  qi@(Qualified _ tema)) = do
                     M.lookup funName r1
               case res of
                 Nothing -> error $ show gs ++ show qi
-                Just i ->return $ cModCall i (unpack mn') (unpack wname)
+                Just i  ->return $ cModCall i (unpack mn') (unpack wname)
             Qualified Nothing ident -> error $ show gs ++ show qi
 exprToErl (C.Let _ bs e) = do
   mapM bindToLetFunDef bs

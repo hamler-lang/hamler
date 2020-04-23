@@ -187,7 +187,8 @@ buildMakeActions outputDir filePathMap foreigns usePrefix =
       Nothing -> do return []
       Just fp -> do
         con <-lift $ makeIO "read Main.core" $ TIO.readFile fp
-        let Right (CE.Constr ( CE.Module (CE.Atom ename) eexports _ efundefs )) = fmap inline $ CE.parseModule $ unpack con
+        -- let Right (CE.Constr ( CE.Module (CE.Atom ename) eexports _ efundefs )) = fmap inline $ CE.parseModule $ unpack con
+        let Right (CE.Constr ( CE.Module (CE.Atom ename) eexports _ efundefs )) =  CE.parseModule $ unpack con
             ff (CE.FunDef (CE.Constr (CE.FunName (CE.Atom n,i))) (CE.Constr expr) ) = (pack $ (unpack $ runModuleName mn) <> "." <> n
                                                                                       , (fromIntegral i,expr))
         return $ fmap ff efundefs

@@ -1,9 +1,37 @@
-module 'Mnesia' ['module_info'/0,
+module 'Mnesia' ['createTable'/2,
+		 'module_info'/0,
 		 'module_info'/1]
     attributes [%% Line 1
 		'file' =
 		    %% Line 1
 		    [{[77|[110|[101|[115|[105|[97|[46|[101|[114|[108]]]]]]]]]],1}]]
+'createTable'/2 =
+    %% Line 19
+    fun (_0,_1) ->
+	let <_3> =
+	    call %% Line 20
+		 'erlang':%% Line 20
+			  'list_to_atom'
+		(_0)
+	in  let <_2> =
+		apply %% Line 20
+		      'parseTabDef'/1
+		    (_1)
+	    in  %% Line 20
+		call 'mnesia':'create_table'
+		    (_3, _2)
+'parseTabDef'/1 =
+    %% Line 22
+    fun (_0) ->
+	case _0 of
+	  <~{}~> when 'true' ->
+	      []
+	  ( <_1> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_1})
+		  -| [{'function_name',{'parseTabDef',1}}] )
+	    -| ['compiler_generated'] )
+	end
 'module_info'/0 =
     fun () ->
 	call 'erlang':'get_module_info'
