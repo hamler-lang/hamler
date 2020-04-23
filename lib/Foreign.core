@@ -1,4 +1,6 @@
-module 'Foreign' ['ffi'/3,
+module 'Foreign' ['ffi'/2,
+		  'ffi'/3,
+		  'ffiIO'/2,
 		  'ffiIO'/3,
 		  'module_info'/0,
 		  'module_info'/1]
@@ -6,20 +8,93 @@ module 'Foreign' ['ffi'/3,
 		'file' =
 		    %% Line 1
 		    [{[70|[111|[114|[101|[105|[103|[110|[46|[101|[114|[108]]]]]]]]]]],1}],
-		%% Line 19
-		'spec' =
-		    %% Line 19
-		    [{{'ffi',3},[{'type',19,'fun',[{'type',19,'product',[{'type',19,'string',[]}|[{'type',19,'string',[]}|[{'type',19,'arity',[]}]]]}|[{'type',19,'fun',[]}]]}]}],
 		%% Line 23
 		'spec' =
 		    %% Line 23
-		    [{{'ffiIO',3},[{'type',23,'fun',[{'type',23,'product',[{'type',23,'string',[]}|[{'type',23,'string',[]}|[{'type',23,'arity',[]}]]]}|[{'type',23,'fun',[]}]]}]}],
-		%% Line 29
+		    [{{'ffi',2},[{'type',23,'fun',[{'type',23,'product',[{'type',23,'string',[]}|[{'type',23,'string',[]}]]}|[{'type',23,'fun',[]}]]}]}],
+		%% Line 28
+		'spec' =
+		    %% Line 28
+		    [{{'ffi',3},[{'type',28,'fun',[{'type',28,'product',[{'type',28,'string',[]}|[{'type',28,'string',[]}|[{'type',28,'arity',[]}]]]}|[{'type',28,'fun',[]}]]}]}],
+		%% Line 32
+		'spec' =
+		    %% Line 32
+		    [{{'ffiIO',2},[{'type',32,'fun',[{'type',32,'product',[{'type',32,'string',[]}|[{'type',32,'string',[]}]]}|[{'type',32,'fun',[]}]]}]}],
+		%% Line 35
+		'spec' =
+		    %% Line 35
+		    [{{'ffiIO',3},[{'type',35,'fun',[{'type',35,'product',[{'type',35,'string',[]}|[{'type',35,'string',[]}|[{'type',35,'arity',[]}]]]}|[{'type',35,'fun',[]}]]}]}],
+		%% Line 41
 		'compile' =
-		    %% Line 29
-		    [{'inline',[{'atom',1}]}]]
+		    %% Line 41
+		    [{'inline',[{'split',1}]}],
+		%% Line 48
+		'compile' =
+		    %% Line 48
+		    [{'inline',[{'atom',1}]}],
+		%% Line 51
+		'compile' =
+		    %% Line 51
+		    [{'inline',[{'int',1}]}]]
+'ffi'/2 =
+    %% Line 24
+    fun (_0,_1) ->
+	%% Line 25
+	case %% Line 43
+	     ( case ( call ( 'string'
+			     -| ['compiler_generated'] ):( 'split'
+							   -| ['compiler_generated'] )
+			  (_1, ( [47]
+				 -| ['compiler_generated'] ))
+		      -| ['compiler_generated'] ) of
+		 %% Line 44
+		 ( <( [F|( [A|( []
+				-| ['compiler_generated'] )]
+			   -| ['compiler_generated'] )]
+		      -| ['compiler_generated'] )> when ( 'true'
+							  -| ['compiler_generated'] ) ->
+		       ( let <_9> =
+			     call %% Line 52
+				  ( 'erlang'
+				    -| ['compiler_generated'] ):%% Line 52
+								( 'list_to_integer'
+								  -| ['compiler_generated'] )
+				 (A)
+			 in  ( {F,_9}
+			       -| ['compiler_generated'] )
+			 -| ['compiler_generated'] )
+		   -| ['compiler_generated'] )
+		 %% Line 45
+		 ( <( [F|( []
+			   -| ['compiler_generated'] )]
+		      -| ['compiler_generated'] )> when ( 'true'
+							  -| ['compiler_generated'] ) ->
+		       ( {F,( 0
+			      -| ['compiler_generated'] )}
+			 -| ['compiler_generated'] )
+		   -| ['compiler_generated'] )
+		 ( <_2> when ( 'true'
+			       -| ['compiler_generated'] ) ->
+		       ( primop ( 'match_fail'
+				  -| ['compiler_generated'] )
+			     (( {( 'case_clause'
+				   -| ['compiler_generated'] ),_2}
+				-| ['compiler_generated'] ))
+			 -| ['compiler_generated'] )
+		   -| ['compiler_generated'] )
+	       end
+	       -| ['compiler_generated'] ) of
+	  <{Fun1,Arity}> when 'true' ->
+	      %% Line 26
+	      apply 'ffi'/3
+		  (_0, Fun1, Arity)
+	  ( <_2> when 'true' ->
+		primop 'match_fail'
+		    ({'badmatch',_2})
+	    -| ['compiler_generated'] )
+	end
 'ffi'/3 =
-    %% Line 20
+    %% Line 29
     fun (_0,_1,_2) ->
 	case <_0,_1,_2> of
 	  <Mod,Fun,Arity>
@@ -27,22 +102,22 @@ module 'Foreign' ['ffi'/3,
 		    (Arity,
 		     0) ->
 	      let <_4> =
-		  call %% Line 30
+		  call %% Line 49
 		       ( 'erlang'
-			 -| ['compiler_generated'] ):%% Line 30
-						     ( 'list_to_existing_atom'
+			 -| ['compiler_generated'] ):%% Line 49
+						     ( 'list_to_atom'
 						       -| ['compiler_generated'] )
-		      (%% Line 21
+		      (%% Line 30
 		       Mod)
 	      in  let <_3> =
-		      call %% Line 30
+		      call %% Line 49
 			   ( 'erlang'
-			     -| ['compiler_generated'] ):%% Line 30
-							 ( 'list_to_existing_atom'
+			     -| ['compiler_generated'] ):%% Line 49
+							 ( 'list_to_atom'
 							   -| ['compiler_generated'] )
-			  (%% Line 21
+			  (%% Line 30
 			   Fun)
-		  in  %% Line 21
+		  in  %% Line 30
 		      apply 'curry'/4
 			  (_4, _3, [], Arity)
 	  ( <_7,_6,_5> when 'true' ->
@@ -51,13 +126,18 @@ module 'Foreign' ['ffi'/3,
 		  -| [{'function_name',{'ffi',3}}] )
 	    -| ['compiler_generated'] )
 	end
+'ffiIO'/2 =
+    %% Line 33
+    fun (_0,_1) ->
+	apply 'ffi'/2
+	    (_0, _1)
 'ffiIO'/3 =
-    %% Line 24
+    %% Line 36
     fun (_0,_1,_2) ->
 	apply 'ffi'/3
 	    (_0, _1, _2)
 'curry'/4 =
-    %% Line 26
+    %% Line 38
     fun (_0,_1,_2,_3) ->
 	case <_0,_1,_2,_3> of
 	  <M,F,A,0> when 'true' ->
@@ -66,7 +146,7 @@ module 'Foreign' ['ffi'/3,
 		      (A)
 	      in  call 'erlang':'apply'
 		      (M, F, _4)
-	  %% Line 27
+	  %% Line 39
 	  <M,F,A,N> when 'true' ->
 	      ( fun (_6) ->
 		    let <_5> =
@@ -76,10 +156,39 @@ module 'Foreign' ['ffi'/3,
 			    (M, F, [_6|A], _5)
 		-| [{'id',{0,0,'-curry/4-fun-0-'}}] )
 	end
-'atom'/1 =
-    %% Line 30
+'split'/1 =
+    %% Line 42
     fun (_0) ->
-	call 'erlang':'list_to_existing_atom'
+	%% Line 43
+	case call 'string':'split'
+		 (_0, [47]) of
+	  %% Line 44
+	  <[F|[A|[]]]> when 'true' ->
+	      let <_1> =
+		  call %% Line 52
+		       ( 'erlang'
+			 -| ['compiler_generated'] ):%% Line 52
+						     ( 'list_to_integer'
+						       -| ['compiler_generated'] )
+		      (A)
+	      in  {F,_1}
+	  %% Line 45
+	  <[F|[]]> when 'true' ->
+	      {F,0}
+	  ( <_2> when 'true' ->
+		primop 'match_fail'
+		    ({'case_clause',_2})
+	    -| ['compiler_generated'] )
+	end
+'atom'/1 =
+    %% Line 49
+    fun (_0) ->
+	call 'erlang':'list_to_atom'
+	    (_0)
+'int'/1 =
+    %% Line 52
+    fun (_0) ->
+	call 'erlang':'list_to_integer'
 	    (_0)
 'module_info'/0 =
     fun () ->
