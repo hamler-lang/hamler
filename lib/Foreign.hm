@@ -9,19 +9,32 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Foreign FFI Module.
+-- The Foreign FFI Mod.
 --
 -----------------------------------------------------------------------------
 module Foreign where
 
 import Control.Monad (IO)
 
-type Module = String
-type Funame = String
-type Arity  = Integer
+type Mod = String
+type Fun = String
 
 -- Pure FFI function
-foreign import ffi :: forall a. Module -> Funame -> Arity -> a
+foreign import ffi0 :: forall a. Mod -> Fun -> a
+foreign import ffi1 :: forall a b. Mod -> Fun -> a -> b
+foreign import ffi2 :: forall a b c. Mod -> Fun -> a -> b -> c
+foreign import ffi3 :: forall a b c d. Mod -> Fun -> a -> b -> c -> d
+foreign import ffi4 :: forall a b c d e. Mod -> Fun -> a -> b -> c -> d -> e
+foreign import ffi5 :: forall a b c d e f. Mod -> Fun -> a -> b -> c -> d -> e -> f
+foreign import ffi6 :: forall a b c d e f g. Mod -> Fun -> a -> b -> c -> d -> e -> f -> g
+foreign import ffi7 :: forall a b c d e f g h. Mod -> Fun -> a -> b -> c -> d -> e -> f -> g -> h
 
 -- FFI function with Effect
-foreign import ffiIO :: forall a. Module -> Funame -> Arity -> IO a
+foreign import ffiIO0 :: forall a. Mod -> Fun -> IO a
+foreign import ffiIO1 :: forall a b. Mod -> Fun -> a -> IO b
+foreign import ffiIO2 :: forall a b c. Mod -> Fun -> a -> b -> IO c
+foreign import ffiIO3 :: forall a b c d. Mod -> Fun -> a -> b -> c -> IO d
+foreign import ffiIO4 :: forall a b c d e. Mod -> Fun -> a -> b -> c -> d -> IO e
+foreign import ffiIO5 :: forall a b c d e f. Mod -> Fun -> a -> b -> c -> d -> e IO f
+foreign import ffiIO6 :: forall a b c d e f g. Mod -> Fun -> a -> b -> c -> d -> e -> f -> IO g
+foreign import ffiIO7 :: forall a b c d e f g h. Mod -> Fun -> a -> b -> c -> d -> e -> f -> g -> IO h

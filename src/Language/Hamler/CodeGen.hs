@@ -105,6 +105,7 @@ moduleToErl C.Module{..} = do
                                   )
                            )
                    )
+
 isJust Nothing  = False
 isJust (Just _) = True
 
@@ -268,7 +269,7 @@ exprToErl (C.Var _  qi@(Qualified _ tema)) = do
                     M.lookup funName r1
               case res of
                 Nothing -> error $ show gs ++ show qi
-                Just i ->return $ cModCall i (unpack mn') (unpack wname)
+                Just i  ->return $ cModCall i (unpack mn') (unpack wname)
             Qualified Nothing ident -> error $ show gs ++ show qi
 exprToErl (C.Let _ bs e) = do
   mapM bindToLetFunDef bs

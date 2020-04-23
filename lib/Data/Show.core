@@ -75,31 +75,30 @@ module 'Show' ['module_info'/0,
 'precision'/2 =
     %% Line 43
     fun (_0,_1) ->
-	%% Line 44
-	case <> of
-	  <>
-	      when try
-		    let <_2> =
-			call 'erlang':'trunc'
-			    (_0)
-		    in  call 'erlang':'=='
-			    (_0, _2)
-		of <Try> ->
-		    Try
-		catch <T,R> ->
-		    'false' ->
-	      _1
-	  %% Line 45
-	  <> when 'true' ->
-	      let <_4> =
-		  call 'erlang':'*'
-		      (_0, 1.00000000000000000000e+01)
-	      in  let <_3> =
-		      call 'erlang':'+'
-			  (_1, 1)
-		  in  apply 'precision'/2
-			  (_4, _3)
-	end
+	let <_2> =
+	    call %% Line 44
+		 'erlang':%% Line 44
+			  'trunc'
+		(_0)
+	in  %% Line 44
+	    case <> of
+	      %% Line 45
+	      <>
+		  when call 'erlang':'=='
+			(_0,
+			 _2) ->
+		  _1
+	      %% Line 46
+	      <> when 'true' ->
+		  let <_4> =
+		      call 'erlang':'*'
+			  (_0, 1.00000000000000000000e+01)
+		  in  let <_3> =
+			  call 'erlang':'+'
+			      (_1, 1)
+		      in  apply 'precision'/2
+			      (_4, _3)
+	    end
 'module_info'/0 =
     fun () ->
 	call 'erlang':'get_module_info'

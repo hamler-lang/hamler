@@ -41,6 +41,7 @@ showNum(N) when is_float(N) ->
 showChar(C) -> [C].
 
 precision(A, P) ->
-    if A == trunc(A) -> P;
-       true -> precision(A*10.0, P+1)
+    case A == trunc(A) of
+        true  -> P;
+        false -> precision(A*10.0, P+1)
     end.
