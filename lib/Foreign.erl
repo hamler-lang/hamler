@@ -50,3 +50,4 @@ atom(S) -> list_to_atom(S).
 
 -compile({inline, [int/1]}).
 int(S) -> list_to_integer(S).
+
