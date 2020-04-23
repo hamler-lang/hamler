@@ -86,26 +86,24 @@ moduleToErl C.Module{..} = do
       Just args ->return $ (Nothing, FunName (Atom $ unpack wname, toInteger args))
       Nothing -> case M.lookup name (gs ^. ffiFun) of
         Just (args,e) -> return $ ( Just (FunDef (Constr $ FunName (Atom $ unpack wname, toInteger args))
-                                                                    (Constr $ e)
+                                                 (Constr $ e)
                                          )
                                   , FunName (Atom $ unpack wname, toInteger args)
                                   )
-        Nothing -> error "error of export var!"
+        Nothing -> throwError $ "error of export var! -- " <> unpack wname <> " --- " <> unpack name
   return $ E.Module (Atom $ unpack $ runModuleName moduleName)
                     ( mm1:mm0:(fmap snd  exports))
                     []
                     ( if gs ^. isInline
                       then  (funDecls' <> (fmap (getJust . fst) $ Prelude.filter (isJust .fst)  exports ))
                       else (funDecls' <> (fmap (\(name,(args,expr)) ->
-                                           FunDef (Constr $ FunName (Atom $ last $ words $ fmap tcc $ unpack name
-                                                                  , toInteger args))
-                                                  (Constr expr)
-                                        )
-                                    (M.toList $ gs ^. ffiFun)
-                                  )
+                                                  FunDef (Constr $ FunName (Atom $ last $ words $ fmap tcc $ unpack name, toInteger args))
+                                                         (Constr expr)
+                                               )
+                                          (M.toList $ gs ^. ffiFun)
+                                         )
                            )
-                   )
-
+                    )
 isJust Nothing  = False
 isJust (Just _) = True
 
@@ -268,9 +266,11 @@ exprToErl (C.Var _  qi@(Qualified _ tema)) = do
                     r1 <- M.lookup mn' (gs ^. modInfoMap)
                     M.lookup funName r1
               case res of
-                Nothing -> error $ show gs ++ show qi
-                Just i  ->return $ cModCall i (unpack mn') (unpack wname)
-            Qualified Nothing ident -> error $ show gs ++ show qi
+                Nothing ->
+                  throwError $ "There is no such function in the module: " <> show qi <> "<-->" <> show gs
+                Just i ->return $ cModCall i (unpack mn') (unpack wname)
+            Qualified Nothing ident ->
+              throwError $ "Did not find this variable: " <> show qi <> "<-->" <> show gs
 exprToErl (C.Let _ bs e) = do
   mapM bindToLetFunDef bs
   e' <- exprToErl e
