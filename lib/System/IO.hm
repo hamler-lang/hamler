@@ -15,4 +15,6 @@
 
 module System.IO where
 
-foreign import print :: String -> String
+import Control.Monad (IO)
+
+foreign import print :: String -> IO String

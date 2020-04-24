@@ -24,11 +24,9 @@ module Data.Ord
   , module Data.Ordering
   ) where
 
--- import Data.Base (Number)
 import Data.Eq (class Eq)
 import Data.Ordering (Ordering(..))
--- import Data.Ring (class Ring, zero, one, negate)
--- import Data.Unit (Unit)
+import Data.Unit (Unit)
 -- import Data.Void (Void)
 
 class Eq a => Ord a where
@@ -46,13 +44,9 @@ instance Ord Integer where
 instance Ord Float where
   compare = compFloat LT EQ GT
 
-{-
-instance Ord Number where
-  compare = compNum LT EQ GT
-
 instance Ord Unit where
   compare _ _ = EQ
-
+{-
 instance Ord Void where
   compare _ _ = EQ
 -}
@@ -88,16 +82,6 @@ foreign import compFloat
   -> Float
   -> Float
   -> Ordering
-
-{-
-foreign import compNum
-  :: Ordering
-  -> Ordering
-  -> Ordering
-  -> Number
-  -> Number
-  -> Ordering
--}
 
 foreign import ordString
   :: Ordering
