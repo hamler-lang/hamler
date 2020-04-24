@@ -31,7 +31,7 @@ foreign import data Pid :: Type
 -- | Erlang timeout.
 foreign import data Timeout :: Type
 
--- foreign import spawn ::forall a b.Module -> (a -> Process b) -> a -> Process Pid
+-- foreign import spawn ::forall a b.(a -> Process b) -> a -> Process Pid
 
 foreign import send :: forall a.Pid -> a -> Process a
 

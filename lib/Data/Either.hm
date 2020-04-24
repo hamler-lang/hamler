@@ -14,7 +14,54 @@
 -----------------------------------------------------------------------------
 module Data.Either where
 
+import Control.Monad (class Applicative, class Apply, class Bind, class Functor, class Monad, map)
+import Data.Function (error,const)
+import Data.Maybe (Maybe(..),maybe)
+
 data Either a b = Left a | Right b
 
--- TODO:...
+instance Functor (Either e) where
+  map fn (Right x) = Right (fn x)
+  map _  (Left e)  = Left e
+
+instance Apply (Either e) where
+  apply (Right fn) x = map fn x
+  apply (Left e)   _ = Left e
+
+instance Applicative (Either e) where
+  pure = Right
+
+instance Bind (Either e) where
+  bind (Right x) k = k x
+  bind (Left e)  _ = Left e
+
+instance Monad (Either e)
+
+either :: forall a b c. (a -> c) -> (b -> c) -> Either a b -> c
+either f _ (Left a)  = f a
+either _ g (Right b) = g b
+
+
+isLeft :: forall a b. Either a b -> Boolean
+isLeft (Left _) = true
+isLeft _        = false
+
+isRight :: forall a b. Either a b -> Boolean
+isRight (Right _) = true
+isRight _         = false
+
+fromLeft :: forall a b. Either a b -> a
+fromLeft (Left a) = a
+fromLeft (Right x) = error "error of Right"
+
+fromRight :: forall a b. Either a b -> b
+fromRight (Right a) = a
+fromRight (Left x) = error "error of Left"
+
+
+note :: forall a b. a -> Maybe b -> Either a b
+note a = maybe (Left a) Right
+
+hush :: forall a b. Either a b -> Maybe b
+hush = either (const Nothing) Just
 

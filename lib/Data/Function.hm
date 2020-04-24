@@ -28,3 +28,4 @@ apply f x = f x
 identity :: forall a .a -> a
 identity x = x
 
+foreign import error :: forall a.String -> a

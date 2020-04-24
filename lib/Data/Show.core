@@ -1,7 +1,7 @@
 module 'Show' ['module_info'/0,
 	       'module_info'/1,
-	       'showChar'/1,
-	       'showFloat'/1,
+	       'showCharImp'/1,
+	       'showFloatImp'/1,
 	       'showInt'/1,
 	       'showNum'/1]
     attributes [%% Line 1
@@ -29,7 +29,7 @@ module 'Show' ['module_info'/0,
     fun (_0) ->
 	call 'erlang':'integer_to_list'
 	    (_0)
-'showFloat'/1 =
+'showFloatImp'/1 =
     %% Line 29
     fun (_0) ->
 	let <_1> =
@@ -68,7 +68,7 @@ module 'Show' ['module_info'/0,
 		  -| [{'function_name',{'showNum',1}}] )
 	    -| ['compiler_generated'] )
 	end
-'showChar'/1 =
+'showCharImp'/1 =
     %% Line 41
     fun (_0) ->
 	[_0|[]]

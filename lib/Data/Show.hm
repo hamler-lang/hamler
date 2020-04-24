@@ -32,21 +32,15 @@ instance Show Boolean where
 instance Show Integer where
   show = showInt
 
-{-
 instance Show Float where
-  show f = showFloat f
-
-instance Show Number where
-  show = showNum
+  show f = showFloatImp f
 
 instance Show Char where
-  show c = showChar c
--}
+  show c = showCharImp c
 
 instance Show String where
   show s = s
 
 foreign import showInt :: Integer -> String
-foreign import showFloat :: Float -> String
--- foreign import showNum :: Number -> String
-foreign import showChar :: Char -> String
+foreign import showFloatImp :: Float -> String
+foreign import showCharImp :: Char -> String

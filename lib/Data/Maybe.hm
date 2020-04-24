@@ -15,8 +15,26 @@
 module Data.Maybe where
 
 import Data.Function (const, identity)
+import Control.Monad
 
 data Maybe a = Nothing | Just a
+
+instance Functor Maybe where
+  map fn (Just x) = Just (fn x)
+  map _  _        = Nothing
+
+instance Apply Maybe where
+  apply (Just fn) x = map fn x
+  apply Nothing   _ = Nothing
+
+instance Applicative Maybe where
+  pure = Just
+
+instance Bind Maybe where
+  bind (Just x) k = k x
+  bind Nothing  _ = Nothing
+
+instance Monad Maybe
 
 maybe :: forall a b. b -> (a -> b) -> Maybe a -> b
 maybe b _ Nothing = b
@@ -30,3 +48,4 @@ isJust = maybe false (const true)
 
 isNothing :: forall a. Maybe a -> Boolean
 isNothing = maybe true (const false)
+

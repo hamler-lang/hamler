@@ -52,3 +52,16 @@ instance Monad IO
 foreign import bindImpl :: forall a b. IO a -> (a -> IO b) -> IO b
 foreign import pureImpl :: forall a. a -> IO a
 
+instance Functor List where
+  map f x = mapListImpl f x
+instance Apply List where
+  apply f x = applyListImpl f x
+instance Applicative List where
+  pure x = [x]
+instance Bind List where
+  bind a f = bindListImpl a f
+instance Monad List
+
+foreign import mapListImpl :: forall a b. (a->b) -> List a -> List b
+foreign import applyListImpl :: forall a b. List (a->b) -> List a -> List b
+foreign import bindListImpl :: forall a b. List a -> (a -> List b) -> List b

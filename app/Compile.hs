@@ -311,9 +311,9 @@ helloHamler :: String
 helloHamler = concat [
           "module Main where\n"
         , "\n"
-        , "import System.IO\n"
+        , "import Prelude\n"
         , "\n"
-        , "main :: String\n"
+        , "main :: IO String\n"
         , "main = print "
         , "\"Let there be Hamler, running on Erlang VM!\"\n"
         ]
