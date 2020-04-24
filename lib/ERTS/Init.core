@@ -1,0 +1,125 @@
+module 'Init' ['getArgument'/1,
+	       'getArguments'/0,
+	       'getStatus'/0,
+	       'module_info'/0,
+	       'module_info'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[73|[110|[105|[116|[46|[101|[114|[108]]]]]]]],1}]]
+'getStatus'/0 =
+    %% Line 22
+    fun () ->
+	%% Line 23
+	case call 'init':'get_status'
+		 () of
+	  <{InternalStatus,ProvidedStatus}> when 'true' ->
+	      let <_2> =
+		  apply %% Line 24
+			'constr'/1
+		      (%% Line 24
+		       InternalStatus)
+	      in  let <_1> =
+		      call %% Line 24
+			   'erlang':%% Line 24
+				    'atom_to_list'
+			  (%% Line 24
+			   ProvidedStatus)
+		  in  %% Line 24
+		      {_2,_1}
+	  ( <_0> when 'true' ->
+		primop 'match_fail'
+		    ({'badmatch',_0})
+	    -| ['compiler_generated'] )
+	end
+'constr'/1 =
+    %% Line 26
+    fun (_0) ->
+	case _0 of
+	  <'starting'> when 'true' ->
+	      {'Starting'}
+	  %% Line 27
+	  <'started'> when 'true' ->
+	      {'Started'}
+	  %% Line 28
+	  <'stopping'> when 'true' ->
+	      {'Stopped'}
+	  ( <_1> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_1})
+		  -| [{'function_name',{'constr',1}}] )
+	    -| ['compiler_generated'] )
+	end
+'getArguments'/0 =
+    %% Line 30
+    fun () ->
+	%% Line 31
+	( letrec
+	      'lc$^0'/1 =
+		  fun (_3) ->
+		      case _3 of
+			<[{Flag,Values}|_1]> when 'true' ->
+			    let <_4> =
+				call 'erlang':'atom_to_list'
+				    (Flag)
+			    in  let <_5> =
+				    apply 'lc$^0'/1
+					(_1)
+				in  ( [{_4,Values}|_5]
+				      -| ['compiler_generated'] )
+			( <[_0|_1]> when 'true' ->
+			      apply 'lc$^0'/1
+				  (_1)
+			  -| ['compiler_generated'] )
+			<[]> when 'true' ->
+			    []
+			( <_6> when 'true' ->
+			      ( primop 'match_fail'
+				    ({'function_clause',_6})
+				-| [{'function_name',{'lc$^0',1}}] )
+			  -| ['compiler_generated'] )
+		      end
+	  in  let <_2> =
+		  call 'init':'get_arguments'
+		      ()
+	      in  apply 'lc$^0'/1
+		      (_2)
+	  -| ['list_comprehension'] )
+'getArgument'/1 =
+    %% Line 33
+    fun (_0) ->
+	let <_2> =
+	    catch
+		let <_1> =
+		    call %% Line 34
+			 'erlang':%% Line 34
+				  'list_to_existing_atom'
+			(_0)
+		in  %% Line 34
+		    call 'init':'get_argument'
+			(_1)
+	in  %% Line 34
+	    case _2 of
+	      %% Line 35
+	      <{'ok',Arg}> when 'true' ->
+		  {'Just',Arg}
+	      %% Line 36
+	      <'error'> when 'true' ->
+		  {'Nothing'}
+	      %% Line 37
+	      <{'EXIT',_5}> when 'true' ->
+		  {'Nothing'}
+	      ( <_3> when 'true' ->
+		    primop 'match_fail'
+			({'case_clause',_3})
+		-| ['compiler_generated'] )
+	    end
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Init')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Init', _0)
+end

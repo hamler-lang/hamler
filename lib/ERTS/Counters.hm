@@ -1,0 +1,46 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  ERTS.Counters
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Counters Module.
+--
+-----------------------------------------------------------------------------
+module ERTS.Counters where
+
+import Data.Ref (Ref)
+
+type CountersRef = Ref
+
+data CountersOpt = Atomics | WriteConcurrency
+
+type CountersInfo =
+  { size   :: Integer
+    -- ^ The number of counters in the array.
+  , memory :: Integer
+    -- ^ Approximate memory consumption for the array in bytes.
+  }
+
+foreign import new :: Integer -> List CountersOpt -> IO CountersRef
+
+get :: CountersRef -> Integer -> IO Integer
+get = ffiIO2 "counters" "get"
+
+add :: CountersRef -> Integer -> Integer -> IO Unit
+add = ffiIO3 "counters" "add"
+
+sub :: CountersRef -> Integer -> Integer -> IO Unit
+sub = ffiIO3 "counters" "sub"
+
+put :: CountersRef -> Integer -> Integer -> IO Unit
+put = ffiIO3 "counters" "put"
+
+info :: CountersRef -> IO CountersInfo
+info = ffiIO1 "counters" "info"
+
