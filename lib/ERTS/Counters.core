@@ -1,0 +1,49 @@
+module 'Counters' ['module_info'/0,
+		   'module_info'/1,
+		   'new'/2]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[67|[111|[117|[110|[116|[101|[114|[115|[46|[101|[114|[108]]]]]]]]]]]],1}]]
+'new'/2 =
+    %% Line 19
+    fun (_0,_1) ->
+	let <_2> =
+	    apply %% Line 20
+		  'parseOpts'/2
+		(_1, %% Line 20
+		     [])
+	in  %% Line 20
+	    call 'counters':'new'
+		(_0, _2)
+'parseOpts'/2 =
+    %% Line 22
+    fun (_0,_1) ->
+	case <_0,_1> of
+	  <[{'Atomics'}|T],Acc> when 'true' ->
+	      %% Line 23
+	      apply 'parseOpts'/2
+		  (T, ['atomics'|Acc])
+	  %% Line 24
+	  <[{'WriteConcurrency'}|T],Acc> when 'true' ->
+	      %% Line 25
+	      apply 'parseOpts'/2
+		  (T, ['write_concurrency'|Acc])
+	  %% Line 26
+	  <[],Acc> when 'true' ->
+	      Acc
+	  ( <_3,_2> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_3,_2})
+		  -| [{'function_name',{'parseOpts',2}}] )
+	    -| ['compiler_generated'] )
+	end
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Counters')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Counters', _0)
+end

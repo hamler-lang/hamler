@@ -1,0 +1,26 @@
+module 'Atomics' ['module_info'/0,
+		  'module_info'/1,
+		  'new'/2]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[65|[116|[111|[109|[105|[99|[115|[46|[101|[114|[108]]]]]]]]]]],1}],
+		%% Line 19
+		'spec' =
+		    %% Line 19
+		    [{{'new',2},[{'type',19,'fun',[{'type',19,'product',[{'type',19,'pos_integer',[]}|[{'type',19,'boolean',[]}]]}|[{'remote_type',19,[{'atom',19,'atomics'}|[{'atom',19,'atomics_ref'}|[[]]]]}]]}]}]]
+'new'/2 =
+    %% Line 20
+    fun (_0,_1) ->
+	%% Line 21
+	call 'atomics':'new'
+	    (_0, [{'signed',_1}|[]])
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Atomics')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Atomics', _0)
+end
