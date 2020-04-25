@@ -14,9 +14,12 @@
 -----------------------------------------------------------------------------
 module ERTS.Atomics where
 
-import Data.Ref (Ref)
+import Control.Monad (IO)
+import Data.Ref (Reference)
+import Data.Unit (Unit)
+import Foreign
 
-type AtomicsRef = Ref
+type AtomicsRef = Reference
 
 type AtomicsInfo =
   { size   :: Integer

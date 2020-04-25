@@ -14,9 +14,12 @@
 -----------------------------------------------------------------------------
 module ERTS.Counters where
 
-import Data.Ref (Ref)
+import Control.Monad (IO)
+import Data.Ref (Reference)
+import Data.Unit (Unit)
+import Foreign
 
-type CountersRef = Ref
+type CountersRef = Reference
 
 data CountersOpt = Atomics | WriteConcurrency
 

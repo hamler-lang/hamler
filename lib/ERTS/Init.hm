@@ -14,7 +14,9 @@
 -----------------------------------------------------------------------------
 module ERTS.Init where
 
+import Control.Monad (IO)
 import Data.Binary (Binary)
+import Data.Maybe (Maybe)
 import Data.Unit (Unit)
 import Foreign
 
@@ -23,8 +25,6 @@ type Arguments = List String
 data InternalStatus = Starting | Started | Stopping
 
 type ProvidedStatus = String
-
-type ScriptId = Tuple (String, String)
 
 restart :: IO Unit
 restart = ffiIO0 "init" "restart"
@@ -35,18 +35,21 @@ reboot = ffiIO0 "init" "reboot"
 stop :: IO Unit
 stop = ffiIO0 "init" "stop"
 
-foreign import getStatus :: IO (Tuple (InternalStatus, ProvidedStatus))
+-- TODO: cannot parse Tuple
+-- foreign import getStatus :: IO (InternalStatus, ProvidedStatus)
 
-boot :: List Binary
+boot :: IO (List Binary)
 boot = ffiIO0 "init" "boot"
 
-foreign import getArguments :: IO (List (Tuple (String, Arguments)))
+-- TODO: cannot parse Tuple
+-- foreign import getArguments :: IO (List (String, Arguments))
 
 foreign import getArgument :: String -> IO (Maybe Arguments)
 
 getPlainArguments :: IO (Arguments)
 getPlainArguments = ffiIO0 "init" "getPlainArguments"
 
-scriptId :: IO ScriptId
-scriptId = ffiIO0 "init" "script_id"
+-- TODO: cannot parse Tuple
+-- scriptId :: IO (String, String)
+-- scriptId = ffiIO0 "init" "script_id"
 

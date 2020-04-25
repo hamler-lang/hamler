@@ -1,0 +1,25 @@
+module 'Function' ['error'/1,
+		   'module_info'/0,
+		   'module_info'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[70|[117|[110|[99|[116|[105|[111|[110|[46|[101|[114|[108]]]]]]]]]]]],1}],
+		%% Line 19
+		'compile' =
+		    %% Line 19
+		    [{'no_auto_import',[{'error',1}]}]]
+'error'/1 =
+    %% Line 21
+    fun (_0) ->
+	call 'erlang':'error'
+	    (_0)
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Function')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Function', _0)
+end
