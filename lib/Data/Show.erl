@@ -14,31 +14,31 @@
 %%---------------------------------------------------------------------------
 -module('Show').
 
--export([ showInt/1
-        , showFloatImp/1
-        , showNum/1
-        , showCharImp/1
+-export([ showIntImpl/1
+        , showFloatImpl/1
+        , showNumImpl/1
+        , showCharImpl/1
         ]).
 
 %% showInt :: Integer -> String
--spec(showInt(integer()) -> string()).
-showInt(I) -> integer_to_list(I).
+-spec(showIntImpl(integer()) -> string()).
+showIntImpl(I) -> integer_to_list(I).
 
 %% showFloat :: Number -> String
--spec(showFloat(float()) -> string()).
-showFloatImp(F) ->
+-spec(showFloatImpl(float()) -> string()).
+showFloatImpl(F) ->
    erlang:float_to_list(F, [{decimals,precision(abs(F), 0)}]).
 
 %% showNumber :: Number -> String
--spec(showNum(number()) -> string()).
-showNum(N) when is_integer(N) ->
-    showInt(N);
-showNum(N) when is_float(N) ->
-    showFloat(N).
+-spec(showNumImpl(number()) -> string()).
+showNumImpl(N) when is_integer(N) ->
+    showIntImpl(N);
+showNumImpl(N) when is_float(N) ->
+    showFloatImpl(N).
 
 %% showChar :: Char -> String
--spec(showChar(char()) -> string()).
-showCharImp(C) -> [C].
+-spec(showCharImpl(char()) -> string()).
+showCharImpl(C) -> [C].
 
 precision(A, P) ->
     case A == trunc(A) of

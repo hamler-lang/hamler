@@ -1,9 +1,9 @@
 module 'Show' ['module_info'/0,
 	       'module_info'/1,
-	       'showCharImp'/1,
-	       'showFloatImp'/1,
-	       'showInt'/1,
-	       'showNum'/1]
+	       'showCharImpl'/1,
+	       'showFloatImpl'/1,
+	       'showIntImpl'/1,
+	       'showNumImpl'/1]
     attributes [%% Line 1
 		'file' =
 		    %% Line 1
@@ -11,25 +11,25 @@ module 'Show' ['module_info'/0,
 		%% Line 24
 		'spec' =
 		    %% Line 24
-		    [{{'showInt',1},[{'type',24,'fun',[{'type',24,'product',[{'type',24,'integer',[]}]}|[{'type',24,'string',[]}]]}]}],
+		    [{{'showIntImpl',1},[{'type',24,'fun',[{'type',24,'product',[{'type',24,'integer',[]}]}|[{'type',24,'string',[]}]]}]}],
 		%% Line 28
 		'spec' =
 		    %% Line 28
-		    [{{'showFloat',1},[{'type',28,'fun',[{'type',28,'product',[{'type',28,'float',[]}]}|[{'type',28,'string',[]}]]}]}],
+		    [{{'showFloatImpl',1},[{'type',28,'fun',[{'type',28,'product',[{'type',28,'float',[]}]}|[{'type',28,'string',[]}]]}]}],
 		%% Line 33
 		'spec' =
 		    %% Line 33
-		    [{{'showNum',1},[{'type',33,'fun',[{'type',33,'product',[{'type',33,'number',[]}]}|[{'type',33,'string',[]}]]}]}],
+		    [{{'showNumImpl',1},[{'type',33,'fun',[{'type',33,'product',[{'type',33,'number',[]}]}|[{'type',33,'string',[]}]]}]}],
 		%% Line 40
 		'spec' =
 		    %% Line 40
-		    [{{'showChar',1},[{'type',40,'fun',[{'type',40,'product',[{'type',40,'char',[]}]}|[{'type',40,'string',[]}]]}]}]]
-'showInt'/1 =
+		    [{{'showCharImpl',1},[{'type',40,'fun',[{'type',40,'product',[{'type',40,'char',[]}]}|[{'type',40,'string',[]}]]}]}]]
+'showIntImpl'/1 =
     %% Line 25
     fun (_0) ->
 	call 'erlang':'integer_to_list'
 	    (_0)
-'showFloatImp'/1 =
+'showFloatImpl'/1 =
     %% Line 29
     fun (_0) ->
 	let <_1> =
@@ -45,7 +45,7 @@ module 'Show' ['module_info'/0,
 	    in  %% Line 30
 		call 'erlang':'float_to_list'
 		    (_0, [{'decimals',_2}|[]])
-'showNum'/1 =
+'showNumImpl'/1 =
     %% Line 34
     fun (_0) ->
 	case _0 of
@@ -53,22 +53,22 @@ module 'Show' ['module_info'/0,
 	      when call 'erlang':'is_integer'
 		    (_0) ->
 	      %% Line 35
-	      apply 'showInt'/1
+	      apply 'showIntImpl'/1
 		  (N)
 	  %% Line 36
 	  <N>
 	      when call 'erlang':'is_float'
 		    (_0) ->
 	      %% Line 37
-	      apply 'showFloat'/1
+	      apply 'showFloatImpl'/1
 		  (N)
 	  ( <_1> when 'true' ->
 		( primop 'match_fail'
 		      ({'function_clause',_1})
-		  -| [{'function_name',{'showNum',1}}] )
+		  -| [{'function_name',{'showNumImpl',1}}] )
 	    -| ['compiler_generated'] )
 	end
-'showCharImp'/1 =
+'showCharImpl'/1 =
     %% Line 41
     fun (_0) ->
 	[_0|[]]

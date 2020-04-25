@@ -14,6 +14,8 @@
 -----------------------------------------------------------------------------
 module ERTS.PersistentTerm where
 
+import Control.Monad (IO)
+import Data.Unit (Unit)
 import Foreign
 
 type PersistentTermInfo =
@@ -36,9 +38,9 @@ get = ffiIO1 "persistent_term" "get"
 get2 :: forall k d v. k -> d -> IO v
 get2 = ffiIO2 "persistent_term" "get"
 
--- | Retrieve the keys and values for all persistent terms.
-getAll :: forall k v. IO (List (k, v))
-getAll = ffiIO0 "persistent_term" "get"
+-- TODO: | Retrieve the keys and values for all persistent terms.
+-- getAll :: forall k v. IO (List (k, v))
+-- getAll = ffiIO0 "persistent_term" "get"
 
 -- | Return information about persistent terms.
 info :: IO PersistentTermInfo
