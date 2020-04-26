@@ -14,10 +14,20 @@
 -----------------------------------------------------------------------------
 module Data.Char where
 
--- TODO:...
--- isAlpha 'c'
--- isDigit '4'
--- toUpper 'a'
--- toLower 'E'
--- ord('A')
--- chr(61)
+foreign import isControl :: Char -> Boolean
+foreign import isSpace :: Char -> Boolean
+foreign import isLower :: Char -> Boolean
+foreign import isUpper :: Char -> Boolean
+foreign import isDigit :: Char -> Boolean
+foreign import isOctDigit :: Char -> Boolean
+foreign import isHexDigit :: Char -> Boolean
+foreign import isAscii :: Char -> Boolean
+
+foreign import toUpper :: Char -> Char
+foreign import toLower :: Char -> Char
+
+
+foreign import ord :: Char -> Integer
+foreign import chr :: Char -> Integer
+
+
