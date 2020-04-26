@@ -12,5 +12,5 @@
 -- The Erlang Application Module.
 --
 -----------------------------------------------------------------------------
-module Contro.OTP.Application where
+module Control.OTP.Application where
 

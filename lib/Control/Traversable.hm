@@ -1,4 +1,4 @@
-module Traversable where
+module Control.Traversable where
 
 import Data.Semigroup
 import Control.Monad

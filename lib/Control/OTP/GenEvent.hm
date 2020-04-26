@@ -12,4 +12,4 @@
 -- The Erlang `gen_event` Behaviour.
 --
 -----------------------------------------------------------------------------
-module Contro.OTP.GenEvent where
+module Control.OTP.GenEvent where
