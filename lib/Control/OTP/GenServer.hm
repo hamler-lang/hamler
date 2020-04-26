@@ -12,4 +12,5 @@
 -- The Erlang `gen_server` Behaviour.
 --
 -----------------------------------------------------------------------------
-module Contro.OTP.GenServer where
+module Control.OTP.GenServer where
+

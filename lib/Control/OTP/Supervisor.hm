@@ -12,5 +12,5 @@
 -- The Erlang Supervisor Module.
 --
 -----------------------------------------------------------------------------
-module Contro.OTP.Supervisor where
+module Control.OTP.Supervisor where
 
