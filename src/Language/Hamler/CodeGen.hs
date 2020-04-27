@@ -90,7 +90,7 @@ moduleToErl C.Module{..} = do
                                          )
                                   , FunName (Atom $ unpack wname, toInteger args)
                                   )
-        Nothing -> throwError $ "error of export var! -- " <> unpack wname <> " --- " <> unpack name
+        Nothing -> throwError $ ( unpack $ runModuleName $ gs ^. gsmoduleName) <> ":The function [" <> unpack wname <> "] is not implemented!"
   return $ E.Module (Atom $ unpack $ runModuleName moduleName)
                     ( mm1:mm0:(fmap snd  exports))
                     []
@@ -267,7 +267,7 @@ exprToErl (C.Var _  qi@(Qualified _ tema)) = do
                     M.lookup funName r1
               case res of
                 Nothing ->
-                  throwError $ "There is no such function in the module: " <> show qi <> "<-->" <> show gs
+                  throwError $ unpack (runModuleName $ gs ^.gsmoduleName) <> " --> There is no such function " <> unpack mn' <> ":" <> unpack wname
                 Just i ->return $ cModCall i (unpack mn') (unpack wname)
             Qualified Nothing ident ->
               throwError $ "Did not find this variable: " <> show qi <> "<-->" <> show gs
