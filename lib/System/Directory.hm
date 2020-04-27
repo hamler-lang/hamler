@@ -1,8 +1,8 @@
 module System.Directory where
 
-import Data.Unit
-import Data.Time
-import Control.Monad
+import Data.Unit (Unit)
+import Data.Time (UTCTime)
+import Control.Monad (IO)
 
 type FilePath = String
 
@@ -68,7 +68,7 @@ foreign import setAccessTime :: FilePath -> UTCTime -> IO Unit
 foreign import setModificationTime :: FilePath -> UTCTime -> IO Unit
 
 -- $PATH methods
-foreign import getSearchPath :: IO [FilePath]
+foreign import getSearchPath :: IO (List FilePath)
 
 -- extension functions
 foreign import splitExtension :: FilePath -> (String,String)
@@ -81,4 +81,3 @@ foreign import addExtension :: FilePath -> String -> FilePath
 foreign import getFileName :: FilePath -> String
 foreign import combine :: FilePath -> FilePath -> FilePath
 
-infixr 5  </> as combine
