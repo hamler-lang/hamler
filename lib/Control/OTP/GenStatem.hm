@@ -13,3 +13,11 @@
 --
 -----------------------------------------------------------------------------
 module Control.OTP.GenStatem where
+
+{-
+start/3,start/4,start_link/3,start_link/4,
+stop/1,stop/3,
+cast/2,call/2,call/3,
+enter_loop/4,enter_loop/5,enter_loop/6,
+reply/1,reply/2]).
+-}

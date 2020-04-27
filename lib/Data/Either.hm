@@ -15,8 +15,8 @@
 module Data.Either where
 
 import Control.Monad (class Applicative, class Apply, class Bind, class Functor, class Monad, map)
-import Data.Function (error,const)
-import Data.Maybe (Maybe(..),maybe)
+import Data.Function (error, const)
+import Data.Maybe (Maybe(..), maybe)
 
 data Either a b = Left a | Right b
 
