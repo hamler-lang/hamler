@@ -1,0 +1,53 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  System.Random
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The System Ranodm Module.
+--
+-----------------------------------------------------------------------------
+module System.Random where
+
+import Control.Monad (IO)
+
+class Random a where
+  randomIO :: IO a
+  randomRIO :: (a, a) -> IO a
+
+instance Random Boolean where
+  randomIO  = randomBooleanImp
+  randomRIO = randomRBooleanImp
+
+foreign import randomBooleanImp :: IO Boolean
+foreign import randomRBooleanImp :: (Boolean, Boolean) -> IO Boolean
+
+instance Random Char where
+  randomIO  = randomCharImp
+  randomRIO = randomRCharImp
+
+foreign import randomCharImp :: IO Char
+foreign import randomRCharImp :: (Char, Char) -> IO Char
+
+instance Random Integer where
+  randomIO  = randomIntegerImp
+  randomRIO = randomRIntegerImp
+
+foreign import randomIntegerImp :: IO Integer
+foreign import randomRIntegerImp :: (Integer, Integer) -> IO Integer
+
+
+instance Random Float where
+  randomIO  = randomFloatImp
+  randomRIO = randomRFloatImp
+
+foreign import randomFloatImp :: IO Float
+foreign import randomRFloatImp :: (Float, Float) -> IO Float
+
+
+
