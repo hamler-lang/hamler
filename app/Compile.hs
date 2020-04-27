@@ -195,7 +195,6 @@ buildFun isIn b = if b
 
 buildSrc :: Bool -> IO ()
 buildSrc bool = do
-  print bool
   dir <- getCurrentDirectory
   isExist <- doesDirectoryExist hamlerlib
   fps1 <- if isExist
@@ -243,7 +242,6 @@ cc x = x
 -- build lib
 buildlib :: Bool -> IO ()
 buildlib bool = do
-  print bool
   dir <- getCurrentDirectory
   fps1 <- gethmFiles (dir <> "/lib")
   let fps = fps1
