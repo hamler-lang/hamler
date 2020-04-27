@@ -12,7 +12,7 @@
 -- The Erlang `gen_server` Behaviour.
 --
 -----------------------------------------------------------------------------
-module Contro.OTP.GenStatem where
+module Control.OTP.GenStatem where
 
 {-
 start/3,start/4,start_link/3,start_link/4,

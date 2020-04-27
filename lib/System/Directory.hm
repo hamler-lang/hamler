@@ -1,0 +1,84 @@
+module System.Directory where
+
+import Data.Unit
+import Data.Time
+import Control.Monad
+
+type FilePath = String
+
+-- Actions on directories
+foreign import createDirectory :: FilePath -> IO Unit
+foreign import createDirectoryIfMissing :: Boolean -> FilePath -> IO Unit
+foreign import removeDirectory :: FilePath -> IO Unit
+foreign import removeDirectoryRecursive :: FilePath -> IO Unit
+foreign import removePathForcably :: FilePath -> IO Unit
+foreign import nameDirectory :: FilePath -> FilePath -> IO Unit
+foreign import listDirectory :: FilePath -> List FilePath
+foreign import getCurrentDirectory :: IO FilePath
+foreign import setCurrentDirectory :: FilePath -> IO Unit
+
+-- Pre-defined directories
+foreign import getHomeDirectory :: IO FilePath
+foreign import getUserDocumentsDirectory :: IO FilePath
+foreign import getTemporaryDirectory :: IO FilePath
+
+-- Actions on files
+foreign import removeFile :: FilePath -> IO Unit
+foreign import nameFile :: FilePath -> FilePath -> IO Unit
+foreign import namePath :: FilePath -> FilePath -> IO Unit
+foreign import copyFile :: FilePath -> FilePath -> IO Unit
+foreign import getFileSize :: FilePath -> IO Integer
+
+foreign import makeAbsolute :: FilePath -> IO FilePath
+
+-- Existence tests
+foreign import doesPathExist :: FilePath -> IO Boolean
+foreign import doesFileExist :: FilePath -> IO Boolean
+foreign import doesDirectoryExist :: FilePath -> IO Boolean
+
+-- Symbolic links
+foreign import createFileLink :: FilePath -> FilePath -> IO Unit
+foreign import createDirectoryLink :: FilePath -> FilePath -> IO Unit
+foreign import removeDirectoryLink :: FilePath -> IO Unit
+foreign import pathIsSymbolicLink :: FilePath -> IO Boolean
+foreign import getSymbolicLinkTarget :: FilePath -> IO FilePath
+
+-- Permissions
+type Permissions = { readable :: Boolean
+                   , writable :: Boolean
+                   , executable :: Boolean
+                   , searchable :: Boolean
+                   }
+
+emptyPermissions :: Permissions
+emptyPermissions = { readable : false
+                   , writable : false
+                   , executable : false
+                   , searchable : false
+                   }
+
+foreign import getPermissions :: FilePath -> IO Permissions
+foreign import setPermissions :: FilePath -> Permissions -> IO Unit
+foreign import copyPermissions :: FilePath -> FilePath -> IO Unit
+
+-- timestamps
+foreign import getAccessTime :: FilePath -> IO UTCTime
+foreign import getModificationTime :: FilePath -> IO UTCTime
+foreign import setAccessTime :: FilePath -> UTCTime -> IO Unit
+foreign import setModificationTime :: FilePath -> UTCTime -> IO Unit
+
+-- $PATH methods
+foreign import getSearchPath :: IO [FilePath]
+
+-- extension functions
+foreign import splitExtension :: FilePath -> (String,String)
+foreign import takeExtension :: FilePath -> String
+foreign import replaceExtension :: FilePath -> String -> FilePath
+foreign import addExtension :: FilePath -> String -> FilePath
+
+
+-- filename/directory functions
+foreign import getFileName :: FilePath -> String
+foreign import combine :: FilePath -> FilePath -> FilePath
+
+infixr 5  </> as combine

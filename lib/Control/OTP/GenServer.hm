@@ -25,4 +25,3 @@ multi_call/2, multi_call/3, multi_call/4,
 enter_loop/3, enter_loop/4, enter_loop/5,
 wake_hib/6
 -}
-
