@@ -16,6 +16,8 @@ module Data.Maybe where
 
 import Data.Function (const, identity)
 import Control.Monad
+import Data.Function
+
 
 data Maybe a = Nothing | Just a
 
@@ -48,4 +50,10 @@ isJust = maybe false (const true)
 
 isNothing :: forall a. Maybe a -> Boolean
 isNothing = maybe true (const false)
+
+fromJust :: forall a.Maybe a -> a
+fromJust (Just a) = a
+formJust _  = error "There is a error!"
+
+
 

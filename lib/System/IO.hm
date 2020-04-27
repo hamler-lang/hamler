@@ -16,5 +16,44 @@
 module System.IO where
 
 import Control.Monad (IO)
+import Data.Either
+import Data.Unit
 
-foreign import print :: String -> IO String
+
+-- simple IO operations
+foreign import print :: String -> IO Unit
+foreign import putStr :: String -> IO Unit
+foreign import putStrLn :: String -> IO Unit
+
+-- IO Exception
+foreign import data Error :: Type
+
+instance Show Error where
+  show = showErrorImpl
+
+foreign import showErrorImpl :: Error -> String
+
+foreign import error :: String -> Error
+
+foreign import message :: Error -> String
+
+foreign import name :: Error -> String
+
+foreign import throwException :: forall a.Error ->  IO a
+
+foreign import catchException :: forall a.(Error -> IO a) -> IO a -> IO a
+
+throw :: forall a.String -> IO a
+throw s = throwException (error s)
+
+try :: forall a.IO a -> IO (Either Error a)
+try action = catchException (\e -> pure (Left e)) (map Right action)
+
+-- File Operate
+type FilePath = String
+foreign import readFile :: FilePath -> IO String
+foreign import writeFile :: FilePath -> String -> IO Unit
+foreign import appendFile :: FilePath -> String -> IO Unit
+
+
+

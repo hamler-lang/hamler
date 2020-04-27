@@ -24,7 +24,7 @@ foreign import length :: forall a.List a -> Int
 
 foreign import scanl :: forall a b.(b -> a -> b) -> b -> List a -> List b
 
-foreign import :: forall a b.(a -> b -> b) -> b -> List a -> List b
+foreign import scanr :: forall a b.(a -> b -> b) -> b -> List a -> List b
 
 foreign import head ::forall a.List a -> Maybe a
 

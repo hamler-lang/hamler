@@ -313,7 +313,7 @@ helloHamler = concat [
         , "\n"
         , "import Prelude\n"
         , "\n"
-        , "main :: IO String\n"
+        , "main :: IO Unit\n"
         , "main = print "
         , "\"Let there be Hamler, running on Erlang VM!\"\n"
         ]
