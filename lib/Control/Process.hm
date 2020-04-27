@@ -18,6 +18,7 @@ import Control.Monad
 import Data.Ref (Reference)
 
 type Process = IO
+type Module  = String
 
 -- | Erlang Module.
 -- foreign import data Module :: Type
