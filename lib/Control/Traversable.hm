@@ -1,14 +1,15 @@
 module Control.Traversable where
 
-import Data.Semigroup
-import Control.Monad
+import Data.Semigroup  (class Monoid, mempty, (<>))
+import Control.Monad (class Applicative, class Functor, apply, map, pure)
+import Data.Function (identity)
 
 class Foldable f where
   foldr :: forall a b. (a -> b -> b) -> b -> f a -> b
   foldl :: forall a b. (b -> a -> b) -> b -> f a -> b
   foldMap :: forall a m. Monoid m => (a -> m) -> f a -> m
 
-class (Functor t, Foldable t) <= Traversable t where
+class (Functor t, Foldable t) => Traversable t where
   traverse :: forall a b m. Applicative m => (a -> m b) -> t a -> m (t b)
   sequence :: forall a m. Applicative m => t (m a) -> m (t a)
 
@@ -19,7 +20,7 @@ instance Foldable List where
   foldl = foldlList
   foldMap = foldMapDefaultR
 
-instance traversableArray :: Traversable Array where
+instance Traversable List where
   traverse = traverseArrayImpl apply map pure
   sequence = sequenceDefault
 
@@ -32,8 +33,8 @@ foreign import traverseArrayImpl
   -> ((a -> b) -> m a -> m b)
   -> (a -> m a)
   -> (a -> m b)
-  -> Array a
-  -> m (Array b)
+  -> List a
+  -> m (List b)
 
 
 
@@ -68,7 +69,7 @@ traverseDefault
   => (a -> m b)
   -> t a
   -> m (t b)
-traverseDefault f ta = sequence (f <$> ta)
+traverseDefault f ta = sequence (map f ta)
 
 sequenceDefault
   :: forall t a m

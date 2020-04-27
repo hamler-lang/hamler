@@ -15,10 +15,10 @@
 
 module System.IO where
 
-import Control.Monad (IO)
-import Data.Either
-import Data.Unit
-
+import Control.Monad (IO,pure,map)
+import Data.Either (Either(..))
+import Data.Unit (Unit)
+import Data.Show (class Show)
 
 -- simple IO operations
 foreign import print :: String -> IO Unit
