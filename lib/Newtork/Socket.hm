@@ -1,0 +1,67 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Network.Socket
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Network Socket Module.
+--
+-----------------------------------------------------------------------------
+
+module Network.Socket where
+
+import Control.Monad (IO)
+import Data.Unit (Unit)
+
+type HostName = String
+type ServiceName = String
+type PortNumber = Integer
+
+data HostAddress  = HostAddress Integer Integer Integer Integer
+
+data SockAddr = SockAddrInt PortNumber HostAddress
+
+data Family = AF_UNSPEC
+            | AF_UNIX
+            | AF_INET
+            | AF_INET6
+            | AF_IMPLINK
+------------| ......
+
+data SocketType = NoSocketType
+                | Stream
+                | Datagram
+                | Raw
+                | RDM
+                | SeqPacket
+
+foreign import data Socket :: Type
+
+foreign import socket :: Family -> SocketType -> IO Socket
+
+foreign import connect :: Socket -> SockAddr -> IO Unit
+foreign import bind :: Socket -> SockAddr -> IO Unit
+
+foreign import listen :: Socket -> Integer -> IO Unit
+foreign import accept :: Socket -> IO (Tuple Socket SockAddr)
+
+foreign import close :: Socket -> IO Unit
+
+foreign import data Bytestring :: Type
+
+foreign import send :: Socket -> Bytestring -> IO Integer
+foreign import sendTo :: Socket -> Bytestring -> SockAddr -> IO Integer
+foreign import sendMany :: Socket -> List Bytestring -> IO Unit
+foreign import sendManyTo :: Socket -> List Bytestring -> SockAddr -> IO Unit
+
+foreign import recv :: Socket -> Integer -> IO Bytestring
+foreign import recvFrom :: Socket -> Integer -> IO (Tuple Bytestring SockAddr)
+
+
+
+
