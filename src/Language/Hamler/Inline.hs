@@ -4,9 +4,9 @@
 module Language.Hamler.Inline where
 
 import           Data.Map                           as M
-import           Data.Text                          (Text, unpack)
-import qualified Data.Text.Lazy                     as L
-import           Debug.Trace
+
+
+
 import           Language.CoreErlang
 import Prelude
 
@@ -18,8 +18,10 @@ type BMap = M.Map String (Integer,Expr)
 
 inline :: Ann Module -> Ann Module
 inline (Constr (Module a b c d))= let bmap = cFunDefMap d
-                       in Constr $  Module a b c (fmap (\(FunDef a ((Constr b))) ->
-                                                (FunDef a ((Constr $ iExpr bmap b))))d)
+                       in Constr $  Module a b c (fmap (\(FunDef a1 ((Constr b1))) ->
+                                                (FunDef a1 ((Constr $ iExpr bmap b1))))d)
+inline x = error $ show x
+
 aExpr :: Ann a -> a
 aExpr (Constr a) = a
 aExpr (Ann a _) = a
@@ -37,8 +39,8 @@ st' :: Expr -> Exprs
 st' e = Expr $ Constr e
 
 iExpr :: BMap ->  Expr -> Expr
-iExpr bmap (EVar v) = EVar v
-iExpr bmap (Lit v) = Lit v
+iExpr _ (EVar v) = EVar v
+iExpr _ (Lit v) = Lit v
 iExpr bmap (Fun (FunName (Atom s,n))) = case M.lookup s bmap of
                                           Nothing -> error $ show s ++ "---" ++ show bmap
                                           Just (_,e) -> case n of
@@ -62,13 +64,12 @@ iExpr bmap (Seq expr1 expr2)  = Seq (st $ fmap (iExpr bmap) $ ts expr1)
 
 iExpr bmap (Case expr a) = Case (st $ fmap (iExpr bmap) $ ts expr) (fmap (gExpr bmap) a)
 
-iExpr x y = y --error $ show y
+iExpr _ y = y --error $ show y
 
 
 gExpr :: BMap ->Ann Alt ->Ann Alt
 gExpr bmap (Constr (Alt p g e)) =Constr $ Alt p g (st $ fmap (iExpr bmap) $ ts e)
 gExpr bmap (Ann (Alt p g e) _) =Constr $ Alt p g (st $ fmap (iExpr bmap) $ ts e)
-gExpr _ x =error $ show x
 
 
 

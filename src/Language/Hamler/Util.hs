@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Language.Hamler.Prelude
+-- Module      :  Language.Hamler.Util
 -- Copyright   :  (c) Feng Lee 2020
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,12 +9,10 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The experimental prelude module.
+-- The experimental Util module.
 --
 -----------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecordWildCards   #-}
-{-# LANGUAGE TemplateHaskell   #-}
 module Language.Hamler.Util where
 
 import           Language.CoreErlang                as E
