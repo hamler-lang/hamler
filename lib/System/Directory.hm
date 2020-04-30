@@ -13,7 +13,7 @@ foreign import removeDirectory :: FilePath -> IO Unit
 foreign import removeDirectoryRecursive :: FilePath -> IO Unit
 foreign import removePathForcably :: FilePath -> IO Unit
 foreign import nameDirectory :: FilePath -> FilePath -> IO Unit
-foreign import listDirectory :: FilePath -> List FilePath
+foreign import listDirectory :: FilePath -> [FilePath]
 foreign import getCurrentDirectory :: IO FilePath
 foreign import setCurrentDirectory :: FilePath -> IO Unit
 
@@ -68,7 +68,7 @@ foreign import setAccessTime :: FilePath -> UTCTime -> IO Unit
 foreign import setModificationTime :: FilePath -> UTCTime -> IO Unit
 
 -- $PATH methods
-foreign import getSearchPath :: IO (List FilePath)
+foreign import getSearchPath :: IO [FilePath]
 
 -- extension functions
 foreign import splitExtension :: FilePath -> (String,String)

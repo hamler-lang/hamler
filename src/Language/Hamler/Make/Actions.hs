@@ -7,34 +7,22 @@ module Language.Hamler.Make.Actions
   ) where
 
 import           Prelude
-
 import           Control.Monad hiding (sequence)
 import           Control.Monad.Error.Class (MonadError(..))
 import           Control.Monad.IO.Class
 import           Control.Monad.Reader (asks)
 import           Control.Monad.Supply
 import           Control.Monad.Trans.Class (MonadTrans(..))
-
-
-
 import           Data.Foldable (for_, minimum)
 import qualified Data.List.NonEmpty as NEL
 import qualified Data.Map as M
 import           Data.Maybe (fromMaybe, maybeToList)
 import qualified Data.Set as S
 import qualified Data.Text as T
-
 import           Data.Time.Clock (UTCTime)
-
-
 import           Language.PureScript.AST
-
-
 import qualified Language.PureScript.CoreFn as CF
-
-
 import           Language.PureScript.Crash
-
 import qualified Language.PureScript.Docs.Prim as Docs.Prim
 import qualified Language.PureScript.Docs.Types as Docs
 import           Language.PureScript.Errors
@@ -44,11 +32,6 @@ import           Language.PureScript.Make.Cache
 import           Language.PureScript.Names
 import           Language.PureScript.Names (runModuleName, ModuleName)
 import           Language.PureScript.Options hiding (codegenTargets)
-
-
-
-
-
 import           System.FilePath ((</>))
 import qualified Data.Text.IO as TIO
 import           Data.Text (Text, unpack, pack)

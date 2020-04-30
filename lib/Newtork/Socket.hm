@@ -48,7 +48,7 @@ foreign import connect :: Socket -> SockAddr -> IO Unit
 foreign import bind :: Socket -> SockAddr -> IO Unit
 
 foreign import listen :: Socket -> Integer -> IO Unit
-foreign import accept :: Socket -> IO (Tuple Socket SockAddr)
+foreign import accept :: Socket -> IO (Socket,SockAddr)
 
 foreign import close :: Socket -> IO Unit
 
@@ -56,11 +56,11 @@ foreign import data Bytestring :: Type
 
 foreign import send :: Socket -> Bytestring -> IO Integer
 foreign import sendTo :: Socket -> Bytestring -> SockAddr -> IO Integer
-foreign import sendMany :: Socket -> List Bytestring -> IO Unit
-foreign import sendManyTo :: Socket -> List Bytestring -> SockAddr -> IO Unit
+foreign import sendMany :: Socket -> [Bytestring] -> IO Unit
+foreign import sendManyTo :: Socket -> [Bytestring] -> SockAddr -> IO Unit
 
 foreign import recv :: Socket -> Integer -> IO Bytestring
-foreign import recvFrom :: Socket -> Integer -> IO (Tuple Bytestring SockAddr)
+foreign import recvFrom :: Socket -> Integer -> IO (Bytestring,SockAddr)
 
 
 
