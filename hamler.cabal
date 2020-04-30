@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6bc843194c0a7e136d81baca6d3b5f76aaf48ca1ce98b3d69ef118cbddd498b3
+-- hash: c1e31e2a83e1468e380e95630c5783b5542084dba0e1a0ca70b2fabbec736edd
 
 name:           hamler
 version:        0.0.2
@@ -42,13 +42,13 @@ library
       Language.Hamler.Make
       Language.Hamler.Make.Actions
       Language.Hamler.Make.BuildPlan
-      Language.Hamler.Prelude
+      Language.Hamler.Util
   other-modules:
       Paths_hamler
   hs-source-dirs:
       src
   default-extensions: ConstraintKinds DataKinds DeriveFunctor DeriveFoldable DeriveTraversable DeriveGeneric DerivingStrategies EmptyDataDecls FlexibleContexts KindSignatures LambdaCase MultiParamTypeClasses NoImplicitPrelude PatternGuards PatternSynonyms RankNTypes RecordWildCards OverloadedStrings ScopedTypeVariables TupleSections ViewPatterns
-  ghc-options: -O2
+  ghc-options: -Wall -O2
   build-tools:
       happy ==1.19.9
   build-depends:
