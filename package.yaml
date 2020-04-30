@@ -57,8 +57,7 @@ build-tools:
 
 library:
   source-dirs: src
-  # ghc-options: -Wall -O2
-  ghc-options: -O2
+  ghc-options: -Wall -O2
   # other-modules:
   default-extensions:
     - ConstraintKinds
