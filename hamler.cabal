@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: c1e31e2a83e1468e380e95630c5783b5542084dba0e1a0ca70b2fabbec736edd
+-- hash: 2962c7c6d32b72c8e46da928f4f4b3d57fe8f5650f42d83c2477ff2eeee73b41
 
 name:           hamler
 version:        0.0.2
@@ -156,8 +156,6 @@ test-suite tests
   type: exitcode-stdio-1.0
   main-is: Main.hs
   other-modules:
-      CodeGenTest
-      CompileTest
       Paths_hamler
   hs-source-dirs:
       tests
