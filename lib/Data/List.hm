@@ -18,36 +18,36 @@ import Data.Maybe
 
 infixr 6 cons as :
 
-foreign import cons :: forall a.a -> List a -> List a
+foreign import cons :: forall a.a -> [a] -> [a]
 
-foreign import length :: forall a.List a -> Integer
+foreign import length :: forall a.[a] -> Integer
 
-foreign import scanl :: forall a b.(b -> a -> b) -> b -> List a -> List b
+foreign import scanl :: forall a b.(b -> a -> b) -> b -> [a] -> [b]
 
-foreign import scanr :: forall a b.(a -> b -> b) -> b -> List a -> List b
+foreign import scanr :: forall a b.(a -> b -> b) -> b -> [a] -> [b]
 
-foreign import head ::forall a.List a -> Maybe a
+foreign import head ::forall a.[a] -> Maybe a
 
-foreign import last :: forall a.List a -> Maybe a
+foreign import last :: forall a.[a] -> Maybe a
 
-foreign import reverse :: forall a.List a -> List a
+foreign import reverse :: forall a.[a] -> [a]
 
-foreign import concat :: forall a.List (List a) -> List a
+foreign import concat :: forall a.[[a]] -> [a]
 
-foreign import filter :: forall a.(a -> Boolean) -> List a -> List a
+foreign import filter :: forall a.(a -> Boolean) -> [a] -> [a]
 
 infixl 6 connect as ++
 
-foreign import connect ::forall a.List a -> List a -> List a
+foreign import connect ::forall a.[a] -> [a] -> [a]
 
-foreign import replicate :: forall a.Integer -> a -> List a
+foreign import replicate :: forall a.Integer -> a -> [a]
 
-foreign import take :: forall a.Integer -> List a -> List a
+foreign import take :: forall a.Integer -> [a] -> [a]
 
-foreign import drop :: forall a.Integer -> List a -> List a
+foreign import drop :: forall a.Integer -> [a] -> [a]
 
-foreign import zip :: forall a b.List a -> List b -> List (Tuple a b)
+foreign import zip :: forall a b.[a] -> [b] -> [(a,b)]
 
-foreign import sort :: forall a.List a -> List a
+foreign import sort :: forall a.[a] -> [a]
 
 

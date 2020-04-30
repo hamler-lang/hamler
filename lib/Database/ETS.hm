@@ -56,7 +56,7 @@ type TableInfo =
 
 foreign import new :: Table -> TableOptions -> IO TableId
 
-all :: IO (List TableId)
+all :: IO [TableId]
 all = ffiIO0 "ets" "all"
 
 -- | Delete an ETS table
@@ -99,13 +99,13 @@ foreign import info :: TableId -> IO (Maybe TableInfo)
 insert :: forall o. TableId -> o -> IO Boolean
 insert = ffiIO2 "ets" "insert"
 
-insertObjects :: forall o. TableId -> List o -> IO Boolean
+insertObjects :: forall o. TableId -> [o] -> IO Boolean
 insertObjects = ffiIO2 "ets" "insert"
 
 insertNew :: forall o. TableId -> o -> IO Boolean
 insertNew = ffiIO2 "ets" "insert_new"
 
-insertNewObjects :: forall o. TableId -> List o -> IO Boolean
+insertNewObjects :: forall o. TableId -> [o] -> IO Boolean
 insertNewObjects = ffiIO2 "ets" "insert_new"
 
 {-
