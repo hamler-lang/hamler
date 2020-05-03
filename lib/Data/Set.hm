@@ -14,4 +14,18 @@
 -----------------------------------------------------------------------------
 module Data.Set where
 
--- TODO: ...
+foreign import data Set :: Type -> Type
+
+foreign import empty      :: forall a.Set a
+foreign import singleton  :: forall a.a -> Set a
+foreign import fromList   :: forall a.[a] -> Set a
+foreign import insert     :: forall a.a -> Set a -> Set a
+foreign import delete     :: forall a.a -> Set a -> Set a
+foreign import member     :: forall a.a -> Set a -> Boolean
+foreign import notMember  :: forall a.a -> Set a -> Boolean
+foreign import null       :: forall a.Set a -> Boolean
+foreign import size       :: forall a.Set a -> Integer
+foreign import union      :: forall a.Set a -> Set a -> Set a
+foreign import difference :: forall a.Set a -> Set a -> Set a
+foreign import filter     :: forall a.(a -> Boolean) -> Set a -> Set a
+foreign import elems      :: forall a.Set a -> [a]

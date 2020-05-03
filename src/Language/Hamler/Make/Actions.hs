@@ -7,34 +7,22 @@ module Language.Hamler.Make.Actions
   ) where
 
 import           Prelude
-
 import           Control.Monad hiding (sequence)
 import           Control.Monad.Error.Class (MonadError(..))
 import           Control.Monad.IO.Class
 import           Control.Monad.Reader (asks)
 import           Control.Monad.Supply
 import           Control.Monad.Trans.Class (MonadTrans(..))
-import           Control.Monad.Writer.Class (MonadWriter(..))
-import           Data.Bifunctor (bimap)
-import           Data.Either (partitionEithers)
 import           Data.Foldable (for_, minimum)
 import qualified Data.List.NonEmpty as NEL
 import qualified Data.Map as M
 import           Data.Maybe (fromMaybe, maybeToList)
 import qualified Data.Set as S
 import qualified Data.Text as T
-import qualified Data.Text.Encoding as TE
 import           Data.Time.Clock (UTCTime)
-import           Data.Version (showVersion)
-import qualified Language.JavaScript.Parser as JS
 import           Language.PureScript.AST
-import qualified Language.PureScript.Bundle as Bundle
-import           Language.PureScript.CodeGen.JS.Printer
 import qualified Language.PureScript.CoreFn as CF
-import qualified Language.PureScript.CoreFn.ToJSON as CFJ
-import qualified Language.PureScript.CoreImp.AST as Imp
 import           Language.PureScript.Crash
-import qualified Language.PureScript.CST as CST
 import qualified Language.PureScript.Docs.Prim as Docs.Prim
 import qualified Language.PureScript.Docs.Types as Docs
 import           Language.PureScript.Errors
@@ -44,12 +32,7 @@ import           Language.PureScript.Make.Cache
 import           Language.PureScript.Names
 import           Language.PureScript.Names (runModuleName, ModuleName)
 import           Language.PureScript.Options hiding (codegenTargets)
-import           Language.PureScript.Pretty.Common (SMap(..))
-import qualified Paths_hamler as Paths
-import           SourceMap
-import           SourceMap.Types
-import           System.Directory (getCurrentDirectory)
-import           System.FilePath ((</>), makeRelative, splitPath, normalise)
+import           System.FilePath ((</>))
 import qualified Data.Text.IO as TIO
 import           Data.Text (Text, unpack, pack)
 import qualified Language.CoreErlang as CE
@@ -122,7 +105,7 @@ buildMakeActions
   -> Bool
   -- ^ Generate a prefix comment?
   -> MakeActions Make
-buildMakeActions isInline outputDir filePathMap foreigns usePrefix =
+buildMakeActions isInline outputDir filePathMap foreigns _ =
     MakeActions getInputTimestampsAndHashes getOutputTimestamp readExterns codegen ffiCodegen progress readCacheDb writeCacheDb outputPrimDocs
   where
 
@@ -137,8 +120,8 @@ buildMakeActions isInline outputDir filePathMap foreigns usePrefix =
       Right filePath -> do
         let inputPaths = filePath : maybeToList (M.lookup mn foreigns)
             getInfo fp = do
-              ts <- getTimestamp fp
-              return (ts, hashFile fp)
+              ts1 <- getTimestamp fp
+              return (ts1, hashFile fp)
         pathsWithInfo <- traverse (\fp -> (fp,) <$> getInfo fp) inputPaths
         return $ Right $ M.fromList pathsWithInfo
 
@@ -185,7 +168,7 @@ buildMakeActions isInline outputDir filePathMap foreigns usePrefix =
                else id
 
   codegen :: CF.Module CF.Ann -> Docs.Module -> ExternsFile -> SupplyT Make ()
-  codegen m docs exts = do
+  codegen m _ _ = do
     let mn = CF.moduleName m
     efundefs' <- case M.lookup mn foreigns of
       Nothing -> do return []
@@ -195,14 +178,16 @@ buildMakeActions isInline outputDir filePathMap foreigns usePrefix =
          Left e -> do
            lift $ makeIO "read Main.core" $ print ("error of parse core file: ---> " <> fp)
            lift $ throwError $ MultipleErrors [ErrorMessage [] $ ErrorParsingModule e]
-         Right (CE.Constr ( CE.Module (CE.Atom ename) eexports _ efundefs )) -> do
+         Right (CE.Constr ( CE.Module (CE.Atom _) _ _ efundefs )) -> do
             let ff (CE.FunDef (CE.Constr (CE.FunName (CE.Atom n,i))) (CE.Constr expr) )
                   = (pack $ (unpack $ runModuleName mn) <> "." <> n, (fromIntegral i,expr))
+                ff x1 = error $ show x1
             return $ fmap ff efundefs
+         x -> error $ show x
     let mods = filter (/= mn) $  filter (/= ModuleName [ProperName "Prim"]) $  fmap snd $ CF.moduleImports m
     modInfoList <- mapM readModuleInfo mods
     let modInfoMap = M.fromList  modInfoList
-    let ((erl,gs),log) = runTranslate isInline modInfoMap efundefs' $  moduleToErl m
+        ((erl,_),_) = runTranslate isInline modInfoMap efundefs' $  moduleToErl m
     case erl of
       Left e -> lift $ makeIO "print error" $ print e
       Right e@(CE.Module _ exports _ _) -> do
@@ -217,10 +202,7 @@ buildMakeActions isInline outputDir filePathMap foreigns usePrefix =
 
 
   ffiCodegen :: CF.Module CF.Ann -> Make ()
-  ffiCodegen m = return ()
-
-  requiresForeign :: CF.Module a -> Bool
-  requiresForeign = not . null . CF.moduleForeign
+  ffiCodegen _ = return ()
 
   progress :: ProgressMessage -> Make ()
   progress = liftIO . putStrLn . renderProgressMessage

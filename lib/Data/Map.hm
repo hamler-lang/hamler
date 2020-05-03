@@ -26,3 +26,5 @@ foreign import delete  :: forall k v.k -> Map k v -> Map k v
 foreign import updateWith :: forall k v.k -> (v -> Maybe v) -> Map k v -> Map k v
 foreign import size    :: forall k v.Map k v -> Integer
 foreign import filter  :: forall k v.(v -> Boolean) -> Map k v -> Map k v
+foreign import fromList :: forall k v.[(k,v)]-> Map k v
+foreign import toList   :: forall k v.Map k v -> [(k,v)]

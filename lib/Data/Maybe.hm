@@ -14,8 +14,9 @@
 -----------------------------------------------------------------------------
 module Data.Maybe where
 
-import Data.Function (const, identity)
-import Control.Monad
+import Control.Monad (class Applicative, class Apply, class Bind, class Functor, class Monad, map)
+import Data.Function (const, error, identity)
+
 
 data Maybe a = Nothing | Just a
 
@@ -49,3 +50,6 @@ isJust = maybe false (const true)
 isNothing :: forall a. Maybe a -> Boolean
 isNothing = maybe true (const false)
 
+fromJust :: forall a.Maybe a -> a
+fromJust (Just a) = a
+fromJust (Nothing) = error "This is a error!"

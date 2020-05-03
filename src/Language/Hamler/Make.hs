@@ -47,7 +47,6 @@ import           System.FilePath (replaceExtension)
 import           Language.Hamler.Make.BuildPlan
 import qualified Language.Hamler.Make.BuildPlan as BuildPlan
 import           Language.Hamler.Make.Actions as Actions
-import Debug.Trace
 
 -- | Rebuild a single module.
 --

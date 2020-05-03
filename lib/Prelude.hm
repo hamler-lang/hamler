@@ -20,7 +20,7 @@ module Prelude
   , module Data.Eq
   , module Data.Float
   , module Data.Function
-  -- , module Data.List
+  , module Data.List
   , module Data.Maybe
   , module Data.Ord
   , module Data.Ref
@@ -28,6 +28,7 @@ module Prelude
   , module Data.Semigroup
   , module Data.Semiring
   , module Data.Show
+  , module Data.Unit
   , module Control.Monad
   , module System.IO
   ) where
@@ -37,9 +38,9 @@ import Data.Bits (band, bnot, bor, bsl, bsr, bxor)
 import Data.Bool ((&&), (||))
 import Data.Either (Either(..))
 import Data.Eq (class Eq, eq, notEq, (/=), (==))
--- import Data.List -- (map)
+import Data.List (head,last,reverse,concat,filter,(++),take,drop,zip,sort,replicate,length)
 import Data.Float (Double)
-import Data.Function (apply, const, flip, identity)
+import Data.Function (apply, const, flip, identity,error)
 import Data.Maybe (Maybe)
 import Data.Ord (class Ord, between, compare, comparing, greaterThan, greaterThanOrEq, lessThan, lessThanOrEq, max, min, (<), (<=), (>), (>=))
 import Data.Ref (Ref, Reference, makeRef)
@@ -47,5 +48,6 @@ import Data.Ring (class Ring, (-))
 import Data.Semigroup (class Semigroup, append, (<>))
 import Data.Semiring (class Semiring, add, mul, one, zero, (*), (+))
 import Data.Show (class Show, show)
+import Data.Unit (Unit)
 import Control.Monad (IO,class Functor,class Apply,class Applicative,class Bind,class Monad,map,pure,bind)
-import System.IO (print)
+import System.IO (print,putStrLn,putStr,throw,try,catchException,readFile,writeFile,appendFile)

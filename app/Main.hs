@@ -11,7 +11,6 @@ import           Data.Foldable (fold)
 import qualified Options.Applicative as Opts
 import           System.Environment (getArgs)
 import qualified System.IO as IO
-import qualified Data.Text as T
 import qualified Text.PrettyPrint.ANSI.Leijen as Doc
 import           Version (versionString)
 

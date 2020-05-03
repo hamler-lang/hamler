@@ -62,6 +62,6 @@ instance Bind List where
   bind a f = bindListImpl a f
 instance Monad List
 
-foreign import mapListImpl :: forall a b. (a->b) -> List a -> List b
-foreign import applyListImpl :: forall a b. List (a->b) -> List a -> List b
-foreign import bindListImpl :: forall a b. List a -> (a -> List b) -> List b
+foreign import mapListImpl :: forall a b. (a->b) -> [a] -> [b]
+foreign import applyListImpl :: forall a b. [(a->b)] -> [a] -> [b]
+foreign import bindListImpl :: forall a b. [a] -> (a -> [b]) -> [b]

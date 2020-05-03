@@ -1,8 +1,8 @@
 module System.Directory where
 
-import Data.Unit
-import Data.Time
-import Control.Monad
+import Data.Unit (Unit)
+import Data.Time (UTCTime)
+import Control.Monad (IO)
 
 type FilePath = String
 
@@ -13,7 +13,7 @@ foreign import removeDirectory :: FilePath -> IO Unit
 foreign import removeDirectoryRecursive :: FilePath -> IO Unit
 foreign import removePathForcably :: FilePath -> IO Unit
 foreign import nameDirectory :: FilePath -> FilePath -> IO Unit
-foreign import listDirectory :: FilePath -> List FilePath
+foreign import listDirectory :: FilePath -> [FilePath]
 foreign import getCurrentDirectory :: IO FilePath
 foreign import setCurrentDirectory :: FilePath -> IO Unit
 
@@ -81,4 +81,3 @@ foreign import addExtension :: FilePath -> String -> FilePath
 foreign import getFileName :: FilePath -> String
 foreign import combine :: FilePath -> FilePath -> FilePath
 
-infixr 5  </> as combine

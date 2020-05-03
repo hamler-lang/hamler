@@ -24,3 +24,5 @@ foreign import connect :: String -> String -> String
 foreign import reverse :: String -> String
 foreign import append  :: String -> String -> String
 foreign import strlen  :: String -> Integer
+foreign import words   :: String -> List String
+foreign import lines   :: String -> List String

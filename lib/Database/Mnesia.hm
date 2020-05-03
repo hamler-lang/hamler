@@ -17,7 +17,7 @@ module Database.Mnesia where
 import Control.Monad (IO)
 import Control.Process (Node)
 
-type TabDef = {ramCopies :: List Node}
+type TabDef = {ramCopies :: [Node]}
 
 foreign import createTable :: String -> TabDef -> IO Boolean
 
