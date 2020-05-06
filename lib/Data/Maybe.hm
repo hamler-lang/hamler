@@ -17,7 +17,6 @@ module Data.Maybe where
 import Control.Monad (class Applicative, class Apply, class Bind, class Functor, class Monad, map)
 import Data.Function (const, error, identity)
 
-
 data Maybe a = Nothing | Just a
 
 instance Functor Maybe where
