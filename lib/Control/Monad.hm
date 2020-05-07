@@ -65,3 +65,11 @@ instance Monad List
 foreign import mapListImpl :: forall a b. (a->b) -> [a] -> [b]
 foreign import applyListImpl :: forall a b. [(a->b)] -> [a] -> [b]
 foreign import bindListImpl :: forall a b. [a] -> (a -> [b]) -> [b]
+
+discard :: forall f a b. Bind f => f a -> (a -> f b) -> f b
+discard = bind
+
+guardF :: Boolean  -> [Boolean]
+guardF true = [true]
+guardF false = []
+
