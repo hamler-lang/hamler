@@ -41,13 +41,9 @@ instance Random Integer where
 foreign import randomIntegerImp :: IO Integer
 foreign import randomRIntegerImp :: (Integer, Integer) -> IO Integer
 
-
 instance Random Float where
   randomIO  = randomFloatImp
   randomRIO = randomRFloatImp
 
 foreign import randomFloatImp :: IO Float
 foreign import randomRFloatImp :: (Float, Float) -> IO Float
-
-
-

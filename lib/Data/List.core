@@ -1,0 +1,142 @@
+module 'List' ['append'/2,
+	       'cons'/2,
+	       'drop'/2,
+	       'head'/1,
+	       'init'/1,
+	       'module_info'/0,
+	       'module_info'/1,
+	       'slice'/3,
+	       'tail'/1,
+	       'take'/2,
+	       'uncons'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[76|[105|[115|[116|[46|[101|[114|[108]]]]]]]],1}],
+		%% Line 28
+		'spec' =
+		    %% Line 28
+		    [{{'append',2},[{'type',28,'fun',[{'type',28,'product',[{'type',28,'list',[]}|[{'type',28,'list',[]}]]}|[{'type',28,'list',[]}]]}]}],
+		%% Line 31
+		'spec' =
+		    %% Line 31
+		    [{{'cons',2},[{'type',31,'fun',[{'type',31,'product',[{'type',31,'any',[]}|[{'type',31,'list',[]}]]}|[{'type',31,'list',[]}]]}]}],
+		%% Line 34
+		'spec' =
+		    %% Line 34
+		    [{{'head',1},[{'type',34,'fun',[{'type',34,'product',[{'type',34,'list',[]}]}|[{'type',34,'any',[]}]]}]}],
+		%% Line 37
+		'spec' =
+		    %% Line 37
+		    [{{'init',1},[{'type',37,'fun',[{'type',37,'product',[{'type',37,'list',[]}]}|[{'type',37,'list',[]}]]}]}],
+		%% Line 40
+		'spec' =
+		    %% Line 40
+		    [{{'tail',1},[{'type',40,'fun',[{'type',40,'product',[{'type',40,'list',[]}]}|[{'type',40,'list',[]}]]}]}],
+		%% Line 43
+		'spec' =
+		    %% Line 43
+		    [{{'take',2},[{'type',43,'fun',[{'type',43,'product',[{'type',43,'pos_integer',[]}|[{'type',43,'list',[]}]]}|[{'type',43,'list',[]}]]}]}],
+		%% Line 46
+		'spec' =
+		    %% Line 46
+		    [{{'drop',2},[{'type',46,'fun',[{'type',46,'product',[{'type',46,'pos_integer',[]}|[{'type',46,'list',[]}]]}|[{'type',46,'list',[]}]]}]}],
+		%% Line 49
+		'spec' =
+		    %% Line 49
+		    [{{'slice',3},[{'type',49,'fun',[{'type',49,'product',[{'type',49,'pos_integer',[]}|[{'type',49,'pos_integer',[]}|[{'type',49,'list',[]}]]]}|[{'type',49,'list',[]}]]}]}]]
+'append'/2 =
+    %% Line 29
+    fun (_0,_1) ->
+	call 'lists':'append'
+	    (_0, _1)
+'cons'/2 =
+    %% Line 32
+    fun (_0,_1) ->
+	[_0|_1]
+'head'/1 =
+    %% Line 35
+    fun (_0) ->
+	case _0 of
+	  <[H|_2]> when 'true' ->
+	      H
+	  ( <_1> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_1})
+		  -| [{'function_name',{'head',1}}] )
+	    -| ['compiler_generated'] )
+	end
+'init'/1 =
+    %% Line 38
+    fun (_0) ->
+	let <_1> =
+	    call 'erlang':'length'
+		(_0)
+	in  let <_2> =
+		call 'erlang':'-'
+		    (_1, 1)
+	    in  call 'lists':'sublist'
+		    (_0, _2)
+'tail'/1 =
+    %% Line 41
+    fun (_0) ->
+	case _0 of
+	  <[_2|T]> when 'true' ->
+	      T
+	  ( <_1> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_1})
+		  -| [{'function_name',{'tail',1}}] )
+	    -| ['compiler_generated'] )
+	end
+'take'/2 =
+    %% Line 44
+    fun (_0,_1) ->
+	call 'lists':'sublist'
+	    (_1, _0)
+'drop'/2 =
+    %% Line 47
+    fun (_0,_1) ->
+	let <_3> =
+	    call 'erlang':'+'
+		(_0, 1)
+	in  let <_2> =
+		call 'erlang':'length'
+		    (_1)
+	    in  call 'lists':'sublist'
+		    (_1, _3, _2)
+'slice'/3 =
+    %% Line 50
+    fun (_0,_1,_2) ->
+	let <_3> =
+	    call %% Line 51
+		 'erlang':%% Line 51
+			  '-'
+		(_1, _0)
+	in  %% Line 51
+	    call 'lists':'slice'
+		(_0, _3, _2)
+'uncons'/1 =
+    %% Line 53
+    fun (_0) ->
+	case _0 of
+	  <[]> when 'true' ->
+	      {'Nothing'}
+	  %% Line 54
+	  <[H|T]> when 'true' ->
+	      {'Just',{H,T}}
+	  ( <_1> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_1})
+		  -| [{'function_name',{'uncons',1}}] )
+	    -| ['compiler_generated'] )
+	end
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('List')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('List', _0)
+end

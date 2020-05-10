@@ -13,8 +13,6 @@ class (Functor t, Foldable t) => Traversable t where
   traverse :: forall a b m. Applicative m => (a -> m b) -> t a -> m (t b)
   sequence :: forall a m. Applicative m => t (m a) -> m (t a)
 
-
-
 instance Foldable List where
   foldr = foldrList
   foldl = foldlList
@@ -23,7 +21,6 @@ instance Foldable List where
 instance Traversable List where
   traverse = traverseArrayImpl apply map pure
   sequence = sequenceDefault
-
 
 foreign import foldrList :: forall a b. (a -> b -> b) -> b  -> [a] -> b
 foreign import foldlList :: forall a b. (b -> a -> b) -> b  -> [a] -> b
@@ -78,5 +75,4 @@ sequenceDefault
   => t (m a)
   -> m (t a)
 sequenceDefault = traverse identity
-
 

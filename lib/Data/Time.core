@@ -1,0 +1,21 @@
+module 'Time' ['getCurrentTime'/0,
+	       'module_info'/0,
+	       'module_info'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[84|[105|[109|[101|[46|[101|[114|[108]]]]]]]],1}]]
+'getCurrentTime'/0 =
+    %% Line 20
+    fun () ->
+	call 'erlang':'timestamp'
+	    ()
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Time')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Time', _0)
+end
