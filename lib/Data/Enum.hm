@@ -1,0 +1,34 @@
+module Data.Enum where
+
+
+class Enum a where
+  range     :: a -> a -> [a]
+  rangeStep :: a -> a -> a -> [a]
+
+instance Enum Integer where
+  range = enumIntegerRange
+  rangeStep = enumIntegerRangeStep
+
+foreign import enumIntegerRange     :: Integer -> Integer -> [Integer]
+foreign import enumIntegerRangeStep :: Integer -> Integer -> Integer -> [Integer]
+
+
+instance Enum Char where
+  range = enumCharRange
+  rangeStep = enumCharRangeStep
+
+
+foreign import enumCharRange     :: Char -> Char -> [Char]
+foreign import enumCharRangeStep :: Char -> Char -> Char -> [Char]
+
+
+instance Enum Float where
+  range = enumFloatRange
+  rangeStep = enumFloatRangeStep
+
+
+foreign import enumFloatRange     :: Float -> Float -> [Float]
+foreign import enumFloatRangeStep :: Float -> Float -> Float -> [Float]
+
+
+
