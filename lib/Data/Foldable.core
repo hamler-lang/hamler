@@ -1,0 +1,29 @@
+module 'Foldable' ['foldlListImpl'/3,
+		   'foldrListImpl'/3,
+		   'module_info'/0,
+		   'module_info'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[70|[111|[108|[100|[97|[98|[108|[101|[46|[101|[114|[108]]]]]]]]]]]],1}]]
+'foldlListImpl'/3 =
+    %% Line 21
+    fun (_0,_1,_2) ->
+	%% Line 22
+	call 'lists':'foldl'
+	    (_0, _1, _2)
+'foldrListImpl'/3 =
+    %% Line 24
+    fun (_0,_1,_2) ->
+	%% Line 25
+	call 'lists':'foldr'
+	    (_0, _1, _2)
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Foldable')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Foldable', _0)
+end

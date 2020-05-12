@@ -1,0 +1,23 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Traversable
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Traversable typeclass.
+--
+-----------------------------------------------------------------------------
+module Data.Traversable where
+
+import Data.Functor (class Functor)
+import Data.Foldable (class Foldable)
+import Control.Applicative (class Applicative)
+
+class (Functor t, Foldable t) => Traversable t where
+  traverse :: forall a b m. Applicative m => (a -> m b) -> t a -> m (t b)
+  sequence :: forall a m. Applicative m => t (m a) -> m (t a)

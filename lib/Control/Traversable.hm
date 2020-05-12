@@ -4,26 +4,10 @@ import Data.Semigroup  (class Monoid, mempty, (<>))
 import Control.Monad (class Applicative, class Functor, apply, map, pure)
 import Data.Function (identity)
 
-class Foldable f where
-  foldr :: forall a b. (a -> b -> b) -> b -> f a -> b
-  foldl :: forall a b. (b -> a -> b) -> b -> f a -> b
-  foldMap :: forall a m. Monoid m => (a -> m) -> f a -> m
-
-class (Functor t, Foldable t) => Traversable t where
-  traverse :: forall a b m. Applicative m => (a -> m b) -> t a -> m (t b)
-  sequence :: forall a m. Applicative m => t (m a) -> m (t a)
-
-instance Foldable List where
-  foldr = foldrList
-  foldl = foldlList
-  foldMap = foldMapDefaultR
-
 instance Traversable List where
   traverse = traverseArrayImpl apply map pure
   sequence = sequenceDefault
 
-foreign import foldrList :: forall a b. (a -> b -> b) -> b  -> [a] -> b
-foreign import foldlList :: forall a b. (b -> a -> b) -> b  -> [a] -> b
 foreign import traverseArrayImpl
   :: forall m a b
    . (m (a -> b) -> m a -> m b)
@@ -32,8 +16,6 @@ foreign import traverseArrayImpl
   -> (a -> m b)
   -> [a]
   -> m ([b])
-
-
 
 -- | for [1, 2, 3] \n -> do
 -- |   print n
@@ -46,18 +28,6 @@ for
   -> (a -> m b)
   -> m (t b)
 for x f = traverse f x
-
-
-
-
-foldMapDefaultR
-  :: forall f a m
-   . Foldable f
-  => Monoid m
-  => (a -> m)
-  -> f a
-  -> m
-foldMapDefaultR f = foldr (\x acc -> f x <> acc) mempty
 
 traverseDefault
   :: forall t a b m

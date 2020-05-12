@@ -9,10 +9,28 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Function Data Module.
+-- The Function data type.
 --
 -----------------------------------------------------------------------------
-module Data.Function where
+module Data.Function
+  ( compose, (<<)
+  , composeFlipped, (>>)
+  , flip, const
+  , apply, ($)
+  , pipeline, (|>)
+  , identity
+  , error
+  ) where
+
+compose :: forall a b c. (b -> c) -> (a -> b) -> (a -> c)
+compose f g = \x -> f (g x)
+
+infixr 9 compose as <<
+
+composeFlipped :: forall a b c. (a -> b) -> (b -> c) -> (a -> c)
+composeFlipped f g = compose g f
+
+infixr 9 composeFlipped as >>
 
 flip :: forall a b c. (a -> b -> c) -> b -> a -> c
 flip f b a = f a b
@@ -23,9 +41,14 @@ const a _ = a
 apply :: forall a b. (a -> b) -> a -> b
 apply f x = f x
 
--- infixr 0 apply as $
+infixr 0 apply as $
 
-identity :: forall a .a -> a
+pipeline :: forall a b. a -> (a -> b) -> b
+pipeline x f = f x
+
+infixl 9 apply as |>
+
+identity :: forall a. a -> a
 identity x = x
 
-foreign import error :: forall a.String -> a
+foreign import error :: forall a. String -> a

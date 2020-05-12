@@ -9,27 +9,16 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Semigroup Typeclass.
+-- The Semigroup typeclass.
 --
 -----------------------------------------------------------------------------
 module Data.Semigroup
   ( class Semigroup
   , append, (<>)
-  , class Monoid
-  , mempty
   ) where
 
 import Data.Unit (Unit, unit)
--- import Data.Void (Void, absurd)
 
--- | The `Semigroup` type class identifies an associative operation on a type.
--- |
--- | Instances are required to satisfy the following law:
--- |
--- | - Associativity: `(x <> y) <> z = x <> (y <> z)`
--- |
--- | One example of a `Semigroup` is `String`, with `(<>)` defined as string
--- | concatenation.
 class Semigroup a where
   append :: a -> a -> a
 
@@ -44,26 +33,9 @@ instance Semigroup (List a) where
 instance Semigroup Unit where
   append _ _ = unit
 
--- instance Semigroup Void where
---   append _ = absurd
-
--- instance Semigroup s' => Semigroup (s -> s') where
---   append f g x = f x <> g x
-
+-- | Append two Strings
 foreign import stringAppend :: String -> String -> String
+
+-- | Append two Lists
 foreign import listAppend :: forall a. List a -> List a -> List a
-
-class Semigroup m => Monoid m where
-  mempty :: m
-
-
-instance Monoid String where
-  mempty = ""
-
-instance Monoid (List a) where
-  mempty = []
-
-instance Monoid Unit where
-  mempty = unit
-
 

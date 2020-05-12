@@ -9,46 +9,52 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Eq Typeclass.
+-- The Eq typeclass.
 --
 -----------------------------------------------------------------------------
 module Data.Eq
   ( class Eq
-  , eq
-  , (==)
-  , notEq
-  , (/=)
+  , eq, (==)
+  , notEq, (/=)
   ) where
 
 import Data.Unit (Unit)
 
-infix 4 eq as ==
-infix 4 notEq as /=
-
 class Eq a where
   eq :: a -> a -> Boolean
 
+infix 4 eq as ==
+
+notEq :: forall a. Eq a => a -> a -> Boolean
+notEq x y = (x == y) == false
+
+infix 4 notEq as /=
+
 instance Eq Boolean where
-  eq = boolEq
+  eq = eqBoolImpl
 
 instance Eq Char where
-  eq = charEq
+  eq = eqCharImpl
 
 instance Eq Integer where
-  eq = intEq
+  eq = eqIntImpl
 
 instance Eq Float where
-  eq = floatEq
+  eq = eqFloatImpl
 
+instance Eq String where
+  eq = eqStringImpl
+
+instance Eq a => Eq (List a) where
+  eq = eqListImpl
 
 instance Eq Unit where
   eq _ _ = true
 
+foreign import eqBoolImpl :: Boolean -> Boolean -> Boolean
+foreign import eqCharImpl :: Char -> Char -> Boolean
+foreign import eqIntImpl :: Integer -> Integer -> Boolean
+foreign import eqFloatImpl :: Float -> Float -> Boolean
+foreign import eqStringImpl :: String -> String -> Boolean
+foreign import eqListImpl :: forall a. List a -> List a -> Boolean
 
-foreign import boolEq  :: Boolean -> Boolean -> Boolean
-foreign import charEq  :: Char -> Char -> Boolean
-foreign import intEq   :: Integer -> Integer -> Boolean
-foreign import floatEq :: Float -> Float -> Boolean
-
-notEq :: forall a. Eq a => a -> a -> Boolean
-notEq x y = (x == y) == false

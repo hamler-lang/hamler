@@ -1,56 +1,42 @@
-module 'Eq' ['boolEq'/2,
-	     'charEq'/2,
-	     'floatEq'/2,
-	     'intEq'/2,
+module 'Eq' ['eqBoolImpl'/2,
+	     'eqCharImpl'/2,
+	     'eqFloatImpl'/2,
+	     'eqIntImpl'/2,
+	     'eqListImpl'/2,
+	     'eqStringImpl'/2,
 	     'module_info'/0,
-	     'module_info'/1,
-	     'numEq'/2]
+	     'module_info'/1]
     attributes [%% Line 1
 		'file' =
 		    %% Line 1
-		    [{[69|[113|[46|[101|[114|[108]]]]]],1}],
-		%% Line 24
-		'spec' =
-		    %% Line 24
-		    [{{'boolEq',2},[{'type',24,'fun',[{'type',24,'product',[{'type',24,'boolean',[]}|[{'type',24,'boolean',[]}]]}|[{'type',24,'boolean',[]}]]}]}],
-		%% Line 27
-		'spec' =
-		    %% Line 27
-		    [{{'charEq',2},[{'type',27,'fun',[{'type',27,'product',[{'type',27,'char',[]}|[{'type',27,'char',[]}]]}|[{'type',27,'boolean',[]}]]}]}],
-		%% Line 30
-		'spec' =
-		    %% Line 30
-		    [{{'intEq',2},[{'type',30,'fun',[{'type',30,'product',[{'type',30,'integer',[]}|[{'type',30,'integer',[]}]]}|[{'type',30,'boolean',[]}]]}]}],
-		%% Line 33
-		'spec' =
-		    %% Line 33
-		    [{{'floatEq',2},[{'type',33,'fun',[{'type',33,'product',[{'type',33,'float',[]}|[{'type',33,'float',[]}]]}|[{'type',33,'boolean',[]}]]}]}],
-		%% Line 36
-		'spec' =
-		    %% Line 36
-		    [{{'numEq',2},[{'type',36,'fun',[{'type',36,'product',[{'type',36,'number',[]}|[{'type',36,'number',[]}]]}|[{'type',36,'boolean',[]}]]}]}]]
-'boolEq'/2 =
+		    [{[69|[113|[46|[101|[114|[108]]]]]],1}]]
+'eqBoolImpl'/2 =
     %% Line 25
     fun (_0,_1) ->
 	call 'erlang':'=='
 	    (_0, _1)
-'charEq'/2 =
+'eqCharImpl'/2 =
+    %% Line 26
+    fun (_0,_1) ->
+	call 'erlang':'=='
+	    (_0, _1)
+'eqIntImpl'/2 =
+    %% Line 27
+    fun (_0,_1) ->
+	call 'erlang':'=='
+	    (_0, _1)
+'eqFloatImpl'/2 =
     %% Line 28
     fun (_0,_1) ->
 	call 'erlang':'=='
 	    (_0, _1)
-'intEq'/2 =
-    %% Line 31
+'eqStringImpl'/2 =
+    %% Line 29
     fun (_0,_1) ->
 	call 'erlang':'=='
 	    (_0, _1)
-'floatEq'/2 =
-    %% Line 34
-    fun (_0,_1) ->
-	call 'erlang':'=='
-	    (_0, _1)
-'numEq'/2 =
-    %% Line 37
+'eqListImpl'/2 =
+    %% Line 30
     fun (_0,_1) ->
 	call 'erlang':'=='
 	    (_0, _1)
