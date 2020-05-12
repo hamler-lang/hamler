@@ -1,0 +1,38 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Enum
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Enum data type.
+--
+-----------------------------------------------------------------------------
+module Data.Enum
+  ( class Enum
+  , range
+  , rangeStep
+  ) where
+
+class Enum a where
+  range     :: a -> a -> [a]
+  rangeStep :: a -> a -> a -> [a]
+
+instance Enum Char where
+  range = enumCharRange
+  rangeStep = enumCharRangeStep
+
+foreign import enumCharRange     :: Char -> Char -> [Char]
+foreign import enumCharRangeStep :: Char -> Char -> Char -> [Char]
+
+instance Enum Integer where
+  range = enumIntegerRange
+  rangeStep = enumIntegerRangeStep
+
+foreign import enumIntegerRange     :: Integer -> Integer -> [Integer]
+foreign import enumIntegerRangeStep :: Integer -> Integer -> Integer -> [Integer]
+
