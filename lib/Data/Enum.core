@@ -1,0 +1,112 @@
+module 'Enum' ['enumCharRange'/2,
+	       'enumCharRangeStep'/3,
+	       'enumIntegerRange'/2,
+	       'enumIntegerRangeStep'/3,
+	       'module_info'/0,
+	       'module_info'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[69|[110|[117|[109|[46|[101|[114|[108]]]]]]]],1}],
+		%% Line 39
+		'compile' =
+		    %% Line 39
+		    [{'inline',[{'range',3}]}]]
+'enumCharRange'/2 =
+    %% Line 23
+    fun (_0,_1) ->
+	case <_0,_1> of
+	  <Start,End>
+	      when call 'erlang':'>='
+		    (End,
+		     Start) ->
+	      %% Line 40
+	      ( call ( 'lists'
+		       -| ['compiler_generated'] ):( 'seq'
+						     -| ['compiler_generated'] )
+		    (Start, End, ( 1
+				   -| ['compiler_generated'] ))
+		-| ['compiler_generated'] )
+	  %% Line 25
+	  <Start,End>
+	      when call 'erlang':'<'
+		    (End,
+		     Start) ->
+	      %% Line 40
+	      ( call ( 'lists'
+		       -| ['compiler_generated'] ):( 'seq'
+						     -| ['compiler_generated'] )
+		    (Start, End, ( -1
+				   -| ['compiler_generated'] ))
+		-| ['compiler_generated'] )
+	  ( <_4,_3> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_4,_3})
+		  -| [{'function_name',{'enumCharRange',2}}] )
+	    -| ['compiler_generated'] )
+	end
+'enumCharRangeStep'/3 =
+    %% Line 28
+    fun (_0,_1,_2) ->
+	%% Line 40
+	( call ( 'lists'
+		 -| ['compiler_generated'] ):( 'seq'
+					       -| ['compiler_generated'] )
+	      (_0, _1, _2)
+	  -| ['compiler_generated'] )
+'enumIntegerRange'/2 =
+    %% Line 31
+    fun (_0,_1) ->
+	case <_0,_1> of
+	  <Start,End>
+	      when call 'erlang':'>='
+		    (End,
+		     Start) ->
+	      %% Line 40
+	      ( call ( 'lists'
+		       -| ['compiler_generated'] ):( 'seq'
+						     -| ['compiler_generated'] )
+		    (Start, End, ( 1
+				   -| ['compiler_generated'] ))
+		-| ['compiler_generated'] )
+	  %% Line 33
+	  <Start,End>
+	      when call 'erlang':'<'
+		    (End,
+		     Start) ->
+	      %% Line 40
+	      ( call ( 'lists'
+		       -| ['compiler_generated'] ):( 'seq'
+						     -| ['compiler_generated'] )
+		    (Start, End, ( -1
+				   -| ['compiler_generated'] ))
+		-| ['compiler_generated'] )
+	  ( <_4,_3> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_4,_3})
+		  -| [{'function_name',{'enumIntegerRange',2}}] )
+	    -| ['compiler_generated'] )
+	end
+'enumIntegerRangeStep'/3 =
+    %% Line 36
+    fun (_0,_1,_2) ->
+	%% Line 40
+	( call ( 'lists'
+		 -| ['compiler_generated'] ):( 'seq'
+					       -| ['compiler_generated'] )
+	      (_0, _1, _2)
+	  -| ['compiler_generated'] )
+'range'/3 =
+    %% Line 40
+    fun (_0,_1,_2) ->
+	call 'lists':'seq'
+	    (_0, _1, _2)
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Enum')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Enum', _0)
+end
