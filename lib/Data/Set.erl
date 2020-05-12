@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Monad
+%% Module      :  Set
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,21 +9,12 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Monad Module.
+%% The Set FFI module.
 %%
 %%---------------------------------------------------------------------------
--module('Monad').
+-module('Set').
 
--export([ pureImpl/1
-        , bindImpl/2
-        , listBindImpl/2
-        ]).
+-export([ singleton/1 ]).
 
--spec(pureImpl(any()) -> any()).
-pureImpl(X) -> X.
-
--spec(bindImpl(any(), mapFun()) -> any()).
-bindImpl(X, F) -> F(X).
-
--spec(listBindImpl(list(any()), mapFun()) -> list(any())).
-listBindImpl(L, F) -> lists:flatten(lists:map(F, L)).
+-spec(singleton(term()) -> sets:set()).
+singleton(A) -> sets:add_element(A, sets:new()).

@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  System.Environment
+-- Module      :  Data.Int
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,9 +9,23 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The System Environment.
+-- The Integer DataType.
 --
 -----------------------------------------------------------------------------
-module Environment where
+module Data.Int where
 
--- TODO: ...
+-- | An alias for `Integer`
+type Int = Integer
+
+-- | newtype ???
+type Int8  = Integer
+type Int16 = Integer
+type Int32 = Integer
+type Int64 = Integer
+
+-- | newtype ???
+type UInt8  = Integer
+type UInt16 = Integer
+type UInt32 = Integer
+type UInt64 = Integer
+

@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Monad
+%% Module      :  Env
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,21 +9,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Monad Module.
+%% The Erlang Env Module.
 %%
 %%---------------------------------------------------------------------------
--module('Monad').
-
--export([ pureImpl/1
-        , bindImpl/2
-        , listBindImpl/2
-        ]).
-
--spec(pureImpl(any()) -> any()).
-pureImpl(X) -> X.
-
--spec(bindImpl(any(), mapFun()) -> any()).
-bindImpl(X, F) -> F(X).
-
--spec(listBindImpl(list(any()), mapFun()) -> list(any())).
-listBindImpl(L, F) -> lists:flatten(lists:map(F, L)).
+-module('Env').

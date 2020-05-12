@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Monad
+%% Module      :  Foldable
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,21 +9,17 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Monad Module.
+%% The Foldable FFI module.
 %%
 %%---------------------------------------------------------------------------
--module('Monad').
+-module('Foldable').
 
--export([ pureImpl/1
-        , bindImpl/2
-        , listBindImpl/2
+-export([ foldlListImpl/3
+        , foldrListImpl/3
         ]).
 
--spec(pureImpl(any()) -> any()).
-pureImpl(X) -> X.
+foldlListImpl(Fun, Acc, List) ->
+    lists:foldl(Fun, Acc, List).
 
--spec(bindImpl(any(), mapFun()) -> any()).
-bindImpl(X, F) -> F(X).
-
--spec(listBindImpl(list(any()), mapFun()) -> list(any())).
-listBindImpl(L, F) -> lists:flatten(lists:map(F, L)).
+foldrListImpl(Fun, Acc, List) ->
+    lists:foldr(Fun, Acc, List).

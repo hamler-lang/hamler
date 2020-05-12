@@ -9,15 +9,15 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Bits Module.
+%% The Bits FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Bits').
 
 -export([ 'band'/2
         , 'bor'/2
-        , 'bnot'/1
         , 'bxor'/2
+        , 'bnot'/1
         , 'bsl'/2
         , 'bsr'/2
         ]).
@@ -28,11 +28,11 @@
 -spec('bor'(integer(), integer()) -> integer()).
 'bor'(X, Y)  -> X bor Y.
 
--spec('bnot'(integer()) -> integer()).
-'bnot'(X) -> bnot X.
-
 -spec('bxor'(integer(), integer()) -> integer()).
 'bxor'(X, Y) -> X bxor Y.
+
+-spec('bnot'(integer()) -> integer()).
+'bnot'(X) -> bnot X.
 
 -spec('bsl'(integer(), integer()) -> integer()).
 'bsl'(X, Y) -> X bsl Y.

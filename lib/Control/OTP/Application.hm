@@ -14,7 +14,8 @@
 -----------------------------------------------------------------------------
 module Control.OTP.Application where
 
-import Control.Process (Node, Module, Timeout)
+import Control.Process (Node, Module)
+import Data.Timeout (Timeout)
 -- import Control.Monad (IO)
 
 type Application = String

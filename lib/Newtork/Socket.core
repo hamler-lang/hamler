@@ -1,0 +1,1476 @@
+module 'Socket' ['accept'/1,
+		 'acceptTimeout'/2,
+		 'bind'/2,
+		 'bindAny'/1,
+		 'bindBroadcast'/1,
+		 'bindLoopback'/1,
+		 'cancel'/2,
+		 'close'/1,
+		 'connect'/2,
+		 'connectTimeout'/3,
+		 'getOpt'/3,
+		 'getPeerName'/1,
+		 'getSockName'/1,
+		 'info'/1,
+		 'listen'/1,
+		 'listenWithBacklog'/2,
+		 'module_info'/0,
+		 'module_info'/1,
+		 'numberOf'/0,
+		 'open'/2,
+		 'recv'/1,
+		 'recvFrom'/1,
+		 'recvWithFlags'/3,
+		 'recvWithLen'/2,
+		 'recvWithTimeout'/3,
+		 'send'/2,
+		 'sendTo'/3,
+		 'shutdown'/2]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[83|[111|[99|[107|[101|[116|[46|[101|[114|[108]]]]]]]]]],1}],
+		%% Line 47
+		'type' =
+		    %% Line 47
+		    [{'sockAddr',{'type',47,'tuple','any'},[]}],
+		%% Line 49
+		'spec' =
+		    %% Line 49
+		    [{{'accept',1},[{'type',49,'fun',[{'type',49,'product',[{'remote_type',49,[{'atom',49,'socket'}|[{'atom',49,'socket'}|[[]]]]}]}|[{'remote_type',49,[{'atom',49,'socket'}|[{'atom',49,'socket'}|[[]]]]}]]}]}],
+		%% Line 53
+		'spec' =
+		    %% Line 53
+		    [{{'acceptTimeout',2},[{'type',53,'fun',[{'type',53,'product',[{'remote_type',53,[{'atom',53,'socket'}|[{'atom',53,'socket'}|[[]]]]}|[{'type',53,'timeout',[]}]]}|[{'remote_type',53,[{'atom',53,'socket'}|[{'atom',53,'socket'}|[[]]]]}]]}]}],
+		%% Line 57
+		'spec' =
+		    %% Line 57
+		    [{{'bind',2},[{'type',57,'fun',[{'type',57,'product',[{'remote_type',57,[{'atom',57,'socket'}|[{'atom',57,'socket'}|[[]]]]}|[{'user_type',57,'sockAddr',[]}]]}|[{'remote_type',57,[{'atom',57,'socket'}|[{'atom',57,'port_number'}|[[]]]]}]]}]}],
+		%% Line 61
+		'spec' =
+		    %% Line 61
+		    [{{'bindAny',1},[{'type',61,'fun',[{'type',61,'product',[{'remote_type',61,[{'atom',61,'socket'}|[{'atom',61,'socket'}|[[]]]]}]}|[{'remote_type',61,[{'atom',61,'socket'}|[{'atom',61,'port_number'}|[[]]]]}]]}]}],
+		%% Line 65
+		'spec' =
+		    %% Line 65
+		    [{{'bindBroadcast',1},[{'type',65,'fun',[{'type',65,'product',[{'remote_type',65,[{'atom',65,'socket'}|[{'atom',65,'socket'}|[[]]]]}]}|[{'remote_type',65,[{'atom',65,'socket'}|[{'atom',65,'port_number'}|[[]]]]}]]}]}],
+		%% Line 69
+		'spec' =
+		    %% Line 69
+		    [{{'bindLoopback',1},[{'type',69,'fun',[{'type',69,'product',[{'remote_type',69,[{'atom',69,'socket'}|[{'atom',69,'socket'}|[[]]]]}]}|[{'remote_type',69,[{'atom',69,'socket'}|[{'atom',69,'port_number'}|[[]]]]}]]}]}],
+		%% Line 73
+		'spec' =
+		    %% Line 73
+		    [{{'cancel',2},[{'type',73,'fun',[{'type',73,'product',[{'remote_type',73,[{'atom',73,'socket'}|[{'atom',73,'socket'}|[[]]]]}|[{'remote_type',73,[{'atom',73,'socket'}|[{'atom',73,'select_info'}|[[]]]]}]]}|[{'atom',73,'ok'}]]}]}],
+		%% Line 77
+		'spec' =
+		    %% Line 77
+		    [{{'close',1},[{'type',77,'fun',[{'type',77,'product',[{'remote_type',77,[{'atom',77,'socket'}|[{'atom',77,'socket'}|[[]]]]}]}|[{'atom',77,'ok'}]]}]}],
+		%% Line 81
+		'spec' =
+		    %% Line 81
+		    [{{'connect',2},[{'type',81,'fun',[{'type',81,'product',[{'remote_type',81,[{'atom',81,'socket'}|[{'atom',81,'socket'}|[[]]]]}|[{'user_type',81,'sockAddr',[]}]]}|[{'atom',81,'ok'}]]}]}],
+		%% Line 85
+		'spec' =
+		    %% Line 85
+		    [{{'connectTimeout',3},[{'type',85,'fun',[{'type',85,'product',[{'remote_type',85,[{'atom',85,'socket'}|[{'atom',85,'socket'}|[[]]]]}|[{'user_type',85,'sockAddr',[]}|[{'type',85,'timeout',[]}]]]}|[{'atom',85,'ok'}]]}]}],
+		%% Line 89
+		'spec' =
+		    %% Line 89
+		    [{{'getOpt',3},[{'type',89,'fun',[{'type',89,'product',[{'remote_type',89,[{'atom',89,'socket'}|[{'atom',89,'socket'}|[[]]]]}|[{'type',89,'string',[]}|[{'type',89,'string',[]}]]]}|[{'type',89,'term',[]}]]}]}],
+		%% Line 93
+		'spec' =
+		    %% Line 93
+		    [{{'getPeerName',1},[{'type',93,'fun',[{'type',93,'product',[{'remote_type',93,[{'atom',93,'socket'}|[{'atom',93,'socket'}|[[]]]]}]}|[{'remote_type',93,[{'atom',93,'socket'}|[{'atom',93,'sockaddr'}|[[]]]]}]]}]}],
+		%% Line 97
+		'spec' =
+		    %% Line 97
+		    [{{'getSockName',1},[{'type',97,'fun',[{'type',97,'product',[{'remote_type',97,[{'atom',97,'socket'}|[{'atom',97,'socket'}|[[]]]]}]}|[{'remote_type',97,[{'atom',97,'socket'}|[{'atom',97,'sockaddr'}|[[]]]]}]]}]}],
+		%% Line 101
+		'spec' =
+		    %% Line 101
+		    [{{'info',1},[{'type',101,'fun',[{'type',101,'product',[{'remote_type',101,[{'atom',101,'socket'}|[{'atom',101,'socket'}|[[]]]]}]}|[{'remote_type',101,[{'atom',101,'socket'}|[{'atom',101,'socket_info'}|[[]]]]}]]}]}],
+		%% Line 104
+		'spec' =
+		    %% Line 104
+		    [{{'listen',1},[{'type',104,'fun',[{'type',104,'product',[{'remote_type',104,[{'atom',104,'socket'}|[{'atom',104,'socket'}|[[]]]]}]}|[{'atom',104,'ok'}]]}]}],
+		%% Line 107
+		'spec' =
+		    %% Line 107
+		    [{{'listenWithBacklog',2},[{'type',107,'fun',[{'type',107,'product',[{'remote_type',107,[{'atom',107,'socket'}|[{'atom',107,'socket'}|[[]]]]}|[{'type',107,'pos_integer',[]}]]}|[{'atom',107,'ok'}]]}]}],
+		%% Line 111
+		'spec' =
+		    %% Line 111
+		    [{{'numberOf',0},[{'type',111,'fun',[{'type',111,'product',[]}|[{'type',111,'integer',[]}]]}]}],
+		%% Line 114
+		'spec' =
+		    %% Line 114
+		    [{{'open',2},[{'type',114,'fun',[{'type',114,'product',[{'remote_type',114,[{'atom',114,'socket'}|[{'atom',114,'domain'}|[[]]]]}|[{'remote_type',114,[{'atom',114,'socket'}|[{'atom',114,'type'}|[[]]]]}]]}|[{'remote_type',114,[{'atom',114,'socket'}|[{'atom',114,'socket'}|[[]]]]}]]}]}],
+		%% Line 136
+		'spec' =
+		    %% Line 136
+		    [{{'send',2},[{'type',136,'fun',[{'type',136,'product',[{'remote_type',136,[{'atom',136,'socket'}|[{'atom',136,'socket'}|[[]]]]}|[{'type',136,'binary',[]}]]}|[{'atom',136,'ok'}]]}]}],
+		%% Line 140
+		'spec' =
+		    %% Line 140
+		    [{{'sendTo',3},[{'type',140,'fun',[{'type',140,'product',[{'remote_type',140,[{'atom',140,'socket'}|[{'atom',140,'socket'}|[[]]]]}|[{'type',140,'binary',[]}|[{'user_type',140,'sockAddr',[]}]]]}|[{'atom',140,'ok'}]]}]}],
+		%% Line 144
+		'spec' =
+		    %% Line 144
+		    [{{'shutdown',2},[{'type',144,'fun',[{'type',144,'product',[{'remote_type',144,[{'atom',144,'socket'}|[{'atom',144,'socket'}|[[]]]]}|[{'type',144,'string',[]}]]}|[{'atom',144,'ok'}]]}]}],
+		%% Line 253
+		'compile' =
+		    %% Line 253
+		    [{'inline',[{'return',1}|[{'return',2}]]}],
+		%% Line 261
+		'compile' =
+		    %% Line 261
+		    [{'inline',[{'atom',1}]}]]
+'accept'/1 =
+    %% Line 50
+    fun (_0) ->
+	%% Line 254
+	( case call 'socket':'accept'
+		   (_0) of
+	    ( <( 'ok'
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( 'ok'
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    %% Line 255
+	    ( <( {( 'ok'
+		    -| ['compiler_generated'] ),Result}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  Result
+	      -| ['compiler_generated'] )
+	    %% Line 256
+	    ( <( {( 'error'
+		    -| ['compiler_generated'] ),Reason}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( call ( 'erlang'
+			   -| ['compiler_generated'] ):( 'error'
+							 -| ['compiler_generated'] )
+			(Reason)
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    ( <_4> when ( 'true'
+			  -| ['compiler_generated'] ) ->
+		  ( primop ( 'match_fail'
+			     -| ['compiler_generated'] )
+			(( {( 'function_clause'
+			      -| ['compiler_generated'] ),_4}
+			   -| ['compiler_generated'] ))
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	  end
+	  -| ['compiler_generated'] )
+'acceptTimeout'/2 =
+    %% Line 54
+    fun (_0,_1) ->
+	%% Line 254
+	( case call 'socket':'accept'
+		   (_0, _1) of
+	    ( <( 'ok'
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( 'ok'
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    %% Line 255
+	    ( <( {( 'ok'
+		    -| ['compiler_generated'] ),Result}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  Result
+	      -| ['compiler_generated'] )
+	    %% Line 256
+	    ( <( {( 'error'
+		    -| ['compiler_generated'] ),Reason}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( call ( 'erlang'
+			   -| ['compiler_generated'] ):( 'error'
+							 -| ['compiler_generated'] )
+			(Reason)
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    ( <_6> when ( 'true'
+			  -| ['compiler_generated'] ) ->
+		  ( primop ( 'match_fail'
+			     -| ['compiler_generated'] )
+			(( {( 'function_clause'
+			      -| ['compiler_generated'] ),_6}
+			   -| ['compiler_generated'] ))
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	  end
+	  -| ['compiler_generated'] )
+'bind'/2 =
+    %% Line 58
+    fun (_0,_1) ->
+	let <_2> =
+	    apply %% Line 59
+		  'destruct'/1
+		(_1)
+	in  %% Line 254
+	    ( case call 'socket':'bind'
+		       (_0, _2) of
+		( <( 'ok'
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      ( 'ok'
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+		%% Line 255
+		( <( {( 'ok'
+			-| ['compiler_generated'] ),Result}
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      Result
+		  -| ['compiler_generated'] )
+		%% Line 256
+		( <( {( 'error'
+			-| ['compiler_generated'] ),Reason}
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      ( call ( 'erlang'
+			       -| ['compiler_generated'] ):( 'error'
+							     -| ['compiler_generated'] )
+			    (Reason)
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+		( <_7> when ( 'true'
+			      -| ['compiler_generated'] ) ->
+		      ( primop ( 'match_fail'
+				 -| ['compiler_generated'] )
+			    (( {( 'function_clause'
+				  -| ['compiler_generated'] ),_7}
+			       -| ['compiler_generated'] ))
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+	      end
+	      -| ['compiler_generated'] )
+'bindAny'/1 =
+    %% Line 62
+    fun (_0) ->
+	%% Line 254
+	( case call 'socket':'bind'
+		   (_0, 'any') of
+	    ( <( 'ok'
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( 'ok'
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    %% Line 255
+	    ( <( {( 'ok'
+		    -| ['compiler_generated'] ),Result}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  Result
+	      -| ['compiler_generated'] )
+	    %% Line 256
+	    ( <( {( 'error'
+		    -| ['compiler_generated'] ),Reason}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( call ( 'erlang'
+			   -| ['compiler_generated'] ):( 'error'
+							 -| ['compiler_generated'] )
+			(Reason)
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    ( <_4> when ( 'true'
+			  -| ['compiler_generated'] ) ->
+		  ( primop ( 'match_fail'
+			     -| ['compiler_generated'] )
+			(( {( 'function_clause'
+			      -| ['compiler_generated'] ),_4}
+			   -| ['compiler_generated'] ))
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	  end
+	  -| ['compiler_generated'] )
+'bindBroadcast'/1 =
+    %% Line 66
+    fun (_0) ->
+	%% Line 254
+	( case call 'socket':'bind'
+		   (_0, 'broadcast') of
+	    ( <( 'ok'
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( 'ok'
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    %% Line 255
+	    ( <( {( 'ok'
+		    -| ['compiler_generated'] ),Result}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  Result
+	      -| ['compiler_generated'] )
+	    %% Line 256
+	    ( <( {( 'error'
+		    -| ['compiler_generated'] ),Reason}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( call ( 'erlang'
+			   -| ['compiler_generated'] ):( 'error'
+							 -| ['compiler_generated'] )
+			(Reason)
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    ( <_4> when ( 'true'
+			  -| ['compiler_generated'] ) ->
+		  ( primop ( 'match_fail'
+			     -| ['compiler_generated'] )
+			(( {( 'function_clause'
+			      -| ['compiler_generated'] ),_4}
+			   -| ['compiler_generated'] ))
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	  end
+	  -| ['compiler_generated'] )
+'bindLoopback'/1 =
+    %% Line 70
+    fun (_0) ->
+	%% Line 254
+	( case call 'socket':'bind'
+		   (_0, 'loopback') of
+	    ( <( 'ok'
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( 'ok'
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    %% Line 255
+	    ( <( {( 'ok'
+		    -| ['compiler_generated'] ),Result}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  Result
+	      -| ['compiler_generated'] )
+	    %% Line 256
+	    ( <( {( 'error'
+		    -| ['compiler_generated'] ),Reason}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( call ( 'erlang'
+			   -| ['compiler_generated'] ):( 'error'
+							 -| ['compiler_generated'] )
+			(Reason)
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    ( <_4> when ( 'true'
+			  -| ['compiler_generated'] ) ->
+		  ( primop ( 'match_fail'
+			     -| ['compiler_generated'] )
+			(( {( 'function_clause'
+			      -| ['compiler_generated'] ),_4}
+			   -| ['compiler_generated'] ))
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	  end
+	  -| ['compiler_generated'] )
+'cancel'/2 =
+    %% Line 74
+    fun (_0,_1) ->
+	let <_2> =
+	    apply %% Line 75
+		  'destruct'/1
+		(_1)
+	in  %% Line 254
+	    ( case call 'socket':'cancel'
+		       (_0, _2) of
+		( <( 'ok'
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      ( 'ok'
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+		%% Line 255
+		( <( {( 'ok'
+			-| ['compiler_generated'] ),Result}
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      Result
+		  -| ['compiler_generated'] )
+		%% Line 256
+		( <( {( 'error'
+			-| ['compiler_generated'] ),Reason}
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      ( call ( 'erlang'
+			       -| ['compiler_generated'] ):( 'error'
+							     -| ['compiler_generated'] )
+			    (Reason)
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+		( <_7> when ( 'true'
+			      -| ['compiler_generated'] ) ->
+		      ( primop ( 'match_fail'
+				 -| ['compiler_generated'] )
+			    (( {( 'function_clause'
+				  -| ['compiler_generated'] ),_7}
+			       -| ['compiler_generated'] ))
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+	      end
+	      -| ['compiler_generated'] )
+'close'/1 =
+    %% Line 78
+    fun (_0) ->
+	%% Line 254
+	( case call 'socket':'close'
+		   (_0) of
+	    ( <( 'ok'
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( 'ok'
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    %% Line 255
+	    ( <( {( 'ok'
+		    -| ['compiler_generated'] ),Result}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  Result
+	      -| ['compiler_generated'] )
+	    %% Line 256
+	    ( <( {( 'error'
+		    -| ['compiler_generated'] ),Reason}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( call ( 'erlang'
+			   -| ['compiler_generated'] ):( 'error'
+							 -| ['compiler_generated'] )
+			(Reason)
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    ( <_4> when ( 'true'
+			  -| ['compiler_generated'] ) ->
+		  ( primop ( 'match_fail'
+			     -| ['compiler_generated'] )
+			(( {( 'function_clause'
+			      -| ['compiler_generated'] ),_4}
+			   -| ['compiler_generated'] ))
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	  end
+	  -| ['compiler_generated'] )
+'connect'/2 =
+    %% Line 82
+    fun (_0,_1) ->
+	let <_2> =
+	    apply %% Line 83
+		  'destruct'/1
+		(_1)
+	in  %% Line 254
+	    ( case call 'socket':'connect'
+		       (_0, _2) of
+		( <( 'ok'
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      ( 'ok'
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+		%% Line 255
+		( <( {( 'ok'
+			-| ['compiler_generated'] ),Result}
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      Result
+		  -| ['compiler_generated'] )
+		%% Line 256
+		( <( {( 'error'
+			-| ['compiler_generated'] ),Reason}
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      ( call ( 'erlang'
+			       -| ['compiler_generated'] ):( 'error'
+							     -| ['compiler_generated'] )
+			    (Reason)
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+		( <_7> when ( 'true'
+			      -| ['compiler_generated'] ) ->
+		      ( primop ( 'match_fail'
+				 -| ['compiler_generated'] )
+			    (( {( 'function_clause'
+				  -| ['compiler_generated'] ),_7}
+			       -| ['compiler_generated'] ))
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+	      end
+	      -| ['compiler_generated'] )
+'connectTimeout'/3 =
+    %% Line 86
+    fun (_0,_1,_2) ->
+	let <_3> =
+	    apply %% Line 87
+		  'destruct'/1
+		(_1)
+	in  %% Line 254
+	    ( case call 'socket':'connect'
+		       (_0, _3, _2) of
+		( <( 'ok'
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      ( 'ok'
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+		%% Line 255
+		( <( {( 'ok'
+			-| ['compiler_generated'] ),Result}
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      Result
+		  -| ['compiler_generated'] )
+		%% Line 256
+		( <( {( 'error'
+			-| ['compiler_generated'] ),Reason}
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      ( call ( 'erlang'
+			       -| ['compiler_generated'] ):( 'error'
+							     -| ['compiler_generated'] )
+			    (Reason)
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+		( <_9> when ( 'true'
+			      -| ['compiler_generated'] ) ->
+		      ( primop ( 'match_fail'
+				 -| ['compiler_generated'] )
+			    (( {( 'function_clause'
+				  -| ['compiler_generated'] ),_9}
+			       -| ['compiler_generated'] ))
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+	      end
+	      -| ['compiler_generated'] )
+'getOpt'/3 =
+    %% Line 90
+    fun (_0,_1,_2) ->
+	let <_4> =
+	    call %% Line 262
+		 ( 'erlang'
+		   -| ['compiler_generated'] ):%% Line 262
+					       ( 'list_to_existing_atom'
+						 -| ['compiler_generated'] )
+		(_1)
+	in  let <_3> =
+		call %% Line 262
+		     ( 'erlang'
+		       -| ['compiler_generated'] ):%% Line 262
+						   ( 'list_to_existing_atom'
+						     -| ['compiler_generated'] )
+		    (_2)
+	    in  %% Line 254
+		( case call 'socket':'getopt'
+			   (_0, _4, _3) of
+		    ( <( 'ok'
+			 -| ['compiler_generated'] )> when ( 'true'
+							     -| ['compiler_generated'] ) ->
+			  ( 'ok'
+			    -| ['compiler_generated'] )
+		      -| ['compiler_generated'] )
+		    %% Line 255
+		    ( <( {( 'ok'
+			    -| ['compiler_generated'] ),Result}
+			 -| ['compiler_generated'] )> when ( 'true'
+							     -| ['compiler_generated'] ) ->
+			  Result
+		      -| ['compiler_generated'] )
+		    %% Line 256
+		    ( <( {( 'error'
+			    -| ['compiler_generated'] ),Reason}
+			 -| ['compiler_generated'] )> when ( 'true'
+							     -| ['compiler_generated'] ) ->
+			  ( call ( 'erlang'
+				   -| ['compiler_generated'] ):( 'error'
+								 -| ['compiler_generated'] )
+				(Reason)
+			    -| ['compiler_generated'] )
+		      -| ['compiler_generated'] )
+		    ( <_14> when ( 'true'
+				   -| ['compiler_generated'] ) ->
+			  ( primop ( 'match_fail'
+				     -| ['compiler_generated'] )
+				(( {( 'function_clause'
+				      -| ['compiler_generated'] ),_14}
+				   -| ['compiler_generated'] ))
+			    -| ['compiler_generated'] )
+		      -| ['compiler_generated'] )
+		  end
+		  -| ['compiler_generated'] )
+'getPeerName'/1 =
+    %% Line 94
+    fun (_0) ->
+	let <_2> =
+	    call %% Line 95
+		 'socket':%% Line 95
+			  'peername'
+		(_0)
+	in  let <_1> = 'construct'/1
+	    in  %% Line 258
+		( case <_2,_1> of
+		    ( <( {( 'ok'
+			    -| ['compiler_generated'] ),Result}
+			 -| ['compiler_generated'] ),Construct> when ( 'true'
+								       -| ['compiler_generated'] ) ->
+			  ( apply Construct
+				(Result)
+			    -| ['compiler_generated'] )
+		      -| ['compiler_generated'] )
+		    %% Line 259
+		    ( <( {( 'error'
+			    -| ['compiler_generated'] ),Reason}
+			 -| ['compiler_generated'] ),_4> when ( 'true'
+								-| ['compiler_generated'] ) ->
+			  ( call ( 'erlang'
+				   -| ['compiler_generated'] ):( 'error'
+								 -| ['compiler_generated'] )
+				(Reason)
+			    -| ['compiler_generated'] )
+		      -| ['compiler_generated'] )
+		    ( <_3,_7> when ( 'true'
+				     -| ['compiler_generated'] ) ->
+			  ( primop ( 'match_fail'
+				     -| ['compiler_generated'] )
+				(( {( 'function_clause'
+				      -| ['compiler_generated'] ),_3,_7}
+				   -| ['compiler_generated'] ))
+			    -| ['compiler_generated'] )
+		      -| ['compiler_generated'] )
+		  end
+		  -| ['compiler_generated'] )
+'getSockName'/1 =
+    %% Line 98
+    fun (_0) ->
+	let <_2> =
+	    call %% Line 99
+		 'socket':%% Line 99
+			  'sockname'
+		(_0)
+	in  let <_1> = 'construct'/1
+	    in  %% Line 258
+		( case <_2,_1> of
+		    ( <( {( 'ok'
+			    -| ['compiler_generated'] ),Result}
+			 -| ['compiler_generated'] ),Construct> when ( 'true'
+								       -| ['compiler_generated'] ) ->
+			  ( apply Construct
+				(Result)
+			    -| ['compiler_generated'] )
+		      -| ['compiler_generated'] )
+		    %% Line 259
+		    ( <( {( 'error'
+			    -| ['compiler_generated'] ),Reason}
+			 -| ['compiler_generated'] ),_4> when ( 'true'
+								-| ['compiler_generated'] ) ->
+			  ( call ( 'erlang'
+				   -| ['compiler_generated'] ):( 'error'
+								 -| ['compiler_generated'] )
+				(Reason)
+			    -| ['compiler_generated'] )
+		      -| ['compiler_generated'] )
+		    ( <_3,_7> when ( 'true'
+				     -| ['compiler_generated'] ) ->
+			  ( primop ( 'match_fail'
+				     -| ['compiler_generated'] )
+				(( {( 'function_clause'
+				      -| ['compiler_generated'] ),_3,_7}
+				   -| ['compiler_generated'] ))
+			    -| ['compiler_generated'] )
+		      -| ['compiler_generated'] )
+		  end
+		  -| ['compiler_generated'] )
+'info'/1 =
+    %% Line 102
+    fun (_0) ->
+	call 'socket':'info'
+	    (_0)
+'listen'/1 =
+    %% Line 105
+    fun (_0) ->
+	%% Line 254
+	( case call 'socket':'listen'
+		   (_0) of
+	    ( <( 'ok'
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( 'ok'
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    %% Line 255
+	    ( <( {( 'ok'
+		    -| ['compiler_generated'] ),Result}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  Result
+	      -| ['compiler_generated'] )
+	    %% Line 256
+	    ( <( {( 'error'
+		    -| ['compiler_generated'] ),Reason}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( call ( 'erlang'
+			   -| ['compiler_generated'] ):( 'error'
+							 -| ['compiler_generated'] )
+			(Reason)
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    ( <_4> when ( 'true'
+			  -| ['compiler_generated'] ) ->
+		  ( primop ( 'match_fail'
+			     -| ['compiler_generated'] )
+			(( {( 'function_clause'
+			      -| ['compiler_generated'] ),_4}
+			   -| ['compiler_generated'] ))
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	  end
+	  -| ['compiler_generated'] )
+'listenWithBacklog'/2 =
+    %% Line 108
+    fun (_0,_1) ->
+	%% Line 254
+	( case call 'socket':'listen'
+		   (_0, _1) of
+	    ( <( 'ok'
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( 'ok'
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    %% Line 255
+	    ( <( {( 'ok'
+		    -| ['compiler_generated'] ),Result}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  Result
+	      -| ['compiler_generated'] )
+	    %% Line 256
+	    ( <( {( 'error'
+		    -| ['compiler_generated'] ),Reason}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( call ( 'erlang'
+			   -| ['compiler_generated'] ):( 'error'
+							 -| ['compiler_generated'] )
+			(Reason)
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    ( <_6> when ( 'true'
+			  -| ['compiler_generated'] ) ->
+		  ( primop ( 'match_fail'
+			     -| ['compiler_generated'] )
+			(( {( 'function_clause'
+			      -| ['compiler_generated'] ),_6}
+			   -| ['compiler_generated'] ))
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	  end
+	  -| ['compiler_generated'] )
+'numberOf'/0 =
+    %% Line 112
+    fun () ->
+	call 'socket':'number_of'
+	    ()
+'open'/2 =
+    %% Line 115
+    fun (_0,_1) ->
+	let <_3> =
+	    apply 'destruct'/1
+		(_0)
+	in  let <_2> =
+		apply 'destruct'/1
+		    (_1)
+	    in  %% Line 254
+		( case call 'socket':'open'
+			   (_3, _2) of
+		    ( <( 'ok'
+			 -| ['compiler_generated'] )> when ( 'true'
+							     -| ['compiler_generated'] ) ->
+			  ( 'ok'
+			    -| ['compiler_generated'] )
+		      -| ['compiler_generated'] )
+		    %% Line 255
+		    ( <( {( 'ok'
+			    -| ['compiler_generated'] ),Result}
+			 -| ['compiler_generated'] )> when ( 'true'
+							     -| ['compiler_generated'] ) ->
+			  Result
+		      -| ['compiler_generated'] )
+		    %% Line 256
+		    ( <( {( 'error'
+			    -| ['compiler_generated'] ),Reason}
+			 -| ['compiler_generated'] )> when ( 'true'
+							     -| ['compiler_generated'] ) ->
+			  ( call ( 'erlang'
+				   -| ['compiler_generated'] ):( 'error'
+								 -| ['compiler_generated'] )
+				(Reason)
+			    -| ['compiler_generated'] )
+		      -| ['compiler_generated'] )
+		    ( <_8> when ( 'true'
+				  -| ['compiler_generated'] ) ->
+			  ( primop ( 'match_fail'
+				     -| ['compiler_generated'] )
+				(( {( 'function_clause'
+				      -| ['compiler_generated'] ),_8}
+				   -| ['compiler_generated'] ))
+			    -| ['compiler_generated'] )
+		      -| ['compiler_generated'] )
+		  end
+		  -| ['compiler_generated'] )
+'recv'/1 =
+    %% Line 117
+    fun (_0) ->
+	%% Line 254
+	( case call 'socket':'recv'
+		   (_0) of
+	    ( <( 'ok'
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( 'ok'
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    %% Line 255
+	    ( <( {( 'ok'
+		    -| ['compiler_generated'] ),Result}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  Result
+	      -| ['compiler_generated'] )
+	    %% Line 256
+	    ( <( {( 'error'
+		    -| ['compiler_generated'] ),Reason}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( call ( 'erlang'
+			   -| ['compiler_generated'] ):( 'error'
+							 -| ['compiler_generated'] )
+			(Reason)
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    ( <_4> when ( 'true'
+			  -| ['compiler_generated'] ) ->
+		  ( primop ( 'match_fail'
+			     -| ['compiler_generated'] )
+			(( {( 'function_clause'
+			      -| ['compiler_generated'] ),_4}
+			   -| ['compiler_generated'] ))
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	  end
+	  -| ['compiler_generated'] )
+'recvWithLen'/2 =
+    %% Line 119
+    fun (_0,_1) ->
+	%% Line 254
+	( case call 'socket':'recv'
+		   (_0, _1) of
+	    ( <( 'ok'
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( 'ok'
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    %% Line 255
+	    ( <( {( 'ok'
+		    -| ['compiler_generated'] ),Result}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  Result
+	      -| ['compiler_generated'] )
+	    %% Line 256
+	    ( <( {( 'error'
+		    -| ['compiler_generated'] ),Reason}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( call ( 'erlang'
+			   -| ['compiler_generated'] ):( 'error'
+							 -| ['compiler_generated'] )
+			(Reason)
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    ( <_6> when ( 'true'
+			  -| ['compiler_generated'] ) ->
+		  ( primop ( 'match_fail'
+			     -| ['compiler_generated'] )
+			(( {( 'function_clause'
+			      -| ['compiler_generated'] ),_6}
+			   -| ['compiler_generated'] ))
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	  end
+	  -| ['compiler_generated'] )
+'recvWithFlags'/3 =
+    %% Line 122
+    fun (_0,_1,_2) ->
+	let <_8> =
+	    letrec
+		'lc$^0'/1 =
+		    %% Line 123
+		    fun (_5) ->
+			case _5 of
+			  <[Flag|_4]> when 'true' ->
+			      let <_6> =
+				  apply 'destruct'/1
+				      (Flag)
+			      in  let <_7> =
+				      apply 'lc$^0'/1
+					  (_4)
+				  in  ( [_6|_7]
+					-| ['compiler_generated'] )
+			  <[]> when 'true' ->
+			      []
+			  ( <_13> when 'true' ->
+				( primop 'match_fail'
+				      ({'function_clause',_13})
+				  -| [{'function_name',{'lc$^0',1}}] )
+			    -| ['compiler_generated'] )
+			end
+	    in  %% Line 123
+		apply 'lc$^0'/1
+		    (_2)
+	in  %% Line 254
+	    ( case call 'socket':'recv'
+		       (_0, _1, _8) of
+		( <( 'ok'
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      ( 'ok'
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+		%% Line 255
+		( <( {( 'ok'
+			-| ['compiler_generated'] ),Result}
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      Result
+		  -| ['compiler_generated'] )
+		%% Line 256
+		( <( {( 'error'
+			-| ['compiler_generated'] ),Reason}
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      ( call ( 'erlang'
+			       -| ['compiler_generated'] ):( 'error'
+							     -| ['compiler_generated'] )
+			    (Reason)
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+		( <_15> when ( 'true'
+			       -| ['compiler_generated'] ) ->
+		      ( primop ( 'match_fail'
+				 -| ['compiler_generated'] )
+			    (( {( 'function_clause'
+				  -| ['compiler_generated'] ),_15}
+			       -| ['compiler_generated'] ))
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+	      end
+	      -| ['compiler_generated'] )
+'recvWithTimeout'/3 =
+    %% Line 125
+    fun (_0,_1,_2) ->
+	%% Line 254
+	( case call 'socket':'recv'
+		   (_0, _1, _2) of
+	    ( <( 'ok'
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( 'ok'
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    %% Line 255
+	    ( <( {( 'ok'
+		    -| ['compiler_generated'] ),Result}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  Result
+	      -| ['compiler_generated'] )
+	    %% Line 256
+	    ( <( {( 'error'
+		    -| ['compiler_generated'] ),Reason}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( call ( 'erlang'
+			   -| ['compiler_generated'] ):( 'error'
+							 -| ['compiler_generated'] )
+			(Reason)
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    ( <_8> when ( 'true'
+			  -| ['compiler_generated'] ) ->
+		  ( primop ( 'match_fail'
+			     -| ['compiler_generated'] )
+			(( {( 'function_clause'
+			      -| ['compiler_generated'] ),_8}
+			   -| ['compiler_generated'] ))
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	  end
+	  -| ['compiler_generated'] )
+'recvFrom'/1 =
+    %% Line 128
+    fun (_0) ->
+	let <Construct> =
+	    fun (_2) ->
+		%% Line 129
+		case _2 of
+		  <{'undefined',Data}> when 'true' ->
+		      %% Line 130
+		      {'Nothing',Data}
+		  %% Line 131
+		  <{Source,Data}> when 'true' ->
+		      let <_1> =
+			  apply %% Line 132
+				'construct'/1
+			      (%% Line 132
+			       Source)
+		      in  %% Line 132
+			  {{'Just',_1},Data}
+		  ( <_3> when 'true' ->
+			( primop 'match_fail'
+			      ({'function_clause',_3})
+			  -| [{'function_name',{'-recvFrom/1-fun-0-',1}}] )
+		    -| ['compiler_generated'] )
+		end
+	in  let <_5> =
+		call %% Line 134
+		     'socket':%% Line 134
+			      'recvFrom'
+		    (_0)
+	    in  %% Line 258
+		( case <_5,Construct> of
+		    ( <( {( 'ok'
+			    -| ['compiler_generated'] ),Result}
+			 -| ['compiler_generated'] ),_8> when ( 'true'
+								-| ['compiler_generated'] ) ->
+			  ( apply _8
+				(Result)
+			    -| ['compiler_generated'] )
+		      -| ['compiler_generated'] )
+		    %% Line 259
+		    ( <( {( 'error'
+			    -| ['compiler_generated'] ),Reason}
+			 -| ['compiler_generated'] ),_4> when ( 'true'
+								-| ['compiler_generated'] ) ->
+			  ( call ( 'erlang'
+				   -| ['compiler_generated'] ):( 'error'
+								 -| ['compiler_generated'] )
+				(Reason)
+			    -| ['compiler_generated'] )
+		      -| ['compiler_generated'] )
+		    ( <_3,_2> when ( 'true'
+				     -| ['compiler_generated'] ) ->
+			  ( primop ( 'match_fail'
+				     -| ['compiler_generated'] )
+				(( {( 'function_clause'
+				      -| ['compiler_generated'] ),_3,_2}
+				   -| ['compiler_generated'] ))
+			    -| ['compiler_generated'] )
+		      -| ['compiler_generated'] )
+		  end
+		  -| ['compiler_generated'] )
+'send'/2 =
+    %% Line 137
+    fun (_0,_1) ->
+	%% Line 254
+	( case call 'socket':'send'
+		   (_0, _1) of
+	    ( <( 'ok'
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( 'ok'
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    %% Line 255
+	    ( <( {( 'ok'
+		    -| ['compiler_generated'] ),Result}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  Result
+	      -| ['compiler_generated'] )
+	    %% Line 256
+	    ( <( {( 'error'
+		    -| ['compiler_generated'] ),Reason}
+		 -| ['compiler_generated'] )> when ( 'true'
+						     -| ['compiler_generated'] ) ->
+		  ( call ( 'erlang'
+			   -| ['compiler_generated'] ):( 'error'
+							 -| ['compiler_generated'] )
+			(Reason)
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	    ( <_6> when ( 'true'
+			  -| ['compiler_generated'] ) ->
+		  ( primop ( 'match_fail'
+			     -| ['compiler_generated'] )
+			(( {( 'function_clause'
+			      -| ['compiler_generated'] ),_6}
+			   -| ['compiler_generated'] ))
+		    -| ['compiler_generated'] )
+	      -| ['compiler_generated'] )
+	  end
+	  -| ['compiler_generated'] )
+'sendTo'/3 =
+    %% Line 141
+    fun (_0,_1,_2) ->
+	let <_3> =
+	    apply %% Line 142
+		  'destruct'/1
+		(_2)
+	in  %% Line 254
+	    ( case call 'socket':'sendto'
+		       (_0, _1, _3) of
+		( <( 'ok'
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      ( 'ok'
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+		%% Line 255
+		( <( {( 'ok'
+			-| ['compiler_generated'] ),Result}
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      Result
+		  -| ['compiler_generated'] )
+		%% Line 256
+		( <( {( 'error'
+			-| ['compiler_generated'] ),Reason}
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      ( call ( 'erlang'
+			       -| ['compiler_generated'] ):( 'error'
+							     -| ['compiler_generated'] )
+			    (Reason)
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+		( <_9> when ( 'true'
+			      -| ['compiler_generated'] ) ->
+		      ( primop ( 'match_fail'
+				 -| ['compiler_generated'] )
+			    (( {( 'function_clause'
+				  -| ['compiler_generated'] ),_9}
+			       -| ['compiler_generated'] ))
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+	      end
+	      -| ['compiler_generated'] )
+'shutdown'/2 =
+    %% Line 145
+    fun (_0,_1) ->
+	let <_2> =
+	    call %% Line 262
+		 ( 'erlang'
+		   -| ['compiler_generated'] ):%% Line 262
+					       ( 'list_to_existing_atom'
+						 -| ['compiler_generated'] )
+		(_1)
+	in  %% Line 254
+	    ( case call 'socket':'shutdown'
+		       (_0, _2) of
+		( <( 'ok'
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      ( 'ok'
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+		%% Line 255
+		( <( {( 'ok'
+			-| ['compiler_generated'] ),Result}
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      Result
+		  -| ['compiler_generated'] )
+		%% Line 256
+		( <( {( 'error'
+			-| ['compiler_generated'] ),Reason}
+		     -| ['compiler_generated'] )> when ( 'true'
+							 -| ['compiler_generated'] ) ->
+		      ( call ( 'erlang'
+			       -| ['compiler_generated'] ):( 'error'
+							     -| ['compiler_generated'] )
+			    (Reason)
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+		( <_9> when ( 'true'
+			      -| ['compiler_generated'] ) ->
+		      ( primop ( 'match_fail'
+				 -| ['compiler_generated'] )
+			    (( {( 'function_clause'
+				  -| ['compiler_generated'] ),_9}
+			       -| ['compiler_generated'] ))
+			-| ['compiler_generated'] )
+		  -| ['compiler_generated'] )
+	      end
+	      -| ['compiler_generated'] )
+'construct'/1 =
+    %% Line 152
+    fun (_0) ->
+	case _0 of
+	  <~{%% Line 153
+	    'port':=Port,'family':='inet',%% Line 154
+					  'addr':=Addr}~> when 'true' ->
+	      let <_1> =
+		  apply %% Line 156
+			'ip4Addr'/1
+		      (%% Line 156
+		       Addr)
+	      in  %% Line 156
+		  {'SockAddrInet',Port,_1}
+	  %% Line 157
+	  <~{%% Line 161
+	    'scope_id':=ScopeId,%% Line 158
+				'port':=Port,'family':='inet6',%% Line 160
+							       'flowinfo':=FlowInfo,%% Line 159
+										    'addr':=Addr}~> when 'true' ->
+	      let <_2> =
+		  apply %% Line 163
+			'ip6Addr'/1
+		      (%% Line 163
+		       Addr)
+	      in  %% Line 163
+		  {'SockAddrInet6',Port,_2,FlowInfo,ScopeId}
+	  %% Line 164
+	  <~{%% Line 165
+	    'path':=Path,'family':='local'}~>
+	      when %% Line 166
+		call 'erlang':'is_binary'
+		    (Path) ->
+	      let <_3> =
+		  call %% Line 167
+		       'erlang':%% Line 167
+				'binary_to_list'
+		      (%% Line 167
+		       Path)
+	      in  %% Line 167
+		  {'SockAddrUnix',_3}
+	  %% Line 168
+	  <~{%% Line 169
+	    'path':=Path,'family':='local'}~> when 'true' ->
+	      %% Line 171
+	      {'SockAddrUnix',Path}
+	  %% Line 172
+	  <~{%% Line 174
+	    'ifindex':=IfIndex,'family':='packet',%% Line 173
+						  'protocol':=PhyProto,%% Line 177
+								       'addr':=HaAddr,%% Line 176
+										      'hatype':=HaType,%% Line 175
+												       'pkttype':=PktType}~> when 'true' ->
+	      %% Line 179
+	      {'SockAddrLL',PhyProto,IfIndex,PktType,HaType,HaAddr}
+	  ( <_4> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_4})
+		  -| [{'function_name',{'construct',1}}] )
+	    -| ['compiler_generated'] )
+	end
+'destruct'/1 =
+    %% Line 185
+    fun (_0) ->
+	case _0 of
+	  <{'Ip4Address',A,B,C,D}> when 'true' ->
+	      %% Line 186
+	      {A,B,C,D}
+	  %% Line 187
+	  <{'Ip6Address',A,B,C,D,E,F,G,H}> when 'true' ->
+	      %% Line 188
+	      {A,B,C,D,E,F,G,H}
+	  %% Line 190
+	  <{'SockAddr',Port,Addr}> when 'true' ->
+	      let <_1> =
+		  apply %% Line 193
+			'destruct'/1
+		      (%% Line 193
+		       Addr)
+	      in  %% Line 191
+		  ~{%% Line 192
+		   'port'=>Port,%% Line 193
+				'addr'=>_1|~{'family'=>'inet'}~}~
+	  %% Line 195
+	  <{'SockAddrInet6',Port,Addr,FlowInfo,ScopeId}> when 'true' ->
+	      let <_2> =
+		  apply %% Line 198
+			'destruct'/1
+		      (%% Line 198
+		       Addr)
+	      in  %% Line 196
+		  ~{%% Line 197
+		   'port'=>Port,%% Line 198
+				'addr'=>_2,%% Line 199
+					   'flowinfo'=>FlowInfo,%% Line 200
+								'scope_id'=>ScopeId|~{'family'=>'inet6'}~}~
+	  %% Line 202
+	  <{'SockAddrUnix',Path}> when 'true' ->
+	      %% Line 203
+	      ~{%% Line 204
+	       'path'=>Path|~{'family'=>'local'}~}~
+	  %% Line 206
+	  <{'SockAddrLL',PhyProto,IfIndex,PktType,HaType,HaAddr}> when 'true' ->
+	      %% Line 207
+	      ~{%% Line 208
+	       'protocol'=>PhyProto,%% Line 209
+				    'ifindex'=>IfIndex,%% Line 210
+						       'pkttype'=>PktType,%% Line 211
+									  'hatype'=>HaType,%% Line 212
+											   'addr'=>HaAddr|~{'family'=>'packet'}~}~
+	  %% Line 214
+	  <{'SelectInfo',Tag,Ref}> when 'true' ->
+	      %% Line 215
+	      {'select_info',Tag,Ref}
+	  %% Line 217
+	  <{'Local'}> when 'true' ->
+	      'local'
+	  %% Line 218
+	  <{'Inet'}> when 'true' ->
+	      'inet'
+	  %% Line 219
+	  <{'Inet6'}> when 'true' ->
+	      'inet6'
+	  %% Line 221
+	  <{'Stream'}> when 'true' ->
+	      'stream'
+	  %% Line 222
+	  <{'Dgram'}> when 'true' ->
+	      'dgram'
+	  %% Line 223
+	  <{'Raw'}> when 'true' ->
+	      'raw'
+	  %% Line 224
+	  <{'Rdm'}> when 'true' ->
+	      'rdm'
+	  %% Line 225
+	  <{'SeqPacket'}> when 'true' ->
+	      'seqpacket'
+	  %% Line 227
+	  <{'CmsgCloexec'}> when 'true' ->
+	      'cmsg_cloexec'
+	  %% Line 228
+	  <{'ErrQueue'}> when 'true' ->
+	      'errqueue'
+	  %% Line 229
+	  <{'Oob'}> when 'true' ->
+	      'oob'
+	  %% Line 230
+	  <{'Peek'}> when 'true' ->
+	      'peek'
+	  %% Line 231
+	  <{'Trunc'}> when 'true' ->
+	      'trunc'
+	  ( <_3> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_3})
+		  -| [{'function_name',{'destruct',1}}] )
+	    -| ['compiler_generated'] )
+	end
+'ip4Addr'/1 =
+    %% Line 233
+    fun (_0) ->
+	case _0 of
+	  <'any'> when 'true' ->
+	      %% Line 234
+	      apply 'ip4Addr'/1
+		  ({0,0,0,0})
+	  %% Line 235
+	  <'broadcast'> when 'true' ->
+	      %% Line 236
+	      apply 'ip4Addr'/1
+		  ({255,255,255,255})
+	  %% Line 237
+	  <'loopback'> when 'true' ->
+	      %% Line 238
+	      apply 'ip4Addr'/1
+		  ({127,0,0,1})
+	  %% Line 239
+	  <{A,B,C,D}> when 'true' ->
+	      %% Line 240
+	      {'Ip4Address',A,B,C,D}
+	  ( <_1> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_1})
+		  -| [{'function_name',{'ip4Addr',1}}] )
+	    -| ['compiler_generated'] )
+	end
+'ip6Addr'/1 =
+    %% Line 242
+    fun (_0) ->
+	case _0 of
+	  <'any'> when 'true' ->
+	      %% Line 243
+	      apply 'ip6Addr'/1
+		  ({0,0,0,0,0,0,0,0})
+	  %% Line 244
+	  <'loopback'> when 'true' ->
+	      %% Line 245
+	      apply 'ip4Addr'/1
+		  ({0,0,0,0,0,0,0,1})
+	  %% Line 246
+	  <{A,B,C,D,E,F,G,H}> when 'true' ->
+	      %% Line 247
+	      {'Ip6Address',A,B,C,D,E,F,G,H}
+	  ( <_1> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_1})
+		  -| [{'function_name',{'ip6Addr',1}}] )
+	    -| ['compiler_generated'] )
+	end
+'return'/1 =
+    %% Line 254
+    fun (_0) ->
+	case _0 of
+	  <'ok'> when 'true' ->
+	      'ok'
+	  %% Line 255
+	  <{'ok',Result}> when 'true' ->
+	      Result
+	  %% Line 256
+	  <{'error',Reason}> when 'true' ->
+	      call 'erlang':'error'
+		  (Reason)
+	  ( <_1> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_1})
+		  -| [{'function_name',{'return',1}}] )
+	    -| ['compiler_generated'] )
+	end
+'return'/2 =
+    %% Line 258
+    fun (_0,_1) ->
+	case <_0,_1> of
+	  <{'ok',Result},Construct> when 'true' ->
+	      apply Construct
+		  (Result)
+	  %% Line 259
+	  <{'error',Reason},_4> when 'true' ->
+	      call 'erlang':'error'
+		  (Reason)
+	  ( <_3,_2> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_3,_2})
+		  -| [{'function_name',{'return',2}}] )
+	    -| ['compiler_generated'] )
+	end
+'atom'/1 =
+    %% Line 262
+    fun (_0) ->
+	call 'erlang':'list_to_existing_atom'
+	    (_0)
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Socket')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Socket', _0)
+end

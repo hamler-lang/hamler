@@ -9,7 +9,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Binary Module.
+%% The Binary FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Binary').

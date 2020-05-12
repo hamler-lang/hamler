@@ -3,34 +3,50 @@ module 'Process' ['link'/1,
 		  'module_info'/1,
 		  'monitor'/1,
 		  'receive'/0,
-		  'send'/2]
+		  'send'/2,
+		  'spawn'/2]
     attributes [%% Line 1
 		'file' =
 		    %% Line 1
 		    [{[80|[114|[111|[99|[101|[115|[115|[46|[101|[114|[108]]]]]]]]]]],1}],
-		%% Line 23
-		'spec' =
-		    %% Line 23
-		    [{{'send',2},[{'type',23,'fun',[{'type',23,'product',[{'type',23,'pid',[]}|[{'type',23,'term',[]}]]}|[{'type',23,'term',[]}]]}]}],
-		%% Line 26
-		'spec' =
-		    %% Line 26
-		    [{{'receive',0},[{'type',26,'fun',[{'type',26,'product',[]}|[{'type',26,'term',[]}]]}]}],
+		%% Line 17
+		'compile' =
+		    %% Line 17
+		    [{'no_auto_import',[{'spawn',2}]}],
 		%% Line 29
 		'spec' =
 		    %% Line 29
-		    [{{'link',1},[{'type',29,'fun',[{'type',29,'product',[{'type',29,'pid',[]}]}|[{'type',29,'boolean',[]}]]}]}],
+		    [{{'send',2},[{'type',29,'fun',[{'type',29,'product',[{'type',29,'pid',[]}|[{'type',29,'term',[]}]]}|[{'type',29,'term',[]}]]}]}],
 		%% Line 32
 		'spec' =
 		    %% Line 32
-		    [{{'monitor',1},[{'type',32,'fun',[{'type',32,'product',[{'type',32,'pid',[]}]}|[{'type',32,'reference',[]}]]}]}]]
+		    [{{'receive',0},[{'type',32,'fun',[{'type',32,'product',[]}|[{'type',32,'term',[]}]]}]}],
+		%% Line 35
+		'spec' =
+		    %% Line 35
+		    [{{'link',1},[{'type',35,'fun',[{'type',35,'product',[{'type',35,'pid',[]}]}|[{'type',35,'boolean',[]}]]}]}],
+		%% Line 38
+		'spec' =
+		    %% Line 38
+		    [{{'monitor',1},[{'type',38,'fun',[{'type',38,'product',[{'type',38,'pid',[]}]}|[{'type',38,'reference',[]}]]}]}]]
+'spawn'/2 =
+    %% Line 26
+    fun (_0,_1) ->
+	let <_2> =
+	    fun () ->
+		%% Line 27
+		apply _0
+		    (_1)
+	in  %% Line 27
+	    call 'erlang':'spawn'
+		(_2)
 'send'/2 =
-    %% Line 24
+    %% Line 30
     fun (_0,_1) ->
 	call 'erlang':'send'
 	    (_0, _1)
 'receive'/0 =
-    %% Line 27
+    %% Line 33
     fun () ->
 	receive
 	  <X> when 'true' ->
@@ -38,12 +54,12 @@ module 'Process' ['link'/1,
 	after 'infinity' ->
 	  'true'
 'link'/1 =
-    %% Line 30
+    %% Line 36
     fun (_0) ->
 	call 'erlang':'link'
 	    (_0)
 'monitor'/1 =
-    %% Line 33
+    %% Line 39
     fun (_0) ->
 	call 'erlang':'monitor'
 	    ('process', _0)

@@ -9,20 +9,20 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Bool DataType.
+-- The Boolean data type.
 --
 -----------------------------------------------------------------------------
 module Data.Bool where
 
--- | An alias for `Boolean`
+-- | An alias for `Boolean` type.
 type Bool = Boolean
 
 infixr 3 and as &&
 infixr 2 or as ||
 
 and :: Bool -> Bool -> Bool
-and true true  = true
-and _    _     = false
+and true true = true
+and _    _    = false
 
 or :: Bool -> Bool -> Bool
 or false false = false

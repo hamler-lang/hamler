@@ -34,10 +34,10 @@ module Prelude
   ) where
 
 import Data.Binary (Binary, BitString)
-import Data.Bits (band, bnot, bor, bsl, bsr, bxor)
-import Data.Bool ((&&), (||))
+import Data.Bits (band, bor, bxor, bnot, bsl, bsr)
+import Data.Bool (Bool, (&&), (||), and, or, not, otherwise)
 import Data.Either (Either(..))
-import Data.Eq (class Eq, eq, notEq, (/=), (==))
+import Data.Eq (class Eq, eq, (==), notEq, (/=))
 import Data.List (head,last,reverse,concat,filter,(++),take,drop,zip,sort,replicate,length)
 import Data.Float (Double)
 import Data.Function (apply, const, flip, identity,error)

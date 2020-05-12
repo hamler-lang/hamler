@@ -1,0 +1,25 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Functor
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Functor type classs.
+--
+-----------------------------------------------------------------------------
+module Data.Functor (class Functor, map, (<$>)) where
+
+class Functor f where
+  map :: forall a b. (a -> b) -> f a -> f b
+
+infixl 4 map as <$>
+
+instance Functor List where
+  map = listMap
+
+foreign import listMap :: forall a b. (a -> b) -> List a -> List b

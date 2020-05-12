@@ -21,11 +21,11 @@ module 'Bits' ['band'/2,
 		%% Line 31
 		'spec' =
 		    %% Line 31
-		    [{{'bnot',1},[{'type',31,'fun',[{'type',31,'product',[{'type',31,'integer',[]}]}|[{'type',31,'integer',[]}]]}]}],
+		    [{{'bxor',2},[{'type',31,'fun',[{'type',31,'product',[{'type',31,'integer',[]}|[{'type',31,'integer',[]}]]}|[{'type',31,'integer',[]}]]}]}],
 		%% Line 34
 		'spec' =
 		    %% Line 34
-		    [{{'bxor',2},[{'type',34,'fun',[{'type',34,'product',[{'type',34,'integer',[]}|[{'type',34,'integer',[]}]]}|[{'type',34,'integer',[]}]]}]}],
+		    [{{'bnot',1},[{'type',34,'fun',[{'type',34,'product',[{'type',34,'integer',[]}]}|[{'type',34,'integer',[]}]]}]}],
 		%% Line 37
 		'spec' =
 		    %% Line 37
@@ -44,16 +44,16 @@ module 'Bits' ['band'/2,
     fun (_0,_1) ->
 	call 'erlang':'bor'
 	    (_0, _1)
-'bnot'/1 =
-    %% Line 32
-    fun (_0) ->
-	call 'erlang':'bnot'
-	    (_0)
 'bxor'/2 =
-    %% Line 35
+    %% Line 32
     fun (_0,_1) ->
 	call 'erlang':'bxor'
 	    (_0, _1)
+'bnot'/1 =
+    %% Line 35
+    fun (_0) ->
+	call 'erlang':'bnot'
+	    (_0)
 'bsl'/2 =
     %% Line 38
     fun (_0,_1) ->

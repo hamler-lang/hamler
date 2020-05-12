@@ -9,64 +9,81 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Monad Module.
+-- The Monad typeclass.
 --
 -----------------------------------------------------------------------------
-module Control.Monad where
+module Control.Monad
+  ( class Monad, bind, (>>=), return
+  , liftM1, liftM2, liftM3, liftM4
+  , module Data.Functor
+  , module Control.Applicative
+  ) where
 
-class Functor f where
-  map :: forall a b. (a -> b) -> f a -> f b
+import Data.Functor (class Functor, map)
+import Control.Applicative (class Applicative, apply, pure)
 
-class Functor f => Apply f where
-  apply :: forall a b. f (a -> b) -> f a -> f b
-
-class Apply f => Applicative f where
-  pure :: forall a. a -> f a
-
-class Apply m => Bind m where
+class Applicative m => Monad m where
   bind :: forall a b. m a -> (a -> m b) -> m b
-
-class (Applicative m, Bind m) => Monad m
+  return :: forall a. a -> m a
 
 infixl 1 bind as >>=
+
+instance Monad List where
+  bind a f = listBindImpl a f
+  return = pure
+
+foreign import listBindImpl :: forall a b. [a] -> (a -> [b]) -> [b]
 
 foreign import data IO :: Type -> Type
 
 instance Functor IO where
   map f a = apply (pure f) a
 
-instance Apply IO where
+instance Applicative IO where
   apply f a = do
     f' <- f
     a' <- a
     pure (f' a')
-
-instance Applicative IO where
   pure = pureImpl
 
-instance Bind IO where
+instance Monad IO where
   bind = bindImpl
-
-instance Monad IO
+  return = pure
 
 foreign import bindImpl :: forall a b. IO a -> (a -> IO b) -> IO b
 foreign import pureImpl :: forall a. a -> IO a
 
-instance Functor List where
-  map f x = mapListImpl f x
-instance Apply List where
-  apply f x = applyListImpl f x
-instance Applicative List where
-  pure x = [x]
-instance Bind List where
-  bind a f = bindListImpl a f
-instance Monad List
+-----------------------------------------------------------------------------
+-- | Lift a function to a monad
 
-foreign import mapListImpl :: forall a b. (a->b) -> [a] -> [b]
-foreign import applyListImpl :: forall a b. [(a->b)] -> [a] -> [b]
-foreign import bindListImpl :: forall a b. [a] -> (a -> [b]) -> [b]
+liftM1 :: forall a b m. Monad m => (a -> b) -> m a -> m b
+liftM1 f ma = do
+  a <- ma
+  return (f a)
 
-discard :: forall f a b. Bind f => f a -> (a -> f b) -> f b
+liftM2 :: forall a b c m. Monad m => (a -> b -> c) -> m a -> m b -> m c
+liftM2 f ma mb = do
+  a <- ma
+  b <- mb
+  return (f a b)
+
+liftM3 :: forall a b c d m. Monad m => (a -> b -> c -> d) -> m a -> m b -> m c -> m d
+liftM3 f ma mb mc = do
+  a <- ma
+  b <- mb
+  c <- mc
+  return (f a b c)
+
+liftM4 :: forall a b c d e m. Monad m => (a -> b -> c -> d -> e) -> m a -> m b -> m c -> m d -> m e
+liftM4 f ma mb mc md = do
+  a <- ma
+  b <- mb
+  c <- mc
+  d <- md
+  return (f a b c d)
+
+-- TODO:...
+discard :: forall f a b. Monad f => f a -> (a -> f b) -> f b
 discard = bind
 
 guardF :: Boolean  -> [Boolean]

@@ -1,0 +1,28 @@
+module 'Set' ['module_info'/0,
+	      'module_info'/1,
+	      'singleton'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[83|[101|[116|[46|[101|[114|[108]]]]]]],1}],
+		%% Line 19
+		'spec' =
+		    %% Line 19
+		    [{{'singleton',1},[{'type',19,'fun',[{'type',19,'product',[{'type',19,'term',[]}]}|[{'remote_type',19,[{'atom',19,'sets'}|[{'atom',19,'set'}|[[]]]]}]]}]}]]
+'singleton'/1 =
+    %% Line 20
+    fun (_0) ->
+	let <_1> =
+	    call 'sets':'new'
+		()
+	in  call 'sets':'add_element'
+		(_0, _1)
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Set')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Set', _0)
+end

@@ -14,11 +14,17 @@
 %%---------------------------------------------------------------------------
 -module('Process').
 
--export([ send/2
+-compile({no_auto_import, [spawn/2]}).
+
+-export([ spawn/2
+        , send/2
         , 'receive'/0
         , 'link'/1
         , 'monitor'/1
         ]).
+
+spawn(Fun, Arg) ->
+    erlang:spawn(fun() -> Fun(Arg) end).
 
 -spec(send(pid(), term()) -> term()).
 send(Pid, Msg) -> erlang:send(Pid, Msg).

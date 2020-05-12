@@ -12,56 +12,164 @@
 -- The Network Socket Module.
 --
 -----------------------------------------------------------------------------
-
 module Network.Socket where
 
 import Control.Monad (IO)
+import Data.Binary (Binary)
+import Data.Maybe (Maybe)
+import Data.Int
+import Data.Timeout (Timeout)
+import Data.Ref (Reference)
 import Data.Unit (Unit)
 
+-- | Host name
 type HostName = String
+
+-- | Port number
+type PortNumber = UInt16
+
+-- | Service name
 type ServiceName = String
-type PortNumber = Integer
 
-data HostAddress  = HostAddress Integer Integer Integer Integer
+-- | Physical-layer protocol
+type PhyProto = UInt16
 
-data SockAddr = SockAddrInt PortNumber HostAddress
+-- | Interface number
+type IfIndex = Int32
 
-data Family = AF_UNSPEC
-            | AF_UNIX
-            | AF_INET
-            | AF_INET6
-            | AF_IMPLINK
-------------| ......
+-- | ARP hardware type
+type HaType = UInt16
 
-data SocketType = NoSocketType
-                | Stream
-                | Datagram
-                | Raw
-                | RDM
-                | SeqPacket
+-- | Physical-layer packet type
+type PktType = UInt8
+
+-- | Physical-layer address
+type HaAddress = Binary
+
+-- | IPv6 flow information
+type FlowInfo = UInt32
+
+-- | IPv6 scope Id
+type ScopeId = UInt32
+
+-- | IPv4 or IPv6 address
+data IpAddress
+  = Ip4Address UInt8 UInt8 UInt8 UInt8
+  | Ip6Address UInt16 UInt16 UInt16 UInt16 UInt16 UInt16 UInt16 UInt16
+
+-- | Socket address
+data SockAddr
+  = SockAddrInet PortNumber IpAddress
+  {- ^
+    struct sockaddr_in {
+               sa_family_t    sin_family; /* address family: AF_INET */
+               in_port_t      sin_port;   /* port in network byte order */
+               struct in_addr sin_addr;   /* internet address */
+           };
+  -}
+  | SockAddrInet6 PortNumber IpAddress FlowInfo ScopeId
+  {- ^
+    struct sockaddr_in6 {
+        sa_family_t     sin6_family;   /* AF_INET6 */
+        in_port_t       sin6_port;     /* port number */
+        uint32_t        sin6_flowinfo; /* IPv6 flow information */
+        struct in6_addr sin6_addr;     /* IPv6 address */
+        uint32_t        sin6_scope_id; /* Scope ID (new in 2.4) */
+    };
+  -}
+  | SockAddrUnix String
+  {- ^
+    struct sockaddr_un {
+        sa_family_t sun_family;        /* AF_UNIX */
+        char        sun_path[108];     /* Pathname */
+    };
+  -}
+  | SockAddrLL PhyProto IfIndex PktType HaType HaAddress
+  {- ^
+    struct sockaddr_ll {
+      unsigned short sll_family;   /* Always AF_PACKET */
+      unsigned short sll_protocol; /* Physical-layer protocol */
+      int            sll_ifindex;  /* Interface number */
+      unsigned short sll_hatype;   /* ARP hardware type */
+      unsigned char  sll_pkttype;  /* Packet type */
+      unsigned char  sll_halen;    /* Length of address */
+      unsigned char  sll_addr[8];  /* Physical-layer address */
+    };
+  -}
+
+data Domain = Local | Inet | Inet6
+
+data SocketType = Stream | Dgram | Raw | Rdm | SeqPacket
+
+data RecvFlag = CmsgCloexec | ErrQueue | Oob | Peek | Trunc
+
+data SelectInfo = SelectInfo String Reference
 
 foreign import data Socket :: Type
 
-foreign import socket :: Family -> SocketType -> IO Socket
+-- | Accept a connection on a socket.
+foreign import accept :: Socket -> IO Socket
 
-foreign import connect :: Socket -> SockAddr -> IO Unit
-foreign import bind :: Socket -> SockAddr -> IO Unit
+-- | Accept a connection on a socket with timeout.
+foreign import acceptTimeout :: Socket -> Timeout -> IO Socket
 
-foreign import listen :: Socket -> Integer -> IO Unit
-foreign import accept :: Socket -> IO (Socket,SockAddr)
+-- | Bind the socket to an address.
+foreign import bind :: Socket -> SockAddr -> IO PortNumber
 
+-- | Bind the socket to any address.
+foreign import bindAny :: Socket -> IO PortNumber
+
+-- | Bind the socket to broadcast address.
+foreign import bindBroadcast :: Socket -> IO PortNumber
+
+-- | Bind the socket to loopback address.
+foreign import bindLoopback :: Socket -> IO PortNumber
+
+-- | Cancel an asynchronous request.
+foreign import cancel :: Socket -> SelectInfo -> IO Unit
+
+-- | Closes the socket.
 foreign import close :: Socket -> IO Unit
 
-foreign import data Bytestring :: Type
+-- | Connects to a remote socket at address specied by the SockAddr argument.
+foreign import connect :: Socket -> SockAddr -> IO Unit
 
-foreign import send :: Socket -> Bytestring -> IO Integer
-foreign import sendTo :: Socket -> Bytestring -> SockAddr -> IO Integer
-foreign import sendMany :: Socket -> [Bytestring] -> IO Unit
-foreign import sendManyTo :: Socket -> [Bytestring] -> SockAddr -> IO Unit
+-- | Connects to a remote socket at address specied by the SockAddr argument.
+foreign import connectTimeout :: Socket -> SockAddr -> Timeout -> IO Unit
 
-foreign import recv :: Socket -> Integer -> IO Bytestring
-foreign import recvFrom :: Socket -> Integer -> IO (Bytestring,SockAddr)
+-- | Get the address of the peer connected to the socket.
+foreign import getPeerName :: Socket -> IO SockAddr
 
+-- | Get the current address to which the socket is bound.
+foreign import getSockName :: Socket -> IO SockAddr
 
+-- | Listen for connections on a socket.
+foreign import listen :: Socket -> IO Unit
 
+foreign import listenWithBacklog :: Socket -> Integer -> IO Unit
 
+-- | The number of active sockets.
+foreign import numberOf :: IO Integer
+
+-- | Creates an socket for communication.
+foreign import open :: Domain -> SocketType -> Socket
+
+-- | Receive a message from a socket.
+foreign import recv :: Socket -> IO Binary
+
+foreign import recvWithLen :: Socket -> Integer -> IO Binary
+
+foreign import recvWithFlags :: Socket -> Integer -> [RecvFlag] -> IO Binary
+
+foreign import recvWithTimeout :: Socket -> Integer -> Timeout -> IO Binary
+
+foreign import recvFrom :: Socket -> (Maybe SockAddr, Binary)
+
+-- | Send a message on a connected socket.
+foreign import send :: Socket -> Binary -> IO Unit
+
+-- | Send a message on a socket, to the specified destination.
+foreign import sendTo :: Socket -> Binary -> SockAddr -> IO Unit
+
+-- | Shut down all or part of a full-duplex connection.
+foreign import shutdown :: Socket -> String -> IO Unit

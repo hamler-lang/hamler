@@ -1,83 +1,88 @@
-module 'Map' ['delete'/2,
-	      'empty'/0,
-	      'filter'/2,
-	      'insert'/3,
-	      'isEmpty'/1,
+module 'Map' ['isEmpty'/1,
 	      'lookup'/2,
 	      'module_info'/0,
 	      'module_info'/1,
-	      'size'/1,
-	      'updateWith'/3]
+	      'notMember'/2,
+	      'singleton'/2,
+	      'take'/2]
     attributes [%% Line 1
 		'file' =
 		    %% Line 1
 		    [{[77|[97|[112|[46|[101|[114|[108]]]]]]],1}],
-		%% Line 27
+		%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[77|[97|[121|[98|[101|[46|[104|[114|[108]]]]]]]]],1}],
+		%% Line 2
 		'type' =
-		    %% Line 27
-		    [{'pred',{'type',27,'fun',[{'type',27,'product',[{'ann_type',27,[{'var',27,'Key'}|[{'type',27,'term',[]}]]}|[{'ann_type',27,[{'var',27,'Value'}|[{'type',27,'term',[]}]]}]]}|[{'type',27,'boolean',[]}]]},[]}],
-		%% Line 29
-		'type' =
-		    %% Line 29
-		    [{'update',{'type',29,'fun',[{'type',29,'product',[{'ann_type',29,[{'var',29,'Value1'}|[{'type',29,'term',[]}]]}]}|[{'ann_type',29,[{'var',29,'Value2'}|[{'type',29,'term',[]}]]}]]},[]}],
-		%% Line 32
+		    %% Line 2
+		    [{'maybe',{'type',2,'union',[{'type',2,'tuple',[{'atom',2,'Nothing'}]}|[{'type',2,'tuple',[{'atom',2,'Just'}|[{'var',2,'A'}]]}]]},[{'var',2,'A'}]}],
+		%% Line 18
+		'file' =
+		    %% Line 18
+		    [{[77|[97|[112|[46|[101|[114|[108]]]]]]],18}],
+		%% Line 30
 		'spec' =
-		    %% Line 32
-		    [{{'empty',0},[{'type',32,'fun',[{'type',32,'product',[]}|[{'type',32,'map','any'}]]}]}],
-		%% Line 36
+		    %% Line 30
+		    [{{'isEmpty',1},[{'type',30,'fun',[{'type',30,'product',[{'type',30,'map','any'}]}|[{'type',30,'boolean',[]}]]}]}],
+		%% Line 34
 		'spec' =
-		    %% Line 36
-		    [{{'isEmpty',1},[{'type',36,'fun',[{'type',36,'product',[{'type',36,'map','any'}]}|[{'type',36,'boolean',[]}]]}]}],
-		%% Line 40
+		    %% Line 34
+		    [{{'lookup',2},[{'type',34,'fun',[{'type',34,'product',[{'ann_type',34,[{'var',34,'Key'}|[{'type',34,'term',[]}]]}|[{'type',34,'map','any'}]]}|[{'user_type',34,'maybe',[{'ann_type',34,[{'var',34,'Value'}|[{'type',34,'term',[]}]]}]}]]}]}],
+		%% Line 41
 		'spec' =
-		    %% Line 40
-		    [{{'insert',3},[{'type',40,'fun',[{'type',40,'product',[{'ann_type',40,[{'var',40,'Key'}|[{'type',40,'term',[]}]]}|[{'ann_type',40,[{'var',40,'Value'}|[{'type',40,'term',[]}]]}|[{'type',40,'map','any'}]]]}|[{'type',40,'map','any'}]]}]}],
+		    %% Line 41
+		    [{{'notMember',2},[{'type',41,'fun',[{'type',41,'product',[{'ann_type',41,[{'var',41,'Key'}|[{'type',41,'term',[]}]]}|[{'type',41,'map','any'}]]}|[{'type',41,'boolean',[]}]]}]}],
 		%% Line 44
 		'spec' =
 		    %% Line 44
-		    [{{'lookup',2},[{'type',44,'fun',[{'type',44,'product',[{'ann_type',44,[{'var',44,'Key'}|[{'type',44,'term',[]}]]}|[{'type',44,'map','any'}]]}|[{'type',44,'union',[{'type',44,'tuple',[{'atom',44,'Just'}|[{'type',44,'term',[]}]]}|[{'atom',44,'Nothing'}]]}]]}]}],
-		%% Line 52
-		'spec' =
-		    %% Line 52
-		    [{{'delete',2},[{'type',52,'fun',[{'type',52,'product',[{'ann_type',52,[{'var',52,'Key'}|[{'type',52,'term',[]}]]}|[{'type',52,'map','any'}]]}|[{'type',52,'map','any'}]]}]}],
-		%% Line 56
-		'spec' =
-		    %% Line 56
-		    [{{'updateWith',3},[{'type',56,'fun',[{'type',56,'product',[{'ann_type',56,[{'var',56,'Key'}|[{'type',56,'term',[]}]]}|[{'user_type',56,'update',[]}|[{'type',56,'map','any'}]]]}|[{'type',56,'map','any'}]]}]}],
-		%% Line 60
-		'spec' =
-		    %% Line 60
-		    [{{'size',1},[{'type',60,'fun',[{'type',60,'product',[{'type',60,'map','any'}]}|[{'type',60,'integer',[]}]]}]}],
-		%% Line 64
-		'spec' =
-		    %% Line 64
-		    [{{'filter',2},[{'type',64,'fun',[{'type',64,'product',[{'user_type',64,'pred',[]}|[{'type',64,'map','any'}]]}|[{'type',64,'map','any'}]]}]}]]
-'empty'/0 =
-    %% Line 33
-    fun () ->
-	~{}~
+		    [{{'take',2},[{'type',44,'fun',[{'type',44,'product',[{'ann_type',44,[{'var',44,'Key'}|[{'type',44,'term',[]}]]}|[{'type',44,'map','any'}]]}|[{'user_type',44,'maybe',[{'type',44,'tuple',[{'ann_type',44,[{'var',44,'Value'}|[{'type',44,'term',[]}]]}|[{'type',44,'map','any'}]]}]}]]}]}]]
+'singleton'/2 =
+    %% Line 27
+    fun (_0,_1) ->
+	~{_0=>_1}~
 'isEmpty'/1 =
-    %% Line 37
+    %% Line 31
     fun (_0) ->
 	let <_1> =
 	    call 'maps':'size'
 		(_0)
 	in  call 'erlang':'=='
 		(_1, 0)
-'insert'/3 =
-    %% Line 41
-    fun (_0,_1,_2) ->
-	call 'maps':'put'
-	    (_0, _1, _2)
 'lookup'/2 =
+    %% Line 35
+    fun (_0,_1) ->
+	%% Line 36
+	case call 'maps':'find'
+		 (_0, _1) of
+	  %% Line 37
+	  <{'ok',Value}> when 'true' ->
+	      {'Just',Value}
+	  %% Line 38
+	  <'error'> when 'true' ->
+	      'Nothing'
+	  ( <_2> when 'true' ->
+		primop 'match_fail'
+		    ({'case_clause',_2})
+	    -| ['compiler_generated'] )
+	end
+'notMember'/2 =
+    %% Line 42
+    fun (_0,_1) ->
+	let <_2> =
+	    call 'maps':'is_key'
+		(_0, _1)
+	in  call 'erlang':'not'
+		(_2)
+'take'/2 =
     %% Line 45
     fun (_0,_1) ->
 	%% Line 46
-	case call 'maps':'find'
+	case call 'maps':'take'
 		 (_0, _1) of
 	  %% Line 47
-	  <{'ok',Value}> when 'true' ->
-	      {'Just',Value}
+	  <_@r0 = {Value,Map2}> when 'true' ->
+	      {'Just',_@r0}
 	  %% Line 48
 	  <'error'> when 'true' ->
 	      'Nothing'
@@ -86,26 +91,6 @@ module 'Map' ['delete'/2,
 		    ({'case_clause',_2})
 	    -| ['compiler_generated'] )
 	end
-'delete'/2 =
-    %% Line 53
-    fun (_0,_1) ->
-	call 'maps':'delete'
-	    (_0, _1)
-'updateWith'/3 =
-    %% Line 57
-    fun (_0,_1,_2) ->
-	call 'maps':'update_with'
-	    (_0, _1, _2)
-'size'/1 =
-    %% Line 61
-    fun (_0) ->
-	call 'maps':'size'
-	    (_0)
-'filter'/2 =
-    %% Line 65
-    fun (_0,_1) ->
-	call 'maps':'filter'
-	    (_0, _1)
 'module_info'/0 =
     fun () ->
 	call 'erlang':'get_module_info'
