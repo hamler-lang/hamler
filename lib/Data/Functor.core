@@ -1,0 +1,29 @@
+module 'Functor' ['mapListImpl'/2,
+		  'module_info'/0,
+		  'module_info'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[70|[117|[110|[99|[116|[111|[114|[46|[101|[114|[108]]]]]]]]]]],1}],
+		%% Line 19
+		'type' =
+		    %% Line 19
+		    [{'mapFun',{'type',19,'fun',[{'type',19,'product',[{'ann_type',19,[{'var',19,'A'}|[{'type',19,'any',[]}]]}]}|[{'ann_type',19,[{'var',19,'B'}|[{'type',19,'any',[]}]]}]]},[]}],
+		%% Line 21
+		'spec' =
+		    %% Line 21
+		    [{{'mapListImpl',2},[{'type',21,'fun',[{'type',21,'product',[{'user_type',21,'mapFun',[]}|[{'type',21,'list',[{'type',21,'any',[]}]}]]}|[{'type',21,'list',[{'type',21,'any',[]}]}]]}]}]]
+'mapListImpl'/2 =
+    %% Line 22
+    fun (_0,_1) ->
+	call 'lists':'map'
+	    (_0, _1)
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Functor')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Functor', _0)
+end

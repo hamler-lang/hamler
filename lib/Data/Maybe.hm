@@ -9,12 +9,21 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- Define the Maybe DataType.
+-- The Maybe datatype.
 --
 -----------------------------------------------------------------------------
-module Data.Maybe where
+module Data.Maybe
+  ( Maybe(..)
+  , maybe
+  , fromMaybe
+  , isJust
+  , isNothing
+  , fromJust
+  ) where
 
-import Control.Monad (class Applicative, class Apply, class Bind, class Functor, class Monad, map)
+import Control.Applicative (class Applicative, pure)
+import Control.Monad (class Monad)
+import Data.Functor (class Functor, map)
 import Data.Function (const, error, identity)
 
 data Maybe a = Nothing | Just a
@@ -23,18 +32,15 @@ instance Functor Maybe where
   map fn (Just x) = Just (fn x)
   map _  _        = Nothing
 
-instance Apply Maybe where
+instance Applicative Maybe where
   apply (Just fn) x = map fn x
   apply Nothing   _ = Nothing
-
-instance Applicative Maybe where
   pure = Just
 
-instance Bind Maybe where
-  bind (Just x) k = k x
-  bind Nothing  _ = Nothing
-
-instance Monad Maybe
+instance Monad Maybe where
+  bind (Just x) fn = fn x
+  bind Nothing  _  = Nothing
+  return = pure
 
 maybe :: forall a b. b -> (a -> b) -> Maybe a -> b
 maybe b _ Nothing = b
@@ -49,6 +55,7 @@ isJust = maybe false (const true)
 isNothing :: forall a. Maybe a -> Boolean
 isNothing = maybe true (const false)
 
-fromJust :: forall a.Maybe a -> a
+fromJust :: forall a. Maybe a -> a
 fromJust (Just a) = a
-fromJust (Nothing) = error "This is a error!"
+fromJust (Nothing) = error "This is Nothing!"
+

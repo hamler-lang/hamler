@@ -19,6 +19,7 @@ module Prelude
   , module Data.Either
   , module Data.Eq
   , module Data.Float
+  , module Data.Functor
   , module Data.Function
   , module Data.List
   , module Data.Maybe
@@ -29,6 +30,7 @@ module Prelude
   , module Data.Semiring
   , module Data.Show
   , module Data.Unit
+  , module Control.Applicative
   , module Control.Monad
   , module System.IO
   ) where
@@ -40,7 +42,8 @@ import Data.Either (Either(..))
 import Data.Eq (class Eq, eq, (==), notEq, (/=))
 import Data.List (head,last,reverse,concat,filter,(++),take,drop,zip,sort,replicate,length)
 import Data.Float (Double)
-import Data.Function (apply, const, flip, identity,error)
+import Data.Functor (class Functor, map, (<$>))
+import Data.Function ((<<), (>>), ($), apply, const, flip, identity, error)
 import Data.Maybe (Maybe)
 import Data.Ord (class Ord, between, compare, comparing, greaterThan, greaterThanOrEq, lessThan, lessThanOrEq, max, min, (<), (<=), (>), (>=))
 import Data.Ref (Ref, Reference, makeRef)
@@ -49,5 +52,7 @@ import Data.Semigroup (class Semigroup, append, (<>))
 import Data.Semiring (class Semiring, add, mul, one, zero, (*), (+))
 import Data.Show (class Show, show)
 import Data.Unit (Unit)
-import Control.Monad (IO,class Functor,class Apply,class Applicative,class Bind,class Monad,map,pure,bind)
+import Control.Applicative (class Applicative, pure)
+import Control.Monad (class Monad, bind, IO)
 import System.IO (print,putStrLn,putStr,throw,try,catchException,readFile,writeFile,appendFile)
+

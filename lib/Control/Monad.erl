@@ -14,16 +14,17 @@
 %%---------------------------------------------------------------------------
 -module('Monad').
 
--export([ pureImpl/1
-        , bindImpl/2
-        , listBindImpl/2
+-export([ bindImpl/2
+        , bindListImpl/2
+        , pureImpl/1
         ]).
+
+-spec(bindImpl(any(), fun((A :: term()) -> B :: term())) -> any()).
+bindImpl(X, F) -> F(X).
+
+-spec(bindListImpl(list(term()), fun((term()) -> list(term()))) -> list(term())).
+bindListImpl(L, F) ->
+    lists:flatten(lists:map(F, L)).
 
 -spec(pureImpl(any()) -> any()).
 pureImpl(X) -> X.
-
--spec(bindImpl(any(), mapFun()) -> any()).
-bindImpl(X, F) -> F(X).
-
--spec(listBindImpl(list(any()), mapFun()) -> list(any())).
-listBindImpl(L, F) -> lists:flatten(lists:map(F, L)).

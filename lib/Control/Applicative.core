@@ -16,6 +16,7 @@ module 'Applicative' ['applyListImpl'/2,
 'applyListImpl'/2 =
     %% Line 22
     fun (_0,_1) ->
+	%% Line 23
 	( letrec
 	      'lc$^0'/1 =
 		  fun (_6) ->

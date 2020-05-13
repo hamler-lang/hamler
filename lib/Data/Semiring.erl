@@ -14,28 +14,25 @@
 %%---------------------------------------------------------------------------
 -module('Semiring').
 
--export([ intAdd/2
-        , intMul/2
-        , floatAdd/2
-        , floatMul/2
+-export([ addInt/2
+        , mulInt/2
+        , addFloat/2
+        , mulFloat/2
         ]).
 
-charAdd(C1, C2) -> C1 + C2.
+%% addInt :: Int -> Int -> Int
+-spec(addInt(integer(), integer()) -> integer()).
+addInt(I1, I2) -> I1 + I2.
 
-charMul(C1, C2) -> C1 * C2.
+%% mulInt :: Int -> Int -> Int
+-spec(mulInt(integer(), integer()) -> integer()).
+mulInt(I1, I2) -> I1 * I2.
 
-%% intAdd :: Int -> Int -> Int
--spec(intAdd(integer(), integer()) -> integer()).
-intAdd(I1, I2) -> I1 + I2.
+%% addFloat :: Float -> Float -> Float
+-spec(addFloat(float(), float()) -> float()).
+addFloat(F1, F2) -> F1 + F2.
 
-%% intMul :: Int -> Int -> Int
--spec(intMul(integer(), integer()) -> integer()).
-intMul(I1, I2) -> I1 * I2.
+%% mulFloat :: Float -> Float -> Float
+-spec(mulFloat(float(), float()) -> float()).
+mulFloat(F1, F2) -> F1 * F2.
 
-%% floatAdd :: Float -> Float -> Float
--spec(floatAdd(float(), float()) -> float()).
-floatAdd(F1, F2) -> F1 + F2.
-
-%% floatAdd :: Float -> Float -> Float
--spec(floatMul(float(), float()) -> number()).
-floatMul(F1, F2) -> F1 * F2.

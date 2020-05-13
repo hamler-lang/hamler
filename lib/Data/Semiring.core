@@ -1,66 +1,46 @@
-module 'Semiring' ['floatAdd'/2,
-		   'floatMul'/2,
-		   'intAdd'/2,
-		   'intMul'/2,
+module 'Semiring' ['addFloat'/2,
+		   'addInt'/2,
 		   'module_info'/0,
 		   'module_info'/1,
-		   'numAdd'/2,
-		   'numMul'/2]
+		   'mulFloat'/2,
+		   'mulInt'/2]
     attributes [%% Line 1
 		'file' =
 		    %% Line 1
 		    [{[83|[101|[109|[105|[114|[105|[110|[103|[46|[101|[114|[108]]]]]]]]]]]],1}],
-		%% Line 26
+		%% Line 24
 		'spec' =
-		    %% Line 26
-		    [{{'intAdd',2},[{'type',26,'fun',[{'type',26,'product',[{'type',26,'integer',[]}|[{'type',26,'integer',[]}]]}|[{'type',26,'integer',[]}]]}]}],
-		%% Line 30
+		    %% Line 24
+		    [{{'addInt',2},[{'type',24,'fun',[{'type',24,'product',[{'type',24,'integer',[]}|[{'type',24,'integer',[]}]]}|[{'type',24,'integer',[]}]]}]}],
+		%% Line 28
 		'spec' =
-		    %% Line 30
-		    [{{'intMul',2},[{'type',30,'fun',[{'type',30,'product',[{'type',30,'integer',[]}|[{'type',30,'integer',[]}]]}|[{'type',30,'integer',[]}]]}]}],
-		%% Line 34
+		    %% Line 28
+		    [{{'mulInt',2},[{'type',28,'fun',[{'type',28,'product',[{'type',28,'integer',[]}|[{'type',28,'integer',[]}]]}|[{'type',28,'integer',[]}]]}]}],
+		%% Line 32
 		'spec' =
-		    %% Line 34
-		    [{{'floatAdd',2},[{'type',34,'fun',[{'type',34,'product',[{'type',34,'float',[]}|[{'type',34,'float',[]}]]}|[{'type',34,'float',[]}]]}]}],
-		%% Line 38
+		    %% Line 32
+		    [{{'addFloat',2},[{'type',32,'fun',[{'type',32,'product',[{'type',32,'float',[]}|[{'type',32,'float',[]}]]}|[{'type',32,'float',[]}]]}]}],
+		%% Line 36
 		'spec' =
-		    %% Line 38
-		    [{{'floatMul',2},[{'type',38,'fun',[{'type',38,'product',[{'type',38,'number',[]}|[{'type',38,'number',[]}]]}|[{'type',38,'number',[]}]]}]}],
-		%% Line 42
-		'spec' =
-		    %% Line 42
-		    [{{'numAdd',2},[{'type',42,'fun',[{'type',42,'product',[{'type',42,'number',[]}|[{'type',42,'number',[]}]]}|[{'type',42,'number',[]}]]}]}],
-		%% Line 46
-		'spec' =
-		    %% Line 46
-		    [{{'numMul',2},[{'type',46,'fun',[{'type',46,'product',[{'type',46,'number',[]}|[{'type',46,'number',[]}]]}|[{'type',46,'number',[]}]]}]}]]
-'intAdd'/2 =
-    %% Line 27
+		    %% Line 36
+		    [{{'mulFloat',2},[{'type',36,'fun',[{'type',36,'product',[{'type',36,'float',[]}|[{'type',36,'float',[]}]]}|[{'type',36,'float',[]}]]}]}]]
+'addInt'/2 =
+    %% Line 25
     fun (_0,_1) ->
 	call 'erlang':'+'
 	    (_0, _1)
-'intMul'/2 =
-    %% Line 31
+'mulInt'/2 =
+    %% Line 29
     fun (_0,_1) ->
 	call 'erlang':'*'
 	    (_0, _1)
-'floatAdd'/2 =
-    %% Line 35
+'addFloat'/2 =
+    %% Line 33
     fun (_0,_1) ->
 	call 'erlang':'+'
 	    (_0, _1)
-'floatMul'/2 =
-    %% Line 39
-    fun (_0,_1) ->
-	call 'erlang':'*'
-	    (_0, _1)
-'numAdd'/2 =
-    %% Line 43
-    fun (_0,_1) ->
-	call 'erlang':'+'
-	    (_0, _1)
-'numMul'/2 =
-    %% Line 47
+'mulFloat'/2 =
+    %% Line 37
     fun (_0,_1) ->
 	call 'erlang':'*'
 	    (_0, _1)

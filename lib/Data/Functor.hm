@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Functor type classs.
+-- The Functor typeclass.
 --
 -----------------------------------------------------------------------------
 module Data.Functor (class Functor, map, (<$>)) where
@@ -20,6 +20,6 @@ class Functor f where
 infixl 4 map as <$>
 
 instance Functor List where
-  map = listMap
+  map = mapListImpl
 
-foreign import listMap :: forall a b. (a -> b) -> List a -> List b
+foreign import mapListImpl :: forall a b. (a -> b) -> List a -> List b

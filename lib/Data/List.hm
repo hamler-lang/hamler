@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The List DataType.
+-- The List datatype.
 --
 -----------------------------------------------------------------------------
 module Data.List where

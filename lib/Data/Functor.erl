@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Applicative
+%% Module      :  Functor
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,15 +9,14 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Applicative FFI module.
+%% The Functor FFI Module.
 %%
 %%---------------------------------------------------------------------------
--module('Applicative').
+-module('Functor').
 
--export([applyListImpl/2]).
+-export([mapListImpl/2]).
 
 -type(mapFun() :: fun((A :: any()) -> B :: any())).
 
--spec(applyListImpl(list(mapFun()), list(any())) -> list(any())).
-applyListImpl(Funs, L) ->
-    [F(X) || X <- L, F <- Funs].
+-spec(mapListImpl(mapFun(), list(any())) -> list(any())).
+mapListImpl(F, L) -> lists:map(F, L).

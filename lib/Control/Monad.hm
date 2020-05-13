@@ -15,6 +15,7 @@
 module Control.Monad
   ( class Monad, bind, (>>=), return
   , liftM1, liftM2, liftM3, liftM4
+  , IO
   , module Data.Functor
   , module Control.Applicative
   ) where
@@ -29,10 +30,10 @@ class Applicative m => Monad m where
 infixl 1 bind as >>=
 
 instance Monad List where
-  bind a f = listBindImpl a f
+  bind a f = bindListImpl a f
   return = pure
 
-foreign import listBindImpl :: forall a b. [a] -> (a -> [b]) -> [b]
+foreign import bindListImpl :: forall a b. [a] -> (a -> [b]) -> [b]
 
 foreign import data IO :: Type -> Type
 
