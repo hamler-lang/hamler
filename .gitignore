@@ -28,3 +28,4 @@ TAGS
 output/
 stack.yaml.lock
 bin/
+.swp
