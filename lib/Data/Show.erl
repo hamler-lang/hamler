@@ -9,7 +9,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Show Module.
+%% The Show module.
 %%
 %%---------------------------------------------------------------------------
 -module('Show').
@@ -18,6 +18,7 @@
         , showFloatImpl/1
         , showNumImpl/1
         , showCharImpl/1
+        , showAny/1
         ]).
 
 %% showInt :: Integer -> String
@@ -45,3 +46,6 @@ precision(A, P) ->
         true  -> P;
         false -> precision(A*10.0, P+1)
     end.
+
+-spec(showAny(any()) -> string()).
+showAny(A) -> lists:flatten(io_lib:format("~p", [A])).

@@ -1,5 +1,6 @@
 module 'Show' ['module_info'/0,
 	       'module_info'/1,
+	       'showAny'/1,
 	       'showCharImpl'/1,
 	       'showFloatImpl'/1,
 	       'showIntImpl'/1,
@@ -8,58 +9,62 @@ module 'Show' ['module_info'/0,
 		'file' =
 		    %% Line 1
 		    [{[83|[104|[111|[119|[46|[101|[114|[108]]]]]]]],1}],
-		%% Line 24
+		%% Line 25
 		'spec' =
-		    %% Line 24
-		    [{{'showIntImpl',1},[{'type',24,'fun',[{'type',24,'product',[{'type',24,'integer',[]}]}|[{'type',24,'string',[]}]]}]}],
-		%% Line 28
+		    %% Line 25
+		    [{{'showIntImpl',1},[{'type',25,'fun',[{'type',25,'product',[{'type',25,'integer',[]}]}|[{'type',25,'string',[]}]]}]}],
+		%% Line 29
 		'spec' =
-		    %% Line 28
-		    [{{'showFloatImpl',1},[{'type',28,'fun',[{'type',28,'product',[{'type',28,'float',[]}]}|[{'type',28,'string',[]}]]}]}],
-		%% Line 33
+		    %% Line 29
+		    [{{'showFloatImpl',1},[{'type',29,'fun',[{'type',29,'product',[{'type',29,'float',[]}]}|[{'type',29,'string',[]}]]}]}],
+		%% Line 34
 		'spec' =
-		    %% Line 33
-		    [{{'showNumImpl',1},[{'type',33,'fun',[{'type',33,'product',[{'type',33,'number',[]}]}|[{'type',33,'string',[]}]]}]}],
-		%% Line 40
+		    %% Line 34
+		    [{{'showNumImpl',1},[{'type',34,'fun',[{'type',34,'product',[{'type',34,'number',[]}]}|[{'type',34,'string',[]}]]}]}],
+		%% Line 41
 		'spec' =
-		    %% Line 40
-		    [{{'showCharImpl',1},[{'type',40,'fun',[{'type',40,'product',[{'type',40,'char',[]}]}|[{'type',40,'string',[]}]]}]}]]
+		    %% Line 41
+		    [{{'showCharImpl',1},[{'type',41,'fun',[{'type',41,'product',[{'type',41,'char',[]}]}|[{'type',41,'string',[]}]]}]}],
+		%% Line 50
+		'spec' =
+		    %% Line 50
+		    [{{'showAny',1},[{'type',50,'fun',[{'type',50,'product',[{'type',50,'any',[]}]}|[{'type',50,'string',[]}]]}]}]]
 'showIntImpl'/1 =
-    %% Line 25
+    %% Line 26
     fun (_0) ->
 	call 'erlang':'integer_to_list'
 	    (_0)
 'showFloatImpl'/1 =
-    %% Line 29
+    %% Line 30
     fun (_0) ->
 	let <_1> =
-	    call %% Line 30
-		 'erlang':%% Line 30
+	    call %% Line 31
+		 'erlang':%% Line 31
 			  'abs'
 		(_0)
 	in  let <_2> =
-		apply %% Line 30
+		apply %% Line 31
 		      'precision'/2
-		    (_1, %% Line 30
+		    (_1, %% Line 31
 			 0)
-	    in  %% Line 30
+	    in  %% Line 31
 		call 'erlang':'float_to_list'
 		    (_0, [{'decimals',_2}|[]])
 'showNumImpl'/1 =
-    %% Line 34
+    %% Line 35
     fun (_0) ->
 	case _0 of
 	  <N>
 	      when call 'erlang':'is_integer'
 		    (_0) ->
-	      %% Line 35
+	      %% Line 36
 	      apply 'showIntImpl'/1
 		  (N)
-	  %% Line 36
+	  %% Line 37
 	  <N>
 	      when call 'erlang':'is_float'
 		    (_0) ->
-	      %% Line 37
+	      %% Line 38
 	      apply 'showFloatImpl'/1
 		  (N)
 	  ( <_1> when 'true' ->
@@ -69,26 +74,26 @@ module 'Show' ['module_info'/0,
 	    -| ['compiler_generated'] )
 	end
 'showCharImpl'/1 =
-    %% Line 41
+    %% Line 42
     fun (_0) ->
 	[_0|[]]
 'precision'/2 =
-    %% Line 43
+    %% Line 44
     fun (_0,_1) ->
 	let <_2> =
-	    call %% Line 44
-		 'erlang':%% Line 44
+	    call %% Line 45
+		 'erlang':%% Line 45
 			  'trunc'
 		(_0)
-	in  %% Line 44
+	in  %% Line 45
 	    case <> of
-	      %% Line 45
+	      %% Line 46
 	      <>
 		  when call 'erlang':'=='
 			(_0,
 			 _2) ->
 		  _1
-	      %% Line 46
+	      %% Line 47
 	      <> when 'true' ->
 		  let <_4> =
 		      call 'erlang':'*'
@@ -99,6 +104,14 @@ module 'Show' ['module_info'/0,
 		      in  apply 'precision'/2
 			      (_4, _3)
 	    end
+'showAny'/1 =
+    %% Line 51
+    fun (_0) ->
+	let <_1> =
+	    call 'io_lib':'format'
+		([126|[112]], [_0|[]])
+	in  call 'lists':'flatten'
+		(_1)
 'module_info'/0 =
     fun () ->
 	call 'erlang':'get_module_info'
