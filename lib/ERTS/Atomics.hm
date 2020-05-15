@@ -36,7 +36,7 @@ type AtomicsInfo =
 foreign import new :: Integer -> Boolean -> IO AtomicsRef
 
 -- | Set atomic to Value.
-put :: forall a. AtomicsRef -> Integer -> a -> IO Unit
+put :: forall a. AtomicsRef -> Integer -> a -> IO ()
 put = ffiIO3 "atomics" "put"
 
 -- | Read atomic value.
@@ -44,7 +44,7 @@ get :: forall a.  AtomicsRef -> Integer -> IO a
 get = ffiIO2 "atomics" "get"
 
 -- | Add Incr to atomic.
-add :: AtomicsRef -> Integer -> Integer -> IO Unit
+add :: AtomicsRef -> Integer -> Integer -> IO ()
 add = ffiIO3 "atomics" "add"
 
 -- | Atomic addition and return of the result.
@@ -52,7 +52,7 @@ addGet :: AtomicsRef -> Integer -> Integer -> IO Integer
 addGet = ffiIO3 "atomics" "add_get"
 
 -- | Subtract Decr from atomic.
-sub :: AtomicsRef -> Integer -> Integer -> IO Unit
+sub :: AtomicsRef -> Integer -> Integer -> IO ()
 sub = ffiIO3 "atomics" "sub"
 
 -- | Atomic subtraction and return of the result.

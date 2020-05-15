@@ -46,6 +46,6 @@ get2 = ffiIO2 "persistent_term" "get"
 info :: IO PersistentTermInfo
 info = ffiIO0 "persistent_term" "info"
 
-put :: forall k v. k -> v -> IO Unit
+put :: forall k v. k -> v -> IO ()
 put = ffiIO2 "persistent_term" "put"
 

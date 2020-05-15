@@ -60,16 +60,16 @@ foreign import ensureAllStarted :: Application -> IO (List Application)
 
 foreign import ensureAllRestarted :: Application -> RestartType -> IO (List Application)
 
-foreign import start :: Application -> IO Unit
+foreign import start :: Application -> IO ()
 
-foreign import restart :: Application -> RestartType -> IO Unit
+foreign import restart :: Application -> RestartType -> IO ()
 
-foreign import stop :: Application -> IO Unit
+foreign import stop :: Application -> IO ()
 
 load/1,
 load/2,
 
-foreign import unload :: Application -> IO Unit
+foreign import unload :: Application -> IO ()
 
 takeover/2
 
