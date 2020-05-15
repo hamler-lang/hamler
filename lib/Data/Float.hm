@@ -14,58 +14,86 @@
 -----------------------------------------------------------------------------
 module Data.Float where
 
+import Foreign (ffi1, ffi2)
+
 -- | An alias for `Float`
 type Double = Float
 
-foreign import abs :: Float -> Float
+abs :: Float -> Float
+abs = ffi1 "erlang" "abs"
 
-foreign import acos :: Float -> Float
+acos :: Float -> Float
+acos = ffi1 "math" "acos"
 
-foreign import acosh :: Float -> Float
+acosh :: Float -> Float
+acosh = ffi1 "math" "acosh"
 
-foreign import asin :: Float -> Float
+asin :: Float -> Float
+asin = ffi1 "math" "asin"
 
-foreign import asinh :: Float -> Float
+asinh :: Float -> Float
+asinh = ffi1 "math" "asinh"
 
-foreign import atan :: Float -> Float
+atan :: Float -> Float
+atan = ffi1 "math" "atan"
 
-foreign import atan2 :: Float -> Float -> Float
+atan2 :: Float -> Float -> Float
+atan2 = ffi2 "math" "atan2"
 
-foreign import atanh :: Float -> Float
+atanh :: Float -> Float
+atanh = ffi1 "math" "atanh"
 
-foreign import ceil :: Float -> Float
+ceil :: Float -> Float
+ceil = ffi1 "math" "ceil"
 
-foreign import cos :: Float -> Float
+cos :: Float -> Float
+cos = ffi1 "math" "cos"
 
-foreign import cosh :: Float -> Float
+cosh :: Float -> Float
+cosh = ffi1 "math" "cosh"
 
-foreign import erf :: Float -> Float
+erf :: Float -> Float
+erf = ffi1 "math" "erf"
 
-foreign import erfc :: Float -> Float
+erfc :: Float -> Float
+erfc = ffi1 "math" "erfc"
 
-foreign import exp :: Float -> Float
+exp :: Float -> Float
+exp = ffi1 "math" "exp"
 
-foreign import floor :: Float -> Float
+floor :: Float -> Float
+floor = ffi1 "math" "floor"
 
-foreign import fmod :: Float -> Float -> Float
+fmod :: Float -> Float -> Float
+fmod = ffi2 "math" "fmod"
 
-foreign import log :: Float -> Float
+log :: Float -> Float
+log = ffi1 "math" "log"
 
-foreign import log2 :: Float -> Float
+log2 :: Float -> Float
+log2 = ffi1 "math" "log2"
 
-foreign import log10 :: Float -> Float
+log10 :: Float -> Float
+log10 = ffi1 "math" "log10"
 
-foreign import pi :: Float
+pi :: Float
+pi = 3.1415926535897932
 
-foreign import pow :: Float -> Float -> Float
+pow :: Float -> Float -> Float
+pow = ffi2 "math" "pow"
 
-foreign import sin :: Float -> Float
+sin :: Float -> Float
+sin = ffi1 "math" "sin"
 
-foreign import sinh :: Float -> Float
+sinh :: Float -> Float
+sinh = ffi1 "math" "sinh"
 
-foreign import sqrt :: Float -> Float
+sqrt :: Float -> Float
+sqrt = ffi1 "math" "sqrt"
 
-foreign import tan :: Float -> Float
+tan :: Float -> Float
+tan = ffi1 "math" "tan"
 
-foreign import tanh :: Float -> Float
+tanh :: Float -> Float
+tanh = ffi1 "math" "tanh"
 
