@@ -18,10 +18,10 @@ import Foreign (ffi2)
 
 -- | An alias for `BitString`. A `Binary` in erlang is a `Bitstring`,
 -- | which length is evenly divisible by 8.
-type Binary = BitString
+-- type Binary = BitString
 
 -- | A `Bitstring` in Erlang is a sequence of zero or more bits.
-foreign import data BitString :: Type
+foreign import data Binary :: Type
 
 -- | Split a binary into a list binaries.
 split :: Binary -> Binary -> List Binary
