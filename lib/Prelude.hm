@@ -36,7 +36,7 @@ module Prelude
   , module System.IO
   ) where
 
-import Data.Binary (Binary, BitString)
+import Data.Binary (Binary)
 import Data.Bits (band, bor, bxor, bnot, bsl, bsr)
 import Data.Bool (Bool, (&&), (||), and, or, not, otherwise)
 import Data.Either (Either(..))
