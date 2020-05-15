@@ -26,7 +26,7 @@ import           Control.Monad.State
 import           Control.Monad.Writer
 import           Data.List                          as LL
 import           Data.Map                           as M
-import           Data.Text                          (Text, unpack)
+import           Data.Text                          (Text, unpack, toLower)
 import qualified Data.Text.Lazy                     as L
 import           Language.CoreErlang                as E
 import           Language.Hamler.Util
@@ -346,6 +346,67 @@ binderToPat (NamedBinder _ i b) = do
   modify (\x -> x & localVar  %~ M.insert (runIdent i) index1)
   modify (\x -> x & binderVarIndex %~ (+1))
   binderToPat b
+binderToPat (MapBinder _ xs) = do
+  xs' <- forM xs $ \(x,y) -> do
+    x' <- binderToKey x
+    y' <- binderToPat y
+    return (x',y')
+  return $ PMap $ Map xs'
+binderToPat (BinaryBinder _ xs) = do
+  xs' <- forM xs $ \(x,y,z) -> do
+    x' <- binderToPat x
+    let (a,b,c,d) = paToCore $ (y,z)
+    return $ Bitstring x' [a,b,c,d]
+  return $ PBinary xs'
+
+
+paToCore :: (Integer,[Text]) -> (Exprs,Exprs,Exprs,Exprs)
+paToCore (i,xs) = if "Integer" `elem` xs
+                  then ( Expr (Constr $ Lit $ LInt i )
+                       , Expr $ Constr $ Lit $ LInt 1
+                       , Expr $ Constr $ Lit $ LAtom $ Atom "integer"
+                       , Expr $ Constr $ E.List $ tText $ LL.delete "Integer" xs
+                       )
+                  else if "Binary" `elem` xs
+                       then ( Expr (Constr $ Lit $ LInt i )
+                            , Expr $ Constr $ Lit $ LInt 8
+                            , Expr $ Constr $ Lit $ LAtom $ Atom "binary"
+                            , Expr $ Constr $ E.List $ tText $ LL.delete "Binary" xs
+                            )
+                       else ( Expr (Constr $ Lit $ LInt i )
+                            , Expr $ Constr $ Lit $ LInt 1
+                            , Expr $ Constr $ Lit $ LAtom $ Atom "integer"
+                            , Expr $ Constr $ E.List $ tText $ xs
+                            )
+
+
+tText :: [Text] -> List Exprs
+tText xs = E.L $ fmap (Expr . Constr . Lit . LAtom . Atom . unpack ) $ cMark "big" endianness . cMark "unsigned" signedness $ fmap toLower xs
+
+signedness :: [Text]
+signedness = ["signed","unsigned"]
+
+endianness :: [Text]
+endianness = ["big","little","native"]
+
+cMark :: Text -> [Text] -> [Text] -> [Text]
+cMark def ts input = case Prelude.filter id $ fmap (`elem` ts) input of
+                       [] -> def:input
+                       [x] -> input
+                       _  -> error $ show input
+
+
+
+binderToKey :: Binder C.Ann -> Translate Key
+binderToKey (LiteralBinder _ (NumericLiteral (Left i))) =return $ KLit $ LInt i
+binderToKey (LiteralBinder _ (NumericLiteral (Right i))) =return $ KLit $ LFloat i
+binderToKey (LiteralBinder _ (StringLiteral s))          =return $ KLit $ LString $ decodePPS s
+binderToKey (LiteralBinder _ (CharLiteral c))           = return $ KLit $ LChar c
+binderToKey (LiteralBinder _ (BooleanLiteral True))      = return $ KLit $ LAtom (Atom "true")
+binderToKey (LiteralBinder _ (BooleanLiteral False))    = return $ KLit $ LAtom (Atom "false")
+binderToKey x = error $ show x
+
+
 
 -- | Literal Binder to Pat
 literalBinderToPat :: L.Literal (C.Binder C.Ann) -> Translate E.Pat

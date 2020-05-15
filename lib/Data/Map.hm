@@ -102,7 +102,7 @@ values = ffi1 "maps" "values"
 
 -- | Builds a map from a list of key-value tuples.
 fromList :: forall k v. [(k,v)] -> Map k v
-fromList = ffi1 "maps" "form_list"
+fromList = ffi1 "maps" "from_list"
 
 -- | Returns a list of pairs representing the key-value associations of Map.
 toList :: forall k v. Map k v -> [(k,v)]

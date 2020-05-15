@@ -13,8 +13,8 @@
 --
 -----------------------------------------------------------------------------
 module Data.Function
-  ( compose, (<<)
-  , composeFlipped, (>>)
+  ( compose   --, (<<)
+  , composeFlipped  ---, (>>)
   , flip, const
   , apply, ($)
   , pipeline, (|>)
@@ -25,12 +25,12 @@ module Data.Function
 compose :: forall a b c. (b -> c) -> (a -> b) -> (a -> c)
 compose f g = \x -> f (g x)
 
-infixr 9 compose as <<
+-- infixr 9 compose as <<
 
 composeFlipped :: forall a b c. (a -> b) -> (b -> c) -> (a -> c)
 composeFlipped f g = compose g f
 
-infixr 9 composeFlipped as >>
+-- infixr 9 composeFlipped as >>
 
 flip :: forall a b c. (a -> b -> c) -> b -> a -> c
 flip f b a = f a b
