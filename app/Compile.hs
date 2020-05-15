@@ -169,6 +169,9 @@ buildlib bl = do
   if r
     then return ()
     else createDirectory tpath
+
+  recErlc (dir <> "/lib")
+
   list <- findFile1 ".beam" tpath
   forM_ list $ \fp -> do
     SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
@@ -280,4 +283,22 @@ gethmFiles basePath = do
               then return [tp]
                    else return []
   return $ concat r
+
+
+
+recErlc :: FilePath -> IO ()
+recErlc fp = do
+  ls <- listDirectory fp
+  forM_ ls $ \f -> do
+    let tp = fp ++ "/" ++ f
+    res <- doesDirectoryExist tp
+    if res
+      then recErlc tp
+      else do
+      if (take 4 $ reverse tp) == "lre."
+        then do
+        SS.shelly $ SS.command_ "erlc" ["-o" ,T.pack fp] [ "+to_core" , T.pack $ tp]
+        return ()
+        else
+        return ()
 
