@@ -35,13 +35,13 @@ foreign import new :: Integer -> [CountersOpt] -> IO CountersRef
 get :: CountersRef -> Integer -> IO Integer
 get = ffiIO2 "counters" "get"
 
-add :: CountersRef -> Integer -> Integer -> IO Unit
+add :: CountersRef -> Integer -> Integer -> IO ()
 add = ffiIO3 "counters" "add"
 
-sub :: CountersRef -> Integer -> Integer -> IO Unit
+sub :: CountersRef -> Integer -> Integer -> IO ()
 sub = ffiIO3 "counters" "sub"
 
-put :: CountersRef -> Integer -> Integer -> IO Unit
+put :: CountersRef -> Integer -> Integer -> IO ()
 put = ffiIO3 "counters" "put"
 
 info :: CountersRef -> IO CountersInfo

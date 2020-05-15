@@ -19,19 +19,19 @@ import Data.Unit (Unit)
 
 type FilePath = String
 
-foreign import mkdir :: FilePath -> IO Unit
+foreign import mkdir :: FilePath -> IO ()
 
 {-
 -- Actions on directories
-foreign import createDirectory :: FilePath -> IO Unit
-foreign import createDirectoryIfMissing :: Boolean -> FilePath -> IO Unit
-foreign import removeDirectory :: FilePath -> IO Unit
-foreign import removeDirectoryRecursive :: FilePath -> IO Unit
-foreign import removePathForcably :: FilePath -> IO Unit
-foreign import nameDirectory :: FilePath -> FilePath -> IO Unit
+foreign import createDirectory :: FilePath -> IO ()
+foreign import createDirectoryIfMissing :: Boolean -> FilePath -> IO ()
+foreign import removeDirectory :: FilePath -> IO ()
+foreign import removeDirectoryRecursive :: FilePath -> IO ()
+foreign import removePathForcably :: FilePath -> IO ()
+foreign import nameDirectory :: FilePath -> FilePath -> IO ()
 foreign import listDirectory :: FilePath -> [FilePath]
 foreign import getCurrentDirectory :: IO FilePath
-foreign import setCurrentDirectory :: FilePath -> IO Unit
+foreign import setCurrentDirectory :: FilePath -> IO ()
 
 -- Pre-defined directories
 foreign import getHomeDirectory :: IO FilePath
@@ -39,10 +39,10 @@ foreign import getUserDocumentsDirectory :: IO FilePath
 foreign import getTemporaryDirectory :: IO FilePath
 
 -- Actions on files
-foreign import removeFile :: FilePath -> IO Unit
-foreign import nameFile :: FilePath -> FilePath -> IO Unit
-foreign import namePath :: FilePath -> FilePath -> IO Unit
-foreign import copyFile :: FilePath -> FilePath -> IO Unit
+foreign import removeFile :: FilePath -> IO ()
+foreign import nameFile :: FilePath -> FilePath -> IO ()
+foreign import namePath :: FilePath -> FilePath -> IO ()
+foreign import copyFile :: FilePath -> FilePath -> IO ()
 foreign import getFileSize :: FilePath -> IO Integer
 
 foreign import makeAbsolute :: FilePath -> IO FilePath
@@ -53,9 +53,9 @@ foreign import doesFileExist :: FilePath -> IO Boolean
 foreign import doesDirectoryExist :: FilePath -> IO Boolean
 
 -- Symbolic links
-foreign import createFileLink :: FilePath -> FilePath -> IO Unit
-foreign import createDirectoryLink :: FilePath -> FilePath -> IO Unit
-foreign import removeDirectoryLink :: FilePath -> IO Unit
+foreign import createFileLink :: FilePath -> FilePath -> IO ()
+foreign import createDirectoryLink :: FilePath -> FilePath -> IO ()
+foreign import removeDirectoryLink :: FilePath -> IO ()
 foreign import pathIsSymbolicLink :: FilePath -> IO Boolean
 foreign import getSymbolicLinkTarget :: FilePath -> IO FilePath
 
@@ -74,14 +74,14 @@ emptyPermissions = { readable : false
                    }
 
 foreign import getPermissions :: FilePath -> IO Permissions
-foreign import setPermissions :: FilePath -> Permissions -> IO Unit
-foreign import copyPermissions :: FilePath -> FilePath -> IO Unit
+foreign import setPermissions :: FilePath -> Permissions -> IO ()
+foreign import copyPermissions :: FilePath -> FilePath -> IO ()
 
 -- timestamps
 foreign import getAccessTime :: FilePath -> IO UTCTime
 foreign import getModificationTime :: FilePath -> IO UTCTime
-foreign import setAccessTime :: FilePath -> UTCTime -> IO Unit
-foreign import setModificationTime :: FilePath -> UTCTime -> IO Unit
+foreign import setAccessTime :: FilePath -> UTCTime -> IO ()
+foreign import setModificationTime :: FilePath -> UTCTime -> IO ()
 
 -- $PATH methods
 foreign import getSearchPath :: IO [FilePath]

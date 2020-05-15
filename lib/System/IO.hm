@@ -26,11 +26,11 @@ import Data.Unit (Unit)
 type FilePath = String
 
 -- Simple IO operations
-foreign import print :: String -> IO Unit
-foreign import printf :: String -> IO Unit
-foreign import println :: String -> IO Unit
+foreign import print :: String -> IO ()
+foreign import printf :: String -> IO ()
+foreign import println :: String -> IO ()
 
 -- Simple File operations
 foreign import readFile :: FilePath -> IO Binary
-foreign import writeFile :: FilePath -> Binary -> IO Unit
-foreign import appendFile :: FilePath -> Binary -> IO Unit
+foreign import writeFile :: FilePath -> Binary -> IO ()
+foreign import appendFile :: FilePath -> Binary -> IO ()

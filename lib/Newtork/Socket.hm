@@ -126,16 +126,16 @@ foreign import bindBroadcast :: Socket -> IO PortNumber
 foreign import bindLoopback :: Socket -> IO PortNumber
 
 -- | Cancel an asynchronous request.
-foreign import cancel :: Socket -> SelectInfo -> IO Unit
+foreign import cancel :: Socket -> SelectInfo -> IO ()
 
 -- | Closes the socket.
-foreign import close :: Socket -> IO Unit
+foreign import close :: Socket -> IO ()
 
 -- | Connects to a remote socket at address specied by the SockAddr argument.
-foreign import connect :: Socket -> SockAddr -> IO Unit
+foreign import connect :: Socket -> SockAddr -> IO ()
 
 -- | Connects to a remote socket at address specied by the SockAddr argument.
-foreign import connectTimeout :: Socket -> SockAddr -> Timeout -> IO Unit
+foreign import connectTimeout :: Socket -> SockAddr -> Timeout -> IO ()
 
 -- | Get the address of the peer connected to the socket.
 foreign import getPeerName :: Socket -> IO SockAddr
@@ -144,9 +144,9 @@ foreign import getPeerName :: Socket -> IO SockAddr
 foreign import getSockName :: Socket -> IO SockAddr
 
 -- | Listen for connections on a socket.
-foreign import listen :: Socket -> IO Unit
+foreign import listen :: Socket -> IO ()
 
-foreign import listenWithBacklog :: Socket -> Integer -> IO Unit
+foreign import listenWithBacklog :: Socket -> Integer -> IO ()
 
 -- | The number of active sockets.
 foreign import numberOf :: IO Integer
@@ -166,10 +166,10 @@ foreign import recvWithTimeout :: Socket -> Integer -> Timeout -> IO Binary
 foreign import recvFrom :: Socket -> (Maybe SockAddr, Binary)
 
 -- | Send a message on a connected socket.
-foreign import send :: Socket -> Binary -> IO Unit
+foreign import send :: Socket -> Binary -> IO ()
 
 -- | Send a message on a socket, to the specified destination.
-foreign import sendTo :: Socket -> Binary -> SockAddr -> IO Unit
+foreign import sendTo :: Socket -> Binary -> SockAddr -> IO ()
 
 -- | Shut down all or part of a full-duplex connection.
-foreign import shutdown :: Socket -> String -> IO Unit
+foreign import shutdown :: Socket -> String -> IO ()

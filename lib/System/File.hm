@@ -30,5 +30,5 @@ foreign import data FileHandle :: Type
 
 foreign import open :: Filename -> OpenMode -> IO FileHandle
 foreign import read :: FileHandle -> Integer -> IO (Maybe Binary)
-foreign import write :: FileHandle -> Binary -> IO Unit
-foreign import close :: FileHandle -> IO Unit
+foreign import write :: FileHandle -> Binary -> IO ()
+foreign import close :: FileHandle -> IO ()
