@@ -13,7 +13,7 @@
 --
 -----------------------------------------------------------------------------
 module Data.Show
-  ( class Show, show
+  ( class Show, show, showAny
   ) where
 
 -- | The `Show` type class represents those types which can be converted into
@@ -44,3 +44,5 @@ instance Show String where
 foreign import showIntImpl :: Integer -> String
 foreign import showFloatImpl :: Float -> String
 foreign import showCharImpl :: Char -> String
+
+foreign import showAny :: forall a. a -> String
