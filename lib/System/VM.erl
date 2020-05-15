@@ -9,7 +9,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Erlang VM Module.
+%% The Erlang VM FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('VM').

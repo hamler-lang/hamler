@@ -13,3 +13,30 @@
 %%
 %%---------------------------------------------------------------------------
 -module('Env').
+
+-export([ getAllEnv/0
+        , getEnv/1
+        , lookupEnv/1
+        , setEnv/2
+        , unsetEnv/1
+        ]).
+
+getAllEnv() ->
+    [list_to_tuple(string:split(Env, "=")) || Env <- os:getenv()].
+
+getEnv(Name) ->
+    case os:getenv(Name) of
+        false -> error("EnvDoesNotExistError");
+        Value -> Value
+    end.
+
+lookupEnv(Name) ->
+    case os:getenv(Name) of
+        false -> {'Nothing'};
+        Value -> {'Just', Value}
+    end.
+
+setEnv(Name, Value) -> os:putenv(Name, Value).
+
+unsetEnv(Name) -> os:unsetenv(Name).
+

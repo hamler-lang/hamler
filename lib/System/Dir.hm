@@ -1,11 +1,27 @@
-module System.Directory where
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  System.Dir
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The System Directory module.
+--
+-----------------------------------------------------------------------------
+module System.Dir where
 
-import Data.Unit (Unit)
-import Data.Time (UTCTime)
 import Control.Monad (IO)
+import Data.Unit (Unit)
 
 type FilePath = String
 
+foreign import mkdir :: FilePath -> IO Unit
+
+{-
 -- Actions on directories
 foreign import createDirectory :: FilePath -> IO Unit
 foreign import createDirectoryIfMissing :: Boolean -> FilePath -> IO Unit
@@ -80,4 +96,4 @@ foreign import addExtension :: FilePath -> String -> FilePath
 -- filename/directory functions
 foreign import getFileName :: FilePath -> String
 foreign import combine :: FilePath -> FilePath -> FilePath
-
+-}

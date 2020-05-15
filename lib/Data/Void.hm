@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  System.VM
+-- Module      :  Data.Void
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,14 +9,21 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Erlang VM module.
+-- The Void datatype.
 --
 -----------------------------------------------------------------------------
-module System.VM where
+module Data.Void (Void) where
 
-import Control.Monad (IO)
+-- import Data.Show (class Show)
 
--- foreign import info :: IO VmInfo
+newtype Void = Void Void
 
-foreign import otpRelease :: IO String
+{-
+instance Show Void where
+  show = absurd
 
+absurd :: forall a. Void -> a
+absurd a = spin a
+  where
+  spin (Void b) = spin b
+-}

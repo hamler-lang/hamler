@@ -1,0 +1,191 @@
+module 'OS' ['getPid'/0,
+	     'module_info'/0,
+	     'module_info'/1,
+	     'osFamily'/0,
+	     'osName'/0,
+	     'runCmd'/1,
+	     'setSignal'/2,
+	     'version'/0]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[79|[83|[46|[101|[114|[108]]]]]],1}],
+		%% Line 25
+		'spec' =
+		    %% Line 25
+		    [{{'getPid',0},[{'type',25,'fun',[{'type',25,'product',[]}|[{'type',25,'integer',[]}]]}]}],
+		%% Line 28
+		'spec' =
+		    %% Line 28
+		    [{{'osName',0},[{'type',28,'fun',[{'type',28,'product',[]}|[{'type',28,'string',[]}]]}]}],
+		%% Line 32
+		'spec' =
+		    %% Line 32
+		    [{{'osFamily',0},[{'type',32,'fun',[{'type',32,'product',[]}|[{'type',32,'string',[]}]]}]}],
+		%% Line 39
+		'spec' =
+		    %% Line 39
+		    [{{'runCmd',1},[{'type',39,'fun',[{'type',39,'product',[{'type',39,'string',[]}]}|[{'type',39,'string',[]}]]}]}],
+		%% Line 42
+		'spec' =
+		    %% Line 42
+		    [{{'version',0},[{'type',42,'fun',[{'type',42,'product',[]}|[{'type',42,'string',[]}]]}]}]]
+'getPid'/0 =
+    %% Line 26
+    fun () ->
+	let <_0> =
+	    call 'os':'getpid'
+		()
+	in  call 'erlang':'list_to_integer'
+		(_0)
+'osName'/0 =
+    %% Line 29
+    fun () ->
+	let <_0> =
+	    call %% Line 30
+		 'os':%% Line 30
+		      'type'
+		()
+	in  let <_1> =
+		call %% Line 30
+		     'erlang':%% Line 30
+			      'element'
+		    (%% Line 30
+		     2, _0)
+	    in  %% Line 30
+		call 'erlang':'atom_to_list'
+		    (_1)
+'osFamily'/0 =
+    %% Line 33
+    fun () ->
+	let <_0> =
+	    call %% Line 34
+		 'os':%% Line 34
+		      'type'
+		()
+	in  let <_1> =
+		call %% Line 34
+		     'erlang':%% Line 34
+			      'element'
+		    (%% Line 34
+		     1, _0)
+	    in  %% Line 34
+		call 'erlang':'atom_to_list'
+		    (_1)
+'setSignal'/2 =
+    %% Line 36
+    fun (_0,_1) ->
+	let <_3> =
+	    apply %% Line 37
+		  'destruct'/1
+		(_0)
+	in  let <_2> =
+		apply %% Line 37
+		      'destruct'/1
+		    (_1)
+	    in  %% Line 37
+		call 'os':'set_signal'
+		    (_3, _2)
+'runCmd'/1 =
+    %% Line 40
+    fun (_0) ->
+	call 'os':'cmd'
+	    (_0)
+'version'/0 =
+    %% Line 43
+    fun () ->
+	%% Line 44
+	case call 'os':'version'
+		 () of
+	  %% Line 45
+	  <{Major,Minor,Release}> when 'true' ->
+	      let <_5> =
+		  letrec
+		      'lc$^0'/1 =
+			  %% Line 46
+			  fun (_2) ->
+			      case _2 of
+				<[I|_1]> when 'true' ->
+				    let <_3> =
+					call 'erlang':'integer_to_list'
+					    (I)
+				    in  let <_4> =
+					    apply 'lc$^0'/1
+						(_1)
+					in  ( [_3|_4]
+					      -| ['compiler_generated'] )
+				<[]> when 'true' ->
+				    []
+				( <_7> when 'true' ->
+				      ( primop 'match_fail'
+					    ({'function_clause',_7})
+					-| [{'function_name',{'lc$^0',1}}] )
+				  -| ['compiler_generated'] )
+			      end
+		  in  %% Line 46
+		      apply 'lc$^0'/1
+			  ([Major|[Minor|[Release|[]]]])
+	      in  %% Line 46
+		  call 'string':'join'
+		      (_5)
+	  %% Line 47
+	  <VersionString> when 'true' ->
+	      VersionString
+	end
+'destruct'/1 =
+    %% Line 50
+    fun (_0) ->
+	case _0 of
+	  <{'Sighup'}> when 'true' ->
+	      'sighup'
+	  %% Line 51
+	  <{'Sigquit'}> when 'true' ->
+	      'sigquit'
+	  %% Line 52
+	  <{'Sigabrt'}> when 'true' ->
+	      'sigabrt'
+	  %% Line 53
+	  <{'Sigalrm'}> when 'true' ->
+	      'sigalrm'
+	  %% Line 54
+	  <{'Sigterm'}> when 'true' ->
+	      'sigterm'
+	  %% Line 55
+	  <{'Sigusr1'}> when 'true' ->
+	      'sigusr1'
+	  %% Line 56
+	  <{'Sigusr2'}> when 'true' ->
+	      'sigusr2'
+	  %% Line 57
+	  <{'Sigchld'}> when 'true' ->
+	      'sigchld'
+	  %% Line 58
+	  <{'Sigstop'}> when 'true' ->
+	      'sigstop'
+	  %% Line 59
+	  <{'Sigtstp'}> when 'true' ->
+	      'sigtstp'
+	  %% Line 61
+	  <{'SigDefault'}> when 'true' ->
+	      'default'
+	  %% Line 62
+	  <{'SigHandle'}> when 'true' ->
+	      'handle'
+	  %% Line 63
+	  <{'SigIgnore'}> when 'true' ->
+	      'ignore'
+	  ( <_1> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_1})
+		  -| [{'function_name',{'destruct',1}}] )
+	    -| ['compiler_generated'] )
+	end
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('OS')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('OS', _0)
+end

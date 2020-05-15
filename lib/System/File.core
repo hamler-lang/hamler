@@ -1,0 +1,117 @@
+module 'File' ['close'/1,
+	       'module_info'/0,
+	       'module_info'/1,
+	       'open'/2,
+	       'read'/2,
+	       'write'/2]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[70|[105|[108|[101|[46|[101|[114|[108]]]]]]]],1}]]
+'open'/2 =
+    %% Line 23
+    fun (_0,_1) ->
+	let <_2> =
+	    apply %% Line 24
+		  'modes'/1
+		(_1)
+	in  let <_3> =
+		call %% Line 24
+		     'file':%% Line 24
+			    'open'
+		    (_0, _2)
+	    in  %% Line 24
+		apply 'return'/1
+		    (_3)
+'read'/2 =
+    %% Line 26
+    fun (_0,_1) ->
+	%% Line 27
+	case call 'file':'read'
+		 (_0, _1) of
+	  %% Line 28
+	  <'eof'> when 'true' ->
+	      {'Nothing'}
+	  %% Line 29
+	  <{'ok',Data}> when 'true' ->
+	      {'Just',Data}
+	  %% Line 30
+	  <{'error',Reason}> when 'true' ->
+	      call 'erlang':'error'
+		  (Reason)
+	  ( <_2> when 'true' ->
+		primop 'match_fail'
+		    ({'case_clause',_2})
+	    -| ['compiler_generated'] )
+	end
+'write'/2 =
+    %% Line 33
+    fun (_0,_1) ->
+	let <_2> =
+	    call %% Line 34
+		 'file':%% Line 34
+			'write'
+		(_0, _1)
+	in  %% Line 34
+	    apply 'return'/1
+		(_2)
+'close'/1 =
+    %% Line 36
+    fun (_0) ->
+	let <_1> =
+	    call %% Line 37
+		 'file':%% Line 37
+			'close'
+		(_0)
+	in  %% Line 37
+	    apply 'return'/1
+		(_1)
+'modes'/1 =
+    %% Line 39
+    fun (_0) ->
+	case _0 of
+	  <{'ReadMode'}> when 'true' ->
+	      ['read']
+	  %% Line 40
+	  <{'WriteMode'}> when 'true' ->
+	      ['write']
+	  %% Line 41
+	  <{'AppendMode'}> when 'true' ->
+	      ['append']
+	  %% Line 42
+	  <{'ReadWriteMode'}> when 'true' ->
+	      ['read'|['write']]
+	  ( <_1> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_1})
+		  -| [{'function_name',{'modes',1}}] )
+	    -| ['compiler_generated'] )
+	end
+'return'/1 =
+    %% Line 44
+    fun (_0) ->
+	case _0 of
+	  <'ok'> when 'true' ->
+	      'ok'
+	  %% Line 45
+	  <{'ok',IoDevice}> when 'true' ->
+	      IoDevice
+	  %% Line 46
+	  <{'error',Reason}> when 'true' ->
+	      call 'erlang':'error'
+		  (Reason)
+	  ( <_1> when 'true' ->
+		( primop 'match_fail'
+		      ({'function_clause',_1})
+		  -| [{'function_name',{'return',1}}] )
+	    -| ['compiler_generated'] )
+	end
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('File')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('File', _0)
+end

@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Foldable typeclasss.
+-- The Foldable typeclass.
 --
 -----------------------------------------------------------------------------
 module Data.Foldable
