@@ -29,3 +29,4 @@ output/
 stack.yaml.lock
 bin/
 .swp
+*.core
