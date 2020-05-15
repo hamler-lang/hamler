@@ -17,33 +17,27 @@ module System.Random where
 import Control.Monad (IO)
 
 class Random a where
-  randomIO :: IO a
-  randomRIO :: (a, a) -> IO a
-
-instance Random Boolean where
-  randomIO  = randomBooleanImp
-  randomRIO = randomRBooleanImp
-
-foreign import randomBooleanImp :: IO Boolean
-foreign import randomRBooleanImp :: (Boolean, Boolean) -> IO Boolean
+  randomIO :: a -> IO a
+  randomRIO :: a -> a -> IO a
 
 instance Random Char where
-  randomIO  = randomCharImp
-  randomRIO = randomRCharImp
+  randomIO  = randomCharImpl
+  randomRIO = randomRCharImpl
 
-foreign import randomCharImp :: IO Char
-foreign import randomRCharImp :: (Char, Char) -> IO Char
+foreign import randomCharImpl :: Char -> IO Char
+foreign import randomRCharImpl :: Char -> Char -> IO Char
 
 instance Random Integer where
-  randomIO  = randomIntegerImp
-  randomRIO = randomRIntegerImp
+  randomIO  = randomIntegerImpl
+  randomRIO = randomRIntegerImpl
 
-foreign import randomIntegerImp :: IO Integer
-foreign import randomRIntegerImp :: (Integer, Integer) -> IO Integer
+foreign import randomIntegerImpl  :: Integer -> IO Integer
+foreign import randomRIntegerImpl :: Integer -> Integer -> IO Integer
 
 instance Random Float where
-  randomIO  = randomFloatImp
-  randomRIO = randomRFloatImp
+  randomIO  = randomFloatImpl
+  randomRIO = randomRFloatImpl
 
-foreign import randomFloatImp :: IO Float
-foreign import randomRFloatImp :: (Float, Float) -> IO Float
+foreign import randomFloatImpl  :: Float -> IO Float
+foreign import randomRFloatImpl :: Float -> Float -> IO Float
+

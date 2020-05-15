@@ -1,0 +1,40 @@
+module 'Error' ['catchException'/2,
+		'module_info'/0,
+		'module_info'/1,
+		'showErrorImpl'/1,
+		'throwException'/1]
+    attributes [%% Line 1
+		'file' =
+		    %% Line 1
+		    [{[69|[114|[114|[111|[114|[46|[101|[114|[108]]]]]]]]],1}]]
+'showErrorImpl'/1 =
+    %% Line 23
+    fun (_0) ->
+	let <_1> =
+	    call %% Line 24
+		 'io_lib':%% Line 24
+			  'format'
+		(%% Line 24
+		 [126|[112]], %% Line 24
+			      [_0|[]])
+	in  %% Line 24
+	    call 'lists':'flatten'
+		(_1)
+'throwException'/1 =
+    %% Line 26
+    fun (_0) ->
+	call 'erlang':'throw'
+	    (_0)
+'catchException'/2 =
+    %% Line 28
+    fun (_0,_1) ->
+	'ok'
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('Error')
+'module_info'/1 =
+    fun (_0) ->
+	call 'erlang':'get_module_info'
+	    ('Error', _0)
+end

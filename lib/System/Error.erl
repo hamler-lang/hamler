@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Dir
+%% Module      :  Error
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,15 +9,20 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Directory FFI module.
+%% The Error FFI module.
 %%
 %%---------------------------------------------------------------------------
--module('Dir').
+-module('Error').
 
--export([mkdir/1]).
+-export([showErrorImpl/1]).
 
-mkdir(FilePath) ->
-    case file:make_dir(FilePath) of
-        ok -> ok;
-        {error, Reason} -> error(Reason)
-    end.
+-export([ throwException/1
+        , catchException/2
+        ]).
+
+showErrorImpl(Error) ->
+    lists:flatten(io_lib:format("~p", [Error])).
+
+throwException(Ex) -> throw(Ex).
+
+catchException(_X, _Y) -> ok.

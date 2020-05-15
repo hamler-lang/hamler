@@ -1,0 +1,48 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  System.Error
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- Handle the system Error/Exception.
+--
+-----------------------------------------------------------------------------
+module System.Error where
+
+import Control.Applicative (pure)
+import Control.Monad (IO)
+import Data.Functor (map)
+import Data.Either (Either(..))
+import Data.Show (class Show)
+
+-- IO Exception
+foreign import data Error :: Type
+
+instance Show Error where
+  show = showErrorImpl
+
+foreign import showErrorImpl :: Error -> String
+
+throw :: forall a. String -> IO a
+throw s = throwException (s)
+
+try :: forall a. IO a -> IO (Either Error a)
+try action = catchException (\e -> pure (Left e)) (map Right action)
+
+{-
+foreign import error :: String -> Error
+
+foreign import message :: Error -> String
+
+foreign import name :: Error -> String
+-}
+
+foreign import throwException :: forall a. String -> IO a
+
+foreign import catchException :: forall a. (Error -> IO a) -> IO a -> IO a
+

@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Monoid typeclasss.
+-- The Monoid typeclass.
 --
 -----------------------------------------------------------------------------
 module Data.Monoid (class Monoid, mempty) where
