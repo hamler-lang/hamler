@@ -38,12 +38,12 @@ foreign import getStatus :: IO (InternalStatus, ProvidedStatus)
 boot :: IO [Binary]
 boot = ffiIO0 "init" "boot"
 
-restart :: IO Unit
+restart :: IO ()
 restart = ffiIO0 "init" "restart"
 
-reboot :: IO Unit
+reboot :: IO ()
 reboot = ffiIO0 "init" "reboot"
 
-stop :: IO Unit
+stop :: IO ()
 stop = ffiIO0 "init" "stop"
 

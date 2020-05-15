@@ -44,7 +44,7 @@ foreign import osFamily :: IO String
 foreign import runCmd :: String -> IO String
 
 -- | Enables or disables OS signals.
-foreign import setSignal :: Signal -> SigHandler -> IO Unit
+foreign import setSignal :: Signal -> SigHandler -> IO ()
 
 -- | Get OS Version.
 foreign import version :: IO String

@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Erlang Supervisor Module.
+-- The Erlang Supervisor Behaviour.
 --
 -----------------------------------------------------------------------------
 module Control.OTP.Supervisor where
