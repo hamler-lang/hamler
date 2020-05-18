@@ -1,0 +1,59 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Result
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Result datatype.
+--
+-----------------------------------------------------------------------------
+module Data.Result
+  ( Result(..)
+  , isOk
+  , isError
+  , fromOk
+  , fromError
+  ) where
+
+import Control.Applicative (class Applicative, pure)
+import Control.Monad (class Monad)
+import Data.Functor (class Functor, map)
+import Data.Function (error)
+
+data Result e a = Ok a | Error e
+
+instance Functor (Result e) where
+  map f (Ok a)    = Ok (f a)
+  map _ (Error e) = Error e
+
+instance Applicative (Result e) where
+  apply (Ok f) a    = map f a
+  apply (Error e) _ = Error e
+  pure = Ok
+
+instance Monad (Result e) where
+  bind (Ok a) k    = k a
+  bind (Error e) _ = Error e
+  return = pure
+
+isOk :: forall e a. Result e a -> Boolean
+isOk (Ok _) = true
+isOk _      = false
+
+isError :: forall e a. Result e a -> Boolean
+isError (Error _) = true
+isError _         = false
+
+fromOk :: forall e a. Result e a -> a
+fromOk (Ok a) = a
+fromOk (Error _) = error "Error"
+
+fromError :: forall e a. Result e a -> e
+fromError (Error e) = e
+fromError (Ok _) = error "Ok"
+
