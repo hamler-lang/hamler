@@ -1,0 +1,1 @@
+[("module_info",1),("module_info",0),("Ord",2),("compare",1),("lessThan",3),("lessThanOrEq",3),("greaterThan",3),("greaterThanOrEq",3),("comparing",4),("min",3),("max",3),("between",4),("ordBoolean",0),("ordChar",0),("ordInteger",0),("ordFloat",0),("ordUnit",0)]

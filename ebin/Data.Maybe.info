@@ -1,0 +1,1 @@
+[("module_info",1),("module_info",0),("Nothing",0),("Just",1),("maybe",3),("fromMaybe",2),("isJust",1),("isNothing",1),("fromJust",1),("functorMaybe",0),("applyMaybe",0),("applicativeMaybe",0),("bindMaybe",0),("monadMaybe",0)]
