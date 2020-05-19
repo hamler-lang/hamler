@@ -9,14 +9,21 @@
 -mode(compile).
 
 main(Args) ->
-    reploop(Args, #{}).
+    reploop(Args, #{bindings => erl_eval:new_bindings()}).
 
 reploop(Args, State) ->
-    case io:get_line(">") of
+    case io:get_line("") of
+        eof -> halt(0);
         ":" ++ Cmd ->
             reploop(Args, exec(Cmd, State));
         Expr ->
-            reploop(Args, eval(Expr, State))
+            try eval(string:trim(Expr), State) of
+                NState -> reploop(Args, NState)
+            catch
+                _:Error ->
+                    io:format("Error: ~p~n", [Error]),
+                    reploop(Args, State)
+            end
     end.
 
 exec("quit" ++ _, _State) ->
@@ -25,9 +32,18 @@ exec("help" ++ _, State) ->
     io:format("Hamler REPL 0.0.1~n"),
     State;
 exec(Cmd, State) ->
-    io:format("Cmd: ~s", [Cmd]),
+    io:format("Unknown cmd: ~s", [Cmd]),
     State.
 
-eval(Expr, State) ->
-    io:format("Expr: ~s", [Expr]),
-    State.
+eval([], State) -> State;
+eval(SExpr, #{bindings := Bindings}) ->
+    {ok, Ts, _} = erl_scan:string(SExpr),
+    Ts1 = case lists:reverse(Ts) of
+              [{dot, _}|_] -> Ts;
+              TsR -> lists:reverse([{dot,erl_anno:new(1)}|TsR])
+          end,
+    {ok, Expr} = erl_parse:parse_exprs(Ts1),
+    {value, Value, NewBindings} = erl_eval:exprs(Expr, Bindings),
+    io:format("~p~n", [Value]),
+    #{bindings => NewBindings}.
+
