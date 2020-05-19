@@ -1,0 +1,33 @@
+#!/usr/bin/env escript
+%% -*- mode: erlang;erlang-indent-level: 4;indent-tabs-mode: nil -*-
+%% ex: ft=erlang ts=4 sw=4 et
+%% -------------------------------------------------------------------
+%%
+%% replsrv: Hamler REPL Server
+%%
+%% -------------------------------------------------------------------
+-mode(compile).
+
+main(Args) ->
+    reploop(Args, #{}).
+
+reploop(Args, State) ->
+    case io:get_line(">") of
+        ":" ++ Cmd ->
+            reploop(Args, exec(Cmd, State));
+        Expr ->
+            reploop(Args, eval(Expr, State))
+    end.
+
+exec("quit" ++ _, _State) ->
+    halt(0);
+exec("help" ++ _, State) ->
+    io:format("Hamler REPL 0.0.1~n"),
+    State;
+exec(Cmd, State) ->
+    io:format("Cmd: ~s", [Cmd]),
+    State.
+
+eval(Expr, State) ->
+    io:format("Expr: ~s", [Expr]),
+    State.
