@@ -1,1 +1,0 @@
-# Hamler's Type System
