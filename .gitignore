@@ -30,3 +30,4 @@ stack.yaml.lock
 bin/
 .swp
 *.core
+.tmp/
