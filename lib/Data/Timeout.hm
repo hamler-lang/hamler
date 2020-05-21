@@ -14,6 +14,25 @@
 -----------------------------------------------------------------------------
 module Data.Timeout where
 
+import Data.Eq (class Eq, (==))
+import Data.Ord (class Ord, compare)
+import Data.Ordering (Ordering(..))
+
 -- | The Erlang Timeout.
 data Timeout = Infinity | Timeout Integer
+
+instance Eq Timeout where
+  eq Infinity Infinity = true
+  eq (Timeout x) (Timeout y) = x == y
+  eq _ _ = false
+
+instance Ord Timeout where
+  compare Infinity Infinity = EQ
+  compare Infinity _        = GT
+  compare _ Infinity        = LT
+  compare (Timeout x) (Timeout y) = x `compare` y
+
+isInfinity :: Timeout -> Boolean
+isInfinity Infinity = true
+isInfinity _        = false
 
