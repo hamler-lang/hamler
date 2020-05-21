@@ -138,7 +138,7 @@ devReplConfig =
       hamlerFiles = hmfs,
       libBeamPath = "ebin",
       srcBeamPath = "ebin",
-      coreFilePath = ".temp/$PSCI.core"
+      coreFilePath = ".tmp/$PSCI.core"
     }
 
 srcReplConfig :: ReplConfig
@@ -148,7 +148,7 @@ srcReplConfig =
       hamlerFiles = srchmfs,
       libBeamPath = "/usr/local/lib/hamler/ebin",
       srcBeamPath = "ebin",
-      coreFilePath = ".temp/$PSCI.core"
+      coreFilePath = ".tmp/$PSCI.core"
     }
 
 commandSrc :: Opts.Parser (IO ())

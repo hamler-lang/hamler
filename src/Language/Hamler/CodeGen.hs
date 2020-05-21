@@ -314,6 +314,50 @@ literalToErl (TupleLiteral a b)           = do
   a' <- exprToErl a
   b' <- exprToErl b
   return $ Tuple [Expr $ Constr a' , Expr $ Constr $ b']
+literalToErl (TupleLiteral3 a b c)           = do
+  a' <- exprToErl a
+  b' <- exprToErl b
+  c' <- exprToErl c
+  return $ Tuple [Expr $ Constr a' , Expr $ Constr $ b' , Expr $ Constr $ c']
+
+literalToErl (TupleLiteral4 a b c d)           = do
+  a' <- exprToErl a
+  b' <- exprToErl b
+  c' <- exprToErl c
+  d' <- exprToErl d
+  return $ Tuple [Expr $ Constr a' , Expr $ Constr $ b' , Expr $ Constr $ c' , Expr $ Constr $ d']
+
+literalToErl (TupleLiteral5 a b c d e)           = do
+  a' <- exprToErl a
+  b' <- exprToErl b
+  c' <- exprToErl c
+  d' <- exprToErl d
+  e' <- exprToErl e
+  return $ Tuple [Expr $ Constr a' , Expr $ Constr $ b' , Expr $ Constr $ c' , Expr $ Constr $ d' , Expr $ Constr $ e']
+
+literalToErl (TupleLiteral6 a b c d e f)           = do
+  a' <- exprToErl a
+  b' <- exprToErl b
+  c' <- exprToErl c
+  d' <- exprToErl d
+  e' <- exprToErl e
+  f' <- exprToErl f
+  return $ Tuple [Expr $ Constr a' , Expr $ Constr $ b' , Expr $ Constr $ c' , Expr $ Constr $ d' , Expr $ Constr $ e' , Expr $ Constr $ f']
+
+literalToErl (TupleLiteral7 a b c d e f g)           = do
+  a' <- exprToErl a
+  b' <- exprToErl b
+  c' <- exprToErl c
+  d' <- exprToErl d
+  e' <- exprToErl e
+  f' <- exprToErl f
+  g' <- exprToErl g
+  return $ Tuple [Expr $ Constr a' , Expr $ Constr $ b' , Expr $ Constr $ c' , Expr $ Constr $ d' , Expr $ Constr $ e' , Expr $ Constr $ f' , Expr $ Constr $ f']
+
+
+
+
+
 literalToErl (ObjectLiteral xs)         = do
   xs' <- forM xs $ \(pps,e) -> do
     e' <- exprToErl e
@@ -423,6 +467,48 @@ literalBinderToPat (TupleLiteral a b)           = do
   a' <- binderToPat a
   b' <- binderToPat b
   return $ E.PTuple [a',b']
+
+literalBinderToPat (TupleLiteral3 a b c)           = do
+  a' <- binderToPat a
+  b' <- binderToPat b
+  c' <- binderToPat c
+  return $ E.PTuple [a',b',c']
+literalBinderToPat (TupleLiteral4 a b c d)           = do
+  a' <- binderToPat a
+  b' <- binderToPat b
+  c' <- binderToPat c
+  d' <- binderToPat d
+  return $ E.PTuple [a',b',c',d']
+literalBinderToPat (TupleLiteral5 a b c d e)           = do
+  a' <- binderToPat a
+  b' <- binderToPat b
+  c' <- binderToPat c
+  d' <- binderToPat d
+  e' <- binderToPat e
+  return $ E.PTuple [a',b',c',d',e']
+literalBinderToPat (TupleLiteral6 a b c d e f)           = do
+  a' <- binderToPat a
+  b' <- binderToPat b
+  c' <- binderToPat c
+  d' <- binderToPat d
+  e' <- binderToPat e
+  f' <- binderToPat f
+  return $ E.PTuple [a',b',c',d',e',f']
+literalBinderToPat (TupleLiteral7 a b c d e f g)           = do
+  a' <- binderToPat a
+  b' <- binderToPat b
+  c' <- binderToPat c
+  d' <- binderToPat d
+  e' <- binderToPat e
+  f' <- binderToPat f
+  g' <- binderToPat g
+  return $ E.PTuple [a',b',c',d',e',f',g']
+
+
+
+
+
+
 literalBinderToPat (ObjectLiteral xs)         = do
   xs' <- forM xs $ \(pps,e) -> do
     e' <- binderToPat e
