@@ -12,8 +12,17 @@
 -- The Erlang Pid datatype.
 --
 -----------------------------------------------------------------------------
-module Data.Pid where
+module Data.Pid (Pid) where
+
+import Data.Show (class Show)
 
 -- | Erlang process id.
 foreign import data Pid :: Type
+
+-- pid :: Int -> Int -> Int -> Pid
+
+instance Show Pid where
+  show = showPidImpl
+
+foreign import showPidImpl :: Pid -> String
 
