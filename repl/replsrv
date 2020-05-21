@@ -9,7 +9,7 @@
 -mode(compile).
 
 -define(MOD, '$PSCI').
--define(OUTPUTDIR, ".temp").
+-define(OUTPUTDIR, ".tmp").
 -define(COMOPTS, [from_core, {outdir, ?OUTPUTDIR}]).
 
 main([Pa, Pz, File]) ->
