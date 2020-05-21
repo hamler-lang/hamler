@@ -12,6 +12,7 @@
 
 module REPL where
 
+import Control.Concurrent
 import Control.Monad
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Class
@@ -23,15 +24,15 @@ import qualified Language.PureScript as P
 import qualified Language.PureScript.CST as CST
 import Minteractive
 import qualified Options.Applicative as Opts
+import qualified Options.Applicative as Opts
 import Prelude.Compat
 import System.Console.Haskeline
-import System.Directory (getCurrentDirectory,listDirectory,doesDirectoryExist)
+import System.Directory (doesDirectoryExist, getCurrentDirectory, listDirectory)
 import System.Exit
 import System.FilePath.Glob (glob)
-import Prelude ()
-import System.IO (BufferMode (..), Handle, hFlush, hClose, hGetChar, hGetLine, hPutStrLn,hPutStr, hSetBuffering)
+import System.IO (BufferMode (..), Handle, hClose, hFlush, hGetChar, hGetLine, hPutStr, hPutStrLn, hSetBuffering)
 import System.Process
-import Control.Concurrent
+import Prelude ()
 
 data PSCiOptions
   = PSCiOptions
@@ -108,21 +109,62 @@ hmfs = do
   dir <- getCurrentDirectory
   gethmFiles (dir <> "/lib")
 
+srchmfs :: IO [FilePath]
+srchmfs = do
+  dir <- getCurrentDirectory
+  t1 <- gethmFiles (dir <> "/src")
+  t2 <- gethmFiles ("/usr/local/lib/hamler/lib")
+  return $ t1 <> t2
+
 dout :: Handle -> IO ()
 dout h = do
   l <- hGetLine h
   putStrLn l
   dout h
 
-command :: IO ()
-command = do
-  fs <- hmfs
+data ReplConfig
+  = ReplConfig
+      { replsrvFilePath :: FilePath,
+        hamlerFiles :: IO [FilePath],
+        libBeamPath :: FilePath,
+        srcBeamPath :: FilePath,
+        coreFilePath :: FilePath
+      }
 
+devReplConfig :: ReplConfig
+devReplConfig =
+  ReplConfig
+    { replsrvFilePath = "repl/replsrv",
+      hamlerFiles = hmfs,
+      libBeamPath = "ebin",
+      srcBeamPath = "ebin",
+      coreFilePath = ".temp/$PSCI.core"
+    }
+
+srcReplConfig :: ReplConfig
+srcReplConfig =
+  ReplConfig
+    { replsrvFilePath = "/usr/local/lib/hamler/bin/replsrv",
+      hamlerFiles = srchmfs,
+      libBeamPath = "/usr/local/lib/hamler/ebin",
+      srcBeamPath = "ebin",
+      coreFilePath = ".temp/$PSCI.core"
+    }
+
+commandSrc :: Opts.Parser (IO ())
+commandSrc =pure $ startReplsrv srcReplConfig
+
+command :: Opts.Parser (IO ())
+command = pure $ startReplsrv devReplConfig
+
+startReplsrv :: ReplConfig -> IO ()
+startReplsrv ReplConfig {..} = do
+  fs <- hamlerFiles
+  getCurrentDirectory >>= print
   (Just hin, Just hout, Just err, _) <-
     createProcess_
-      "error ....... "
-      (proc "/Users/hk/github/hamler/.psci_modules/node_modules/replsrv" [])
-      -- (proc "repl/test" [])
+      "start replsrv error!! "
+      (proc replsrvFilePath [libBeamPath, srcBeamPath, coreFilePath])
         { std_out = CreatePipe,
           std_in = CreatePipe,
           std_err = CreatePipe
@@ -130,21 +172,17 @@ command = do
   hSetBuffering hin NoBuffering
   hSetBuffering hout NoBuffering
   hSetBuffering err NoBuffering
-
-
   forkIO $ dout hout
-
   loop hin hout (PSCiOptions fs nodeBackend)
-
   where
-    loop :: Handle -> Handle  -> PSCiOptions -> IO ()
+    loop :: Handle -> Handle -> PSCiOptions -> IO ()
     loop hin hout PSCiOptions {..} = do
       inputFiles <- concat <$> traverse glob psciInputGlob
       e <- runExceptT $ do
         modules <- ExceptT (loadAllModules inputFiles)
-        -- when (null modules) . liftIO $ do
-        --   putStr noInputMessage
-        --   exitFailure
+        when (null modules) . liftIO $ do
+          putStr noInputMessage
+          exitFailure
         (externs, _) <- ExceptT . runMake . make $ fmap CST.pureResult <$> modules
         return (modules, externs)
       case psciBackend of
@@ -163,7 +201,7 @@ command = do
                       . flip evalStateT initialState
                       . runInputT (setComplete completion settings)
                   handleCommand' :: state -> Command -> StateT PSCiState (ReaderT PSCiConfig IO) ()
-                  handleCommand' state = handleCommand (hin , hout) (liftIO (reload state)) (liftIO . putStrLn)
+                  handleCommand' state = handleCommand (hin, hout) (liftIO (reload state)) (liftIO . putStrLn)
                   go :: state -> InputT (StateT PSCiState (ReaderT PSCiConfig IO)) ()
                   go state = do
                     c <- getCommand

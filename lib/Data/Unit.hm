@@ -18,4 +18,3 @@ instance Show Unit where
   show _ = "unit"
 
 
-t = #{ 1 => 3 , 2 => 4 }
