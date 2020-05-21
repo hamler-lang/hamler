@@ -33,25 +33,26 @@ class Eq a => Ord a where
   compare :: a -> a -> Ordering
 
 instance Ord Boolean where
-  compare = compBool LT EQ GT
+  compare = cmpBoolImpl LT EQ GT
 
 instance Ord Char where
-  compare = compChar LT EQ GT
+  compare = cmpCharImpl LT EQ GT
 
 instance Ord Integer where
-  compare = compInt LT EQ GT
+  compare = cmpIntImpl LT EQ GT
 
 instance Ord Float where
-  compare = compFloat LT EQ GT
+  compare = cmpFloatImpl LT EQ GT
 
 instance Ord Unit where
   compare _ _ = EQ
+
 {-
 instance Ord Void where
   compare _ _ = EQ
 -}
 
-foreign import compBool
+foreign import cmpBoolImpl
   :: Ordering
   -> Ordering
   -> Ordering
@@ -59,7 +60,7 @@ foreign import compBool
   -> Boolean
   -> Ordering
 
-foreign import compChar
+foreign import cmpCharImpl
   :: Ordering
   -> Ordering
   -> Ordering
@@ -67,7 +68,7 @@ foreign import compChar
   -> Char
   -> Ordering
 
-foreign import compInt
+foreign import cmpIntImpl
   :: Ordering
   -> Ordering
   -> Ordering
@@ -75,7 +76,7 @@ foreign import compInt
   -> Integer
   -> Ordering
 
-foreign import compFloat
+foreign import cmpFloatImpl
   :: Ordering
   -> Ordering
   -> Ordering
@@ -83,7 +84,7 @@ foreign import compFloat
   -> Float
   -> Ordering
 
-foreign import ordString
+foreign import cmpStringImpl
   :: Ordering
   -> Ordering
   -> Ordering
@@ -101,13 +102,13 @@ lessThan a1 a2 = case a1 `compare` a2 of
 greaterThan :: forall a. Ord a => a -> a -> Boolean
 greaterThan a1 a2 = case a1 `compare` a2 of
   GT -> true
-  _ -> false
+  _  -> false
 
 -- | Test whether one value is _non-strictly less than_ another.
 lessThanOrEq :: forall a. Ord a => a -> a -> Boolean
 lessThanOrEq a1 a2 = case a1 `compare` a2 of
   GT -> false
-  _ -> true
+  _  -> true
 
 -- | Test whether one value is _non-strictly greater than_ another.
 greaterThanOrEq :: forall a. Ord a => a -> a -> Boolean

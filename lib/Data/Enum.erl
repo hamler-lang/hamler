@@ -20,22 +20,23 @@
         , enumIntegerRangeStep/3
         ]).
 
-enumCharRange(Start, End) when End >= Start ->
-    range(Start, End, 1);
-enumCharRange(Start, End) when End < Start ->
-    range(Start, End, -1).
+enumCharRange(Start, Stop) when Stop >= Start ->
+    range(Start, Stop, 1);
+enumCharRange(Start, Stop) when Stop < Start ->
+    range(Start, Stop, -1).
 
-enumCharRangeStep(Start, End, Step) ->
-    range(Start, End, Step).
+enumCharRangeStep(Start, Next, Stop) ->
+    range(Start, Stop, Next-Start).
 
-enumIntegerRange(Start, End) when End >= Start ->
-    range(Start, End, 1);
-enumIntegerRange(Start, End) when End < Start ->
-    range(Start, End, -1).
+enumIntegerRange(Start, Stop) when Stop >= Start ->
+    range(Start, Stop, 1);
+enumIntegerRange(Start, Stop) when Stop < Start ->
+    range(Start, Stop, -1).
 
-enumIntegerRangeStep(Start, End, Step) ->
-    range(Start, End, Step).
+enumIntegerRangeStep(Start, Next, Stop) ->
+    range(Start, Stop, Next-Start).
 
 -compile({inline, [range/3]}).
-range(Start, End, Step) -> lists:seq(Start, End, Step).
+range(Start, Stop, Step) ->
+    lists:seq(Start, Stop, Step).
 

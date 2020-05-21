@@ -22,9 +22,9 @@
         , eqListImpl/2
         ]).
 
-eqBoolImpl(B1, B2) -> B1 == B2.
-eqCharImpl(C1, C2) -> C1 == C2.
-eqIntImpl(I1, I2)  -> I1 == I2.
-eqFloatImpl(N1, N2) -> N1 == N2.
-eqStringImpl(S1, S2) -> S1 == S2.
-eqListImpl(L1, L2) -> L1 == L2.
+eqBoolImpl(B1, B2) -> B1 =:= B2.
+eqCharImpl(C1, C2) -> C1 =:= C2.
+eqIntImpl(I1, I2)  -> I1 =:= I2.
+eqFloatImpl(N1, N2) -> N1 =:= N2.
+eqStringImpl(S1, S2) -> S1 =:= S2.
+eqListImpl(L1, L2) -> L1 =:= L2.

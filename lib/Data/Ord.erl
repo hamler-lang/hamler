@@ -9,40 +9,37 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Ord Module.
+%% The Ord FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Ord').
 
--export([ compBool/3
-        , compChar/3
-        , compInt/3
-        , compFloat/3
-        , compNum/3
-        , compString/3
+-export([ cmpBoolImpl/3
+        , cmpCharImpl/3
+        , cmpIntImpl/3
+        , cmpFloatImpl/3
+        , cmpStringImpl/3
         ]).
 
-compBool(LT, GT, EQ) ->
-    fun(B1, B2) -> comp(LT, GT, EQ, B1, B2) end.
+cmpBoolImpl(LT, EQ, GT) ->
+    fun(B1, B2) -> cmp(LT, EQ, GT, B1, B2) end.
 
-compChar(LT, GT, EQ) ->
-    fun (C1, C2) -> comp(LT, GT, EQ, C1, C2) end.
+cmpCharImpl(LT, EQ, GT) ->
+    fun (C1, C2) -> cmp(LT, EQ, GT, C1, C2) end.
 
-compInt(LT, GT, EQ) ->
-    fun(I1, I2) -> comp(LT, GT, EQ, I1, I2) end.
+cmpIntImpl(LT, EQ, GT) ->
+    fun(I1, I2) -> cmp(LT, EQ, GT, I1, I2) end.
 
-compFloat(LT, GT, EQ) ->
-    fun(F1, F2) -> comp(LT, GT, EQ, F1, F2) end.
+cmpFloatImpl(LT, EQ, GT) ->
+    fun(F1, F2) -> cmp(LT, EQ, GT, F1, F2) end.
 
-compNum(LT, GT, EQ) ->
-    fun(N1, N2) -> comp(LT, GT, EQ, N1, N2) end.
+cmpStringImpl(LT, EQ, GT) ->
+    fun(S1, S2) -> cmp(LT, EQ, GT, S1, S2) end.
 
-compString(LT, GT, EQ) ->
-    fun(S1, S2) -> comp(LT, GT, EQ, S1, S2) end.
-
--compile({inline, [comp/5]}).
-comp(LT, GT, EQ, X, Y) ->
+-compile({inline, [cmp/5]}).
+cmp(LT, EQ, GT, X, Y) ->
     if X > Y -> GT;
        X < Y -> LT;
        true  -> EQ
     end.
+
