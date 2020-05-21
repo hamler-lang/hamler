@@ -15,16 +15,15 @@
 module Control.Process where
 
 import Control.Monad
+import Data.Pid (Pid)
 import Data.Ref (Reference)
 
 type Process = IO
-type Module  = String
+
+type Module = String
 
 -- | Erlang Node.
 foreign import data Node :: Type
-
--- | An erlang process id.
-foreign import data Pid :: Type
 
 foreign import spawn ::forall a b. (a -> Process b) -> a -> Process Pid
 
@@ -42,4 +41,6 @@ foreign import receive :: forall a. Process a
 foreign import link :: Pid -> Process Boolean
 
 foreign import monitor :: Pid -> Process Reference
+
+foreign import isProcessAlive :: Pid -> Process Boolean
 

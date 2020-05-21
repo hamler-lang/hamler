@@ -21,6 +21,7 @@
         , 'receive'/0
         , 'link'/1
         , 'monitor'/1
+        , isProcessAlive/1
         ]).
 
 spawn(Fun, Arg) ->
@@ -37,3 +38,7 @@ send(Pid, Msg) -> erlang:send(Pid, Msg).
 
 -spec('monitor'(pid()) -> reference()).
 'monitor'(Pid) -> erlang:monitor(process, Pid).
+
+-spec(isProcessAlive(pid()) -> boolean()).
+isProcessAlive(Pid) -> erlang:is_process_alive(Pid).
+
