@@ -11,7 +11,18 @@
 -define(MOD, '$PSCI').
 -define(OUTPUTDIR, ".temp").
 -define(COMOPTS, [from_core, {outdir, ?OUTPUTDIR}]).
+
+main([Pa, Pz, File]) ->
+    true = code:add_path(Pa),
+    true = code:add_path(Pz),
     true = code:add_path(?OUTPUTDIR),
+    reploop(#{file => File}).
+
+reploop(State = #{file := File}) ->
+    case io:get_line("") of
+        eof -> halt(0);
+        ":" ++ Cmd ->
+            reploop(exec(Cmd, State));
         _Expr ->
             try
                 code:purge(?MOD),
@@ -28,7 +39,7 @@
 exec("quit" ++ _, _State) ->
     halt(0);
 exec("help" ++ _, State) ->
-    io:format("Hamler REPL 0.1~n"),
+    io:format("Hamler REPL 0.0.1~n"),
     State;
 exec(Cmd, State) ->
     io:format("Unknown cmd: ~s", [Cmd]),
