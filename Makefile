@@ -17,8 +17,8 @@ install:
 test:
 	$(stack) test --fast $(package)
 
-rep:
+repl:
 	$(stack) run repldev
 
 
-.PHONY : build run install test
+.PHONY : build run install test repl
