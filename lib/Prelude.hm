@@ -17,6 +17,7 @@ module Prelude
   , module Data.Bits
   , module Data.Bool
   , module Data.Either
+  , module Data.Enum
   , module Data.Eq
   , module Data.Float
   , module Data.Functor
@@ -40,6 +41,7 @@ import Data.Binary (Binary)
 import Data.Bits (band, bor, bxor, bnot, bsl, bsr)
 import Data.Bool (Bool, (&&), (||), and, or, not, otherwise)
 import Data.Either (Either(..))
+import Data.Enum (class Enum, range, rangeStep)
 import Data.Eq (class Eq, eq, (==), notEq, (/=))
 import Data.List (head, last, reverse, concat, filter, (++), take, drop, zip, sort, replicate, length)
 import Data.Float (Double)
