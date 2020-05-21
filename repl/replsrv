@@ -8,42 +8,36 @@
 %% -------------------------------------------------------------------
 -mode(compile).
 
-main(Args) ->
-    reploop(Args, #{bindings => erl_eval:new_bindings()}).
+-define(MOD, '$PSCI').
 
-reploop(Args, State) ->
+main(Args) ->
+    %% TODO: Fix the hard code path
+    code:add_path("/Users/hk/github/hamler/.psci_modules/node_modules/"),
+    File = "/Users/hk/github/hamler/.psci_modules/node_modules/\$PSCI.core",
+
+    reploop(Args, #{file => File}).
+
+reploop(Args, State = #{file := File}) ->
     case io:get_line("") of
         eof -> halt(0);
-        ":" ++ Cmd ->
-            reploop(Args, exec(Cmd, State));
-        Expr ->
-            try eval(string:trim(Expr), State) of
-                NState -> reploop(Args, NState)
+        _Expr ->
+            try
+                code:purge(?MOD),
+                code:load_file(?MOD),
+                {ok, _} = compile:file(File, [from_core]),
+                print(?MOD:it())
             catch
-                _:Error ->
-                    io:format("Error: ~p~n", [Error]),
-                    reploop(Args, State)
-            end
+                Error:Reason:Stk ->
+                    io:format("Error: ~p, Reason: ~p~nStacktrace:~p~n", [Error, Reason, Stk])
+            end,
+            reploop(Args, State)
     end.
 
-exec("quit" ++ _, _State) ->
-    halt(0);
-exec("help" ++ _, State) ->
-    io:format("Hamler REPL 0.0.1~n"),
-    State;
-exec(Cmd, State) ->
-    io:format("Unknown cmd: ~s", [Cmd]),
-    State.
-
-eval([], State) -> State;
-eval(SExpr, #{bindings := Bindings}) ->
-    {ok, Ts, _} = erl_scan:string(SExpr),
-    Ts1 = case lists:reverse(Ts) of
-              [{dot, _}|_] -> Ts;
-              TsR -> lists:reverse([{dot,erl_anno:new(1)}|TsR])
-          end,
-    {ok, Expr} = erl_parse:parse_exprs(Ts1),
-    {value, Value, NewBindings} = erl_eval:exprs(Expr, Bindings),
-    io:format("~p~n", [Value]),
-    #{bindings => NewBindings}.
+%% @private
+print(I) when is_integer(I) ->
+    io:format("~w~n", [I]);
+print(A) when is_atom(A) ->
+    io:format("~s~n", [A]);
+print(T) ->
+    io:format("~p~n", [T]).
 

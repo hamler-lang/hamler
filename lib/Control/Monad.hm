@@ -16,6 +16,8 @@ module Control.Monad
   ( class Monad, bind, (>>=), return
   , liftM1, liftM2, liftM3, liftM4
   , IO
+  , discard
+  , guardF
   , module Data.Functor
   , module Control.Applicative
   ) where

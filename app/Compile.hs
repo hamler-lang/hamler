@@ -191,9 +191,9 @@ buildlib bl = do
   forM_ ifs $ \fp -> do
     SS.shelly $ SS.run_ "rm" [T.pack $ tpath <> "/" <> fp]
 
-  jfs <- findFile1 ".json" tpath
-  forM_ jfs $ \fp -> do
-    SS.shelly $ SS.run_ "rm" [T.pack $ tpath <> "/" <> fp]
+  -- jfs <- findFile1 ".json" tpath
+  -- forM_ jfs $ \fp -> do
+  --   SS.shelly $ SS.run_ "rm" [T.pack $ tpath <> "/" <> fp]
 
   exitSuccess
 
