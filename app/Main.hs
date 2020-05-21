@@ -13,9 +13,10 @@ import           System.Environment (getArgs)
 import qualified System.IO as IO
 import qualified Text.PrettyPrint.ANSI.Leijen as Doc
 import           Version (versionString)
+import qualified REPL as R
 
 main :: IO ()
-main = do
+main =  do
     IO.hSetEncoding IO.stdout IO.utf8
     IO.hSetEncoding IO.stderr IO.utf8
     cmd <- Opts.handleParseResult . execParserPure opts =<< getArgs
@@ -63,5 +64,14 @@ main = do
         ,  Opts.command "run"
             (Opts.info Compile.runProject
               (Opts.progDesc "run hamler project"))
+
+        ,  Opts.command "repldev"
+            (Opts.info R.command
+              (Opts.progDesc "dev hamler lib"))
+
+        ,  Opts.command "repl"
+            (Opts.info R.commandSrc
+              (Opts.progDesc "run hamler repl"))
+
         ]
 

@@ -1,6 +1,8 @@
 module Data.Unit where
 
 import Data.Show (class Show)
+import Data.Map
+import Control.Monad
 
 -- | The `Unit` type has a single inhabitant, called `unit`. It represents
 -- | values with no computational content.
@@ -14,3 +16,5 @@ foreign import unit :: Unit
 
 instance Show Unit where
   show _ = "unit"
+
+

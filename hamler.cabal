@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2962c7c6d32b72c8e46da928f4f4b3d57fe8f5650f42d83c2477ff2eeee73b41
+-- hash: b764dadca0a2b72f4a2b97b3f3ff65f07d0b69cbaaaa1addde07aa68539f71ae
 
 name:           hamler
 version:        0.0.2
@@ -41,7 +41,6 @@ library
       Language.Hamler.Inline
       Language.Hamler.Make
       Language.Hamler.Make.Actions
-      Language.Hamler.Make.BuildPlan
       Language.Hamler.Util
   other-modules:
       Paths_hamler
@@ -66,6 +65,7 @@ library
     , containers
     , directory >=1.2.3
     , filepath
+    , haskeline >=0.7.5.0
     , language-javascript
     , lens
     , lifted-async >=0.10.0.3 && <0.10.1
@@ -96,6 +96,8 @@ executable hamler
   main-is: Main.hs
   other-modules:
       Compile
+      Minteractive
+      REPL
       Version
       Paths_hamler
   hs-source-dirs:
@@ -120,6 +122,7 @@ executable hamler
     , directory >=1.2.3
     , filepath
     , hamler
+    , haskeline >=0.7.5.0
     , language-javascript
     , lens
     , lifted-async >=0.10.0.3 && <0.10.1
@@ -180,6 +183,7 @@ test-suite tests
     , directory >=1.2.3
     , filepath
     , hamler
+    , haskeline >=0.7.5.0
     , hspec
     , hspec-discover
     , language-javascript

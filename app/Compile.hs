@@ -146,6 +146,10 @@ buildSrc bl = do
   forM_ ifs1 $ \fp -> do
     SS.shelly $ SS.run_ "rm" [T.pack $ tpath <> "/" <> fp]
 
+  jfs <- findFile1 ".json" tpath
+  forM_ jfs $ \fp -> do
+    SS.shelly $ SS.run_ "rm" [T.pack $ tpath <> "/" <> fp]
+
   exitSuccess
 
 hmToCore :: FilePath -> FilePath
@@ -223,7 +227,7 @@ findFile1 base fp = do
 
 
 dictlist :: [FilePath]
-dictlist =["ebin","src","test",".deps"]
+dictlist =["ebin","src","test",".deps",".temp"]
 
 helloHamler :: String
 helloHamler = concat [
@@ -231,7 +235,7 @@ helloHamler = concat [
         , "\n"
         , "import Prelude\n"
         , "\n"
-        , "main :: IO String\n"
+        , "main :: IO ()\n"
         , "main = print "
         , "\"Let there be Hamler, running on Erlang VM!\"\n"
         ]

@@ -38,61 +38,11 @@ import           Data.Text (Text, unpack, pack)
 import qualified Language.CoreErlang as CE
 import           Language.Hamler.CodeGen
 import           Language.Hamler.Inline
-
+import           Language.PureScript.Make hiding (buildMakeActions)
 
 -- | Determines when to rebuild a module
-data RebuildPolicy
-  -- | Never rebuild this module
-  = RebuildNever
-  -- | Always rebuild this module
-  | RebuildAlways
-  deriving (Show, Eq, Ord)
-
--- | Progress messages from the make process
-data ProgressMessage
-  = CompilingModule ModuleName
-  -- ^ Compilation started for the specified module
-  deriving (Show, Eq, Ord)
-
--- | Render a progress message
 renderProgressMessage :: ProgressMessage -> String
 renderProgressMessage (CompilingModule mn) = "Compiling " ++ T.unpack (runModuleName mn)
-
--- | Actions that require implementations when running in "make" mode.
---
--- This type exists to make two things abstract:
---
--- * The particular backend being used (JavaScript, C++11, etc.)
---
--- * The details of how files are read/written etc.
-data MakeActions m = MakeActions
-  { getInputTimestampsAndHashes :: ModuleName -> m (Either RebuildPolicy (M.Map FilePath (UTCTime, m ContentHash)))
-  -- ^ Get the timestamps and content hashes for the input files for a module.
-  -- The content hash is returned as a monadic action so that the file does not
-  -- have to be read if it's not necessary.
-  , getOutputTimestamp :: ModuleName -> m (Maybe UTCTime)
-  -- ^ Get the timestamp for the output files for a module. This should be the
-  -- timestamp for the oldest modified file, or 'Nothing' if any of the required
-  -- output files are missing.
-  , readExterns :: ModuleName -> m (FilePath, Maybe ExternsFile)
-  -- ^ Read the externs file for a module as a string and also return the actual
-  -- path for the file.
-  , codegen :: CF.Module CF.Ann -> Docs.Module -> ExternsFile -> SupplyT m ()
-  -- ^ Run the code generator for the module and write any required output files.
-  , ffiCodegen :: CF.Module CF.Ann -> m ()
-  -- ^ Check ffi and print it in the output directory.
-  , progress :: ProgressMessage -> m ()
-  -- ^ Respond to a progress update.
-  , readCacheDb :: m CacheDb
-  -- ^ Read the cache database (which contains timestamps and hashes for input
-  -- files) from some external source, e.g. a file on disk.
-  , writeCacheDb :: CacheDb -> m ()
-  -- ^ Write the given cache database to some external source (e.g. a file on
-  -- disk).
-  , outputPrimDocs :: m ()
-  -- ^ If generating docs, output the documentation for the Prim modules
-  }
-
 -- | A set of make actions that read and write modules from the given directory.
 buildMakeActions
   :: Bool
@@ -147,7 +97,7 @@ buildMakeActions isInline outputDir filePathMap foreigns _ =
 
   readExterns :: ModuleName -> Make (FilePath, Maybe ExternsFile)
   readExterns mn = do
-    let path = outputDir </> T.unpack (runModuleName mn) </> "externs.json"
+    let path = outputDir </> (T.unpack (runModuleName mn) <> ".json")
     (path, ) <$> readExternsFile path
 
   outputPrimDocs :: Make ()
@@ -168,8 +118,9 @@ buildMakeActions isInline outputDir filePathMap foreigns _ =
                else id
 
   codegen :: CF.Module CF.Ann -> Docs.Module -> ExternsFile -> SupplyT Make ()
-  codegen m _ _ = do
+  codegen m _ exts = do
     let mn = CF.moduleName m
+    lift $ writeJSONFile (outputDir </> ( unpack (runModuleName mn) <> ".json")) exts
     efundefs' <- case M.lookup mn foreigns of
       Nothing -> do return []
       Just fp -> do

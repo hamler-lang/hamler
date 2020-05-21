@@ -44,8 +44,8 @@ import qualified Language.PureScript.CoreFn as CF
 import           System.Directory (doesFileExist)
 import           System.FilePath (replaceExtension)
 
-import           Language.Hamler.Make.BuildPlan
-import qualified Language.Hamler.Make.BuildPlan as BuildPlan
+import           Language.PureScript.Make.BuildPlan
+import qualified Language.PureScript.Make.BuildPlan as BuildPlan
 import           Language.Hamler.Make.Actions as Actions
 
 -- | Rebuild a single module.
