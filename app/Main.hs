@@ -67,11 +67,11 @@ main =  do
 
         ,  Opts.command "repldev"
             (Opts.info R.command
-              (Opts.progDesc "run hamler project"))
+              (Opts.progDesc "dev hamler lib"))
 
         ,  Opts.command "repl"
             (Opts.info R.commandSrc
-              (Opts.progDesc "run hamler project"))
+              (Opts.progDesc "run hamler repl"))
 
         ]
 
