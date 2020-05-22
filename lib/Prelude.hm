@@ -13,7 +13,8 @@
 --
 -----------------------------------------------------------------------------
 module Prelude
-  ( module Data.Binary
+  ( module Data.Atom
+  , module Data.Binary
   , module Data.Bits
   , module Data.Bool
   , module Data.Either
@@ -24,6 +25,7 @@ module Prelude
   , module Data.Function
   , module Data.List
   , module Data.Maybe
+  , module Data.Map
   , module Data.Ord
   , module Data.Ref
   , module Data.Ring
@@ -37,6 +39,7 @@ module Prelude
   , module System.IO
   ) where
 
+import Data.Atom (atom)
 import Data.Binary (Binary)
 import Data.Bits (band, bor, bxor, bnot, bsl, bsr)
 import Data.Bool (Bool, (&&), (||), and, or, not, otherwise)
@@ -48,14 +51,15 @@ import Data.Float (Double)
 import Data.Functor (class Functor, map, (<$>))
 import Data.Function (($), apply, const, flip, identity, error)
 import Data.Maybe (Maybe)
+import Data.Map (fromList)
 import Data.Ord (class Ord, between, compare, comparing, greaterThan, greaterThanOrEq, lessThan, lessThanOrEq, max, min, (<), (<=), (>), (>=))
 import Data.Ref (Ref, Reference, makeRef)
-import Data.Ring (class Ring, (-))
+import Data.Ring (class Ring, (-), (%),(/))
 import Data.Semigroup (class Semigroup, append, (<>))
 import Data.Semiring (class Semiring, add, mul, one, zero, (*), (+))
 import Data.Show (class Show, show)
 import Data.Unit (Unit)
 import Control.Applicative (class Applicative, pure, (<*>))
-import Control.Monad (class Monad, bind, IO)
+import Control.Monad (class Monad, bind, IO, discard, guardF)
 import System.Error (throw, try)
 import System.IO (print, printf, println, readFile, writeFile, appendFile)
