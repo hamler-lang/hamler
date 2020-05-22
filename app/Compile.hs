@@ -26,7 +26,8 @@ import           System.Directory
 import           Language.Hamler.Make
 import qualified Shelly as SS
 import qualified Data.List as LL
--- import           Prelude
+import           Control.Concurrent.Async.Lifted
+
 
 data PSCMakeOptions = PSCMakeOptions
   { pscmInput        :: [FilePath]
@@ -187,8 +188,10 @@ buildlib bl = do
                           }
           )
   cfs <- findFile1 ".core" tpath
+
+  SS.shelly $ SS.command_ "erlc" ["-o" ,T.pack tpath] (fmap (\fp -> T.pack $ tpath <> "/" <> fp) cfs)
+
   forM_ cfs $ \fp -> do
-    SS.shelly $ SS.command_ "erlc" ["-o" ,T.pack tpath] [T.pack $ tpath <> "/" <> fp]
     SS.shelly $ SS.run_ "rm" [T.pack $ tpath <> "/" <> fp]
 
   ifs <- findFile1 ".info" tpath
@@ -286,21 +289,22 @@ gethmFiles basePath = do
                    else return []
   return $ concat r
 
+type CoreFilePath = FilePath
+type DireFilePath = FilePath
 
+myt :: ([CoreFilePath],[DireFilePath]) -> FilePath -> IO ([CoreFilePath],[DireFilePath])
+myt (a,b) fp = do
+  res <- doesDirectoryExist fp
+  if res
+    then return (a ,fp:b)
+    else do
+    if (take 4 $ reverse fp) == "lre."
+      then return (fp:a,b)
+      else return (a,b)
 
 recErlc :: FilePath -> IO ()
 recErlc fp = do
   ls <- listDirectory fp
-  forM_ ls $ \f -> do
-    let tp = fp ++ "/" ++ f
-    res <- doesDirectoryExist tp
-    if res
-      then recErlc tp
-      else do
-      if (take 4 $ reverse tp) == "lre."
-        then do
-        SS.shelly $ SS.command_ "erlc" ["-o" ,T.pack fp] [ "+to_core" , T.pack $ tp]
-        return ()
-        else
-        return ()
-
+  (coreFiles,dires) <- foldM myt ([],[]) $ fmap (\t -> fp ++ "/" ++ t) ls
+  SS.shelly $ SS.command_ "erlc" ["-o" ,T.pack fp,"+to_core" ] (fmap T.pack coreFiles)
+  mapConcurrently_ recErlc dires
