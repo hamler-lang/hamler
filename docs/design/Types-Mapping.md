@@ -3,7 +3,6 @@
 
 | Hamler Data Type  | Erlang Data Type               | Mapping Description               |
 | ----------------- | ------------------------------ | --------------------------------- |
-| None              | 'None' \| none()               | null                              |
 | Bool              | boolean()                      | True -> true <br />False -> false |
 | Atom(Symbol)      | atom()                         |                                   |
 | Char              | char() ??                      |                                   |
