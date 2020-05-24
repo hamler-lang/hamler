@@ -1,0 +1,41 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Demo.GenServer
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The GenServer Demo.
+--
+-----------------------------------------------------------------------------
+module Demo.GenServer where
+
+import Prelude
+import Control.OTP.GenServer (class GenServer, call, cast, startLink)
+import Control.OTP.GenServer.Types (NoReply(..))
+
+data Arg = Arg Integer
+
+data Msg = Inc | Dec | Query
+
+data State = State Integer
+
+instance GenServer Arg State Msg where
+  init (Arg n) = pure (State n)
+  -- handleCall Query _ (State n) = pure (Reply n (State n))
+  handleCast Inc (State n) = pure (NoReply (State (n+1)))
+  handleCast Dec (State n) = pure (NoReply (State (n-1)))
+  handleCast _ st          = pure (NoReply st)
+  handleInfo _ st          = pure (NoReply st)
+
+main :: forall a. IO a
+main = do
+  pid <- startLink (Arg 10)
+  cast pid "Hello GenServer"
+  reply <- call pid Query
+  pure reply
+
