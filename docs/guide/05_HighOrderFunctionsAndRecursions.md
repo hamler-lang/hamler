@@ -6,8 +6,6 @@
 
 ```
 
-
-
 ## Recursions on more complicated datatypes
 
 ```
