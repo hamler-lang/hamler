@@ -15,14 +15,33 @@
 module Data.Atom where
 
 import Data.Eq (class Eq)
+import Data.Ord (class Ord, Ordering(..))
 
+-- Erlang Atom Datatype.
 foreign import data Atom :: Type
 
+-- String to Atom.
 foreign import atom :: String -> Atom
 
+-- String to existing Atom.
+foreign import existingAtom :: String -> Atom
+
+-- Atom to String.
 foreign import toString :: Atom -> String
 
 instance Eq Atom where
-    eq = eqAtomImpl
+  eq = eqAtomImpl
+
+instance Ord Atom where
+  compare = cmpAtomImpl LT EQ GT
 
 foreign import eqAtomImpl :: Atom -> Atom -> Boolean
+
+foreign import cmpAtomImpl
+  :: Ordering
+  -> Ordering
+  -> Ordering
+  -> Atom
+  -> Atom
+  -> Ordering
+
