@@ -14,62 +14,66 @@
 -----------------------------------------------------------------------------
 module Control.OTP.Supervisor where
 
-{-
--type child()    :: 'undefined' | pid().
--type child_id() :: term().
--type mfargs()   :: {M :: module(), F :: atom(), A :: [term()] | undefined}.
--type modules()  :: [module()] | 'dynamic'.
--type restart()  :: 'permanent' | 'transient' | 'temporary'.
--type shutdown() :: 'brutal_kill' | timeout().
--type worker()   :: 'worker' | 'supervisor'.
--type sup_name() :: {'local', Name :: atom()}
-                  | {'global', Name :: atom()}
-                  | {'via', Module :: module(), Name :: any()}.
--type sup_ref()  :: (Name :: atom())
-                  | {Name :: atom(), Node :: node()}
-                  | {'global', Name :: atom()}
-                  | {'via', Module :: module(), Name :: any()}
-                  | pid().
--type child_spec() :: #{id := child_id(),       % mandatory
-			start := mfargs(),      % mandatory
-			restart => restart(),   % optional
-			shutdown => shutdown(), % optional
-			type => worker(),       % optional
-			modules => modules()}   % optional
-                    | {Id :: child_id(),
-                       StartFunc :: mfargs(),
-                       Restart :: restart(),
-                       Shutdown :: shutdown(),
-                       Type :: worker(),
-                       Modules :: modules()}.
+import Control.OTP.Supervisor.Types
+import Control.Process (Module, Node, Process)
+import Data.Atom (Atom)
+import Data.Pid (Pid)
+import Data.Maybe (Maybe)
+import Data.Result (Result)
+import Data.Unit (Unit)
 
--type strategy() :: 'one_for_all' | 'one_for_one'
-                  | 'rest_for_one' | 'simple_one_for_one'.
+-- Supervisor ref.
+data SupRef
+  = SupName Atom
+    -- ^ The supervisor is locally registered.
+  | SupNameOn Atom Node
+    -- ^ The supervisor is locally registered at another node.
+  | SupGlobal Atom
+    -- ^ The supervisor is globally registered.
+  | SupNameVia Module Atom
+    -- ^ The supervisor is registered through an alternative process registry.
+  | SupPid Pid
+    -- ^ The supervisor pid.
 
--type sup_flags() :: #{strategy => strategy(),         % optional
-		       intensity => non_neg_integer(), % optional
-		       period => pos_integer()}        % optional
-                   | {RestartStrategy :: strategy(),
-                      Intensity :: non_neg_integer(),
-                      Period :: pos_integer()}.
--type children() :: {Ids :: [child_id()], Db :: #{child_id() => child_rec()}}.
+class Supervisor a s | a -> s where
+  init :: a -> Process s
 
--record(child, {% pid is undefined when child is not running
-	        pid = undefined :: child()
-	                         | {restarting, pid() | undefined}
-	                         | [pid()],
-		id              :: child_id(),
-		mfargs          :: mfargs(),
-		restart_type    :: restart(),
-		shutdown        :: shutdown(),
-		child_type      :: worker(),
-		modules = []    :: modules()}).
--type child_rec() :: #child{}.
+-- Start a Supervisor.
+foreign import startSupervisor
+  :: forall a s. Supervisor a s => a -> Process Pid
 
--export([start_link/2, start_link/3,
-	 start_child/2, restart_child/2,
-	 delete_child/2, terminate_child/2,
-	 which_children/1, count_children/1,
-	 check_childspecs/1, get_childspec/2]).
+-- Check a list of child specification.
+foreign import checkChildSpecs
+  :: [ChildSpec] -> Process (Result ChildSpecError ())
 
--}
+-- Return counts of children.
+foreign import countChildren
+  :: SupRef -> Process ChildCounts
+
+-- Delete the child specification identified by Id.
+foreign import deleteChild
+  :: SupRef -> ChildId -> Process (Result ChildError ())
+
+-- Get the child spec for the child identified by Id.
+foreign import getChildSpec
+  :: SupRef -> ChildId -> Process (Maybe ChildSpec)
+
+-- Restart a child process.
+foreign import restartChild
+  :: SupRef -> ChildId -> Process (Result ChildError Child)
+
+-- Start a child process.
+foreign import startChild
+  :: SupRef -> ChildSpec -> Process (Result ChildError Child)
+
+-- Terminate a child process.
+foreign import terminateChild
+  :: SupRef -> ChildId -> Process (Result ChildError ())
+
+-- Terminate a child process by Pid.
+foreign import terminateChildByPid
+  :: SupRef -> Pid -> Process (Result ChildError ())
+
+foreign import whichChildren
+  :: SupRef -> Process [ChildId]
+

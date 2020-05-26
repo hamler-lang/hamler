@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  GenServer
+%% Module      :  Behaviour
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,23 +9,17 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The GenServer FFI module.
+%% The Supervisor Behaviour FFI.
 %%
 %%---------------------------------------------------------------------------
--module('GenServer').
+-module('Behaviour').
 
--export([ startServer/2
-        , call/2
-        , cast/2
-        ]).
+-behaviour(supervisor).
 
--define(MOD, 'Control.OTP.GenServer.Behaviour').
+%% supervisor callbacks
+-export([init/1]).
 
-startServer(Class, Args) ->
-    {ok, Pid} = gen_server:start_link(?MOD, [Class, Args], []),
-    Pid.
-
-call(Pid, Req) -> gen_server:call(Pid, Req).
-
-cast(Pid, Msg) -> gen_server:cast(Pid, Msg).
-
+init([Class = #{init := InitFun}, Args]) ->
+    io:format("~p~n", [Args]),
+    {SupFlags, [ChildSpec]} = InitFun(Args),
+    {ok, {SupFlags, [ChildSpec]}}.
