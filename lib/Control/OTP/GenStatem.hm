@@ -9,15 +9,47 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Erlang `gen_server` Behaviour.
+-- The Erlang `gen_statem` Behaviour.
 --
 -----------------------------------------------------------------------------
 module Control.OTP.GenStatem where
 
-{-
+import Control.OTP.GenStatem.Types
+import Control.Process (Module, Node, Process)
+import Data.Pid (Pid)
+import Data.Timeout (Timeout)
+import Data.Unit (Unit)
+
+data StatemRef
+  = StatemPid Pid
+    -- ^ The Pid of gen_statem.
+  | StatemRef LocalName
+    -- ^ The gen_statem is locally registered.
+  | StatemRefOn LocalName Node
+    -- ^ The gen_statem is locally registered on another node.
+  | StatemGlobal GlobalName
+    -- ^ The gen_statem is globally registered in global.
+  | StatemVia Module ViaName
+    -- ^ The gen_statem is registered in an alternative process registry.
+
+class GenStatem a s e | s -> e, e -> a, a -> s where
+  init :: a -> Process s
+  handleEvent :: e -> s -> Process s
+
+foreign import call :: forall req rep. StatemRef -> req -> Process rep
+
+foreign import cast :: forall m. StatemRef -> m -> Process ()
+
+foreign import startStatem :: forall a s m. GenStatem a s m => a -> Process Pid
+
+-- Shutdown the Statem process
+foreign import shutdown :: StatemRef -> ShutdownReason -> Timeout -> Process ()
+
+-- Stop the Statem process.
+foreign import stop :: StatemRef -> Process ()
+
+{- TODO:
 start/3,start/4,start_link/3,start_link/4,
-stop/1,stop/3,
-cast/2,call/2,call/3,
-enter_loop/4,enter_loop/5,enter_loop/6,
 reply/1,reply/2]).
 -}
+

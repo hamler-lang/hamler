@@ -9,40 +9,34 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The GenServer Behaviour FFI.
+%% The GenStatem Behaviour FFI.
 %%
 %%---------------------------------------------------------------------------
 -module('Behaviour').
 
--behaviour(gen_server).
+-behaviour(gen_statem).
 
-%% gen_server callbacks
 -export([ init/1
-        , handle_call/3
-        , handle_cast/2
-        , handle_info/2
-        , terminate/2
-        , code_change/3
+        , callback_mode/0
+        , handle_event/4
+        , terminate/3
+        , code_change/4
         ]).
 
 init([Class = #{init := InitFun}, Args]) ->
     io:format("~p~n", [Args]),
     {ok, #{class => Class, st => InitFun(Args)}}.
 
-handle_call(Request, _From, State) ->
-    io:format("Call: ~p~n", [Request]),
-    {reply, ok, State}.
+callback_mode() -> handle_event_function.
 
-handle_cast(Msg, State) ->
-    io:format("Cast: ~p~n", [Msg]),
-    {noreply, State}.
+handle_event(EventType, Event, State, Data) ->
+    %% Ignore all other events
+    io:format("EventType: ~p, Event: ~p~n", [EventType, Event]),
+    {next_state, State, Data}.
 
-handle_info(_Info, State) ->
-    {noreply, State}.
+terminate(_Reason, _State, _Data) ->
+    void.
 
-terminate(_Reason, _State) ->
-    ok.
-
-code_change(_OldVsn, State, _Extra) ->
-    {ok, State}.
+code_change(_Vsn, State, Data, _Extra) ->
+    {ok, State, Data}.
 

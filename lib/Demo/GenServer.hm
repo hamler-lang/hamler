@@ -15,27 +15,32 @@
 module Demo.GenServer where
 
 import Prelude
-import Control.OTP.GenServer (class GenServer, call, cast, startLink)
-import Control.OTP.GenServer.Types (NoReply(..))
+import Control.OTP.GenServer (class GenServer, call, cast, startServer, noReply)
 
-data Arg = Arg Integer
+data Args = Arg Integer
 
 data Msg = Inc | Dec | Query
 
 data State = State Integer
 
-instance GenServer Arg State Msg where
-  init (Arg n) = pure (State n)
-  -- handleCall Query _ (State n) = pure (Reply n (State n))
-  handleCast Inc (State n) = pure (NoReply (State (n+1)))
-  handleCast Dec (State n) = pure (NoReply (State (n-1)))
-  handleCast _ st          = pure (NoReply st)
-  handleInfo _ st          = pure (NoReply st)
+instance GenServer Args State Msg where
+  init (Arg n) = return (State n)
+  handleCast Inc st = return $ noReply $ inc(st)
+  handleCast Dec st = return $ noReply $ dec(st)
+  handleCast _ st   = return $ noReply st
+
+  handleInfo _ st   = return $ noReply st
+
+inc :: State -> State
+inc (State n) = State (n+1)
+
+dec :: State -> State
+dec (State n) = State (n-1)
 
 main :: forall a. IO a
 main = do
-  pid <- startLink (Arg 10)
+  pid <- startServer (Arg 10)
   cast pid "Hello GenServer"
   reply <- call pid Query
-  pure reply
+  return reply
 
