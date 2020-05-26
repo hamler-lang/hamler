@@ -79,7 +79,7 @@ forall a b c. (a -> b -> c) - > b -> a -> c
 
 ## 3. 3 Notes On Indentation
 
-Like all ML Language Family, Hamler is indentation sensitive. Any language in the same block should have same level of indentation. In the case of a declaration spans more than one line, the other lines have to be intended past the first line.
+Like all ML Language Family, Hamler is indentation sensitive. Any declaration in the same block should have same level of indentation. In the case of a declaration spans more than one line, the other lines have to be intended past the first line.
 
 ```Haskell
 flip x f = f
@@ -123,7 +123,7 @@ type Name = String
 
 type Person =
   { FisrtName  :: Name
-  , SecondName ::Name
+  , SecondName :: Name
   }
 
 {-
