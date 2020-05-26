@@ -64,7 +64,7 @@ foreign import restartChild
 
 -- Start a child process.
 foreign import startChild
-  :: SupRef -> ChildSpec -> Process (Result ChildError Child)
+  :: SupRef -> ChildSpec -> Process (Result ChildError ChildPid)
 
 -- Terminate a child process.
 foreign import terminateChild

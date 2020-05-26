@@ -16,15 +16,21 @@ module Control.OTP.GenEvent.Behaviour where
 
 import Control.Process (Process)
 
-foreign import init :: forall a st. a -> Process st
+foreign import init
+  :: forall a st. a -> Process st
 
-foreign import handle_call :: forall r st. r -> st -> Process st
+foreign import handle_call
+  :: forall r st. r -> st -> Process st
 
-foreign import handle_cast :: forall req st. req -> st -> Process st
+foreign import handle_event
+  :: forall e st. e -> st -> Process st
 
-foreign import handle_info :: forall m st. m -> st -> Process st
+foreign import handle_info
+  :: forall m st. m -> st -> Process st
 
-foreign import terminate :: forall r st. r -> Process st
+foreign import terminate
+  :: forall r st. r -> Process st
 
-foreign import code_change :: forall vsn st extra. vsn -> st -> extra -> Process st
+foreign import code_change
+  :: forall vsn st extra. vsn -> st -> extra -> Process st
 

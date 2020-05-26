@@ -22,6 +22,9 @@
         , deleteChild/2
         , getChildSpec/2
         , restartChild/2
+        , startChild/2
+        , terminateChild/2
+        , terminateChildByPid/2
         , whichChildren/1
         ]).
 
@@ -65,6 +68,24 @@ restartChild(SupRef, Id) ->
     case supervisor:restartChild(supRef(SupRef), Id) of
         {ok, Child} ->
             ok(childRecord(Child));
+        {error, Reason} ->
+            err(childError(Reason))
+    end.
+
+startChild(SupRef, ChildSpec) ->
+    case supervisor:start_child(supRef(SupRef), ChildSpec) of
+        {ok, ChildPid} -> ok(ChildPid);
+        {error, Reason} ->
+            err(childError(Reason))
+    end.
+
+terminateChildByPid(SupRef, Pid) ->
+    terminateChild(SupRef, Pid).
+
+%% TODO:
+terminateChild(SupRef, ChildId) ->
+    case supervisor:terminate_child(supRef(SupRef), ChildId) of
+        ok -> ok(ok);
         {error, Reason} ->
             err(childError(Reason))
     end.
