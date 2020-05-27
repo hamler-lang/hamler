@@ -26,7 +26,6 @@ module Control.OTP.GenEvent
   ) where
 
 import Control.Process (Module, Node, Process)
-import Data.Atom (Atom)
 import Data.Pid (Pid)
 import Data.Unit (Unit)
 

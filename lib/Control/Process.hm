@@ -15,7 +15,6 @@
 module Control.Process where
 
 import Control.Monad
-import Data.Atom (Atom)
 import Data.Pid (Pid)
 import Data.Ref (Reference)
 

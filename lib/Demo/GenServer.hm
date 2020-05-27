@@ -16,6 +16,7 @@ module Demo.GenServer where
 
 import Prelude
 import Control.OTP.GenServer (class GenServer, call, cast, startServer, noReply)
+import Control.OTP.Application as App
 
 data Args = Arg Integer
 
@@ -24,12 +25,12 @@ data Msg = Inc | Dec | Query
 data State = State Integer
 
 instance GenServer Args State Msg where
-  init (Arg n) = return (State n)
-  handleCast Inc st = return $ noReply $ inc(st)
-  handleCast Dec st = return $ noReply $ dec(st)
-  handleCast _ st   = return $ noReply st
+  init (Arg n) = pure (State n)
+  handleCast Inc st = pure $ noReply $ inc(st)
+  handleCast Dec st = pure $ noReply $ dec(st)
+  handleCast _ st   = pure $ noReply st
 
-  handleInfo _ st   = return $ noReply st
+  handleInfo _ st   = pure $ noReply st
 
 inc :: State -> State
 inc (State n) = State (n+1)
@@ -39,6 +40,7 @@ dec (State n) = State (n-1)
 
 main :: forall a. IO a
 main = do
+  App.ensureStarted :sasl
   pid <- startServer (Arg 10)
   cast pid "Hello GenServer"
   reply <- call pid Query

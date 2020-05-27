@@ -14,12 +14,16 @@
 %%---------------------------------------------------------------------------
 -module('Ord').
 
--export([ cmpBoolImpl/3
+-export([ cmpAtomImpl/3
+        , cmpBoolImpl/3
         , cmpCharImpl/3
         , cmpIntImpl/3
         , cmpFloatImpl/3
         , cmpStringImpl/3
         ]).
+
+cmpAtomImpl(LT, EQ, GT) ->
+    fun(A1, A2) -> cmp(LT, EQ, GT, A1, A2) end.
 
 cmpBoolImpl(LT, EQ, GT) ->
     fun(B1, B2) -> cmp(LT, EQ, GT, B1, B2) end.

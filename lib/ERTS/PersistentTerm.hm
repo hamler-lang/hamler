@@ -9,14 +9,14 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The PersistentTerm Module.
+-- The PersistentTerm module.
 --
 -----------------------------------------------------------------------------
 module ERTS.PersistentTerm where
 
 import Control.Monad (IO)
 import Data.Unit (Unit)
-import Foreign
+import Foreign (ffiIO0, ffiIO1, ffiIO2)
 
 type PersistentTermInfo =
   { size    :: Integer
@@ -27,16 +27,16 @@ type PersistentTermInfo =
 
 -- | Erase the name for the persistent term with key Key.
 erase :: forall k. k -> IO Boolean
-erase = ffiIO1 "persistent_term" "erase"
+erase = ffiIO1 :persistent_term :erase
 
 -- | Retrieve the value for the persistent term associated with the key Key.
 get :: forall k v. k -> IO v
-get = ffiIO1 "persistent_term" "get"
+get = ffiIO1 :persistent_term :get
 
 -- | Retrieve the value for the persistent term associated with the key Key.
 -- Return Default if no term has been stored with the key Key.
 get2 :: forall k d v. k -> d -> IO v
-get2 = ffiIO2 "persistent_term" "get"
+get2 = ffiIO2 :persistent_term :get
 
 -- TODO: | Retrieve the keys and values for all persistent terms.
 -- getAll :: forall k v. IO (List (k, v))
@@ -44,8 +44,8 @@ get2 = ffiIO2 "persistent_term" "get"
 
 -- | Return information about persistent terms.
 info :: IO PersistentTermInfo
-info = ffiIO0 "persistent_term" "info"
+info = ffiIO0 :persistent_term :info
 
 put :: forall k v. k -> v -> IO ()
-put = ffiIO2 "persistent_term" "put"
+put = ffiIO2 :persistent_term :put
 

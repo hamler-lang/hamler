@@ -24,7 +24,7 @@ import Foreign (ffi1, ffi2, ffi3, ffi4)
 infixl 6 append as ++
 
 append :: forall a. [a] -> [a] -> [a]
-append = ffi2 "lists" "append"
+append = ffi2 :lists :append
 
 -- infixr 6 cons as :
 
@@ -36,7 +36,7 @@ foreign import head :: forall a. [a] -> a
 
 -- | Return the last element of a list.
 last :: forall a. [a] -> a
-last = ffi1 "lists" "last"
+last = ffi1 :lists :last
 
 -- | Return the elements after the head of a list.
 foreign import tail :: forall a. [a] -> [a]
@@ -48,21 +48,21 @@ foreign import uncons :: forall a. [a] -> Maybe (a, [a])
 
 -- | Return the length/size of the list.
 length :: forall a. [a] -> Integer
-length = ffi1 "erlang" "length"
+length = ffi1 :erlang :length
 
 -- | Reverse the list.
 reverse :: forall a. [a] -> [a]
-reverse = ffi1 "lists" "reverse"
+reverse = ffi1 :lists :reverse
 
 -- | Concat
 concat :: forall a. [[a]] -> [a]
-concat = ffi1 "lists" "concat"
+concat = ffi1 :lists :concat
 
 filter :: forall a. (a -> Boolean) -> [a] -> [a]
-filter = ffi1 "lists" "filter"
+filter = ffi1 :lists :filter
 
 replicate :: forall a. Integer -> a -> [a]
-replicate = ffi2 "lists" "duplicate"
+replicate = ffi2 :lists :duplicate
 
 -----------------------------------------------------------------------------
 -- Build lists
@@ -79,7 +79,7 @@ replicate = ffi2 "lists" "duplicate"
 foreign import take :: forall a. Integer -> [a] -> [a]
 
 takeWhile :: forall a. (a -> Boolean) -> [a] -> [a]
-takeWhile = ffi2 "lists" "takeWhile"
+takeWhile = ffi2 :lists :takeWhile
 
 foreign import drop :: forall a. Integer -> [a] -> [a]
 
@@ -92,49 +92,49 @@ span = splitWith
 
 -- | Split List into two lists according to Pred.
 splitWith :: forall a. (a -> Boolean) -> [a] -> ([a], [a])
-splitWith = ffi2 "lists" "splitwith"
+splitWith = ffi2 :lists :splitwith
 
 splitAt :: forall a. Integer -> [a] -> ([a], [a])
-splitAt = ffi2 "lists" "split"
+splitAt = ffi2 :lists :split
 
 dropWhile :: forall a. (a -> Boolean) -> [a] -> [a]
-dropWhile = ffi2 "lists" "dropWhile"
+dropWhile = ffi2 :lists :dropWhile
 
 -----------------------------------------------------------------------------
 -- Sort lists
 -----------------------------------------------------------------------------
 
 sort :: forall a. [a] -> [a]
-sort = ffi1 "lists" "sort"
+sort = ffi1 :lists :sort
 
 keysort :: forall a b. Integer -> [(a, b)] -> [(a, b)]
-keysort = ffi2 "lists" "keysort"
+keysort = ffi2 :lists :keysort
 
 usort :: forall a. [a] -> [a]
-usort = ffi1 "lists" "usort"
+usort = ffi1 :lists :usort
 
 ukeysort :: forall a b. Integer -> [(a, b)] -> [(a, b)]
-ukeysort = ffi2 "lists" "ukeysort"
+ukeysort = ffi2 :lists :ukeysort
 
 -----------------------------------------------------------------------------
 -- Zip and unzip lists
 -----------------------------------------------------------------------------
 
 zip :: forall a b. [a] -> [b] -> [(a, b)]
-zip = ffi2 "lists" "zip"
+zip = ffi2 :lists :zip
 
 zip3 :: forall a b c. [a] -> [b] -> [c] -> [(a, b, c)]
-zip3 = ffi3 "lists" "zip3"
+zip3 = ffi3 :lists :zip3
 
 zipWith :: forall a b c. (a -> b -> c) -> [a] -> [b] -> [c]
-zipWith = ffi3 "lists" "zipWith"
+zipWith = ffi3 :lists :zipWith
 
 zipWith3 :: forall a b c d. (a -> b -> c -> d) -> [a] -> [b] -> [c] -> [d]
-zipWith3 = ffi4 "lists" "zipWith3"
+zipWith3 = ffi4 :lists :zipWith3
 
 unzip :: forall a b. [(a, b)] -> ([a], [b])
-unzip = ffi1 "lists" "unzip"
+unzip = ffi1 :lists :unzip
 
 unzip3 :: forall a b c. [(a, b, c)] -> ([a], [b], [c])
-unzip3 = ffi1 "lists" "unzip3"
+unzip3 = ffi1 :lists :unzip3
 

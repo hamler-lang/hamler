@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Counters Module.
+-- The Counters module.
 --
 -----------------------------------------------------------------------------
 module ERTS.Counters where
@@ -17,7 +17,7 @@ module ERTS.Counters where
 import Control.Monad (IO)
 import Data.Ref (Reference)
 import Data.Unit (Unit)
-import Foreign
+import Foreign (ffiIO1, ffiIO2, ffiIO3)
 
 type CountersRef = Reference
 
@@ -33,17 +33,17 @@ type CountersInfo =
 foreign import new :: Integer -> [CountersOpt] -> IO CountersRef
 
 get :: CountersRef -> Integer -> IO Integer
-get = ffiIO2 "counters" "get"
+get = ffiIO2 :counters :get
 
 add :: CountersRef -> Integer -> Integer -> IO ()
-add = ffiIO3 "counters" "add"
+add = ffiIO3 :counters :add
 
 sub :: CountersRef -> Integer -> Integer -> IO ()
-sub = ffiIO3 "counters" "sub"
+sub = ffiIO3 :counters :sub
 
 put :: CountersRef -> Integer -> Integer -> IO ()
-put = ffiIO3 "counters" "put"
+put = ffiIO3 :counters :put
 
 info :: CountersRef -> IO CountersInfo
-info = ffiIO1 "counters" "info"
+info = ffiIO1 :counters :info
 
