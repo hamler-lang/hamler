@@ -17,8 +17,6 @@
 -export([ atom/1
         , existingAtom/1
         , toString/1
-        , eqAtomImpl/2
-        , cmpAtomImpl/3
         ]).
 
 -spec(atom(string()) -> atom()).
