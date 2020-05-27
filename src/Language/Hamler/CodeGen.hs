@@ -304,6 +304,7 @@ literalToErl :: L.Literal (C.Expr C.Ann) -> Translate E.Expr
 literalToErl (NumericLiteral (Left i))  = return $ Lit $ LInt i
 literalToErl (NumericLiteral (Right i)) = return $ Lit $ LFloat i
 literalToErl (StringLiteral s)          = return $ Lit $ LString $ decodePPS s
+literalToErl (AtomLiteral s)            = return $ Lit $ LAtom $ Atom $ decodePPS s
 literalToErl (CharLiteral c)            = return $ Lit $ LChar c
 literalToErl (BooleanLiteral True)      = return $ Lit $ LAtom (Atom "true")
 literalToErl (BooleanLiteral False)     = return $ Lit $ LAtom (Atom "false")
@@ -445,6 +446,7 @@ binderToKey :: Binder C.Ann -> Translate Key
 binderToKey (LiteralBinder _ (NumericLiteral (Left i))) =return $ KLit $ LInt i
 binderToKey (LiteralBinder _ (NumericLiteral (Right i))) =return $ KLit $ LFloat i
 binderToKey (LiteralBinder _ (StringLiteral s))          =return $ KLit $ LString $ decodePPS s
+binderToKey (LiteralBinder _ (AtomLiteral s))          =return $ KLit $ LAtom $ Atom $ decodePPS s
 binderToKey (LiteralBinder _ (CharLiteral c))           = return $ KLit $ LChar c
 binderToKey (LiteralBinder _ (BooleanLiteral True))      = return $ KLit $ LAtom (Atom "true")
 binderToKey (LiteralBinder _ (BooleanLiteral False))    = return $ KLit $ LAtom (Atom "false")
@@ -457,6 +459,7 @@ literalBinderToPat :: L.Literal (C.Binder C.Ann) -> Translate E.Pat
 literalBinderToPat (NumericLiteral (Left i))  = return $ PLit $ LInt i
 literalBinderToPat (NumericLiteral (Right i)) = return $ PLit $ LFloat i
 literalBinderToPat (StringLiteral s)          = return $ PLit $ LString $ decodePPS s
+literalBinderToPat (AtomLiteral s)          = return $ PLit $ LAtom $ Atom $ decodePPS s
 literalBinderToPat (CharLiteral c)            = return $ PLit $ LChar c
 literalBinderToPat (BooleanLiteral True)      = return $ PLit $ LAtom (Atom "true")
 literalBinderToPat (BooleanLiteral False)     = return $ PLit $ LAtom (Atom "false")
