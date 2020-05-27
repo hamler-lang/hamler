@@ -9,15 +9,18 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Foreign FFI Mod.
+-- The Foreign FFI module.
 --
 -----------------------------------------------------------------------------
 module Foreign where
 
 import Control.Monad (IO)
 
-type Mod = String
-type Fun = String
+-- Foreign module name
+type Mod = Atom
+
+-- Foreign function name
+type Fun = Atom
 
 -- Pure FFI function
 foreign import ffi0 :: forall a. Mod -> Fun -> a

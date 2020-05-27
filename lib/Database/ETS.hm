@@ -58,30 +58,30 @@ type TableInfo =
 foreign import new :: Table -> TableOptions -> IO TableId
 
 all :: IO [TableId]
-all = ffiIO0 "ets" "all"
+all = ffiIO0 :ets :all
 
 -- | Delete an ETS table
 deleteTable :: TableId -> IO Boolean
-deleteTable = ffiIO1 "ets" "delete"
+deleteTable = ffiIO1 :ets :delete
 
 -- | Delete a record.
 delete :: forall k. TableId -> k -> IO Boolean
-delete = ffiIO2 "ets" "delete"
+delete = ffiIO2 :ets :delete
 
 -- | Delete all records of a table.
 deleteAllObjects :: TableId -> IO Boolean
-deleteAllObjects = ffiIO1 "ets" "delete_all_objects"
+deleteAllObjects = ffiIO1 :ets :delete_all_objects
 
 deleteObject :: forall a. TableId -> a -> IO Boolean
-deleteObject = ffiIO2 "ets" "delete_object"
+deleteObject = ffiIO2 :ets :delete_object
 
 -- | Displays information about all ETS tables on a terminal.
 browse :: IO String
-browse = ffiIO0 "ets" "i"
+browse = ffiIO0 :ets :i
 
 -- | Browses table Tab on a terminal.
 browseTable :: TableId -> IO String
-browseTable = ffiIO1 "ets" "i"
+browseTable = ffiIO1 :ets :i
 
 -- file2tab/1
 -- file2tab/2
@@ -98,16 +98,16 @@ foreign import info :: TableId -> IO (Maybe TableInfo)
 -- init_table/2
 
 insert :: forall o. TableId -> o -> IO Boolean
-insert = ffiIO2 "ets" "insert"
+insert = ffiIO2 :ets :insert
 
 insertObjects :: forall o. TableId -> [o] -> IO Boolean
-insertObjects = ffiIO2 "ets" "insert"
+insertObjects = ffiIO2 :ets :insert
 
 insertNew :: forall o. TableId -> o -> IO Boolean
-insertNew = ffiIO2 "ets" "insert_new"
+insertNew = ffiIO2 :ets :insert_new
 
 insertNewObjects :: forall o. TableId -> [o] -> IO Boolean
-insertNewObjects = ffiIO2 "ets" "insert_new"
+insertNewObjects = ffiIO2 :ets :insert_new
 
 {-
 -- is_compiled_ms/1

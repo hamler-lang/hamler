@@ -16,7 +16,6 @@ module Control.OTP.Supervisor where
 
 import Control.OTP.Supervisor.Types
 import Control.Process (Module, Node, Process)
-import Data.Atom (Atom)
 import Data.Pid (Pid)
 import Data.Maybe (Maybe)
 import Data.Result (Result)

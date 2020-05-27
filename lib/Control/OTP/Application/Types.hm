@@ -15,7 +15,6 @@
 module Control.OTP.Application.Types where
 
 import Control.Process (Node, Module)
-import Data.Atom (Atom)
 import Data.Timeout (Timeout)
 
 type Application = Atom

@@ -15,7 +15,6 @@
 module Control.OTP.GenStatem.Behaviour where
 
 import Control.Process (Process)
-import Data.Atom (Atom)
 
 foreign import init :: forall a st. a -> Process st
 

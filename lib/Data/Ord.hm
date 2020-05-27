@@ -32,6 +32,9 @@ import Data.Unit (Unit)
 class Eq a => Ord a where
   compare :: a -> a -> Ordering
 
+instance Ord Atom where
+  compare = cmpAtomImpl LT EQ GT
+
 instance Ord Boolean where
   compare = cmpBoolImpl LT EQ GT
 
@@ -51,6 +54,14 @@ instance Ord Unit where
 instance Ord Void where
   compare _ _ = EQ
 -}
+
+foreign import cmpAtomImpl
+  :: Ordering
+  -> Ordering
+  -> Ordering
+  -> Atom
+  -> Atom
+  -> Ordering
 
 foreign import cmpBoolImpl
   :: Ordering

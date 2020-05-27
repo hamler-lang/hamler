@@ -30,12 +30,3 @@ existingAtom(S) -> list_to_existing_atom(S).
 -spec(toString(atom()) -> string()).
 toString(A) -> atom_to_list(A).
 
--spec(eqAtomImpl(atom(), atom()) -> boolean()).
-eqAtomImpl(A1, A2) -> A1 =:= A2.
-
-cmpAtomImpl(LT, EQ, GT) ->
-    fun(A1, A2) when A1 < A2 -> LT;
-       (A1, A2) when A1 == A2 -> EQ;
-       (A1, A2) when A1 > A2 -> GT
-    end.
-

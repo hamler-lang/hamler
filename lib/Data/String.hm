@@ -27,13 +27,13 @@ infixl 6 concat as ++
 
 -- | Concatenates two strings to form a new string.
 concat :: String -> String -> String
-concat = ffi2 "string" "concat"
+concat = ffi2 :string :concat
 
 -----------------------------------------------------------------------------
 -- | Basic functions
 
 isEmpty :: String -> Boolean
-isEmpty = ffi1 "string" "is_empty"
+isEmpty = ffi1 :string :is_empty
 
 -- | String length.
 length :: String -> Integer
@@ -41,13 +41,13 @@ length = strlen
 
 -- | Reverse the UTF-8 String.
 reverse :: String -> String
-reverse = ffi1 "string" "reverse"
+reverse = ffi1 :string :reverse
 
 strlen :: String -> Integer
-strlen = ffi1 "string" "length"
+strlen = ffi1 :string :length
 
 equal :: String -> String -> Boolean
-equal = ffi2 "string" "equal"
+equal = ffi2 :string :equal
 
 foreign import equalIgnoreCase :: String -> String -> Boolean
 
@@ -88,11 +88,11 @@ foreign import replicate :: Integer -> String -> String
 -- | Join, split, take, drop and slice utf8 string
 
 join :: [String] -> String -> String
-join = ffi2 "string" "join"
+join = ffi2 :string :join
 
 {- TODO:
 lexemes :: String -> String -> [String]
-lexemes = ffi2 "string" "lexemes"
+lexemes = ffi2 :string "lexemes"
 -}
 
 foreign import split :: String -> String -> [String]
@@ -112,7 +112,7 @@ drop :: Integer -> String -> String
 drop n s = slice s (n+1)
 
 slice :: String -> Integer -> String
-slice = ffi2 "string" "slice"
+slice = ffi2 :string :slice
 
 foreign import sliceTo :: String -> Integer -> Integer -> String
 
@@ -121,26 +121,26 @@ foreign import sliceTo :: String -> Integer -> Integer -> String
 
 -- | Converts String to lowercase.
 toLower :: String -> String
-toLower = ffi1 "string" "lowercase"
+toLower = ffi1 :string :lowercase
 
 -- | Converts String to titlecase.
 toTitle :: String -> String
-toTitle = ffi1 "string" "titlecase"
+toTitle = ffi1 :string :titlecase
 
 -- | Converts String to uppercase.
 toUpper :: String -> String
-toUpper = ffi1 "string" "uppercase"
+toUpper = ffi1 :string :uppercase
 
 -- | Converts String to a case-agnostic comparable string.
 caseFold :: String -> String
-caseFold = ffi1 "string" "casefold"
+caseFold = ffi1 :string :casefold
 
 -----------------------------------------------------------------------------
 -- | Padding utf8 string
 
 -- | Padding whitespace.
 pad :: String -> Integer -> String
-pad = ffi2 "string" "pad"
+pad = ffi2 :string :pad
 
 -- | Padding whitespace in the leading of the string.
 foreign import padLeft :: String -> Integer -> String
@@ -153,11 +153,11 @@ foreign import padRight :: String -> Integer -> String
 
 -- | Returns a string where any trailing \n or \r\n have been removed from String.
 chomp :: String -> String
-chomp = ffi1 "string" "chomp"
+chomp = ffi1 :string :chomp
 
 -- | Trim whitespace characters and line terminators.
 trim :: String -> String
-trim = ffi1 "string" "trim"
+trim = ffi1 :string :trim
 
 foreign import trimChars:: String -> String -> String
 

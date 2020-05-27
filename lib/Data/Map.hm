@@ -21,7 +21,7 @@ foreign import data Map :: Type -> Type -> Type
 
 -- | Returns a new empty map.
 empty :: forall k v. Map k v
-empty = ffi0 "maps" "new"
+empty = ffi0 :maps :new
 
 -- | Create a map with only one key-value pair.
 foreign import singleton :: forall k v. k -> v -> Map k v
@@ -36,18 +36,18 @@ foreign import isEmpty :: forall k v. Map k v -> Boolean
 
 -- | Insert the key-value pair into a map.
 insert :: forall k v. k -> v -> Map k v -> Map k v
-insert = ffi3 "maps" "put"
+insert = ffi3 :maps :put
 
 -- | Return the `Value` associated with `Key`.
 foreign import lookup :: forall k v. k -> Map k v -> Maybe v
 
 -- | TODO: docs later...
 map :: forall k v. ((k, v) -> v) -> Map k v -> Map k v
-map = ffi2 "maps" "map"
+map = ffi2 :maps :map
 
 -- | Test if a key is a member of a Map.
 member :: forall k v. k -> Map k v -> Boolean
-member = ffi2 "maps" "is_key"
+member = ffi2 :maps :is_key
 
 -- | Test if a key is not a member of a Map.
 foreign import notMember :: forall k v. k -> Map k v -> Boolean
@@ -60,33 +60,33 @@ fold = ffi3 "maps" "fold"
 
 -- | Update an existed key-value pair.
 update :: forall k v. k -> v -> Map k v -> Map k v
-update = ffi3 "maps" "update"
+update = ffi3 :maps :update
 
 -- | Update a value in a Map1 associated with Key by calling Fun on the old value to get a new value.
 updateWith :: forall k v. k -> (v -> v) -> Map k v -> Map k v
-updateWith = ffi3 "maps" "update_with"
+updateWith = ffi3 :maps :update_with
 
 updateWithInit :: forall k v. k -> (v -> v) -> v -> Map k v -> Map k v
-updateWithInit = ffi4 "maps" "update_with"
+updateWithInit = ffi4 :maps :update_with
 
 -- | TODO: docs later...
 foreign import take :: forall k v.  k -> Map k v -> Maybe (v, (Map k v))
 
 -- | Delete the key-value pair, if it exists.
 delete :: forall k v. k -> Map k v -> Map k v
-delete = ffi2 "maps" "remove"
+delete = ffi2 :maps :remove
 
 -- | Returns the size of the Map.
 size :: forall k v. Map k v -> Integer
-size = ffi1 "maps" "size"
+size = ffi1 :maps :size
 
 -- | Returns a map Map for which predicate Pred holds true in Map.
 filter :: forall k v. ((k, v) -> Boolean) -> Map k v -> Map k v
-filter = ffi2 "maps" "filter"
+filter = ffi2 :maps :filter
 
 -- | Merges two maps into a single map.
 merge :: forall k v. Map k v -> Map k v -> Map k v
-merge = ffi2 "maps" "merge"
+merge = ffi2 :maps :merge
 
 -- | An alias of `toList` function.
 assocs :: forall k v. Map k v -> [(k,v)]
@@ -94,24 +94,24 @@ assocs = toList
 
 -- | Returns a list of keys contained in a map.
 keys :: forall k v. Map k v -> List k
-keys = ffi1 "maps" "keys"
+keys = ffi1 :maps :keys
 
 -- | Returns a list of values contained in a map.
 values :: forall k v. Map k v -> List v
-values = ffi1 "maps" "values"
+values = ffi1 :maps :values
 
 -- | Builds a map from a list of key-value tuples.
 fromList :: forall k v. [(k,v)] -> Map k v
-fromList = ffi1 "maps" "from_list"
+fromList = ffi1 :maps :from_list
 
 -- | Returns a list of pairs representing the key-value associations of Map.
 toList :: forall k v. Map k v -> [(k,v)]
-toList = ffi1 "maps" "to_list"
+toList = ffi1 :maps :to_list
 
 -- | TODO: docs later...
 with :: forall k v. [k] -> Map k v -> Map k v
-with = ffi2 "maps" "with"
+with = ffi2 :maps :with
 
 -- | TODO: docs later...
 without :: forall k v. [k] -> Map k v -> Map k v
-without = ffi2 "maps" "without"
+without = ffi2 :maps :without

@@ -9,10 +9,13 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Erlang Binary data type.
+-- The Erlang Binary datatype.
 --
 -----------------------------------------------------------------------------
 module Data.Binary where
+
+import Data.Eq (class Eq)
+import Data.Ord (class Ord, Ordering(..))
 
 import Foreign (ffi2)
 
@@ -23,6 +26,23 @@ import Foreign (ffi2)
 -- | A `Bitstring` in Erlang is a sequence of zero or more bits.
 foreign import data Binary :: Type
 
+instance Eq Binary where
+  eq = eqBinImpl
+
+instance Ord Binary where
+  compare = cmpBinImpl LT EQ GT
+
+foreign import eqBinImpl :: Binary -> Binary -> Boolean
+
+foreign import cmpBinImpl
+  :: Ordering
+  -> Ordering
+  -> Ordering
+  -> Binary
+  -> Binary
+  -> Ordering
+
 -- | Split a binary into a list binaries.
-split :: Binary -> Binary -> List Binary
-split = ffi2 "binary" "split"
+split :: Binary -> Binary -> [Binary]
+split = ffi2 :binary :split
+

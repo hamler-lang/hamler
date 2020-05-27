@@ -14,8 +14,6 @@
 -----------------------------------------------------------------------------
 module Control.OTP.GenStatem.Types where
 
-import Data.Atom (Atom)
-
 type LocalName  = Atom
 type GlobalName = Atom
 type ViaName = Atom

@@ -30,6 +30,9 @@ notEq x y = (x == y) == false
 
 infix 4 notEq as /=
 
+instance Eq Atom where
+  eq = eqAtomImpl
+
 instance Eq Boolean where
   eq = eqBoolImpl
 
@@ -51,6 +54,7 @@ instance Eq a => Eq (List a) where
 instance Eq Unit where
   eq _ _ = true
 
+foreign import eqAtomImpl :: Atom -> Atom -> Boolean
 foreign import eqBoolImpl :: Boolean -> Boolean -> Boolean
 foreign import eqCharImpl :: Char -> Char -> Boolean
 foreign import eqIntImpl :: Integer -> Integer -> Boolean
