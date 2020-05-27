@@ -96,6 +96,8 @@ isEmpty (x : xs) = false
 
 ## 4. 7 Record Patterns
 
+
+
 ```haskell
 showPerson :: { firstName :: Name, lastName :: Name } -> Name
 showPerson { firstName: x, lastName: y } = y <> ", " <> x
@@ -111,7 +113,12 @@ showPerson { firstName: x, lastName: y } = y <> ", " <> x
 
 ## 4. 8 Map Patterns
 
-```
+We can also pattern match on `Map`s, and this is very similar to `Record`s, except some syntax changes. For example, `getID` let us to get the ID of Wang from a map where we have to have at least Wang, Thomas and Leeming as keys. 
+
+```haskell
+getID :: Map String Integer -> Maybe Integer
+getID #{ "Wang":= x, "Thomas" := y, "Leeming" := z } = Just x
+getID _                                              = Nothing
 
 ```
 
@@ -119,10 +126,15 @@ showPerson { firstName: x, lastName: y } = y <> ", " <> x
 
 ## 4. 9 Binary Patterns
 
-```haskell
+Matching on binaries is just like how it is done in Erlang. Int the following example, we are trying to get a 24 bit integer out of the Binary  passed to getA.
 
-               
+```haskell
+getA :: Binary -> Just Integer
+getA << (a):24:Big-Integer | (b):4:Binary-Little | (c):32:Binary >> = Just a
+getA _                                                               = Nothing
 ```
+
+`Big` and `Little` meas the endianess in the part we need. `Integer` or `Binary` are the type we will give to after we extract the segment. The number of bits of the segment depends on the size of segment we need and the type we assign. If they type we assign is an `Integer` then the get same number of the size, which is required to be evenly divisible by 8. If it is a `Binary` we want, it will need 8 times the size of bits. 
 
 
 
@@ -138,4 +150,3 @@ sumUpTo x p = case plus p of
                 x -> true
                 _ -> false
 ```
-

@@ -1,10 +1,10 @@
-# Recursions and High-Order Functions 
+# Recursions and Higher Order Functions 
 
-## Intro
+## 5. 1 Intro
 
 Resursion is an important technique in programming, especially in functional programming. 
 
-Simple example:
+Simple examples:
 
 ```haskell
 fact :: Int -> Int
@@ -19,9 +19,9 @@ fib n = fib (n - 1) + fib (n - 2)
 
 
 
-## Recursions on more complicated datatypes
+## 5. 2 Recursions on more complicated datatypes
 
-Defination of datatype list is recursive, when define a function for such datatypes it comes naturally to define it recursively.
+Defination of datatype list is recursive. So,when we define a function for such datatypes, it comes naturally to define the function recursively.
 
 ```haskell
 length :: forall a . [a] -> Integer
@@ -31,7 +31,7 @@ length (x:xs) = 1 + length xs
 
 
 
-## Map, filter and fold
+## 5. 3 Map, filter and fold
 
 `map`, `filter` and `fold` are three commonly used functions to manipulate a list. `map` is used to apply `f` on all `a`s in a list of `a`. `filter` is to filter the list. `foldr` is to decontruct the list by replacing `:` with and operator/or function. 
 
@@ -44,7 +44,7 @@ map f (x:xs) = f x : xs
 
 filter :: forall a. (a -> Boolean) -> [a] -> [a]
 filter p []     = []
-filter p (x:xs) = if f x then x : filter p xs 
+filter p (x:xs) = if f x then (x : filter p xs)
                          else filter p xs
 
 foldr :: forall a b. (a -> b -> b) -> b -> [a] -> b --simplied defination see typeclass for more info
@@ -65,9 +65,9 @@ Here are some examples on the usage.
 15
 ```
 
-Functions like map, filter and foldr are also called high-order functions, becuase they take an function as argument. 
 
-## List Comprehensions
+
+## 5. 4 List Comprehensions
 
 There is an alternative way to define map and filter, which is to use list comprehension.
 
@@ -87,4 +87,23 @@ With list comprehension we can also do things like:
 [1,2,3,4,5,6,7,8,9,10]
 
 ```
+
+
+
+## 5. 5 Higher Order Functions
+
+Functions like map, filter and foldr are also called higher order functions, becuase they take an function as argument. A higher order function takes a function as its aruguement or/and returns a function as it's result. 
+
+Here are some more examples of such functions. 
+
+```haskell
+apply :: forall a b. (a -> b) -> a -> b
+apply f x = f x
+
+compose :: forall a b. (b -> c) -> (a -> b) -> a -> c
+compose g f x = g (f x)
+
+```
+
+
 
