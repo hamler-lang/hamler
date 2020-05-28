@@ -52,7 +52,13 @@ This is the very unique datatype exists in Erlang, and notes for Haskell users `
 
 ```
 
-## 3. 2 Functions
+
+
+## 3. 2 Operators
+
+
+
+## 3. 3 Functions
 
 When we define a new function, we can give it a type signature. For exmaple `double` is a function takes an `Integer` and gives an `Integer` doubled as output. 
 
@@ -102,7 +108,7 @@ plus 2:: Integer -> Integer
 
 
 
-## 3. 2 Quantified Types
+## 3. 4 Quantified Types
 
 They are also known as **polymorhphic types**. 
 

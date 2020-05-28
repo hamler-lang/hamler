@@ -47,7 +47,7 @@ filter p []     = []
 filter p (x:xs) = if f x then (x : filter p xs)
                          else filter p xs
 
-foldr :: forall a b. (a -> b -> b) -> b -> [a] -> b --simplied defination see typeclass for more info
+foldr :: forall a b. (a -> b -> b) -> b -> [a] -> b --simplified defination see typeclass for more info
 foldr f k []     = k
 foldr f k (x:xs) = f x (foldr f k xs)
 ```
@@ -102,7 +102,6 @@ apply f x = f x
 
 compose :: forall a b. (b -> c) -> (a -> b) -> a -> c
 compose g f x = g (f x)
-
 ```
 
 
