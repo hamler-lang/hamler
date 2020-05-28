@@ -30,7 +30,7 @@ instance Ring Float where
 class Ring a => Division a where
   div :: a -> a -> a
 
-infixl 7 div as /
+-- infixl 7 div as /
 
 instance Division Integer where
   div = intDiv
