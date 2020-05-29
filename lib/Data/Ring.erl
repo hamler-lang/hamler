@@ -14,21 +14,29 @@
 %%---------------------------------------------------------------------------
 -module('Ring').
 
--export([ charSub/2
-        , intSub/2
+-export([ intSub/2
         , floatSub/2
-        , numSub/2
+        , intDiv/2
+        , floatDiv/2
+        , intRem/2
         ]).
 
--spec(charSub(char(), char()) -> char()).
-charSub(C1, C2) -> C1 - C2.
-
+%% intSub :: Integer -> Integer -> Integer
 -spec(intSub(integer(), integer()) -> integer()).
-intSub(I1, I2) -> I1 - I2.
+intSub(X, Y) -> X - Y.
 
+%% floatSub :: Float -> Float -> Float
 -spec(floatSub(float(), float()) -> float()).
-floatSub(F1, F2) -> F1 - F2.
+floatSub(X, Y) -> X - Y.
 
--spec(numSub(number(), number()) -> number()).
-numSub(N1, N2) -> N1 - N2.
+%% intDiv :: Integer -> Integer -> Integer
+-spec(intDiv(integer(), integer()) -> integer()).
+intDiv(X, Y) -> X div Y.
 
+%% floatDiv :: Float -> Float -> Float
+-spec(floatDiv(float(), float()) -> float()).
+floatDiv(X, Y) -> X / Y.
+
+%% intRem :: Integer -> Integer -> Integer
+-spec(intRem(integer(), integer()) -> integer()).
+intRem(X, Y) -> X rem Y.

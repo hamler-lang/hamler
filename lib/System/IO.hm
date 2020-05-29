@@ -1,0 +1,36 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  System.IO
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The System IO Module.
+--
+-----------------------------------------------------------------------------
+module System.IO
+  ( print, printf, println
+  , readFile, writeFile, appendFile
+  , FilePath
+  ) where
+
+import Control.Monad (IO)
+import Data.Binary (Binary)
+import Data.Unit (Unit)
+
+-- | File Path
+type FilePath = String
+
+-- Simple IO operations
+foreign import print :: String -> IO ()
+foreign import printf :: String -> IO ()
+foreign import println :: String -> IO ()
+
+-- Simple File operations
+foreign import readFile :: FilePath -> IO Binary
+foreign import writeFile :: FilePath -> Binary -> IO ()
+foreign import appendFile :: FilePath -> Binary -> IO ()

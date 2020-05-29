@@ -1,0 +1,49 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  System.Init
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Erlang Init module.
+--
+-----------------------------------------------------------------------------
+module System.Init where
+
+import Control.Monad (IO)
+import Data.Binary (Binary)
+import Data.Maybe (Maybe)
+import Data.Unit (Unit)
+import Foreign (ffiIO0)
+
+type Arguments = [String]
+
+data InternalStatus = Starting | Started | Stopping
+
+type ProvidedStatus = String
+
+foreign import getArgument :: String -> IO (Maybe Arguments)
+
+foreign import getArguments :: IO (List (String, Arguments))
+
+getPlainArguments :: IO (Arguments)
+getPlainArguments = ffiIO0 :init :getPlainArguments
+
+foreign import getStatus :: IO (InternalStatus, ProvidedStatus)
+
+boot :: IO [Binary]
+boot = ffiIO0 :init :boot
+
+restart :: IO ()
+restart = ffiIO0 :init :restart
+
+reboot :: IO ()
+reboot = ffiIO0 :init :reboot
+
+stop :: IO ()
+stop = ffiIO0 :init :stop
+

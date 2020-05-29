@@ -1,0 +1,48 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Show
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Show typeclass.
+--
+-----------------------------------------------------------------------------
+module Data.Show
+  ( class Show, show, showAny
+  ) where
+
+-- | The `Show` type class represents those types which can be converted into
+-- | a human-readable `String` representation.
+-- |
+-- | While not required, it is recommended that for any expression `x`, the
+-- | string `show x` be executable PureScript code which evaluates to the same
+-- | value as the expression `x`.
+class Show a where
+  show :: a -> String
+
+instance Show Boolean where
+  show true = "true"
+  show false = "false"
+
+instance Show Integer where
+  show = showIntImpl
+
+instance Show Float where
+  show f = showFloatImpl f
+
+instance Show Char where
+  show c = showCharImpl c
+
+instance Show String where
+  show s = s
+
+foreign import showIntImpl :: Integer -> String
+foreign import showFloatImpl :: Float -> String
+foreign import showCharImpl :: Char -> String
+
+foreign import showAny :: forall a. a -> String

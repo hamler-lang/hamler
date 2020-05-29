@@ -9,15 +9,79 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Char Type.
+-- The Unicode Char datatype.
 --
 -----------------------------------------------------------------------------
 module Data.Char where
 
--- TODO:...
--- isAlpha 'c'
--- isDigit '4'
--- toUpper 'a'
--- toLower 'E'
--- ord('A')
--- chr(61)
+-----------------------------------------------------------------------------
+-- | Character classification
+
+-- | Unicode control characters: 0..31, 127.
+foreign import isControl :: Char -> Boolean
+
+-- | Unicode space characters:
+-- ' '  (0x20) space (SPC)
+-- '\t' (0x09) horizontal tab (TAB)
+-- '\n' (0x0a) newline (LF)
+-- '\v' (0x0b) vertical tab (VT)
+-- '\f' (0x0c) feed (FF)
+-- '\r' (0x0d) carriage return (CR)
+foreign import isSpace :: Char -> Boolean
+
+-- | Return true for a lowercase Unicode character.
+foreign import isLower :: Char -> Boolean
+
+-- | Return true for a uppercase Unicode character.
+foreign import isUpper :: Char -> Boolean
+
+-- | Alphabetic Unicode characters.
+foreign import isAlpha :: Char -> Boolean
+
+-- | Alphabetic or numeric Unicode characters.
+foreign import isAlphaNum :: Char -> Boolean
+
+-- | Printable characters.
+foreign import isPrint :: Char -> Boolean
+
+-- | ASCII digits: '0'..'9'.
+foreign import isDigit :: Char -> Boolean
+
+-- | ASCII octal digits: '0'..'7'.
+foreign import isOctDigit :: Char -> Boolean
+
+-- | ASCII hexadecimal digits: '0'..'9', 'a'..'f', 'A'..'F'.
+foreign import isHexDigit :: Char -> Boolean
+
+-- TODO: right?
+isLetter :: Char -> Boolean
+isLetter = isAlpha
+
+-- | ASCII characters.
+foreign import isAscii :: Char -> Boolean
+
+-----------------------------------------------------------------------------
+-- | Case conversion
+
+-- | Converts a unicode character to its uppercase equivalent.
+foreign import toUpper :: Char -> Char
+
+-- | Converts a unicode character to its lowercase equivalent.
+foreign import toLower :: Char -> Char
+
+-- | Converts a unicode character to its titlecase or uppercase equivalent.
+foreign import toTitle :: Char -> Char
+
+-----------------------------------------------------------------------------
+-- | Int conversion
+
+-- | Convert a digit Char to the corresponding Int.
+foreign import digitToInt :: Char -> Integer
+
+-- | Convert an Int in the range 0..15 to the corresponding digit Char.
+foreign import intToDigit :: Integer -> Char
+
+foreign import ord :: Char -> Integer
+
+foreign import chr :: Integer -> Char
+

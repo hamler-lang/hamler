@@ -1,0 +1,27 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Ref
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Erlang Reference Data Type.
+--
+-----------------------------------------------------------------------------
+module Data.Ref where
+
+-- | An alias for erlang `Reference`
+type Ref = Reference
+
+-- |
+-- Erlang reference is a term that is unique in an Erlang runtime system,
+-- created by calling `make_ref`.
+--
+foreign import data Reference :: Type
+
+foreign import makeRef :: Reference
+

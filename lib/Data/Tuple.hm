@@ -14,18 +14,29 @@
 -----------------------------------------------------------------------------
 module Data.Tuple where
 
-data Tuple :: Type
+import Data.Function (error)
 
 fst :: forall a b. (a, b) -> a
 fst (a, _) = a
+fst _ = error "error things"
 
 snd :: forall a b. (a, b) -> b
 snd (_, b) = b
+snd _ = error "error things"
 
 swap :: forall a b. (a, b) -> (b, a)
 swap (a, b) = (b, a)
+swap _ = error "error things"
 
+curry :: forall a b c. ((a, b) -> c) -> a -> b -> c
+curry f x y =  f (x, y)
+
+uncurry :: forall a b c. (a -> b -> c) -> ((a, b) -> c)
+uncurry f p =  f (fst p) (snd p)
+
+
+{-
 foreign import elem :: forall a. Integer -> Tuple -> a
 foreign import setElem :: forall a. Integer -> a -> Tuple -> Tuple
 foreign import size :: forall a. Tuple -> Integer
-
+-}

@@ -1,0 +1,66 @@
+#!/usr/bin/env escript
+%% -*- mode: erlang;erlang-indent-level: 4;indent-tabs-mode: nil -*-
+%% ex: ft=erlang ts=4 sw=4 et
+%% -------------------------------------------------------------------
+%%
+%% replsrv: Hamler REPL Server
+%%
+%% -------------------------------------------------------------------
+-mode(compile).
+
+-define(MOD, '$PSCI').
+-define(OUTPUTDIR, ".tmp").
+-define(COMOPTS, [from_core, {outdir, ?OUTPUTDIR}]).
+
+main([Pa, Pz, File]) ->
+    true = code:add_path(Pa),
+    true = code:add_path(Pz),
+    true = code:add_path(?OUTPUTDIR),
+    reploop(#{file => File}).
+
+reploop(State = #{file := File}) ->
+    case io:get_line("") of
+        eof -> halt(0);
+        ":" ++ Cmd ->
+            reploop(exec(Cmd, State));
+        _Expr ->
+            try
+                code:purge(?MOD),
+                {ok, _} = compile:file(File, ?COMOPTS),
+                code:load_file(?MOD),
+                print(?MOD:it())
+            catch
+                Error:Reason:Stk ->
+                    io:format("Error: ~p, Reason: ~p~nStacktrace:~p~n", [Error, Reason, Stk])
+            end,
+            reploop(State)
+    end.
+
+exec("quit" ++ _, _State) ->
+    halt(0);
+exec("help" ++ _, State) ->
+    io:format("Hamler REPL 0.0.1~n"),
+    State;
+exec(Cmd, State) ->
+    io:format("Unknown cmd: ~s", [Cmd]),
+    State.
+
+%%eval([], State) -> State;
+%%eval(SExpr, #{bindings := Bindings}) ->
+%%    {ok, Ts, _} = erl_scan:string(SExpr),
+%%    Ts1 = case lists:reverse(Ts) of
+%%              [{dot, _}|_] -> Ts;
+%%              TsR -> lists:reverse([{dot,erl_anno:new(1)}|TsR])
+%%          end,
+%%    {ok, Expr} = erl_parse:parse_exprs(Ts1),
+%%    {value, Value, NewBindings} = erl_eval:exprs(Expr, Bindings),
+%%    io:format("~p~n", [Value]),
+%%    #{bindings => NewBindings}.
+
+print(I) when is_integer(I) ->
+    io:format("~w~n", [I]);
+print(A) when is_atom(A) ->
+    io:format("~s~n", [A]);
+print(T) ->
+    io:format("~p~n", [T]).
+

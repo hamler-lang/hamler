@@ -9,19 +9,163 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The String Data Type.
+-- The UTF-8 String data type.
 --
 -----------------------------------------------------------------------------
 module Data.String where
 
-import Data.Maybe
+import Data.Maybe (Maybe)
+import Data.Semiring ((+))
+import Foreign (ffi1, ffi2)
 
-infixl 6 connect as ++
+type Prefix = String
+type Suffix = String
+type Pattern = String
+type Replacement = String
 
--- TODO: rename the connect?
-foreign import connect :: String -> String -> String
-foreign import take    :: Int -> String -> Maybe String
-foreign import reverse :: String -> String
-foreign import append  :: String -> String -> String
-foreign import length  :: String -> Int
+infixl 6 concat as ++
+
+-- | Concatenates two strings to form a new string.
+concat :: String -> String -> String
+concat = ffi2 :string :concat
+
+-----------------------------------------------------------------------------
+-- | Basic functions
+
+isEmpty :: String -> Boolean
+isEmpty = ffi1 :string :is_empty
+
+-- | String length.
+length :: String -> Integer
+length = strlen
+
+-- | Reverse the UTF-8 String.
+reverse :: String -> String
+reverse = ffi1 :string :reverse
+
+strlen :: String -> Integer
+strlen = ffi1 :string :length
+
+equal :: String -> String -> Boolean
+equal = ffi2 :string :equal
+
+foreign import equalIgnoreCase :: String -> String -> Boolean
+
+startsWith :: String -> Prefix -> Boolean
+startsWith = hasPrefix
+
+foreign import hasPrefix :: String -> Prefix -> Boolean
+
+endsWith :: String -> Suffix -> Boolean
+endsWith = hasSuffix
+
+foreign import hasSuffix :: String -> Suffix -> Boolean
+
+-----------------------------------------------------------------------------
+-- | Index, Find and Replace
+
+foreign import indexOf :: String -> Char -> Integer
+
+foreign import lastIndexOf :: String -> Char -> Integer
+
+foreign import find :: String -> Pattern -> Maybe String
+
+foreign import findLast :: String -> Pattern -> Maybe String
+
+foreign import replace :: String -> Pattern -> Replacement -> String
+
+foreign import replaceFirst :: String -> Pattern -> Replacement -> String
+
+foreign import replaceLast :: String -> Pattern -> Replacement -> String
+
+-----------------------------------------------------------------------------
+-- | Replicate
+
+-- | Replicate to build a new string.
+foreign import replicate :: Integer -> String -> String
+
+-----------------------------------------------------------------------------
+-- | Join, split, take, drop and slice utf8 string
+
+join :: [String] -> String -> String
+join = ffi2 :string :join
+
+{- TODO:
+lexemes :: String -> String -> [String]
+lexemes = ffi2 :string "lexemes"
+-}
+
+foreign import split :: String -> String -> [String]
+
+-- | Breaks string up into a list strings at newline characters.
+foreign import lines :: String -> [String]
+
+-- | Breaks a string up into a list of words at whitespace characters.
+foreign import words :: String -> [String]
+
+-- | Returns the first n characters of the string.
+take :: Integer -> String -> String
+take n s = sliceTo s 1 n
+
+-- | Returns the string without the first n characters.
+drop :: Integer -> String -> String
+drop n s = slice s (n+1)
+
+slice :: String -> Integer -> String
+slice = ffi2 :string :slice
+
+foreign import sliceTo :: String -> Integer -> Integer -> String
+
+-----------------------------------------------------------------------------
+-- | Converting utf8 string
+
+-- | Converts String to lowercase.
+toLower :: String -> String
+toLower = ffi1 :string :lowercase
+
+-- | Converts String to titlecase.
+toTitle :: String -> String
+toTitle = ffi1 :string :titlecase
+
+-- | Converts String to uppercase.
+toUpper :: String -> String
+toUpper = ffi1 :string :uppercase
+
+-- | Converts String to a case-agnostic comparable string.
+caseFold :: String -> String
+caseFold = ffi1 :string :casefold
+
+-----------------------------------------------------------------------------
+-- | Padding utf8 string
+
+-- | Padding whitespace.
+pad :: String -> Integer -> String
+pad = ffi2 :string :pad
+
+-- | Padding whitespace in the leading of the string.
+foreign import padLeft :: String -> Integer -> String
+
+-- | Padding whitespace in the trailing of the string.
+foreign import padRight :: String -> Integer -> String
+
+-----------------------------------------------------------------------------
+-- | Trimming utf8 string
+
+-- | Returns a string where any trailing \n or \r\n have been removed from String.
+chomp :: String -> String
+chomp = ffi1 :string :chomp
+
+-- | Trim whitespace characters and line terminators.
+trim :: String -> String
+trim = ffi1 :string :trim
+
+foreign import trimChars:: String -> String -> String
+
+foreign import trimLeft :: String -> String
+
+foreign import trimLeftChars :: String -> String -> String
+
+foreign import trimRight :: String -> String
+
+foreign import trimRightChars :: String -> String -> String
 

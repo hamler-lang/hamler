@@ -1,0 +1,99 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Float
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Float module.
+--
+-----------------------------------------------------------------------------
+module Data.Float where
+
+import Foreign (ffi1, ffi2)
+
+-- | An alias for `Float`
+type Double = Float
+
+abs :: Float -> Float
+abs = ffi1 :erlang :abs
+
+acos :: Float -> Float
+acos = ffi1 :math :acos
+
+acosh :: Float -> Float
+acosh = ffi1 :math :acosh
+
+asin :: Float -> Float
+asin = ffi1 :math :asin
+
+asinh :: Float -> Float
+asinh = ffi1 :math :asinh
+
+atan :: Float -> Float
+atan = ffi1 :math :atan
+
+atan2 :: Float -> Float -> Float
+atan2 = ffi2 :math :atan2
+
+atanh :: Float -> Float
+atanh = ffi1 :math :atanh
+
+ceil :: Float -> Float
+ceil = ffi1 :math :ceil
+
+cos :: Float -> Float
+cos = ffi1 :math :cos
+
+cosh :: Float -> Float
+cosh = ffi1 :math :cosh
+
+erf :: Float -> Float
+erf = ffi1 :math :erf
+
+erfc :: Float -> Float
+erfc = ffi1 :math :erfc
+
+exp :: Float -> Float
+exp = ffi1 :math :exp
+
+floor :: Float -> Float
+floor = ffi1 :math :floor
+
+fmod :: Float -> Float -> Float
+fmod = ffi2 :math :fmod
+
+log :: Float -> Float
+log = ffi1 :math :log
+
+log2 :: Float -> Float
+log2 = ffi1 :math :log2
+
+log10 :: Float -> Float
+log10 = ffi1 :math :log10
+
+pi :: Float
+pi = 3.1415926535897932
+
+pow :: Float -> Float -> Float
+pow = ffi2 :math :pow
+
+sin :: Float -> Float
+sin = ffi1 :math :sin
+
+sinh :: Float -> Float
+sinh = ffi1 :math :sinh
+
+sqrt :: Float -> Float
+sqrt = ffi1 :math :sqrt
+
+tan :: Float -> Float
+tan = ffi1 :math :tan
+
+tanh :: Float -> Float
+tanh = ffi1 :math :tanh
+

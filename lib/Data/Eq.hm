@@ -9,49 +9,56 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Eq Typeclass.
+-- The Eq typeclass.
 --
 -----------------------------------------------------------------------------
-module Data.Eq where
+module Data.Eq
+  ( class Eq
+  , eq, (==)
+  , notEq, (/=)
+  ) where
 
-import Data.Base (Integer, Float)
+import Data.Unit (Unit)
 
 class Eq a where
   eq :: a -> a -> Boolean
 
-instance Eq Boolean where
-  eq = boolEq
-instance Eq Char where
-  eq = charEq
-instance Eq Int where
-  eq = intEq
-instance Eq Float where
-  eq = floatEq
-instance Eq Number where
-  eq = numEq
-
-foreign import boolEq  :: Boolean -> Boolean -> Boolean
-foreign import charEq  :: Char -> Char -> Boolean
-foreign import intEq   :: Int -> Int -> Boolean
-foreign import floatEq :: Float -> Float -> Boolean
-foreign import numEq   :: Number -> Number -> Boolean
-
-otherwise :: Boolean
-otherwise = true
-
-notEq :: forall a. Eq a => a -> a -> Boolean
-notEq x y = (x==y) == false
-
 infix 4 eq as ==
 
-infixr 3 conj as &&
-infixr 2 disj as ||
+notEq :: forall a. Eq a => a -> a -> Boolean
+notEq x y = (x == y) == false
 
-conj :: Boolean -> Boolean -> Boolean
-conj true true = true
-conj _ _ = false
+infix 4 notEq as /=
 
-disj :: Boolean -> Boolean -> Boolean
-disj false false = false
-disj _ _ = true
+instance Eq Atom where
+  eq = eqAtomImpl
+
+instance Eq Boolean where
+  eq = eqBoolImpl
+
+instance Eq Char where
+  eq = eqCharImpl
+
+instance Eq Integer where
+  eq = eqIntImpl
+
+instance Eq Float where
+  eq = eqFloatImpl
+
+instance Eq String where
+  eq = eqStringImpl
+
+instance Eq a => Eq (List a) where
+  eq = eqListImpl
+
+instance Eq Unit where
+  eq _ _ = true
+
+foreign import eqAtomImpl :: Atom -> Atom -> Boolean
+foreign import eqBoolImpl :: Boolean -> Boolean -> Boolean
+foreign import eqCharImpl :: Char -> Char -> Boolean
+foreign import eqIntImpl :: Integer -> Integer -> Boolean
+foreign import eqFloatImpl :: Float -> Float -> Boolean
+foreign import eqStringImpl :: String -> String -> Boolean
+foreign import eqListImpl :: forall a. List a -> List a -> Boolean
 

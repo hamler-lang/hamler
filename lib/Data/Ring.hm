@@ -21,20 +21,30 @@ class Semiring a => Ring a where
 
 infixl 6 sub as -
 
-instance Ring Char where
-  sub = charSub
-
 instance Ring Integer where
   sub = intSub
 
 instance Ring Float where
   sub = floatSub
 
-instance Ring Number where
-  sub = numSub
+class Ring a => Division a where
+  div :: a -> a -> a
 
-foreign import charSub :: Char -> Char -> Char
-foreign import intSub :: Int -> Int -> Int
+infixl 7 div as /
+
+instance Division Integer where
+  div = intDiv
+
+instance Division Float where
+  div = floatDiv
+
+rem :: Integer -> Integer -> Integer
+rem = intRem
+
+infixl 7 rem as %
+
+foreign import intSub :: Integer -> Integer -> Integer
 foreign import floatSub :: Float -> Float -> Float
-foreign import numSub :: Number -> Number -> Number
-
+foreign import intDiv :: Integer -> Integer -> Integer
+foreign import floatDiv :: Float -> Float -> Float
+foreign import intRem :: Integer -> Integer -> Integer

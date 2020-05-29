@@ -27,4 +27,3 @@ setElem(I, El, Tup) -> setelement(I, El, Tup).
 
 -spec(size(tuple()) -> integer()).
 size(Tup) -> tuple_size(Tup).
-

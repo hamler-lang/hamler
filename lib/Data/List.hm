@@ -9,143 +9,132 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The List DataType.
+-- The List datatype.
 --
 -----------------------------------------------------------------------------
 module Data.List where
 
-import Data.Eq
-import Data.Maybe
-import Data.Ord
-import Data.Ring
-import Data.Semiring
+import Data.Maybe (Maybe)
+import Foreign (ffi1, ffi2, ffi3, ffi4)
 
-infixr 6 Cons as :
+-----------------------------------------------------------------------------
+-- Basic functions
+-----------------------------------------------------------------------------
 
-data List a = Nil | Cons a (List a)
+infixl 6 append as ++
 
-nil :: forall a.List a
-nil = Nil
+append :: forall a. [a] -> [a] -> [a]
+append = ffi2 :lists :append
 
-cons :: forall a.a -> List a -> List a
-cons a Nil = a : Nil
-cons a xs = a :xs
+-- infixr 6 cons as :
 
-map :: forall a b.(a->b) -> List a -> List b
-map f Nil = Nil
-map f (x:xs) = f x : map f xs
+-- | Cons a list.
+foreign import cons :: forall a. a -> [a] -> [a]
 
-length :: forall a.List a -> Int
-length Nil = 0
-length (x:xs) = 1 + length xs
+-- | Return the first element of a list.
+foreign import head :: forall a. [a] -> a
 
-foldl :: forall a b.(b -> a -> b) -> b -> List a -> b
-foldl f b Nil = b
-foldl f b (x:xs) = foldl f (f b x) xs
+-- | Return the last element of a list.
+last :: forall a. [a] -> a
+last = ffi1 :lists :last
 
-foldr :: forall a b.(a -> b -> b) -> b -> List a -> b
-foldr f b Nil = b
-foldr f b (x:xs) = f x (foldr f b xs)
+-- | Return the elements after the head of a list.
+foreign import tail :: forall a. [a] -> [a]
 
-scanl :: forall a b.(b -> a -> b) -> b -> List a -> List b
-scanl f b Nil = Nil
-scanl f b (x:xs) = t : scanl f t xs
-  where t = f b x
+foreign import init :: forall a. [a] -> [a]
 
-scanr :: forall a b.(a -> b -> b) -> b -> List a -> List b
-scanr f b Nil = Nil
-scanr f b (x:xs) = f x t : r
-  where r = scanr f b xs
-        t = case r of
-              Nil -> b
-              c:cs -> c
+-- | Decompose a list into its head and tail.
+foreign import uncons :: forall a. [a] -> Maybe (a, [a])
 
-head ::forall a.List a -> Maybe a
-head Nil = Nothing
-head (x:xs) = Just x
+-- | Return the length/size of the list.
+length :: forall a. [a] -> Integer
+length = ffi1 :erlang :length
 
-last :: forall a.List a -> Maybe a
-last Nil = Nothing
-last (x:Nil) = Just x
-last (x:xs) = last xs
+-- | Reverse the list.
+reverse :: forall a. [a] -> [a]
+reverse = ffi1 :lists :reverse
 
-reverse :: forall a.List a -> List a
-reverse Nil = Nil
-reverse (x:xs)= reverse xs ++  (x:Nil)
+-- | Concat
+concat :: forall a. [[a]] -> [a]
+concat = ffi1 :lists :concat
 
+filter :: forall a. (a -> Boolean) -> [a] -> [a]
+filter = ffi1 :lists :filter
 
-concat :: forall a.List (List a) -> List a
-concat xs = foldr (\x y -> foldr (:) y x ) Nil xs
+replicate :: forall a. Integer -> a -> [a]
+replicate = ffi2 :lists :duplicate
 
+-----------------------------------------------------------------------------
+-- Build lists
+-----------------------------------------------------------------------------
 
+-- foreign import scanl :: forall a b. (b -> a -> b) -> b -> [a] -> [b]
 
+-- foreign import scanr :: forall a b. (a -> b -> b) -> b -> [a] -> [b]
 
-filter :: forall a. (a -> Boolean) -> List a -> List a
-filter f Nil = Nil
-filter f (x:xs)  = if f x
-                   then  x : filter f xs
-                   else filter f xs
+-----------------------------------------------------------------------------
+-- Split and Sublists
+-----------------------------------------------------------------------------
 
+foreign import take :: forall a. Integer -> [a] -> [a]
 
-infixl 6 connect as ++
+takeWhile :: forall a. (a -> Boolean) -> [a] -> [a]
+takeWhile = ffi2 :lists :takeWhile
 
-connect ::forall a.List a -> List a -> List a
-connect Nil ys = ys
-connect (x:xs) ys = x : connect xs ys
+foreign import drop :: forall a. Integer -> [a] -> [a]
 
-and :: List Boolean -> Boolean
-and Nil = true
-and (x:xs) = x && and xs
+-- | Extract a sublist by a start and end index.
+foreign import slice :: forall a. Integer -> Integer -> [a] -> [a]
 
-or :: List Boolean -> Boolean
-or Nil = false
-or (x:xs) = x || or xs
+-- | An alias for `splitWith` function.
+span :: forall a. (a -> Boolean) -> [a] -> ([a], [a])
+span = splitWith
 
-any :: forall a.(a -> Boolean) -> List a -> Boolean
-any f Nil = false
-any f (x:xs) = f x || any f xs
+-- | Split List into two lists according to Pred.
+splitWith :: forall a. (a -> Boolean) -> [a] -> ([a], [a])
+splitWith = ffi2 :lists :splitwith
 
-all :: forall a.(a -> Boolean) -> List a -> Boolean
-all f Nil = true
-all f (x:xs) = f x && all f xs
+splitAt :: forall a. Integer -> [a] -> ([a], [a])
+splitAt = ffi2 :lists :split
 
-replicate :: forall a. Int -> a -> List a
-replicate i a | i <= 0 =Nil
-              | otherwise = a : replicate (i-1) a
-replicate i a = Nil
+dropWhile :: forall a. (a -> Boolean) -> [a] -> [a]
+dropWhile = ffi2 :lists :dropWhile
 
-take :: forall a. Int -> List a -> List a
-take _ Nil = Nil
-take 0 xs  = Nil
-take i (x:xs) = x : take (i-1) xs
+-----------------------------------------------------------------------------
+-- Sort lists
+-----------------------------------------------------------------------------
 
-drop :: forall a. Int -> List a -> List a
-drop _ Nil = Nil
-drop 0 xs =xs
-drop i (x:xs) = drop (i-1) xs
+sort :: forall a. [a] -> [a]
+sort = ffi1 :lists :sort
 
+keysort :: forall a b. Integer -> [(a, b)] -> [(a, b)]
+keysort = ffi2 :lists :keysort
 
--------------example------------
-createN :: Int -> List Int
-createN 0 = Nil
-createN i = i : createN (i-1)
+usort :: forall a. [a] -> [a]
+usort = ffi1 :lists :usort
 
-t1 = createN 10
-t2 = scanl (+) 0 t1
-t3 = scanr (+) 0 t1
+ukeysort :: forall a b. Integer -> [(a, b)] -> [(a, b)]
+ukeysort = ffi2 :lists :ukeysort
 
-t4 = filter t t1
-  where t x = false
+-----------------------------------------------------------------------------
+-- Zip and unzip lists
+-----------------------------------------------------------------------------
 
-t5 = filter (\x -> x > 4) t1
-t6 = reverse t1
-t7 = map createN (createN 5)
-t8 = concat t7
-t9 = and (true:true:true:Nil)
-t10 = replicate 10 "nice"
-t11 = take 5 t10
-t12 = drop 8 t10
---------------------------------
+zip :: forall a b. [a] -> [b] -> [(a, b)]
+zip = ffi2 :lists :zip
 
+zip3 :: forall a b c. [a] -> [b] -> [c] -> [(a, b, c)]
+zip3 = ffi3 :lists :zip3
 
+zipWith :: forall a b c. (a -> b -> c) -> [a] -> [b] -> [c]
+zipWith = ffi3 :lists :zipWith
+
+zipWith3 :: forall a b c d. (a -> b -> c -> d) -> [a] -> [b] -> [c] -> [d]
+zipWith3 = ffi4 :lists :zipWith3
+
+unzip :: forall a b. [(a, b)] -> ([a], [b])
+unzip = ffi1 :lists :unzip
+
+unzip3 :: forall a b c. [(a, b, c)] -> ([a], [b], [c])
+unzip3 = ffi1 :lists :unzip3
 

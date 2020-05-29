@@ -6,7 +6,7 @@ stack = $(stack_yaml) stack
 all: build
 
 build:
-	$(stack) build
+	$(stack) run build -- -l
 
 run:
 	$(stack) build --fast && $(stack) exec -- $(exe_target)
@@ -17,4 +17,8 @@ install:
 test:
 	$(stack) test --fast $(package)
 
-.PHONY : build install test
+repl:
+	$(stack) run repldev
+
+
+.PHONY : build run install test repl

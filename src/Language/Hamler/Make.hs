@@ -44,10 +44,9 @@ import qualified Language.PureScript.CoreFn as CF
 import           System.Directory (doesFileExist)
 import           System.FilePath (replaceExtension)
 
-import           Language.Hamler.Make.BuildPlan
-import qualified Language.Hamler.Make.BuildPlan as BuildPlan
+import           Language.PureScript.Make.BuildPlan
+import qualified Language.PureScript.Make.BuildPlan as BuildPlan
 import           Language.Hamler.Make.Actions as Actions
-import Debug.Trace
 
 -- | Rebuild a single module.
 --
@@ -240,9 +239,6 @@ inferForeignModules =
     inferForeignModule (Right path) = do
       let coreFile = replaceExtension path "core"
       exists <- liftIO $ doesFileExist coreFile
-      liftIO $ print coreFile
       if exists
-        then do
-        liftIO $ print "file is exist"
-        return (Just $  coreFile)
+        then return (Just $  coreFile)
         else return Nothing

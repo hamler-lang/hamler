@@ -1,0 +1,43 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Foreign
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Foreign FFI module.
+--
+-----------------------------------------------------------------------------
+module Foreign where
+
+import Control.Monad (IO)
+
+-- Foreign module name
+type Mod = Atom
+
+-- Foreign function name
+type Fun = Atom
+
+-- Pure FFI function
+foreign import ffi0 :: forall a. Mod -> Fun -> a
+foreign import ffi1 :: forall a b. Mod -> Fun -> a -> b
+foreign import ffi2 :: forall a b c. Mod -> Fun -> a -> b -> c
+foreign import ffi3 :: forall a b c d. Mod -> Fun -> a -> b -> c -> d
+foreign import ffi4 :: forall a b c d e. Mod -> Fun -> a -> b -> c -> d -> e
+foreign import ffi5 :: forall a b c d e f. Mod -> Fun -> a -> b -> c -> d -> e -> f
+foreign import ffi6 :: forall a b c d e f g. Mod -> Fun -> a -> b -> c -> d -> e -> f -> g
+foreign import ffi7 :: forall a b c d e f g h. Mod -> Fun -> a -> b -> c -> d -> e -> f -> g -> h
+
+-- FFI function with Effect
+foreign import ffiIO0 :: forall a. Mod -> Fun -> IO a
+foreign import ffiIO1 :: forall a b. Mod -> Fun -> a -> IO b
+foreign import ffiIO2 :: forall a b c. Mod -> Fun -> a -> b -> IO c
+foreign import ffiIO3 :: forall a b c d. Mod -> Fun -> a -> b -> c -> IO d
+foreign import ffiIO4 :: forall a b c d e. Mod -> Fun -> a -> b -> c -> d -> IO e
+foreign import ffiIO5 :: forall a b c d e f. Mod -> Fun -> a -> b -> c -> d -> e IO f
+foreign import ffiIO6 :: forall a b c d e f g. Mod -> Fun -> a -> b -> c -> d -> e -> f -> IO g
+foreign import ffiIO7 :: forall a b c d e f g h. Mod -> Fun -> a -> b -> c -> d -> e -> f -> g -> IO h

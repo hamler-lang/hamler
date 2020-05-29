@@ -1,0 +1,31 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Control.OTP.GenServer.Behaviour
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The GenServer Behaviour.
+--
+-----------------------------------------------------------------------------
+module Control.OTP.GenServer.Behaviour where
+
+import Control.Process (Process)
+import Control.OTP.GenServer.Types
+
+foreign import init :: forall args state. args -> Process state
+
+foreign import handle_call :: forall request state reply. request -> From -> state -> Process (Reply reply state)
+
+foreign import handle_cast :: forall request state. request -> state -> Process (NoReply state)
+
+foreign import handle_info :: forall info state. info -> state -> Process (NoReply state)
+
+foreign import terminate :: forall reason state. reason -> Process state
+
+foreign import code_change :: forall vsn state extra. vsn -> state -> extra -> Process state
+

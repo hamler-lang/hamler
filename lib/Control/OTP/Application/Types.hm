@@ -1,0 +1,63 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Control.OTP.Application.Types
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Application Types.
+--
+-----------------------------------------------------------------------------
+module Control.OTP.Application.Types where
+
+import Control.Process (Node, Module)
+import Data.Timeout (Timeout)
+
+type Application = Atom
+
+data AppStartType = Normal | Takeover Node | Failover Node
+
+data AppRestartType = Permanent | Transient | Temporary
+
+-- TODO: {Par :: atom(), Val :: term()}
+foreign import data AppEnv :: Type
+
+-- TODO: [{Phase :: atom(), PhaseArgs :: term()}] | 'undefined'}
+foreign import data AppStartPhase :: Type
+
+-- TODO: PhaseArgs :: term()
+foreign import data AppPhaseArgs :: Type
+
+-- TODO: StartArgs :: term()
+foreign import data AppStartArgs :: Type
+
+-- TODO: StartError :: term()
+foreign import data AppStartError :: Type
+
+type AppSpec =
+  { name         :: Atom
+  , description  :: String
+  , vsn          :: String
+  , id           :: String
+  , modules      :: [Module]
+  , registered   :: [String]
+  , applications :: [Application]
+  , includedApps :: [Application]
+  , env          :: [AppEnv]
+  , startPhases  :: [AppStartPhase]
+  , maxT         :: Timeout
+  , maxP         :: Timeout
+  , appMod       :: Module
+  , startArgs    :: AppStartArgs
+  }
+
+type AppDescr =
+   { name :: Atom
+   , desc :: String
+   , vsn  :: String
+   }
+

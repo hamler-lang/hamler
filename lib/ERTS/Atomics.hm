@@ -1,0 +1,76 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  ERTS.Atomics
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Atomics Module.
+--
+-----------------------------------------------------------------------------
+module ERTS.Atomics where
+
+import Control.Monad (IO)
+import Data.Ref (Reference)
+import Data.Unit (Unit)
+import Foreign
+
+type AtomicsRef = Reference
+
+type AtomicsInfo =
+  { size   :: Integer
+    -- ^ The number of atomics in the array.
+  , max    :: Integer
+    -- ^ The highest possible value an atomic in this array can hold.
+  , min    :: Integer
+    -- ^ The lowest possible value an atomic in this array can hold.
+  , memory :: Integer
+    -- ^ Approximate memory consumption for the array in bytes.
+  }
+
+-- | Create a new atomic array of Arity atomics.
+foreign import new :: Integer -> Boolean -> IO AtomicsRef
+
+-- | Set atomic to Value.
+put :: forall a. AtomicsRef -> Integer -> a -> IO ()
+put = ffiIO3 :atomics :put
+
+-- | Read atomic value.
+get :: forall a.  AtomicsRef -> Integer -> IO a
+get = ffiIO2 :atomics :get
+
+-- | Add Incr to atomic.
+add :: AtomicsRef -> Integer -> Integer -> IO ()
+add = ffiIO3 :atomics :add
+
+-- | Atomic addition and return of the result.
+addGet :: AtomicsRef -> Integer -> Integer -> IO Integer
+addGet = ffiIO3 :atomics :add_get
+
+-- | Subtract Decr from atomic.
+sub :: AtomicsRef -> Integer -> Integer -> IO ()
+sub = ffiIO3 :atomics :sub
+
+-- | Atomic subtraction and return of the result.
+subGet :: AtomicsRef -> Integer -> Integer -> IO Integer
+subGet = ffiIO3 :atomics :sub_get
+
+-- | Atomically replaces the value of the atomic with Desired and
+-- returns the value it held previously.
+exchange :: AtomicsRef -> Integer -> Integer -> IO Integer
+exchange = ffiIO3 :atomics :exchange
+
+-- | Atomically compares the atomic with Expected, and if those are equal,
+-- set atomic to Desired. Returns ok if Desired was written. Returns the
+-- actual atomic value if not equal to Expected.
+compareExchange :: AtomicsRef -> Integer -> Integer -> Integer -> IO Integer
+compareExchange = ffiIO4 :atomics :compare_exchange
+
+-- | Return information about an atomic array.
+info :: AtomicsRef -> IO AtomicsInfo
+info = ffiIO1 :atomics :info
+

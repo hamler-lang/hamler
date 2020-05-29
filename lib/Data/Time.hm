@@ -14,4 +14,11 @@
 -----------------------------------------------------------------------------
 module Data.Time where
 
+import Control.Monad
+
 -- TODO:...
+foreign import data UTCTime :: Type
+
+foreign import getCurrentTime :: IO UTCTime
+
+

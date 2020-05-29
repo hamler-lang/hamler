@@ -1,0 +1,41 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Semigroup
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Semigroup typeclass.
+--
+-----------------------------------------------------------------------------
+module Data.Semigroup
+  ( class Semigroup
+  , append, (<>)
+  ) where
+
+import Data.Unit (Unit, unit)
+
+class Semigroup a where
+  append :: a -> a -> a
+
+infixr 5 append as <>
+
+instance Semigroup String where
+  append = stringAppend
+
+instance Semigroup (List a) where
+  append = listAppend
+
+instance Semigroup Unit where
+  append _ _ = unit
+
+-- | Append two Strings
+foreign import stringAppend :: String -> String -> String
+
+-- | Append two Lists
+foreign import listAppend :: forall a. List a -> List a -> List a
+

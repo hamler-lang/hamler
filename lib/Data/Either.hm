@@ -9,12 +9,65 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Either DataType.
+-- The Either datatype.
 --
 -----------------------------------------------------------------------------
-module Data.Either where
+module Data.Either
+  ( Either(..)
+  , either
+  , isLeft
+  , isRight
+  , fromLeft
+  , fromRight
+  , note
+  , hush
+  ) where
+
+import Control.Applicative (class Applicative, pure)
+import Control.Monad (class Monad)
+import Data.Functor (class Functor, map)
+import Data.Function (error, const)
+import Data.Maybe (Maybe(..), maybe)
 
 data Either a b = Left a | Right b
 
--- TODO:...
+instance Functor (Either e) where
+  map fn (Right x) = Right (fn x)
+  map _  (Left e)  = Left e
+
+instance Applicative (Either e) where
+  apply (Right fn) x = map fn x
+  apply (Left e)   _ = Left e
+  pure = Right
+
+instance Monad (Either e) where
+  bind (Right x) k = k x
+  bind (Left e)  _ = Left e
+  return = pure
+
+either :: forall a b c. (a -> c) -> (b -> c) -> Either a b -> c
+either f _ (Left a)  = f a
+either _ g (Right b) = g b
+
+isLeft :: forall a b. Either a b -> Boolean
+isLeft (Left _) = true
+isLeft _        = false
+
+isRight :: forall a b. Either a b -> Boolean
+isRight (Right _) = true
+isRight _         = false
+
+fromLeft :: forall a b. Either a b -> a
+fromLeft (Left a) = a
+fromLeft (Right x) = error "Right"
+
+fromRight :: forall a b. Either a b -> b
+fromRight (Right a) = a
+fromRight (Left x) = error "Left"
+
+note :: forall a b. a -> Maybe b -> Either a b
+note a = maybe (Left a) Right
+
+hush :: forall a b. Either a b -> Maybe b
+hush = either (const Nothing) Just
 

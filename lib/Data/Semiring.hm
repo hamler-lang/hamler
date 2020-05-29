@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Semiring Typeclass.
+-- The Semiring typeclass.
 --
 -----------------------------------------------------------------------------
 module Data.Semiring where
@@ -23,20 +23,20 @@ class Semiring a where
 infixl 6 add as +
 infixl 7 mul as *
 
-instance Semiring Int where
-  add = intAdd
+instance Semiring Integer where
+  add = addInt
   zero = 0
-  mul = intMul
+  mul = mulInt
   one = 1
 
-instance Semiring Number where
-  add = numAdd
+instance Semiring Float where
+  add = addFloat
   zero = 0.0
-  mul = numMul
+  mul = mulFloat
   one = 1.0
 
-foreign import intAdd :: Int -> Int -> Int
-foreign import intMul :: Int -> Int -> Int
-foreign import numAdd :: Number -> Number -> Number
-foreign import numMul :: Number -> Number -> Number
+foreign import addInt :: Integer -> Integer -> Integer
+foreign import mulInt :: Integer -> Integer -> Integer
+foreign import addFloat :: Float -> Float -> Float
+foreign import mulFloat :: Float -> Float -> Float
 

@@ -1,0 +1,29 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Void
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Void datatype.
+--
+-----------------------------------------------------------------------------
+module Data.Void (Void) where
+
+-- import Data.Show (class Show)
+
+newtype Void = Void Void
+
+{-
+instance Show Void where
+  show = absurd
+
+absurd :: forall a. Void -> a
+absurd a = spin a
+  where
+  spin (Void b) = spin b
+-}

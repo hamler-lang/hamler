@@ -14,53 +14,36 @@
 %%---------------------------------------------------------------------------
 -module('Map').
 
--export([ empty/0
+-include("Maybe.hrl").
+
+-export([ singleton/2
         , isEmpty/1
-        , insert/3
         , lookup/2
-        , delete/2
-        , updateWith/3
-        , size/1
-        , filter/2
+        , notMember/2
+        , take/2
         ]).
 
--type(pred() :: fun((Key :: term(), Value :: term()) -> boolean())).
+%% forall k v. k -> v -> Map k v
+singleton(K, V) -> #{K => V}.
 
--type(update() :: fun((Value1 :: term()) -> Value2 :: term())).
-
-%% empty   :: forall k v.Ord k => Map k v
--spec(empty() -> map()).
-empty() -> #{}.
-
-%% isEmpty :: forall k v.Ord k => Map k v -> Boolean
+%% isEmpty :: forall k v. Map k v -> Boolean
 -spec(isEmpty(map()) -> boolean()).
 isEmpty(Map) -> maps:size(Map) == 0.
 
-%% insert  :: forall k v.Ord k => k -> v -> Map k v -> Map k v
--spec(insert(Key :: term(), Value :: term(), map()) -> map()).
-insert(Key, Value, Map) -> maps:put(Key, Value, Map).
-
-%% lookup  :: forall k v.Ord k => k -> Map k v -> Maybe v
--spec(lookup(Key :: term(), map()) -> {'Just', term()} | 'Nothing').
+%% lookup :: forall k v. k -> Map k v -> Maybe v
+-spec(lookup(Key :: term(), map()) -> maybe(Value :: term())).
 lookup(Key, Map) ->
     case maps:find(Key, Map) of
         {ok, Value} -> {'Just', Value};
         error -> 'Nothing'
     end.
 
-%% delete  :: forall k v.Ord k => k -> Map k v -> Map k v
--spec(delete(Key :: term(), map()) -> map()).
-delete(Key, Map) -> maps:delete(Key, Map).
+-spec(notMember(Key :: term(), map()) -> boolean()).
+notMember(Key, Map) -> not maps:is_key(Key, Map).
 
-%% update  :: forall k v.Ord k => (v -> Maybe v) -> k -> Map k v -> Map k v
--spec(updateWith(Key :: term(), update(), map()) -> map()).
-updateWith(Key, Fun, Map) -> maps:update_with(Key, Fun, Map).
-
-%% size    :: forall k v.Ord k => Map k v -> Int
--spec(size(map()) -> integer()).
-size(Map) -> maps:size(Map).
-
-%% filter  :: forall k v.Ord k => (v -> Boolean) -> Map k v -> Map k v
--spec(filter(pred(), map()) -> map()).
-filter(Pred, Map) -> maps:filter(Pred, Map).
-
+-spec(take(Key :: term(), map()) -> maybe({Value :: term(), map()})).
+take(Key, Map) ->
+    case maps:take(Key, Map) of
+        {Value, Map2} -> {'Just', {Value, Map2}};
+        error -> 'Nothing'
+    end.

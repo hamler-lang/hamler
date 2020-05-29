@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: dfaaa1bb5d45bd06f3ae719d6807a362c6579571a69f6e05466d2d9c41757ae7
+-- hash: b764dadca0a2b72f4a2b97b3f3ff65f07d0b69cbaaaa1addde07aa68539f71ae
 
 name:           hamler
-version:        0.0.1
+version:        0.0.2
 synopsis:       The Hamler Programming Language
 description:    Hamler is a functional programming language inspired by Haskell and Stardard ML, that compiles to Core Erlang.
 category:       Language, Compiler
@@ -38,16 +38,16 @@ library
   exposed-modules:
       Language.Hamler
       Language.Hamler.CodeGen
+      Language.Hamler.Inline
       Language.Hamler.Make
       Language.Hamler.Make.Actions
-      Language.Hamler.Make.BuildPlan
-      Language.Hamler.Prelude
+      Language.Hamler.Util
   other-modules:
       Paths_hamler
   hs-source-dirs:
       src
   default-extensions: ConstraintKinds DataKinds DeriveFunctor DeriveFoldable DeriveTraversable DeriveGeneric DerivingStrategies EmptyDataDecls FlexibleContexts KindSignatures LambdaCase MultiParamTypeClasses NoImplicitPrelude PatternGuards PatternSynonyms RankNTypes RecordWildCards OverloadedStrings ScopedTypeVariables TupleSections ViewPatterns
-  ghc-options: -O2
+  ghc-options: -Wall -O2
   build-tools:
       happy ==1.19.9
   build-depends:
@@ -65,6 +65,7 @@ library
     , containers
     , directory >=1.2.3
     , filepath
+    , haskeline >=0.7.5.0
     , language-javascript
     , lens
     , lifted-async >=0.10.0.3 && <0.10.1
@@ -81,6 +82,7 @@ library
     , safe >=0.3.9 && <0.4
     , semialign >=1 && <1.1
     , semigroups >=0.16.2 && <0.19
+    , shelly
     , sourcemap >=0.1.6
     , text
     , time
@@ -94,11 +96,13 @@ executable hamler
   main-is: Main.hs
   other-modules:
       Compile
+      Minteractive
+      REPL
       Version
       Paths_hamler
   hs-source-dirs:
       app
-  ghc-options:  -O2
+  ghc-options: -Wall -O2
   build-tools:
       happy ==1.19.9
   build-depends:
@@ -118,6 +122,7 @@ executable hamler
     , directory >=1.2.3
     , filepath
     , hamler
+    , haskeline >=0.7.5.0
     , language-javascript
     , lens
     , lifted-async >=0.10.0.3 && <0.10.1
@@ -135,6 +140,7 @@ executable hamler
     , safe >=0.3.9 && <0.4
     , semialign >=1 && <1.1
     , semigroups >=0.16.2 && <0.19
+    , shelly
     , sourcemap >=0.1.6
     , text
     , time
@@ -153,12 +159,11 @@ test-suite tests
   type: exitcode-stdio-1.0
   main-is: Main.hs
   other-modules:
-      CodeGenTest
-      CompileTest
       Paths_hamler
   hs-source-dirs:
       tests
   default-extensions: NoImplicitPrelude LambdaCase OverloadedStrings
+  ghc-options: -Wall
   build-tools:
       happy ==1.19.9
   build-depends:
@@ -178,6 +183,7 @@ test-suite tests
     , directory >=1.2.3
     , filepath
     , hamler
+    , haskeline >=0.7.5.0
     , hspec
     , hspec-discover
     , language-javascript
