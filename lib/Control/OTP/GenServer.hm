@@ -22,9 +22,6 @@ module Control.OTP.GenServer
 
 import Control.OTP.GenServer.Types (From, NoReply(..), Reply(..))
 import Control.Process (Process)
--- import Control.Monad
--- import Data.Ring
--- import Data.Function
 import Data.Pid (Pid)
 import Data.Unit (Unit)
 
@@ -46,41 +43,4 @@ reply a s = Reply a s
 
 noReply :: forall s. s -> NoReply s
 noReply s = NoReply s
-
--- class GenServer s m | s -> m, m -> s where
---   init :: IO s
---   handle_call :: m ->  s -> Process (m, s)
---   handle_cast :: m -> s -> Process s
---   handler_info :: m -> s -> Process s
---   terminate :: IO s
-
--- data State = State Integer
-
--- data Message = Ping Integer | Pong Integer
-
-
--- myinit :: IO State
--- myinit = return (State 0)
-
--- myhandle_call :: Message -> From -> State -> Process (Reply Message State)
--- myhandle_call (Ping 0) from (State i) = do
---   return (Reply (Pong 0) (State 0))
--- myhandle_call (Ping x) from (State i) = do
---   return (Reply (Pong (x-1))  (State (i-1)))
--- myhandle_call m from s = error "error happened!!"
-
--- myhandle_cast :: Message -> State -> Process (NoReply State)
--- myhandle_cast m s = return (NoReply s)
-
--- myhandle_info :: Message -> State -> Process (NoReply State)
--- myhandle_info m s = return (NoReply s)
-
--- terminate :: IO State
--- terminate = return (State 1000)
-
-
-
--- t = { name => "yang", age => 23, sp => :nice , tt => p , pos => { posx => 10 , posy => 20}}
-
--- p = (1,2,3,4,5, :baba ,"global")
 

@@ -14,10 +14,10 @@
 -----------------------------------------------------------------------------
 module System.File where
 
-import Control.Monad (IO,bind,return)
+import Control.Monad (IO)
 import Data.Binary (Binary)
-import Data.Maybe (Maybe(..))
-import Data.Unit (Unit,unit)
+import Data.Maybe (Maybe)
+import Data.Unit (Unit)
 
 type Filename = String
 
@@ -32,14 +32,3 @@ foreign import open :: Filename -> OpenMode -> IO FileHandle
 foreign import read :: FileHandle -> Integer -> IO (Maybe Binary)
 foreign import write :: FileHandle -> Binary -> IO ()
 foreign import close :: FileHandle -> IO ()
-
-
-t :: IO ()
-t = do
-  h <- open "lib/System/File.hm" ReadMode
-  r <- read h 300
-  case r of
-    Just b -> do
-      h1 <- open "lib/System/File1.hm" WriteMode
-      write h1 b
-    Nothing -> return ()
