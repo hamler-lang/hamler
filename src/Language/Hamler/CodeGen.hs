@@ -3,9 +3,6 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 -----------------------------------------------------------------------------
-
------------------------------------------------------------------------------
-
 -- |
 -- Module      :  Language.Hamler.CodeGen
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
@@ -17,9 +14,11 @@
 -- Portability :  portable
 --
 -- Generate CoreErlang AST from Purescript source code.
+-----------------------------------------------------------------------------
+
 module Language.Hamler.CodeGen
-  ( moduleToErl,
-    runTranslate,
+  ( moduleToErl
+  , runTranslate
   )
 where
 
