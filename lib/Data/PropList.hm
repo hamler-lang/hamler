@@ -1,0 +1,54 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.PropList
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The PropList datatype.
+--
+-----------------------------------------------------------------------------
+module Data.PropList where
+
+import Foreign (ffi2)
+
+type PropKey = Atom
+
+-- Erlang Proplist
+foreign import data PropList :: Type
+
+-- Erlang Property
+foreign import data Property :: Type
+
+-- Delete a property.
+delete :: PropKey -> PropList -> PropList
+delete = ffi2 :proplists :delete
+
+-- Is the property defined?
+isDefined :: PropKey -> PropList -> Boolean
+isDefined = ffi2 :proplists :is_defined
+
+-- Get Atom property.
+getAtom :: PropKey -> PropList -> Atom
+getAtom = ffi2 :properlists :get_value
+
+-- Returns the value of a boolean key/value option.
+getBool :: PropKey -> PropList -> Boolean
+getBool = ffi2 :proplists :get_bool
+
+getInt :: PropKey -> PropList -> Integer
+getInt = ffi2 :proplists :get_value
+
+getFloat :: PropKey -> PropList -> Float
+getFloat = ffi2 :proplists :get_value
+
+getString :: PropKey -> PropList -> String
+getString = ffi2 :proplists :get_value
+
+getNest :: PropKey -> PropList-> PropList
+getNest = ffi2 :proplists :get_value
+
