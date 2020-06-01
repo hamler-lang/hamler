@@ -14,7 +14,6 @@
 -----------------------------------------------------------------------------
 module Prelude
   ( module Data.Atom
-  , module Data.Binary
   , module Data.Bits
   , module Data.Bool
   , module Data.Either
@@ -40,7 +39,6 @@ module Prelude
   ) where
 
 import Data.Atom (atom)
-import Data.Binary (Binary)
 import Data.Bits (band, bor, bxor, bnot, bsl, bsr)
 import Data.Bool (Bool, (&&), (||), and, or, not, otherwise)
 import Data.Either (Either(..))
