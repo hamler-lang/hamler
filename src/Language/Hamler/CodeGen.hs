@@ -394,6 +394,7 @@ literalToErl (ObjectLiteral xs) = do
         Expr $ Constr e'
       )
   return $ EMap $ E.Map xs'
+literalToErl (BinaryLiteral xs) = return $ Binary $ fmap tupleToBinaryVal xs
 
 -- | Binder to Pat
 binderToPat :: Binder C.Ann -> Translate Pat
@@ -505,6 +506,13 @@ paToC mi ts b = case ts of
               Expr $ Constr $ Lit $ LAtom $ Atom "binary",
               Expr $ Constr $ E.List $ tText $ LL.delete "Binary" ts'
             )
+tupleToBinaryVal :: (Integer, Integer) -> Bitstring Exprs
+tupleToBinaryVal (a,b) = Bitstring (Expr $ Constr $ Lit $ LInt a)
+                         [ Expr (Constr $ Lit $ LInt b),
+                           Expr $ Constr $ Lit $ LInt 1,
+                           Expr $ Constr $ Lit $ LAtom $ Atom "integer",
+                           Expr $ Constr $ E.List $ tText $ LL.delete "Integer" []
+                         ]
 
 binderToKey :: Binder C.Ann -> Translate Key
 binderToKey (LiteralBinder _ (NumericLiteral (Left i))) = return $ KLit $ LInt i
