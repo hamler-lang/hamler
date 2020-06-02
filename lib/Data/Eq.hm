@@ -36,9 +36,6 @@ instance Eq Atom where
 instance Eq Boolean where
   eq = eqBoolImpl
 
-instance Eq Binary where
-  eq = eqBinImpl
-
 instance Eq Char where
   eq = eqCharImpl
 
@@ -59,7 +56,6 @@ instance Eq Unit where
 
 foreign import eqAtomImpl :: Atom -> Atom -> Boolean
 foreign import eqBoolImpl :: Boolean -> Boolean -> Boolean
-foreign import eqBinImpl :: Binary -> Binary -> Boolean
 foreign import eqCharImpl :: Char -> Char -> Boolean
 foreign import eqIntImpl :: Integer -> Integer -> Boolean
 foreign import eqFloatImpl :: Float -> Float -> Boolean
