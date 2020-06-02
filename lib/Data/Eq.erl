@@ -16,7 +16,6 @@
 
 -export([ eqAtomImpl/2
         , eqBoolImpl/2
-        , eqBinImpl/2
         , eqCharImpl/2
         , eqIntImpl/2
         , eqFloatImpl/2
@@ -28,9 +27,6 @@
 eqAtomImpl(A1, A2) -> A1 =:= A2.
 
 eqBoolImpl(B1, B2) -> B1 =:= B2.
-
--spec(eqBinImpl(binary(), binary()) -> boolean()).
-eqBinImpl(B1, B2) -> B1 =:= B2.
 
 eqCharImpl(C1, C2) -> C1 =:= C2.
 
