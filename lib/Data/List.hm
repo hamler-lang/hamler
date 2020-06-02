@@ -26,7 +26,7 @@ infixl 6 append as ++
 append :: forall a. [a] -> [a] -> [a]
 append = ffi2 :lists :append
 
--- infixr 6 cons as :
+infixr 6 cons as :
 
 -- | Cons a list.
 foreign import cons :: forall a. a -> [a] -> [a]
