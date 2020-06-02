@@ -14,7 +14,6 @@
 -----------------------------------------------------------------------------
 module Prelude
   ( module Data.Atom
-  , module Data.Binary
   , module Data.Bits
   , module Data.Bool
   , module Data.Either
@@ -40,7 +39,6 @@ module Prelude
   ) where
 
 import Data.Atom (atom)
-import Data.Binary (Binary)
 import Data.Bits (band, bor, bxor, bnot, bsl, bsr)
 import Data.Bool (Bool, (&&), (||), and, or, not, otherwise)
 import Data.Either (Either(..))
@@ -57,7 +55,7 @@ import Data.Ref (Ref, Reference, makeRef)
 import Data.Ring (class Ring, (-), (%),(/))
 import Data.Semigroup (class Semigroup, append, (<>))
 import Data.Semiring (class Semiring, add, mul, one, zero, (*), (+))
-import Data.Show (class Show, show)
+import Data.Show (class Show, show,showAny)
 import Data.Unit (Unit)
 import Control.Applicative (class Applicative, pure, (<*>))
 import Control.Monad (class Monad, return, bind, IO, discard, guardF)
