@@ -433,6 +433,11 @@ binderToPat (BinaryBinder _ xs) = do
     (a, b1, c, d) <- paToC y z b
     return $ Bitstring x' [a, b1, c, d]
   return $ PBinary xs'
+binderToPat (ListBinder _ xs b) = do
+  xs' <- mapM binderToPat xs
+  b' <- binderToPat b
+  return $ PList (LL xs' b')
+
 
 tText :: [Text] -> List Exprs
 tText xs = E.L $ fmap (Expr . Constr . Lit . LAtom . Atom . unpack) $ cMark "big" endianness . cMark "unsigned" signedness $ fmap toLower xs
