@@ -38,6 +38,9 @@ instance Ord Atom where
 instance Ord Boolean where
   compare = cmpBoolImpl LT EQ GT
 
+instance Ord Binary where
+  compare = cmpBinImpl LT EQ GT
+
 instance Ord Char where
   compare = cmpCharImpl LT EQ GT
 
@@ -69,6 +72,14 @@ foreign import cmpBoolImpl
   -> Ordering
   -> Boolean
   -> Boolean
+  -> Ordering
+
+foreign import cmpBinImpl
+  :: Ordering
+  -> Ordering
+  -> Ordering
+  -> Binary
+  -> Binary
   -> Ordering
 
 foreign import cmpCharImpl

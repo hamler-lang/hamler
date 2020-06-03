@@ -15,7 +15,6 @@
 module Network.Socket where
 
 import Control.Monad (IO)
-import Data.Binary (Binary)
 import Data.Maybe (Maybe)
 import Data.Int
 import Data.Timeout (Timeout)
