@@ -299,6 +299,10 @@ exprToErl (C.Case _ es alts) = do
   es' <- mapM exprToErl es
   alts' <- mapM altToErl alts
   return $ E.Case (E.Exprs $ Constr $ fmap Constr es') alts'
+exprToErl (C.List _ es e) = do
+  es' <- mapM exprToErl es
+  e' <- exprToErl e
+  return $ E.List $ LL (fmap (Expr . Constr) es') (Expr $ Constr e')
 
 -- | CoreFn Alt to CoreErlang Alt
 altToErl :: CaseAlternative C.Ann -> Translate (E.Ann E.Alt)
