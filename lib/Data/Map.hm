@@ -29,6 +29,10 @@ foreign import singleton :: forall k v. k -> v -> Map k v
 -- | Test if the map is empty.
 foreign import isEmpty :: forall k v. Map k v -> Boolean
 
+-- | Test if the Key exists in the Map.
+isKey :: forall k v. k -> Map k v -> Boolean
+isKey = ffi2 :maps :is_key
+
 -- | Same to `put` function.
 insert :: forall k v. k -> v -> Map k v -> Map k v
 insert = put

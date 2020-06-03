@@ -31,6 +31,7 @@ module Prelude
   , module Data.Semigroup
   , module Data.Semiring
   , module Data.Show
+  , module Data.Tuple
   , module Data.Unit
   , module Control.Applicative
   , module Control.Monad
@@ -56,6 +57,7 @@ import Data.Ring (class Ring, (-), (%),(/))
 import Data.Semigroup (class Semigroup, append, (<>))
 import Data.Semiring (class Semiring, add, mul, one, zero, (*), (+))
 import Data.Show (class Show, show,showAny)
+import Data.Tuple (fst, snd)
 import Data.Unit (Unit)
 import Control.Applicative (class Applicative, pure, (<*>))
 import Control.Monad (class Monad, return, bind, IO, discard, guardF)
