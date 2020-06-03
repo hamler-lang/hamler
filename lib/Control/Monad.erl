@@ -24,7 +24,7 @@ bindImpl(X, F) -> F(X).
 
 -spec(bindListImpl(list(term()), fun((term()) -> list(term()))) -> list(term())).
 bindListImpl(L, F) ->
-    lists:flatten(lists:map(F, L)).
+    lists:append(lists:map(F, L)).
 
 -spec(pureImpl(any()) -> any()).
 pureImpl(X) -> X.
