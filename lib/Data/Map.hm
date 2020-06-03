@@ -26,17 +26,20 @@ empty = ffi0 :maps :new
 -- | Create a map with only one key-value pair.
 foreign import singleton :: forall k v. k -> v -> Map k v
 
--- | An alias of `isEmpty` function.
-
-null :: forall k v. Map k v -> Boolean
-null = isEmpty
-
 -- | Test if the map is empty.
 foreign import isEmpty :: forall k v. Map k v -> Boolean
 
--- | Insert the key-value pair into a map.
+-- | Same to `put` function.
 insert :: forall k v. k -> v -> Map k v -> Map k v
-insert = ffi3 :maps :put
+insert = put
+
+-- | Insert the key-value pair into a map.
+put :: forall k v. k -> v -> Map k v -> Map k v
+put = ffi3 :maps :put
+
+-- | Return the `Value` associated with `Key`. Throw exception if the `Key` does not exist.
+get :: forall k v. k -> Map k v -> v
+get = ffi2 :maps :get
 
 -- | Return the `Value` associated with `Key`.
 foreign import lookup :: forall k v. k -> Map k v -> Maybe v
