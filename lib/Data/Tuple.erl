@@ -9,10 +9,12 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Tuple FFI Module.
+%% The Tuple FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Tuple').
+
+%% Deprecated later.
 
 -export([ elem/2
         , setElem/3
@@ -20,10 +22,10 @@
         ]).
 
 -spec(elem(integer(), tuple()) -> any()).
-elem(I, Tup) -> element(I, Tup).
+elem(I, T) -> element(I, T).
 
 -spec(setElem(integer(), any(), tuple()) -> tuple()).
-setElem(I, El, Tup) -> setelement(I, El, Tup).
+setElem(I, E, T) -> setelement(I, T, E).
 
 -spec(size(tuple()) -> integer()).
-size(Tup) -> tuple_size(Tup).
+size(T) -> tuple_size(T).
