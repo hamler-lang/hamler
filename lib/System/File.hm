@@ -15,7 +15,6 @@
 module System.File where
 
 import Control.Monad (IO)
-import Data.Binary (Binary)
 import Data.Maybe (Maybe)
 import Data.Unit (Unit)
 

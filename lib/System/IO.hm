@@ -19,7 +19,6 @@ module System.IO
   ) where
 
 import Control.Monad (IO)
-import Data.Binary (Binary)
 import Data.Unit (Unit)
 
 -- | File Path
