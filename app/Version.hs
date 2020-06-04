@@ -1,3 +1,6 @@
+{-# LANGUAGE CPP #-}
+{-# LANGUAGE TemplateHaskell #-}
+
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Version
@@ -14,5 +17,8 @@
 -----------------------------------------------------------------------------
 module Version where
 
+import Data.Version (showVersion)
+import Paths_hamler as Paths
+
 versionString :: String
-versionString = "0.0.2"
+versionString = showVersion Paths.version
