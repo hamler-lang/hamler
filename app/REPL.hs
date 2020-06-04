@@ -18,19 +18,18 @@ import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Class
 import Control.Monad.Trans.Except (ExceptT (..), runExceptT)
 import Control.Monad.Trans.Reader (ReaderT, runReaderT)
-import Control.Monad.Trans.State.Strict (StateT, evalStateT)
+import Control.Monad.Trans.State.Strict (StateT, evalStateT,get)
 import Data.Foldable (for_)
 import qualified Language.PureScript as P
 import qualified Language.PureScript.CST as CST
 import Minteractive
-import qualified Options.Applicative as Opts
 import qualified Options.Applicative as Opts
 import Prelude.Compat
 import System.Console.Haskeline
 import System.Directory (doesDirectoryExist, getCurrentDirectory, listDirectory)
 import System.Exit
 import System.FilePath.Glob (glob)
-import System.IO (BufferMode (..), Handle, hClose, hFlush, hGetChar, hGetLine, hPutStr, hPutStrLn, hSetBuffering)
+import System.IO (BufferMode (..), Handle, hGetLine, hSetBuffering)
 import System.Process
 import Prelude ()
 
@@ -72,13 +71,18 @@ nodeBackend = Backend setup eval reload shutdown
     shutdown _ = return ()
 
 -- | Parses the input and returns either a command, or an error as a 'String'.
-getCommand :: forall m. MonadException m => InputT m (Either String [Command])
-getCommand = handleInterrupt (return (Right [])) $ do
-  line <- withInterrupt $ getInputLine "> "
+getCommand :: forall m. MonadException m => String -> InputT m (Either String [Command])
+getCommand s = handleInterrupt (return (Right [])) $ do
+  line <- withInterrupt $ getInputLine $ addSpace s
   case line of
     Nothing -> return (Right [QuitPSCi]) -- Ctrl-D when input is empty
     Just "" -> return (Right [])
     Just s -> return (parseCommand s)
+
+addSpace :: String -> String 
+addSpace w = case words w of 
+              [r] -> r++" "
+              _ -> w
 
 pasteMode :: forall m. MonadException m => InputT m (Either String [Command])
 pasteMode =
@@ -204,7 +208,8 @@ startReplsrv ReplConfig {..} = do
                   handleCommand' state = handleCommand (hin, hout) (liftIO (reload state)) (liftIO . putStrLn)
                   go :: state -> InputT (StateT PSCiState (ReaderT PSCiConfig IO)) ()
                   go state = do
-                    c <- getCommand
+                    v <- lift get
+                    c <- getCommand (getVal v)
                     case c of
                       Left err -> outputStrLn err >> go state
                       Right xs -> goExec xs

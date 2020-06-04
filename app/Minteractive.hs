@@ -125,6 +125,7 @@ handleCommand _ _ p (ShowInfo QueryImport) = handleShowImportedModules p
 handleCommand _ _ p (ShowInfo QueryPrint) = handleShowPrint p
 handleCommand _ _ p (CompleteStr prefix) = handleComplete p prefix
 handleCommand _ _ p (SetInteractivePrint ip) = handleSetInteractivePrint p ip
+handleCommand _ _ p (Setval _ s2)  = handleSetVal s2
 handleCommand _ _ _ _ = P.internalError "handleCommand: unexpected command"
 
 -- | Reload the application state
@@ -371,3 +372,9 @@ handleSetInteractivePrint print' new = do
       printErrors errs
     Right _ ->
       pure ()
+
+handleSetVal ::
+  (MonadState PSCiState m, MonadIO m) =>
+  String -> m ()
+handleSetVal s = do 
+  modify (setVal (s ,s))
