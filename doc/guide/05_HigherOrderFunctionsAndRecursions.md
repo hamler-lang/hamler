@@ -1,8 +1,16 @@
-# Recursions and Higher Order Functions
+# Recursions and Higher Order Functions 
 
-## 5. 1 Intro
+- [Intro](#Intro)
+- [Recursions on more complicated datatypes](#Recursions on more complicated datatypes)
+- [Map, filter and fold](#Map, filter and fold)
+- [List Comprehensions](#List Comprehensions)
+- [Higher Order Functions](#Higher Order Functions)
 
-Resursion is an important technique in programming, especially in functional programming.
+---
+
+## Intro
+
+Resursion is an important technique in programming, especially in functional programming. 
 
 Simple examples:
 
@@ -11,7 +19,7 @@ fact :: Int -> Int
 fact 0 = 1
 fact n = n * fact (n - 1)
 
-fib :: Int -> Int
+fib :: Int -> Int 
 fib 0 = 1
 fib 1 = 1
 fib n = fib (n - 1) + fib (n - 2)
@@ -19,7 +27,9 @@ fib n = fib (n - 1) + fib (n - 2)
 
 
 
-## 5. 2 Recursions on more complicated datatypes
+---
+
+## Recursions on more complicated datatypes
 
 Defination of datatype list is recursive. So,when we define a function for such datatypes, it comes naturally to define the function recursively.
 
@@ -31,9 +41,11 @@ length (x:xs) = 1 + length xs
 
 
 
-## 5. 3 Map, filter and fold
+---
 
-`map`, `filter` and `fold` are three commonly used functions to manipulate a list. `map` is used to apply `f` on all `a`s in a list of `a`. `filter` is to filter the list. `foldr` is to decontruct the list by replacing `:` with and operator/or function.
+## Map, filter and fold
+
+`map`, `filter` and `fold` are three commonly used functions to manipulate a list. `map` is used to apply `f` on all `a`s in a list of `a`. `filter` is to filter the list. `foldr` is to decontruct the list by replacing `:` with and operator/or function. 
 
 Here are the definitions.
 
@@ -67,7 +79,9 @@ Here are some examples on the usage.
 
 
 
-## 5. 4 List Comprehensions
+---
+
+## List Comprehensions
 
 There is an alternative way to define map and filter, which is to use list comprehension.
 
@@ -79,7 +93,7 @@ filter p xs = [x | x <- xs, p x]
 With list comprehension we can also do things like:
 
 ```haskell
-> [x + y | x <- [1..2], y<- [1..3]]
+> [x + y | x <- [1..2], y<- [1..3]] 
 [2,4,5]
 
 -- .. is syntax sugar for range
@@ -90,11 +104,13 @@ With list comprehension we can also do things like:
 
 
 
-## 5. 5 Higher Order Functions
+---
 
-Functions like map, filter and foldr are also called higher order functions, becuase they take an function as argument. A higher order function takes a function as its aruguement or/and returns a function as it's result.
+## Higher Order Functions
 
-Here are some more examples of such functions.
+Functions like map, filter and foldr are also called higher order functions, becuase they take an function as argument. A higher order function takes a function as its aruguement or/and returns a function as it's result. 
+
+Here are some more examples of such functions. 
 
 ```haskell
 apply :: forall a b. (a -> b) -> a -> b
@@ -105,10 +121,4 @@ compose g f x = g (f x)
 ```
 
 
-TODO:
 
--- ## Tail Recursions
--- ## Accumulator
--- ## Map, filer and fold
--- ## List Comprehensions
--- ## Do Notation
