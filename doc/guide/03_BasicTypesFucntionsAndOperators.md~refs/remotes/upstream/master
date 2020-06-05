@@ -7,6 +7,7 @@
 - [Functions](#Functions)
 - [Quantified types](#Quantified types)
 - [Notes on indentations](#Notes on indentations)
+- [Type synynom](#Type synynom)
 - [Record](#Record)
 
 ---
@@ -229,5 +230,3 @@ newLeader = Leader {fisrtName : "James"}
 
 
 
-
-- [Type synynom](#Type synynom)
