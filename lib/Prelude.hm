@@ -37,7 +37,12 @@ module Prelude
   , module Control.Monad
   , module System.Error
   , module System.IO
+  , t
+  , t1
+  , merge
+  , mergesort
   ) where
+
 
 import Data.Atom (atom)
 import Data.Bits (band, bor, bxor, bnot, bsl, bsr)
@@ -45,7 +50,7 @@ import Data.Bool (Bool, (&&), (||), and, or, not, otherwise)
 import Data.Either (Either(..))
 import Data.Enum (class Enum, range, rangeStep)
 import Data.Eq (class Eq, eq, (==), notEq, (/=))
-import Data.List (head, last, reverse, concat, filter, (++), take, drop, zip, sort, replicate, length)
+import Data.List (cons,head, splitAt, last, reverse, concat, filter, (++), take, drop, zip, sort, replicate, length, init, tail)
 import Data.Float (Double)
 import Data.Functor (class Functor, map, (<$>))
 import Data.Function (($), apply, const, flip, identity, error)
@@ -58,8 +63,61 @@ import Data.Semigroup (class Semigroup, append, (<>))
 import Data.Semiring (class Semiring, add, mul, one, zero, (*), (+))
 import Data.Show (class Show, show,showAny)
 import Data.Tuple (fst, snd)
-import Data.Unit (Unit)
+import Data.Unit (Unit,unit)
 import Control.Applicative (class Applicative, pure, (<*>))
-import Control.Monad (class Monad, return, bind, IO, discard, guardF)
+import Control.Monad (class Monad, return, bind, IO, discard, guardF,seqio)
 import System.Error (throw, try)
 import System.IO (print, printf, println, readFile, writeFile, appendFile)
+import Control.Process (selfPid,spawn,send,receive,monitor,selfPid)
+import Data.Pid (Pid)
+
+
+t :: IO ()
+t = do
+  pid0 <- selfPid
+  pid100 <- seqio [spawn loop (State pid0) | x <- [1..1000]]
+  seqio [send j (Next i) | (i,j) <- (zip pid100 [last pid100|init pid100]) ]
+  send (head pid100) (Trans "great hamler! " 0)
+  return ()
+
+data Message = Next Pid
+             | Trans String Integer
+
+data State = State Pid
+
+dealMessage :: State ->  Message -> IO State
+dealMessage (State pid) (Next p) = return (State p)
+dealMessage (State pid) (Trans str 11111) = return (State pid)
+dealMessage (State pid) (Trans str i) =
+  do send pid (Trans str (i+1))
+     pid0 <- selfPid
+     println (show pid0 <> " -> " <> show pid <> ": " <> str <> show i)
+     return (State pid)
+
+loop :: State -> IO ()
+loop s = do
+  x <- receive
+  s1 <- dealMessage s x
+  loop s1
+
+t1 [x|[k,n,m]] = k
+t1 _ = error "nice"
+
+
+
+merge :: forall a. Ord a => [a] -> [a] -> [a]
+merge [] ys = ys
+merge xs [] = xs
+merge [x|xs] [y|ys] = if x <= y
+                      then  [x |merge xs [y|ys]]
+                      else  [y |merge [x|xs] ys]
+
+mergesort :: forall a. Ord a => [a] -> [a]
+mergesort [] = []
+mergesort [x] = [x]
+mergesort xs = let (as, bs) = splitAt (length xs / 2) xs
+               in merge (mergesort as) (mergesort bs)
+
+
+
+
