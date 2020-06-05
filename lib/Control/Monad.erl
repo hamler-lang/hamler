@@ -17,6 +17,7 @@
 -export([ bindImpl/2
         , bindListImpl/2
         , pureImpl/1
+        , seqio/1
         ]).
 
 -spec(bindImpl(any(), fun((A :: term()) -> B :: term())) -> any()).
@@ -28,3 +29,7 @@ bindListImpl(L, F) ->
 
 -spec(pureImpl(any()) -> any()).
 pureImpl(X) -> X.
+
+seqio(L) when is_list(L) ->
+    L.
+

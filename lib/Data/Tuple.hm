@@ -18,15 +18,12 @@ import Data.Function (error)
 
 fst :: forall a b. (a, b) -> a
 fst (a, _) = a
-fst _ = error "badTuple"
 
 snd :: forall a b. (a, b) -> b
 snd (_, b) = b
-snd _ = error "badTuple"
 
 swap :: forall a b. (a, b) -> (b, a)
 swap (a, b) = (b, a)
-swap _ = error "badTuple"
 
 curry :: forall a b c. ((a, b) -> c) -> a -> b -> c
 curry f x y =  f (x, y)

@@ -18,6 +18,7 @@ module Control.Monad
   , IO
   , discard
   , guardF
+  , seqio
   , module Data.Functor
   , module Control.Applicative
   ) where
@@ -93,3 +94,5 @@ guardF :: Boolean  -> [Boolean]
 guardF true = [true]
 guardF false = []
 
+
+foreign import seqio ::forall a.[IO a] -> IO [a]
