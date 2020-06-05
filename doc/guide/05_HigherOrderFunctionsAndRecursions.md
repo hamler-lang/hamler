@@ -1,6 +1,14 @@
 # Recursions and Higher Order Functions 
 
-## 5. 1 Intro
+- [Intro](#Intro)
+- [Recursions on more complicated datatypes](#Recursions on more complicated datatypes)
+- [Map, filter and fold](#Map, filter and fold)
+- [List Comprehensions](#List Comprehensions)
+- [Higher Order Functions](#Higher Order Functions)
+
+---
+
+## Intro
 
 Resursion is an important technique in programming, especially in functional programming. 
 
@@ -19,7 +27,9 @@ fib n = fib (n - 1) + fib (n - 2)
 
 
 
-## 5. 2 Recursions on more complicated datatypes
+---
+
+## Recursions on more complicated datatypes
 
 Defination of datatype list is recursive. So,when we define a function for such datatypes, it comes naturally to define the function recursively.
 
@@ -31,7 +41,9 @@ length (x:xs) = 1 + length xs
 
 
 
-## 5. 3 Map, filter and fold
+---
+
+## Map, filter and fold
 
 `map`, `filter` and `fold` are three commonly used functions to manipulate a list. `map` is used to apply `f` on all `a`s in a list of `a`. `filter` is to filter the list. `foldr` is to decontruct the list by replacing `:` with and operator/or function. 
 
@@ -67,7 +79,9 @@ Here are some examples on the usage.
 
 
 
-## 5. 4 List Comprehensions
+---
+
+## List Comprehensions
 
 There is an alternative way to define map and filter, which is to use list comprehension.
 
@@ -90,7 +104,9 @@ With list comprehension we can also do things like:
 
 
 
-## 5. 5 Higher Order Functions
+---
+
+## Higher Order Functions
 
 Functions like map, filter and foldr are also called higher order functions, becuase they take an function as argument. A higher order function takes a function as its aruguement or/and returns a function as it's result. 
 

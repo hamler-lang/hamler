@@ -1,11 +1,46 @@
-1. **Why Hamler**
-2. **Setup**
-3. **Basic functions and types**
-4. More Types and Pattern Matching
-5. High Order Functions And Recursions
-6. Type Classes
-7. Applicative and Monad
+1. [**Why Hamler**](#01_WhyHamler)
+   - [What's hamler](01_WhyHamler#What's hamler)
+   - [Prequisitcs](01_WhyHamler#Prequisitcs)
+   - [Haskell Style](01_WhyHamlerHaskell Style)
+   - [Typechecking](01_WhyHamler#Typechecking)
+   - [Erlang and Concurrency](01_WhyHamler#Erlang and Concurrency)
+2. [**QuickStart**](02_QuickStart) 
+   - [Install](02_QuickStart#Install)
+   - [Hamler interpreter](02_QuickStart#Hamler interpreter)
+   - [Create a project](02_QuickStart#Create a project)
+   - [Module Structure](02_QuickStart#Module Structure)
+   - [Hello Hamler](02_QuickStart#Hello, Hamler !)
+3. [**Basic Types, Functions and Operators**](03_BasicTypesFucntionsAndOperators)
+   - [Simple Types](03_BasicTypesFucntionsAndOperators#Simple Types)
+   - [Operators](03_BasicTypesFucntionsAndOperators#Operators)
+   - [Functions](03_BasicTypesFucntionsAndOperators#Functions)
+   - [Quantified types](03_BasicTypesFucntionsAndOperators#Quantified types)
+   - [Notes on indentations](03_BasicTypesFucntionsAndOperators#Notes on indentations)
+   - [Type synynom](03_BasicTypesFucntionsAndOperators#Type synynom)
+   - [Record](03_BasicTypesFucntionsAndOperators#Record)
+4. [**More Types and Pattern Matching**](04_MoreTypesandPatternMatching)
+   - [Algebraic Data Type](04_MoreTypesandPatternMatching#Algebraic Data Type)
+   - [Map](04_MoreTypesandPatternMatching#Map)
+   - [Newtypes](04_MoreTypesandPatternMatching#Newtypes)
+   - [Simple Pattern Matching](04_MoreTypesandPatternMatching#Simple Pattern Matching)
+   - [Guards](04_MoreTypesandPatternMatching#Guards)
+   - [List Patterns](04_MoreTypesandPatternMatching#List Patterns)
+   - [Record Patterns](04_MoreTypesandPatternMatching#Record Patterns)
+   - [Map Patterns](04_MoreTypesandPatternMatching#Map Patterns)
+   - [Binary Patterns](04_MoreTypesandPatternMatching#Binary Patterns)
+   - [Case Expressions](04_MoreTypesandPatternMatchingCase Expressions)
+5. [**High Order Functions And Recursions**](05_HigherOrderFunctionsAndRecursions)
+   - [Intro](05_HigherOrderFunctionsAndRecursions#Intro)
+   - [Recursions on more complicated datatypes](05_HigherOrderFunctionsAndRecursions#Recursions on more complicated datatypes)
+   - [Map, filter and fold](05_HigherOrderFunctionsAndRecursions#Map, filter and fold)
+   - [List Comprehensions](05_HigherOrderFunctionsAndRecursions#List Comprehensions)
+   - [Higher Order Functions](05_HigherOrderFunctionsAndRecursions#Higher Order Functions)
+6. [**Type Classes**](06_TypeClasses)
+   - [Intro](06_TypeClasses#Intro)
+   - [Functor](06_TypeClasses#Functor)
+   - [Other common type classes](06_TypeClasses#Other common type classes)
+7. **Applicative and Monad**
 8. Foreign Language Interface
 9. Concurrency and Distrubutaion
-10. **OTP**
+10. OTP
 

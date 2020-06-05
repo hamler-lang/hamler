@@ -2,9 +2,17 @@
 
 # Basic Types, Functions and Operators
 
+- [Simple Types](#Simple Types)
+- [Operators](#Operators)
+- [Functions](#Functions)
+- [Quantified types](#Quantified types)
+- [Notes on indentations](#Notes on indentations)
+- [Type synynom](#Type synynom)
+- [Record](#Record)
 
+---
 
-## 3. 1 Simple Types
+## Simple Types
 
 Hamler is strongly typed, and has a powerful static type system. Let's start with some simple exmaples.
 
@@ -54,11 +62,15 @@ This is the very unique datatype exists in Erlang, and notes for Haskell users `
 
 
 
-## 3. 2 Operators
+---
+
+## Operators
 
 
 
-## 3. 3 Functions
+---
+
+## Functions
 
 When we define a new function, we can give it a type signature. For exmaple `double` is a function takes an `Integer` and gives an `Integer` doubled as output. 
 
@@ -67,7 +79,7 @@ double :: Integer -> Integer
 double x = x * 2
 ```
 
-**Lambda**
+**Lambda Expression**
 
 There is also lambda in Hamler, here is an example on how we rewrite double.
 
@@ -82,7 +94,7 @@ It become really handy when we need to make an anoumynous function.
 
 ```
 
-**Curry**
+**Currying**
 
 ```haskell
 --Curry
@@ -108,32 +120,36 @@ plus 2:: Integer -> Integer
 
 
 
-## 3. 4 Quantified Types
+---
+
+## Quantified Types
 
 They are also known as **polymorhphic types**. 
 
 ```Haskell
->:type id
+> :type id
 id :: forall a. a -> a
 ```
 
 The key word `forall`indicates that id is univerally quantified, meaning that id can be applied with any type. 
 
 ```Haskell
->id 1
+> id 1
 1
 ```
 
 A more complicated example is `flip`. `flip`is also a [high-order function](), which will be explained in the later chapter. 
 
 ```Haskell
->:type flip
+> :type flip
 forall a b c. (a -> b -> c) - > b -> a -> c
 ```
 
 
 
-## 3. 3 Notes On Indentations
+---
+
+## Notes On Indentations
 
 Like all ML Language Family, Hamler is indentation sensitive. Any declaration in the same block should have same level of indentation. In the case of a declaration spans more than one line, the other lines have to be intended past the first line.
 
@@ -159,9 +175,9 @@ distance x y = sqrt z
 
 
 
-## 3. 4 Define your own types
+---
 
-**Type Synonym**
+## Type Synonym
 
 Type synonym can be used to simplify a long type name to make code more readable. 
 
@@ -172,7 +188,11 @@ type String = [Char]
 
 Or you can define you own synonym name or a record.
 
-## 3. 5 Record
+
+
+---
+
+## Record
 
 ```Haskell
 type Name = String

@@ -2,7 +2,13 @@
 
 # Type Class
 
-## 6. 1 Intro
+- [Intro](#Intro)
+- [Functor](#Functor)
+- [Other common type classes](#Other common type classes)
+
+---
+
+## Intro
 
 A type class defines some types related by their operations. This is saying that typeclasses are usuaslly defined in terms of those operations. 
 
@@ -28,7 +34,9 @@ instance Show Boolean where
 
 
 
-## 6. 2 Functor
+---
+
+## Functor
 
 We have seen how map is defined for `[]`, and we can also map on other types. We call these types Functor if they can be `map`ped and stratify the Functor law at the same time.
 
@@ -49,7 +57,9 @@ instance Functor [] where
 
 
 
-## 6. 3 Other common type classes
+---
+
+## Other common type classes
 
 ```haskell
 class Eq a where

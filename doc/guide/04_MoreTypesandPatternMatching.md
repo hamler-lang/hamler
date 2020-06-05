@@ -1,8 +1,19 @@
 # More Types and Pattern Matching
 
+- [Algebraic Data Type](#Algebraic Data Type)
+- [Map](#Map)
+- [Newtypes](#Newtypes)
+- [Simple Pattern Matching](#Simple Pattern Matching)
+- [Guards](#Guards)
+- [List Patterns](#List Patterns)
+- [Record Patterns](#Record Patterns)
+- [Map Patterns](#Map Patterns)
+- [Binary Patterns](#Binary Patterns)
+- [Case Expressions](Case Expressions)
 
+---
 
-## 4. 1 Algebraic Data types
+## Algebraic Data Types
 
 Using algebraic data types we are saying some datatype can be one of the many things, distingushed by and identifies by what is called a constructor.
 
@@ -26,7 +37,9 @@ data [a] = a : [a]
 
 
 
-## 4. 2 Map
+---
+
+## Map
 
 Map is the Map from Erlang. `Map k v` is the type of a Map.
 
@@ -46,7 +59,9 @@ Just  5
 
 
 
-## 4. 3 Newtypes
+---
+
+## Newtypes
 
 Newtypes is used to distinguish two types which have have the same type of value but different units/meanings.
 
@@ -63,7 +78,9 @@ m1 = empty
 
 
 
-## 4. 4 Simple Pattern Matching
+---
+
+## Simple Pattern Matching
 
 
 
@@ -75,7 +92,11 @@ fib x = fib (x - 1) + fib (x - 2)
 
 
 
-## 4. 5 Guards
+---
+
+## Guards
+
+
 
 ```haskell
 max x y | x > y     = x 
@@ -84,7 +105,11 @@ max x y | x > y     = x
 
 
 
-## 4. 6 List Patterns
+---
+
+## List Patterns
+
+
 
 ```Haskell
 isEmpty :: forall a.[a] -> Boolean
@@ -94,7 +119,9 @@ isEmpty (x : xs) = false
 
 
 
-## 4. 7 Record Patterns
+---
+
+## Record Patterns
 
 
 
@@ -111,7 +138,9 @@ showPerson { firstName: x, lastName: y } = y <> ", " <> x
 
 
 
-## 4. 8 Map Patterns
+---
+
+## Map Patterns
 
 We can also pattern match on `Map`s, and this is very similar to `Record`s, except some syntax changes. For example, `getID` let us to get the ID of Wang from a map where we have to have at least Wang, Thomas and Leeming as keys. 
 
@@ -124,7 +153,9 @@ getID _                                              = Nothing
 
 
 
-## 4. 9 Binary Patterns
+---
+
+## Binary Patterns
 
 Matching on binaries is just like how it is done in Erlang. Int the following example, we are trying to get a 24 bit integer out of the Binary  passed to getA.
 
@@ -138,7 +169,9 @@ getA _                                                               = Nothing
 
 
 
-## 4 . 10 Case Expressions
+---
+
+## Case Expressions
 
 With `case` we can also pattern match on the value after some computations, when there is no need to bind the intermediate result.
 
