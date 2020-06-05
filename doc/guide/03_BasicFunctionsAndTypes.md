@@ -4,54 +4,6 @@
 
 
 
-## 3. 1 Simple Types
-
-Hamler is strongly typed, and has a powerful static type system. Let's start with some simple exmaples.
-
-**Boolean**
-
-```Haskell
-true :: Boolean
-false :: Boolean
-```
-
-**Numbers**
-
-Hamler has Integer and Float, and since they have different types so they can't be mixed together.
-
-```Haskell
---Integer
-1 :: Int
-
---Float
-0.1 :: Float
-```
-
-**Atoms**
-
-Atom is probably more familiar to Erlang user. It is  a literal, a constant with a name start with `:` .
-
-```
-:hello
-:world
-```
-
-**Strings**
-
-In Hamler `String` is just a list of `Char`
-
-```Haskell
-"Hello World" :: String  -- ['H','e','l','l','o',',','W','o','r','l','d']
-```
-
-**Binaries**
-
-This is the very unique datatype exists in Erlang, and notes for Haskell users `Binary` contains the same information as `ByteString` if you are not very familiar with binaries, this [link](https://erlang.org/doc/man/binary.html) should be helpful for some intuition.
-
-```
-
-```
-
 
 
 ## 3. 2 Operators
