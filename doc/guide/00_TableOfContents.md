@@ -1,5 +1,7 @@
+# The Hamler Programming Language
+
 1. **Why Hamler**
-2. **Setup**
+2. **Quick Start**
 3. **Basic functions and types**
 4. More Types and Pattern Matching
 5. High Order Functions And Recursions
