@@ -1,10 +1,10 @@
 # Recursions and Higher Order Functions
 
-- [Intro](#Intro)
-- [Recursions on more complicated datatypes](#Recursions%20on%20more%20complicated%20datatypes)
-- [Map, filter and fold](#Map,%20filter%20and%20fold)
-- [List Comprehensions](#List%20Comprehensions)
-- [Higher Order Functions](#Higher%20Order%20Functions)
+- [Intro](#intro)
+- [Recursions on more complicated datatypes](#recursions-on-more-complicated-datatypes)
+- [Map, filter and fold](#map-filter-and-fold)
+- [List Comprehensions](#list-comprehensions)
+- [Higher Order Functions](#higher-order-functions)
 
 ---
 

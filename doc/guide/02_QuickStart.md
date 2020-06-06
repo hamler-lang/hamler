@@ -1,10 +1,10 @@
 # Quick Start
 
-- [Install](#Install)
-- [Hamler Interpreter](#Hamler%20Interpreter)
-- [Create A Project](#Create%20A%20Project)
-- [Module Structure](#Module%20Structure)
-- [Hello Hamler](#Hello,%20Hamler%20!)
+- [Install](#install)
+- [Hamler Interpreter](#hamler-interpreter)
+- [Create A Project](#create-a-project)
+- [Module Structure](#module-structure)
+- [Hello Hamler](#hello-hamler-)
 
 ---
 
@@ -25,7 +25,7 @@ $ brew install hamler
    $brew install erlang@22
    ```
 
-2. Install Stack 
+2. Install Stack
 
    Stack tutoriall https://docs.haskellstack.org/en/stable/install_and_upgrade/
 
