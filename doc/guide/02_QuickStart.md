@@ -1,10 +1,10 @@
 # Quick Start
 
 - [Install](#Install)
-- [Hamler interpreter](#Hamler interpreter)
-- [Create a project](#Create a project)
-- [Module Structure](#Module Structure)
-- [Hello Hamler](#Hello, Hamler !)
+- [Hamler Interpreter](#Hamler%20Interpreter)
+- [Create A Project](#Create%20A%20Project)
+- [Module Structure](#Module%20Structure)
+- [Hello Hamler](#Hello,%20Hamler%20!)
 
 ---
 
@@ -19,17 +19,23 @@ $ brew install hamler
 
 **Install from source code(macOS)**
 
-1. Install Stack 
+1. Install Eralng
+
+   ```shell
+   $brew install erlang@22
+   ```
+
+2. Install Stack 
 
    Stack tutoriall https://docs.haskellstack.org/en/stable/install_and_upgrade/
 
-2. Clone from the git repo
+3. Clone from the git repo
 
    ```shell
    $ git clone https://github.com/hamler-lang/hamler.git
    ```
 
-3. Install hamler
+4. Install hamler
 
    ```shell
    $ cd hamler
@@ -44,7 +50,7 @@ $ brew install hamler
 
 ---
 
-## Hamler interpreter
+## Hamler Interpreter
 
 ```shell
 $ hamler repl
@@ -72,7 +78,7 @@ $ hamler repl
 
 ---
 
-## Create a project
+## Create A Project
 
 ```shell
 $ mkdir demo-project

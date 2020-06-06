@@ -1,10 +1,10 @@
 # Why Hamler?
 
-- [What's hamler](#What's hamler)
+- [What's Hamler](#What's%20Hamler)
 - [Prequisitcs](#Prequisitcs)
-- [Haskell Style](Haskell Style)
-- [Typechecking](#Typechecking)
-- [Erlang and Concurrency](#Erlang and Concurrency)
+- [Haskell Style](#Haskell%20Style)
+- [Type Checking](#Type%20Checking)
+- [Erlang and Concurrency](#Erlang%20and%20Concurrency)
 
 For almost a decade, we have been developing software systems based on Erlang/OTP, especially our main product [EMQ X](https://github.com/emqx/emqx) - the scalable open-source MQTT broker. So, we have always believed that Erlang is a masterpiece of engineering. With amazing concurrency, distribution and fault tolerance, it is one of the few general-purpose language platforms able to properly handle concurrency and soft realtime.
 
@@ -67,7 +67,7 @@ mergesort xs = let (as, bs) = splitAt (length xs / 2) xs
 
 ---
 
-## TypeChecking 
+## Type Checking 
 
 Hamler is strongly typed with compile type checking. So at compile time we can ensure that our program is type-safe, and this can help porgrammers to avoid silly mistakes like adding a string and an integer. 
 
