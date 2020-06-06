@@ -235,5 +235,3 @@ newLeader = Leader {fisrtName : "James"}
 
 
 
-
-- [Type synynom](#Type synynom)
