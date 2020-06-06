@@ -4,7 +4,7 @@
 
 - [Intro](#Intro)
 - [Functor](#Functor)
-- [Other common type classes](#Other common type classes)
+- [Other common type classes](#Other%20common%20type%20classes)
 
 ---
 
