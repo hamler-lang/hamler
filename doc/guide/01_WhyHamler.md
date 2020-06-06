@@ -2,7 +2,7 @@
 
 - [What's Hamler](#What's%20Hamler)
 - [Prequisitcs](#Prequisitcs)
-- [Haskell Style](#Haskell%20Style)
+- [Haskell Style](#haskell-style)
 - [Type Checking](#Type%20Checking)
 - [Erlang and Concurrency](#Erlang%20and%20Concurrency)
 
