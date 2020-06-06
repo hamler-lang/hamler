@@ -15,7 +15,7 @@
 
 ## Algebraic Data Types
 
-Using algebraic data types we are saying some datatype can be one of the many things, distingushed by and identifies by what is called a constructor.
+Using algebraic data types we are saying some datatype can be one of the many things, distinguished by and identified by what is called a constructor.
 
 For example, `Maybe a` is saying that If something has type Maybe a, it can either be a value which has an `a ` type and wrapped by a constructor `Just` or an empty value `Nothing`
 
@@ -24,7 +24,7 @@ data Maybe a = Just a
              | Nothing
 ```
 
-Another example is `List`, from its defination we can see that it has a recursive structure. So we can have whatever number of elements in our list, but they have to have the same type.
+Another example is `List`, from its definition we can see that it has a recursive structure. So we can have whatever number of elements in our list, but they have to have the same type.
 
 ```haskell
 data List a = Cons a (List a)
@@ -41,7 +41,7 @@ data [a] = a : [a]
 
 ## Map
 
-Map is the Map from Erlang. `Map k v` is the type of a Map.
+Map is the `Map` from Erlang. `Map k v` is the type of a Map.
 
 We can construct a Map like this:
 
@@ -63,7 +63,7 @@ Just  5
 
 ## Newtypes
 
-Newtypes is used to distinguish two types which have have the same type of value but different units/meanings.
+`newtype`s are used to distinguish two types which have have the same type of value but different units/meanings.
 
 For example:
 
@@ -142,7 +142,7 @@ showPerson { firstName: x, lastName: y } = y <> ", " <> x
 
 ## Map Patterns
 
-We can also pattern match on `Map`s, and this is very similar to `Record`s, except some syntax changes. For example, `getID` let us to get the ID of Wang from a map where we have to have at least Wang, Thomas and Leeming as keys.
+We can also pattern match on `Map`s, and this is very similar to `Record`s, except for some syntax changes. For example, `getID` let us get the ID of Wang from a map where we have to have at least Wang, Thomas and Leeming as keys.
 
 ```haskell
 getID :: Map String Integer -> Maybe Integer
@@ -157,7 +157,7 @@ getID _                                              = Nothing
 
 ## Binary Patterns
 
-Matching on binaries is just like how it is done in Erlang. Int the following example, we are trying to get a 24 bit integer out of the Binary  passed to getA.
+Matching on binaries is just like how it is done in Erlang. Int the following example, we are trying to get a 24-bit integer out of the Binary  passed to getA.
 
 ```haskell
 getA :: Binary -> Just Integer
@@ -165,7 +165,7 @@ getA << (a):24:Big-Integer | (b):4:Binary-Little | (c):32:Binary >> = Just a
 getA _                                                               = Nothing
 ```
 
-`Big` and `Little` meas the endianess in the part we need. `Integer` or `Binary` are the type we will give to after we extract the segment. The number of bits of the segment depends on the size of segment we need and the type we assign. If they type we assign is an `Integer` then the get same number of the size, which is required to be evenly divisible by 8. If it is a `Binary` we want, it will need 8 times the size of bits.
+`Big` and `Little` means the endianess in the part we need. `Integer` or `Binary` is the type we will give to after we extract the segment. The number of bits of the segment depends on the size of the segment we need and the type we assign. If they type we assign is an `Integer` then we get exact the same number of the `size` of bits, which is required to be evenly divisible by 8. If it is a `Binary` we want, it will need 8 times the size of bits.
 
 
 
@@ -173,7 +173,7 @@ getA _                                                               = Nothing
 
 ## Case Expressions
 
-With `case` we can also pattern match on the value after some computations, when there is no need to bind the intermediate result.
+With `case` we can also pattern match on the value after some computations when there is no need to bind the intermediate result.
 
 ```haskell
 plus (x, y) = x + y
