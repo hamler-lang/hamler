@@ -94,13 +94,13 @@ $ make run
 
 ## Module struture
 
-A module is simply a bunch of related functions, types and type classes. This makes a program a collection of modules. This helps oraganize your code and make reuse some of the code easier.
+A module is simply a bunch of related functions, types and type classes. This makes a program a collection of modules. This helps organize your code and make reuse some of the code easier.
 
 ### Module header
 
 **Module declaration**
 
-This how we declare a new module and specify which of the fucntions or types are exported.
+This how we declare a new module and specify which of the functions or types are exported.
 
 ```haskell
 module Helllo (greet, farewell) where
@@ -116,7 +116,7 @@ farewell n = "Bye " ++ n
 
 **Module import**
 
-The syntax for import in Hamler is `import <module name>`. This has to be done before defining any functions. One module can import as many as modules if you wish, but there could be ambigiousity when there are two things with the same name.
+The syntax for import in Hamler is `import <module name>`. This has to be done before defining any functions. One module can import as many as modules if you wish, but there could be ambiguitywhen there are two things with the same name.
 
 ```haskell
 import Data.List       --Modules are imported using their full names
