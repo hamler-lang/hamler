@@ -2,12 +2,12 @@
 
 # Basic Types, Functions and Operators
 
-- [Simple Types](#Simple Types)
+- [Simple Types](#Simple%20Types)
 - [Operators](#Operators)
 - [Functions](#Functions)
-- [Quantified types](#Quantified types)
-- [Notes on indentations](#Notes on indentations)
-- [Type synynom](#Type synynom)
+- [Quantified Types](#Quantified%20types)
+- [Notes on Indentations](#Notes%20on%20Indentations)
+- [Type Synynom](#Type%20synynom)
 - [Record](#Record)
 
 ---
@@ -66,6 +66,15 @@ This is the very unique datatype exists in Erlang, and notes for Haskell users `
 
 ## Operators
 
+| Operator | Meaning                |      | Operator | Meaning               |
+| -------- | ---------------------- | ---- | -------- | --------------------- |
+| +        | Numeric addition       |      | ==       | Equality check        |
+| -        | Numeric subtraction    |      | <        | Less than             |
+| *        | Numeric multiplication |      | <=       | Less than or equal    |
+| /        | Numeric division (div) |      | >        | Greater than          |
+| %        | Remainder              |      | >=       | Greater than or equal |
+| &&       | Boolean AND            |      | \|\|     | Boolean OR            |
+
 
 
 ---
@@ -89,10 +98,6 @@ double' = \x -> 2 * x
 ```
 
 It become really handy when we need to make an anoumynous function.
-
-```
-
-```
 
 **Currying**
 

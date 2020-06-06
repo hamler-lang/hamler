@@ -1,15 +1,15 @@
 # More Types and Pattern Matching
 
-- [Algebraic Data Type](#Algebraic Data Type)
+- [Algebraic Data Type](#Algebraic%20Data%20Type)
 - [Map](#Map)
 - [Newtypes](#Newtypes)
-- [Simple Pattern Matching](#Simple Pattern Matching)
+- [Simple Pattern Matching](#Simple%20Pattern%20Matching)
 - [Guards](#Guards)
-- [List Patterns](#List Patterns)
-- [Record Patterns](#Record Patterns)
-- [Map Patterns](#Map Patterns)
-- [Binary Patterns](#Binary Patterns)
-- [Case Expressions](Case Expressions)
+- [List Patterns](#List%20Patterns)
+- [Record Patterns](#Record%20Patterns)
+- [Map Patterns](#Map%20Patterns)
+- [Binary Patterns](#Binary%20Patterns)
+- [Case Expressions](#Case%20Expressions)
 
 ---
 
