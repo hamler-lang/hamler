@@ -1,10 +1,10 @@
 # Applicative and Monad
 
-In this chapter we are going to look at two very important type class, Applicative Functor and Monad.
+In this chapter, we are going to look at two very important type class, Applicative Functor and Monad.
 
 **Applicative**
 
-Let's kick off with how the Applicative class is defined. From the defination we can see that Applicatives they are Functors with two more operations, which is pure and apply. `pure` wraps some value to make an applicative functor. `apply` is a bit more complicated.
+Let's start with how the Applicative class is defined. From the definition, we can see that Applicatives they are Functors with two more operations, which is pure and apply. `pure` wraps some value to make an applicative functor. `apply` is a bit more complicated.
 
 Let's just look at its type, does that ring a bell? Yeah, it looks like map except we have functions wrapped in side an applicative functor. What `apply` does is extract the function(s) from the functor and map them to the `f a` .
 

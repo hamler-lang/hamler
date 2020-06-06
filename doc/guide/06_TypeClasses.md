@@ -10,9 +10,9 @@
 
 ## Intro
 
-A type class defines some types related by their operations. This is saying that typeclasses are usuaslly defined in terms of those operations.
+A type class defines some types related by their operations. This is saying that typeclasses are usuasually defined in terms of those operations, and these operations group those type together.
 
-For example, we can put all types that can be converted to a `String` in the same type family called `Show` .
+For example, we can put all types that can be converted to a `String` in the same type class called `Show` .
 
 We can introduce this `Show` type class by:
 
@@ -21,7 +21,7 @@ class Show a where
   show :: a -> String
 ```
 
-Then we gave an instance to the type class.
+Then we can give an instance to the type class.
 
 ```haskell
 instance Show String where
@@ -38,7 +38,7 @@ instance Show Boolean where
 
 ## Functor
 
-We have seen how map is defined for `[]`, and we can also map on other types. We call these types Functor if they can be `map`ped and stratify the Functor law at the same time.
+We have seen how map is defined for `[]`, and we can also map on other types. We call these types `Functor` if they can be `map`ped and can satistify the `Functor` law at the same time.
 
  Functor laws:                                   `map id = id     |       map (compose g f)  = map g . map f `
 
