@@ -38,8 +38,6 @@ Now all the features are avaliable in the Hamler programming language.
 brew install hamler
 ```
 
-**Install from source code(macOS)**
-
 1. Install Stack 
 
    Stack tutoriall https://docs.haskellstack.org/en/stable/install_and_upgrade/
@@ -56,9 +54,34 @@ brew install hamler
    cd hamler
    make 
    make install
-   cp repl/replsrv /usr/local/lib/hamler/bin/
    cp lib /usr/local/lib/hamler/
+   cp repl/replsrv /usr/local/lib/hamler/bin/
    cp ebin /usr/local/lib/hamler/
+   ```
+**Build from source code(macOS)**
+
+0. Install Erlang
+
+   ```shell
+   brew install erlang@22
+   ```
+
+1. Install Stack
+
+   Stack tutoriall https://docs.haskellstack.org/en/stable/install_and_upgrade/
+
+2. Clone hamler from the git repo
+
+   ```shell
+   git clone https://github.com/hamler-lang/hamler.git
+   ```
+
+3. Install hamler
+
+   ```shell
+   cd hamler
+   make
+   make install
    ```
 
 ## **Try the interpreter**
