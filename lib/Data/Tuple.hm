@@ -14,8 +14,6 @@
 -----------------------------------------------------------------------------
 module Data.Tuple where
 
-import Data.Function (error)
-
 fst :: forall a b. (a, b) -> a
 fst (a, _) = a
 

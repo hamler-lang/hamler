@@ -26,6 +26,7 @@ module Prelude
   , module Data.Maybe
   , module Data.Map
   , module Data.Ord
+  , module Data.Pid
   , module Data.Ref
   , module Data.Ring
   , module Data.Semigroup
@@ -35,12 +36,9 @@ module Prelude
   , module Data.Unit
   , module Control.Applicative
   , module Control.Monad
+  , module Control.Process
   , module System.Error
   , module System.IO
-  , t
-  , t1
-  , merge
-  , mergesort
   ) where
 
 
@@ -68,56 +66,5 @@ import Control.Applicative (class Applicative, pure, (<*>))
 import Control.Monad (class Monad, return, bind, IO, discard, guardF,seqio)
 import System.Error (throw, try)
 import System.IO (print, printf, println, readFile, writeFile, appendFile)
-import Control.Process (selfPid,spawn,send,receive,monitor,selfPid)
+import Control.Process (spawn,send,receive,monitor,selfPid)
 import Data.Pid (Pid)
-
-
-t :: IO ()
-t = do
-  pid0 <- selfPid
-  pid100 <- seqio [spawn loop (State pid0) | x <- [1..1000]]
-  seqio [send j (Next i) | (i,j) <- (zip pid100 [last pid100|init pid100]) ]
-  send (head pid100) (Trans "great hamler! " 0)
-  return ()
-
-data Message = Next Pid
-             | Trans String Integer
-
-data State = State Pid
-
-dealMessage :: State ->  Message -> IO State
-dealMessage (State pid) (Next p) = return (State p)
-dealMessage (State pid) (Trans str 11111) = return (State pid)
-dealMessage (State pid) (Trans str i) =
-  do send pid (Trans str (i+1))
-     pid0 <- selfPid
-     println (show pid0 <> " -> " <> show pid <> ": " <> str <> show i)
-     return (State pid)
-
-loop :: State -> IO ()
-loop s = do
-  x <- receive
-  s1 <- dealMessage s x
-  loop s1
-
-t1 [x|[k,n,m]] = k
-t1 _ = error "nice"
-
-
-
-merge :: forall a. Ord a => [a] -> [a] -> [a]
-merge [] ys = ys
-merge xs [] = xs
-merge [x|xs] [y|ys] = if x <= y
-                      then  [x |merge xs [y|ys]]
-                      else  [y |merge [x|xs] ys]
-
-mergesort :: forall a. Ord a => [a] -> [a]
-mergesort [] = []
-mergesort [x] = [x]
-mergesort xs = let (as, bs) = splitAt (length xs / 2) xs
-               in merge (mergesort as) (mergesort bs)
-
-
-
-
