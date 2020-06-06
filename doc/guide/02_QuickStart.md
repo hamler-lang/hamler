@@ -4,7 +4,7 @@
 - [Hamler Interpreter](#hamler-interpreter)
 - [Create A Project](#create-a-project)
 - [Module Structure](#module-structure)
-- [Hello Hamler](#hello,-hamler-!)
+- [Hello Hamler](#hello-hamler-)
 
 ---
 

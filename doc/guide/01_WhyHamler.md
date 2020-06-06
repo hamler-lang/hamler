@@ -1,6 +1,6 @@
 # Why Hamler?
 
-- [What's Hamler](#what's-hamler)
+- [What's Hamler](#whats-hamler)
 - [Prequisitcs](#prequisitcs)
 - [Haskell Style](#haskell-style)
 - [Type Checking](#type-checking)
