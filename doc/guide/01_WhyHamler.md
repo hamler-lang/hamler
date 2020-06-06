@@ -33,9 +33,9 @@ Cool, let's quit the bragging and kick off.
 
 ## Prequisitcs
 
-- Basic Programming Skils
+- Basic Programming Skills
 
-- It will be good to have some experience with Haskell or Eralng (but this is not essential)
+- It will be good to have some experience with Haskell or Erlang (but this is not essential)
 
 
 
@@ -43,9 +43,9 @@ Cool, let's quit the bragging and kick off.
 
 ## Haskell Style
 
-First of all, Hamler is purely functional. It has really similiar syntax to Haskell, so if you are familiar with Haskell it should not be a problem. However, if you are not, the guide should be able to walk through the basic syntax and make you more comfortable with programming functionally.
+First of all, Hamler is purely functional. It has really similar syntax to Haskell, so if you are familiar with Haskell it should not be a problem. However, if you are not, the guide should be able to walk through the basic syntax and make you more comfortable with programming functionally.
 
-This is an example of implementing merge sort in Hamler. It is normal that you don't understand what going, the purpose of the exmaple to is just let you get a gist of what will the code look.
+This is an example of implementing merge sort in Hamler. It is normal that you don't understand what going, the purpose of the example to is just let you get a gist of what will the code look.
 
 ```haskell
 merge :: forall a. Ord a => [a] -> [a] -> [a]
@@ -68,7 +68,7 @@ mergesort xs = let (as, bs) = splitAt (length xs / 2) xs
 
 ## Type Checking
 
-Hamler is strongly typed with compile type checking. So at compile time we can ensure that our program is type-safe, and this can help porgrammers to avoid silly mistakes like adding a string and an integer.
+Hamler is strongly typed with compile type checking. So at compile time we can ensure that our program is type-safe, and this can help programmers to avoid silly mistakes like adding a string and an integer.
 
 
 
@@ -76,7 +76,7 @@ Hamler is strongly typed with compile type checking. So at compile time we can e
 
 ## Erlang and Concurrency
 
-Erlang is famous for its concrurrency. Concurrent porgramming can be used to imporve performance, gain scalability and fault-torlerance. **BEAM** is the virtual machine at the core of the Erlang Open Telecom Platform (OTP) which enables it to happen. By compiling Hamler to CoreErlang, we can essential take avantage from Erlang VM.
+Erlang is famous for its concurrency. Concurrent programming can be used to improve performance, gain scalability and fault-tolerance. **BEAM** is the virtual machine at the core of the Erlang Open Telecom Platform (OTP) which enables it to happen. By compiling Hamler to CoreErlang, we can essentially take advantage of Erlang VM.
 
 ```haskell
 t :: IO ()

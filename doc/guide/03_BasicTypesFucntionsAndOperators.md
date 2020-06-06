@@ -14,7 +14,7 @@
 
 ## Simple Types
 
-Hamler is strongly typed, and has a powerful static type system. Let's start with some simple exmaples.
+Hamler is strongly typed, and has a powerful static type system. Let's start with some simple examples.
 
 **Boolean**
 
@@ -25,7 +25,7 @@ false :: Boolean
 
 **Numbers**
 
-Hamler has Integer and Float, and since they have different types so they can't be mixed together.
+Hamler has Integer and Float, and since they have different types so they can't be mixed.
 
 ```Haskell
 --Integer
@@ -37,7 +37,7 @@ Hamler has Integer and Float, and since they have different types so they can't 
 
 **Atoms**
 
-Atom is probably more familiar to Erlang user. It is  a literal, a constant with a name start with `:` .
+Atom is probably more familiar to Erlang user. It is  a literal, a constant with a name starting with `:` .
 
 ```
 :hello
@@ -56,8 +56,8 @@ In Hamler `String` is just a list of `Char`
 
 This is the very unique datatype exists in Erlang, and notes for Haskell users `Binary` contains the same information as `ByteString` if you are not very familiar with binaries, this [link](https://erlang.org/doc/man/binary.html) should be helpful for some intuition.
 
-```
-
+```haskell
+<<1,2,3:8,4:16,5,"abcdefg">> :: Binary
 ```
 
 
@@ -81,7 +81,7 @@ This is the very unique datatype exists in Erlang, and notes for Haskell users `
 
 ## Functions
 
-When we define a new function, we can give it a type signature. For exmaple `double` is a function takes an `Integer` and gives an `Integer` doubled as output.
+When we define a new function, we can give it a type signature. For example `double` is a function takes an `Integer` and gives an `Integer` doubled as output.
 
 ```haskell
 double :: Integer -> Integer
@@ -90,14 +90,14 @@ double x = x * 2
 
 **Lambda Expression**
 
-There is also lambda in Hamler, here is an example on how we rewrite double.
+There are also lambda expressions in Hamler, here is an example of how we rewrite double.
 
-```
+```haskell
 double' :: Integer -> Integer
 double' = \x -> 2 * x
 ```
 
-It become really handy when we need to make an anoumynous function.
+It becomes really handy when we need to make an anonymous function.
 
 **Currying**
 
@@ -136,14 +136,14 @@ They are also known as **polymorhphic types**.
 id :: forall a. a -> a
 ```
 
-The key word `forall`indicates that id is univerally quantified, meaning that id can be applied with any type.
+The key word `forall`indicates that `id` is univerally quantified, meaning that `id` can be applied to any type.
 
 ```Haskell
 > id 1
 1
 ```
 
-A more complicated example is `flip`. `flip`is also a [high-order function](), which will be explained in the later chapter.
+A more complicated example is `flip`. `flip`is also a [higher-order function](05_HigherOrderFunctionsAndRecursions.md), which will be explained in the later chapter.
 
 ```Haskell
 > :type flip
@@ -156,7 +156,7 @@ forall a b c. (a -> b -> c) - > b -> a -> c
 
 ## Notes On Indentations
 
-Like all ML Language Family, Hamler is indentation sensitive. Any declaration in the same block should have same level of indentation. In the case of a declaration spans more than one line, the other lines have to be intended past the first line.
+Like all ML Language Family, Hamler is indentation sensitive. Any declaration in the same block should have the same level of indentation. In the case of a declaration spans more than one line, the other lines have to be intended past the first line.
 
 ```Haskell
 flip x f = f
@@ -168,7 +168,7 @@ flip f x = f
 
 **`Let` and `Where` Block**
 
-Keywork such as Let and Where introduces new block, where further indentation is needed.
+Keywords such as Let and Where introduces a new block, where further indentation is needed.
 
 ```haskell
 distance x y = sqrt z

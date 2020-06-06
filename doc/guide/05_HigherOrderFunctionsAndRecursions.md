@@ -31,7 +31,7 @@ fib n = fib (n - 1) + fib (n - 2)
 
 ## Recursions on more complicated datatypes
 
-Defination of datatype list is recursive. So,when we define a function for such datatypes, it comes naturally to define the function recursively.
+Definition of the datatype list is recursive. So,when we define a function for such datatypes, it comes naturally to define the function recursively.
 
 ```haskell
 length :: forall a . [a] -> Integer
@@ -45,7 +45,7 @@ length (x:xs) = 1 + length xs
 
 ## Map, filter and fold
 
-`map`, `filter` and `fold` are three commonly used functions to manipulate a list. `map` is used to apply `f` on all `a`s in a list of `a`. `filter` is to filter the list. `foldr` is to decontruct the list by replacing `:` with and operator/or function.
+`map`, `filter` and `foldr` are three commonly used functions to manipulate a list. `map` applys `f` on all `a`s in a list of `a`. `filter` just filters the list according to `p`. `foldr` destructs the list by replacing every `:` with a operator/or function.
 
 Here are the definitions.
 
@@ -108,7 +108,7 @@ With list comprehension we can also do things like:
 
 ## Higher Order Functions
 
-Functions like map, filter and foldr are also called higher order functions, becuase they take an function as argument. A higher order function takes a function as its aruguement or/and returns a function as it's result.
+Functions like map, filter and foldr are also called higher order functions, becuase they take a function as their argument. A higher order function takes a function as its argument or/and returns a function as it's result.
 
 Here are some more examples of such functions.
 
