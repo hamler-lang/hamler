@@ -39,7 +39,7 @@ $ brew install hamler
 
    ```shell
    $ cd hamler
-   $ make 
+   $ make
    $ make install
    $ cp repl/replsrv /usr/local/lib/hamler/bin/
    $ cp lib /usr/local/lib/hamler/
@@ -94,17 +94,17 @@ $ make run
 
 ## Module struture
 
-A module is simply a bunch of related functions, types and type classes. This makes a program a collection of modules. This helps oraganize your code and make reuse some of the code easier. 
+A module is simply a bunch of related functions, types and type classes. This makes a program a collection of modules. This helps oraganize your code and make reuse some of the code easier.
 
 ### Module header
 
 **Module declaration**
 
-This how we declare a new module and specify which of the fucntions or types are exported. 
+This how we declare a new module and specify which of the fucntions or types are exported.
 
 ```haskell
-module Helllo (greet, farewell) where 
-{-the module name can be a word or words seperated by '.', 
+module Helllo (greet, farewell) where
+{-the module name can be a word or words seperated by '.',
   in this case i it is just "Hello"-}
 
 greet :: String -> String
@@ -116,11 +116,11 @@ farewell n = "Bye " ++ n
 
 **Module import**
 
-The syntax for import in Hamler is `import <module name>`. This has to be done before defining any functions. One module can import as many as modules if you wish, but there could be ambigiousity when there are two things with the same name. 
+The syntax for import in Hamler is `import <module name>`. This has to be done before defining any functions. One module can import as many as modules if you wish, but there could be ambigiousity when there are two things with the same name.
 
 ```haskell
 import Data.List       --Modules are imported using their full names
-import Data.Maybe (isJust, isNothing)   -- We can choose which functions to import 
+import Data.Maybe (isJust, isNothing)   -- We can choose which functions to import
 import qualified Data.Funtion as F     
 {- We can deal with ambiguisity by this, this means we need to add "F." Before every functions we imported from Data.Function to specify that it is from Data.Function-}
 import Prelue hiding (fst)  -- Prelude is the module always get imported, this way we can define our own fst
@@ -139,4 +139,3 @@ import System.IO
 
 main = print "Hello, World!"
 ```
-
