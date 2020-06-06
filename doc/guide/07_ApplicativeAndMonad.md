@@ -4,7 +4,7 @@ In this chapter we are going to look at two very important type class, Applicati
 
 **Applicative**
 
-Let's kick off with how the Applicative class is defined. From the defination we can see that Applicatives they are Functors with two more operations, which is pure and apply. `pure` wraps some value to make an applicative functor. `apply` is a bit more complicated. 
+Let's kick off with how the Applicative class is defined. From the defination we can see that Applicatives they are Functors with two more operations, which is pure and apply. `pure` wraps some value to make an applicative functor. `apply` is a bit more complicated.
 
 Let's just look at its type, does that ring a bell? Yeah, it looks like map except we have functions wrapped in side an applicative functor. What `apply` does is extract the function(s) from the functor and map them to the `f a` .
 
@@ -13,7 +13,7 @@ class Functor f => Applicative f where
   pure  :: forall a. a -> f a
   apply :: forall a b. f (a -> b) -> f a -> f b
 
-infixl 4 apply as <*> 
+infixl 4 apply as <*>
 ```
 
 Here are some examples of intances of `Applicatve`
@@ -63,4 +63,3 @@ liftM2 f ma mb = do
   b <- mb
   return (f a b)
 ```
-

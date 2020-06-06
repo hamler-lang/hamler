@@ -2,13 +2,13 @@
 
 # Basic Types, Functions and Operators
 
-- [Simple Types](#Simple%20Types)
-- [Operators](#Operators)
-- [Functions](#Functions)
-- [Quantified Types](#Quantified%20types)
-- [Notes on Indentations](#Notes%20on%20Indentations)
-- [Type Synynom](#Type%20synynom)
-- [Record](#Record)
+- [Simple Types](#simple-types)
+- [Operators](#operators)
+- [Functions](#functions)
+- [Quantified Types](#quantified-types)
+- [Notes on Indentations](#notes-on-indentations)
+- [Type Synynom](#type-synynom)
+- [Record](#record)
 
 ---
 
@@ -20,19 +20,19 @@ Hamler is strongly typed, and has a powerful static type system. Let's start wit
 
 ```Haskell
 true :: Boolean
-false :: Boolean 
+false :: Boolean
 ```
 
-**Numbers** 
+**Numbers**
 
-Hamler has Integer and Float, and since they have different types so they can't be mixed together. 
+Hamler has Integer and Float, and since they have different types so they can't be mixed together.
 
 ```Haskell
 --Integer
 1 :: Int
 
---Float 
-0.1 :: Float 
+--Float
+0.1 :: Float
 ```
 
 **Atoms**
@@ -46,7 +46,7 @@ Atom is probably more familiar to Erlang user. It is  a literal, a constant with
 
 **Strings**
 
-In Hamler `String` is just a list of `Char` 
+In Hamler `String` is just a list of `Char`
 
 ```Haskell
 "Hello World" :: String  -- ['H','e','l','l','o',',','W','o','r','l','d']
@@ -54,7 +54,7 @@ In Hamler `String` is just a list of `Char`
 
 **Binaries**
 
-This is the very unique datatype exists in Erlang, and notes for Haskell users `Binary` contains the same information as `ByteString` if you are not very familiar with binaries, this [link](https://erlang.org/doc/man/binary.html) should be helpful for some intuition. 
+This is the very unique datatype exists in Erlang, and notes for Haskell users `Binary` contains the same information as `ByteString` if you are not very familiar with binaries, this [link](https://erlang.org/doc/man/binary.html) should be helpful for some intuition.
 
 ```
 
@@ -81,7 +81,7 @@ This is the very unique datatype exists in Erlang, and notes for Haskell users `
 
 ## Functions
 
-When we define a new function, we can give it a type signature. For exmaple `double` is a function takes an `Integer` and gives an `Integer` doubled as output. 
+When we define a new function, we can give it a type signature. For exmaple `double` is a function takes an `Integer` and gives an `Integer` doubled as output.
 
 ```haskell
 double :: Integer -> Integer
@@ -108,7 +108,7 @@ add :: (Integer, Integer) -> Integer
 add (x, y) = x + y
 
 --This is curried (+)
-plus :: Integer -> Integer -> Integer 
+plus :: Integer -> Integer -> Integer
 plus x y = x + y
 ```
 
@@ -116,10 +116,10 @@ plus x y = x + y
 
 ```Haskell
 -- plus :: Integer -> (Integer -> Integer) This is one of the example of higher order functions
->:t plus 2 
+>:t plus 2
 plus 2:: Integer -> Integer
 >let plusTwo = plus2
->plusTwo 3 
+>plusTwo 3
 5
 ```
 
@@ -129,21 +129,21 @@ plus 2:: Integer -> Integer
 
 ## Quantified Types
 
-They are also known as **polymorhphic types**. 
+They are also known as **polymorhphic types**.
 
 ```Haskell
 > :type id
 id :: forall a. a -> a
 ```
 
-The key word `forall`indicates that id is univerally quantified, meaning that id can be applied with any type. 
+The key word `forall`indicates that id is univerally quantified, meaning that id can be applied with any type.
 
 ```Haskell
 > id 1
 1
 ```
 
-A more complicated example is `flip`. `flip`is also a [high-order function](), which will be explained in the later chapter. 
+A more complicated example is `flip`. `flip`is also a [high-order function](), which will be explained in the later chapter.
 
 ```Haskell
 > :type flip
@@ -184,7 +184,7 @@ distance x y = sqrt z
 
 ## Type Synonym
 
-Type synonym can be used to simplify a long type name to make code more readable. 
+Type synonym can be used to simplify a long type name to make code more readable.
 
 ```Haskell
 >:i String
@@ -209,7 +209,7 @@ type Person =
 
 {-
 This is syntax sugared
-"type Person = Record (FisrtName  :: Name , SecondName ::Name)" 
+"type Person = Record (FisrtName  :: Name , SecondName ::Name)"
 -}
 ```
 
@@ -232,6 +232,3 @@ newLeader = Leader {fisrtName : "James"}
 >newLeader.lastName
 "Portsman"
 ```
-
-
-
