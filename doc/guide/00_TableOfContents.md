@@ -32,7 +32,7 @@
 5. [**High Order Functions And Recursions**](05_HigherOrderFunctionsAndRecursions.md)
    - [Intro](05_HigherOrderFunctionsAndRecursions.md#intro)
    - [Recursions on more complicated datatypes](05_HigherOrderFunctionsAndRecursions.md#recursions-on-more-complicated-datatypes)
-   - [Map, filter and fold](05_HigherOrderFunctionsAndRecursions.md#map,-filter-and-fold)
+   - [Map, filter and fold](05_HigherOrderFunctionsAndRecursions.md#map-filter-and-fold)
    - [List Comprehensions](05_HigherOrderFunctionsAndRecursions.md#list-comprehensions)
    - [Higher Order Functions](05_HigherOrderFunctionsAndRecursions.md#higher-order-functions)
 6. [**Type Classes**](06_TypeClasses.md)
