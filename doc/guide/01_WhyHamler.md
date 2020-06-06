@@ -54,7 +54,6 @@ merge xs [] = xs
 merge [x|xs] [y|ys] = if x <= y
                       then  [x |merge xs [y|ys]]
                       else  [y |merge [x|xs] ys]
-merge _ _ = error "nice"  --this line is not neccessary and will be solved when new update released.
 
 mergesort :: forall a. Ord a => [a] -> [a]
 mergesort [] = []
@@ -78,3 +77,35 @@ Hamler is strongly typed with compile type checking. So at compile time we can e
 ## Erlang and Concurrency
 
 Erlang is famous for its concrurrency. Concurrent porgramming can be used to imporve performance, gain scalability and fault-torlerance. **BEAM** is the virtual machine at the core of the Erlang Open Telecom Platform (OTP) which enables it to happen. By compiling Hamler to CoreErlang, we can essential take avantage from Erlang VM.
+
+```haskell
+t :: IO ()
+t = do
+  pid0 <- selfPid
+  pid100 <- seqio [spawn loop (State pid0) | x <- [1..1000]]
+  seqio [send j (Next i) | (i,j) <- (zip pid100 [last pid100|init pid100]) ]
+  send (head pid100) (Trans "great hamler! " 0)
+  return ()
+
+data Message = Next Pid
+             | Trans String Integer
+
+data State = State Pid
+
+dealMessage :: State ->  Message -> IO State
+dealMessage (State pid) (Next p) = return (State p)
+dealMessage (State pid) (Trans str 11111) = return (State pid)
+dealMessage (State pid) (Trans str i) =
+  do send pid (Trans str (i+1))
+     pid0 <- selfPid
+     println (show pid0 <> " -> " <> show pid <> ": " <> str <> show i)
+     return (State pid)
+
+loop :: State -> IO ()
+loop s = do
+  x <- receive
+  s1 <- dealMessage s x
+  loop s1
+
+```
+
