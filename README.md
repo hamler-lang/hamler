@@ -103,6 +103,7 @@ make run
 
 - [Cheatsheet](https://github.com/hamler-lang/hamler/blob/master/doc/Cheatsheet.md)
 - [Guide](https://github.com/hamler-lang/hamler/blob/master/doc/guide/)
+- [Design](https://github.com/hamler-lang/hamler/blob/master/doc/design/)
 
 ## **Community, discussion and supports**
 
