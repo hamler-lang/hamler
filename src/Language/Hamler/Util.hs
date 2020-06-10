@@ -81,10 +81,18 @@ tcc '.' =' '
 tcc x = x
 
 cModCall :: Int -> String -> String -> E.Expr
-cModCall n s1 s2 = ModCall (ce s1 ,ce s2) (fmap cb [0..n-1])
+cModCall 0 s1 s2 = ModCall (ce s1 ,ce s2) []
   where ce s = Expr $ Constr $ Lit $ LAtom $ Atom s
-        cb i = Expr $ Constr $ EVar $ E.Var $ Constr $ "_" ++ show i
 
+cModCall n s1 s2 =netLambda1 (fmap cv [0..n-1]) [] (ce s1) (ce s2)
+  where ce s = Expr $ Constr $ Lit $ LAtom $ Atom s
+        cv i = E.Var $ Constr $ "_" ++ show i
+
+
+netLambda1 :: [Var] -> [Var]  -> E.Exprs -> E.Exprs ->E.Expr
+netLambda1 [] [] p1 p2 = error "nice"
+netLambda1 [x] s p1 p2= Lam [x] (Expr . Constr $ ModCall (p1 ,p2) (fmap (Expr . Constr . EVar) (reverse $ x:s)))
+netLambda1 (x:xs) s p1 p2 = Lam [x] (Expr $ Constr $ netLambda1 xs  (x:s) p1 p2)
 
 
 
