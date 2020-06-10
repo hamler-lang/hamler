@@ -37,6 +37,7 @@ import Language.PureScript.CoreFn as C
 import Language.PureScript.Names
 import Text.Pretty.Simple
 import Prelude
+import qualified Data.Text as T
 
 type MError = String
 
@@ -126,6 +127,7 @@ bindToErl :: C.Bind C.Ann -> Translate [FunDef]
 bindToErl (NonRec _ ident e) = do
   modify (\x -> x & binderVarIndex .~ 100)
   e' <- exprToErl e
+  modify (\x -> x & localVar .~ M.empty)
   gs <- get
   let name = showQualified runIdent $ mkQualified ident (gs ^. gsmoduleName)
       wname = runIdent ident
@@ -169,12 +171,10 @@ exprToErl (Literal _ l) = literalToErl l
 exprToErl (Constructor _ _ (ProperName p) ids) = do
   let args = length ids
       popName = unpack p
-      popAtom = Expr $ Constr $ Lit $ LAtom $ Atom $ popName
+      popAtom = Lit $ LAtom $ Atom $ popName
       cvar i = E.Var $ Constr ("_" <> show i)
       vars = fmap cvar [0 .. args -1]
-      ckv i = Expr $ Constr $ EVar $ cvar i
-      cm = Tuple $ popAtom : fmap ckv [0 .. args -1]
-  return $ Lam vars (Expr $ Constr $ cm)
+  return $ netConst (popAtom)  vars []
 exprToErl (Accessor _ pps e) = do
   e' <- exprToErl e
   return $ ModCall (mapsAtom, getAtom) [ppsToAtomExprs pps, Expr $ Constr e']
@@ -187,77 +187,30 @@ exprToErl (ObjectUpdate _ e xs) = do
             (mapsAtom, putAtom)
             [ppsToAtomExprs k, Expr $ Constr v', Expr $ Constr m]
   foldM foldFun e' xs
-exprToErl t@(Abs _ _ _) = do
+exprToErl (Abs _ i e) = do
   gs <- get
-  let (xs, e') = expend [] t
-      xs' = runIdent <$> reverse xs
-      allVar = M.size (gs ^. localVar)
-      iks = zip xs' [allVar ..]
-      vars = fmap (\(_, i0) -> E.Var $ Constr ("_" <> show i0)) iks
-  modify (\x -> x & localVar %~ mapInsertList iks)
-  e'' <- exprToErl e'
-  case e'' of
-    Lam cv ce -> do
-      put gs
-      return $ Lam (vars <> cv) ce
-    _ -> do
-      put gs
-      return $ Lam vars (Expr $ Constr e'')
-  where
-    expend s (Abs _ ident expr) = expend (ident : s) expr
-    expend s exp1 = (s, exp1)
-exprToErl t@(C.App _ _ _) = do
-  let (e', xs) = expend t []
-  e'' <- exprToErl e'
-  xs' <- mapM exprToErl xs
-  case e'' of
-    (E.Fun (E.FunName (Atom _, args))) -> do
-      case args == (fromIntegral $ length xs') of
-        True -> return $ E.App (Expr $ Constr e'') (fmap (Expr . Constr) xs')
-        False ->
-          if (fromIntegral $ length xs') > args
-            then do
-              let (xs1, xs2) = Prelude.splitAt (fromIntegral args) xs'
-              return $
-                E.App
-                  (Expr $ Constr $ E.App (Expr $ Constr e'') $ fmap (Expr . Constr) xs1)
-                  (fmap (Expr . Constr) xs2)
-            else do
-              gs <- get
-              let detal = args - (fromIntegral $ length xs')
-                  allVar = M.size $ gs ^. localVar
-                  vars = fmap (\i -> E.Var $ Constr ("_" <> show i)) [allVar .. allVar + fromIntegral detal -1]
-              return $ Lam vars $ Expr $ Constr $
-                E.App
-                  (Expr $ Constr e'')
-                  ( (fmap (Expr . Constr) xs')
-                      <> (fmap (Expr . Constr . EVar) vars)
-                  )
-    m@(E.ModCall ((Expr (Constr (Lit (LAtom (Atom s1))))), s2) mcxs) -> do
-      gs <- get
-      let mn = unpack $ runModuleName $ gs ^. gsmoduleName
-      if s1 == mn
-        then return m
-        else do
-          let args = length mcxs
-          if args == (length xs')
-            then return $ E.ModCall (Expr $ Constr $ Lit $ LAtom $ Atom s1, s2) $ fmap (Expr . Constr) xs'
-            else
-              if (length xs' > args)
-                then do
-                  let (xs1, xs2) = Prelude.splitAt (fromIntegral args) xs'
-                      ttt = E.ModCall (Expr $ Constr $ Lit $ LAtom $ Atom s1, s2) $ fmap (Expr . Constr) xs1
-                  return $ E.App (Expr $ Constr $ ttt) (fmap (Expr . Constr) xs2)
-                else do
-                  let detal = args - (length xs')
-                      allVar = M.size $ gs ^. localVar
-                      vars = fmap (\i -> E.Var $ Constr ("_" <> show i)) [allVar .. allVar + fromIntegral detal -1]
-                      ttt t1 = E.Expr $ Constr $ E.ModCall (Expr $ Constr $ Lit $ LAtom $ Atom s1, s2) $ t1
-                  return $ Lam vars $ ttt (fmap (Expr . Constr) xs' <> fmap (Expr . Constr . EVar) vars)
-    _ -> return $ E.App (Expr $ Constr e'') $ fmap (Expr . Constr) xs'
-  where
-    expend (C.App _ l r) s = expend l (r : s)
-    expend e s = (e, s)
+  let allVar = M.size (gs ^. localVar)
+      var = E.Var $ Constr ("_" <> show allVar)
+  modify (\x -> x & localVar %~ M.insert (runIdent i) allVar)
+  e' <- exprToErl e
+  put gs
+  return $ Lam [var] (Expr $ Constr $ e')
+
+exprToErl (C.App _ e1@(C.App _ _ _) e2) = do
+  e1' <- exprToErl e1
+  e2' <- exprToErl e2
+  gs <- get
+  let allVar = M.size (gs ^. localVar)
+      var = E.Var $ Constr ("_" <> show allVar)
+  modify (\x -> x & localVar %~ M.insert ("letBinderVar" <>  (T.pack $ show allVar)) allVar)
+  return $ E.Let ([var], Expr $ Constr $ e1') (Expr $ Constr $ E.App (Expr $ Constr $ EVar var ) [Expr $ Constr e2'])
+
+
+exprToErl (C.App _ e1 e2) = do
+  e1' <- exprToErl e1
+  e2' <- exprToErl e2
+  return $ E.App (Expr $ Constr e1') [Expr $ Constr e2']
+
 exprToErl (C.Var _ qi@(Qualified _ tema)) = do
   let name = showQualified runIdent qi
       wname = runIdent tema
@@ -270,14 +223,16 @@ exprToErl (C.Var _ qi@(Qualified _ tema)) = do
       Nothing -> case M.lookup name (gs ^. globalVar) of
         Just a -> case a of
           0 -> return $ E.App (Expr $ Constr $ E.Fun $ E.FunName (Atom (unpack wname), 0)) []
-          x -> return $ E.Fun $ E.FunName (Atom (unpack wname), toInteger x)
+          x -> return $ E.Fun $ E.FunName (Atom (unpack wname), 1)
         Nothing -> case M.lookup name (gs ^. ffiFun) of
           Just (0, e) -> return $ E.App (Expr $ Constr e) []
           Just (x, e) ->
             return $
               if gs ^. isInline
-                then e
-                else E.Fun $ E.FunName (Atom (unpack wname), toInteger x)
+              then e
+              else let ndd =  E.Fun $ E.FunName (Atom (unpack wname), toInteger x)
+                       vars = fmap (\k -> E.Var $ Constr ("_" <> show k)) [0..x-1]
+                   in  netLambda vars ndd []
           Nothing -> case qi of
             Qualified (Just mn) _ -> do
               let mn' = runModuleName mn
@@ -298,12 +253,18 @@ exprToErl (C.Let _ bs e) = do
 exprToErl (C.Case _ es alts) = do
   es' <- mapM exprToErl es
   alts' <- mapM altToErl alts
-  return $ E.Case (E.Exprs $ Constr $ fmap Constr es') alts'
+  gs <- get
+  let allVar = M.size (gs ^. localVar)
+      is = [allVar .. allVar + length es' -1]
+      vars =fmap (\i -> E.Var $ Constr ("_" <> show i)) is
+      varName = fmap (\i -> ("CaseVar" <>  (T.pack $ show i))) is
+  forM_ (zip varName is) $ \(n,i) -> do
+    modify (\x -> x & localVar %~ M.insert n i)
+  return $ E.Let (vars, Exprs $ Constr $ fmap ( Constr) es') (Expr $ Constr $ E.Case (E.Exprs $ Constr $ fmap (Constr . EVar) vars) alts')
 exprToErl (C.List _ es e) = do
   es' <- mapM exprToErl es
   e' <- exprToErl e
   return $ E.List $ LL (fmap (Expr . Constr) es') (Expr $ Constr e')
-
 -- | CoreFn Alt to CoreErlang Alt
 altToErl :: CaseAlternative C.Ann -> Translate (E.Ann E.Alt)
 altToErl (CaseAlternative bs res) = do
@@ -589,3 +550,17 @@ literalBinderToPat (ObjectLiteral xs) = do
     e' <- binderToPat e
     return (KLit $ LAtom $ Atom $ decodePPS pps, e')
   return $ PMap $ E.Map xs'
+
+netLambda :: [Var] -> E.Expr -> [Var] ->E.Expr
+netLambda [] _ [] = error "nice"
+netLambda [x] e s= Lam [x] (Expr . Constr $ E.App (Expr . Constr $ e) (fmap (Expr . Constr . EVar) (reverse $ x:s)))
+netLambda (x:xs) e s = Lam [x] (Expr $ Constr $ netLambda xs e (x:s))
+
+
+netConst :: E.Expr -> [Var] -> [Var] ->E.Expr
+netConst c [] [] =  Tuple [Expr . Constr $ c]
+netConst c [x] s= Lam [x] (Expr $ Constr $ Tuple $ (Expr $ Constr c) : fmap (Expr . Constr . EVar) (reverse $ x:s))
+netConst c (x:xs) s = Lam [x] (Expr $ Constr $ netConst c xs (x:s))
+
+
+
