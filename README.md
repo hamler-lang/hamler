@@ -136,6 +136,13 @@ The Hamler core team comes from [EMQ Technologies Co., Ltd.](https://emqx.io/) n
 - [ysfscream](https://github.com/ysfscream): Maintainer of hamler-lang.org
 - [juan6666](https://github.com/juan6666)：Designer of Hamler language logo
 
+[homebrew]: https://github.com/hamler-lang/homebrew-hamler
+[rebar3_hamler]: https://github.com/hamler-lang/rebar3_hamler
+
+## **About EMQ**
+
+[**EMQ**](https://emqx.io/) is an open source software company providing highly-scalable, real-time messaging and streaming platform for IoT applications in 5G Era.
+
 ## **License**
 
 BSD3
