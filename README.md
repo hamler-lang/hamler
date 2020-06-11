@@ -122,12 +122,19 @@ To contribute to **Hamler** project:
 - Contribute code: Fork the project, and submit feature requests to [hamler-lang/hamler](https://github.com/hamler-lang/hamler).
 - Submit a proposal: Fork the [hamler-wiki](https://github.com/hamler-lang/hamler-wiki) project and submit pull request
 
-## **Authors**
+## **Core Team**
 
 The Hamler core team comes from [EMQ Technologies Co., Ltd.](https://emqx.io/) now.
 
-- Feng Lee <feng@emqx.io>
-- Yang M  <yangm@emqx.io>
+- [Feng Lee](https://github.com/emqplus): Designer of Hamler Language
+- [Yang M](https://github.com/EMQ-YangM): Implemented Hamler Compiler
+- [S Hu](https://github.com/SjWho): Maintainer of the documentations
+- [Shawn](https://github.com/terry-xiaoyu): Contributed [rebar3_hamler][rebar3_hamler] plugin
+- [Rory Z](https://github.com/zhanghongtong): Contributed [homebrew][homebrew] install package
+- [wivwiv](https://github.com/wivwiv): Designer of hamler-lang.org website
+- [CrazyWisdom](https://github.com/CrazyWisdom): Maintainer of hamler-lang.org
+- [ysfscream](https://github.com/ysfscream): Maintainer of hamler-lang.org
+- [juan6666](https://github.com/juan6666)：Designer of Hamler language logo
 
 ## **License**
 
