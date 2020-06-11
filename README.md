@@ -35,6 +35,7 @@ Now all the features are avaliable in the Hamler programming language.
 **Homebrew(macOS)**
 
 ```shell
+brew tap hamler-lang/hamler
 brew install hamler
 ```
 
