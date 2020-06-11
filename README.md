@@ -102,9 +102,8 @@ make run
 
 ### **Documentation**
 
-- [Cheatsheet](https://github.com/hamler-lang/hamler/blob/master/doc/Cheatsheet.md)
-- [Guide](https://github.com/hamler-lang/hamler/blob/master/doc/guide/)
-- [Design](https://github.com/hamler-lang/hamler/blob/master/doc/design/)
+- [Cheatsheet](https://github.com/hamler-lang/documentation/blob/master/Cheatsheet.md)
+- [Guide](https://github.com/hamler-lang/documentation/blob/master/guides/00_TableOfContents.md)
 
 ## **Community, discussion and supports**
 
