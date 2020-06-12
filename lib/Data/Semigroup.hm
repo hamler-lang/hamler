@@ -24,9 +24,6 @@ class Semigroup a where
 
 infixr 5 append as <>
 
-instance Semigroup String where
-  append = stringAppend
-
 instance Semigroup (List a) where
   append = listAppend
 

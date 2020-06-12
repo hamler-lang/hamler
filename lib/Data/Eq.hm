@@ -48,9 +48,6 @@ instance Eq Integer where
 instance Eq Float where
   eq = eqFloatImpl
 
-instance Eq String where
-  eq = eqStringImpl
-
 instance Eq a => Eq (List a) where
   eq = eqListImpl
 
