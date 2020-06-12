@@ -151,7 +151,7 @@ The Hamler core team comes from [EMQ Technologies Co., Ltd.](https://emqx.io/) n
 
 ## **License & Credits**
 
-We would like to express our great appreciation to the [Purescript][PureScriptSite] team and community for all years of efforts making its amazing compiler with CoreFn.
+We would like to express our great appreciation to the [Purescript][PureScriptSite] team and community for all years of efforts making its amazing compiler, especially **CoreFn** and its incredible adaptability.
 
 The hamler project is licensed under BSD3, see [LICENSE](./LICENSE).
 
