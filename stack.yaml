@@ -12,7 +12,7 @@ extra-deps:
 - github: hamler-lang/CoreErlang
   commit: afb0b731ff457d278403ab4bc134d3c88e09ea1f
 - github: hamler-lang/purescript
-  commit: 2c43709229b12e72dfc550ccf3efce6bfa60da72
+  commit: 6f71d3df88c471705fefa25818dfe6900c263989
 flags:
   these:
     assoc: false

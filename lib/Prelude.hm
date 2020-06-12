@@ -52,7 +52,7 @@ import Data.List (cons,head, splitAt, last, reverse, concat, filter, (++), take,
 import Data.Float (Double)
 import Data.Functor (class Functor, map, (<$>))
 import Data.Function (($), apply, const, flip, identity, error)
-import Data.Maybe (Maybe)
+import Data.Maybe (Maybe(..))
 import Data.Map (fromList)
 import Data.Ord (class Ord, between, compare, comparing, greaterThan, greaterThanOrEq, lessThan, lessThanOrEq, max, min, (<), (<=), (>), (>=))
 import Data.Ref (Ref, Reference, makeRef)
