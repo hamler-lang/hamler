@@ -36,84 +36,88 @@ The Hamler 0.1 compiler was forked from [PureScript][PureScriptHamler] 0.13.6. T
 
 ![hamler-compiler](https://github.com/hamler-lang/hamler.github.io/blob/master/images/compiler.png)
 
-The Hamler source code is parsed to generate CST, then CoreErlang's IR is generated after CST -> AST -> CoreFn's syntax tree transformation, syntax analysis and type checking. The code is then used by the Erlang compiler to generate the final Beam bytecode.
+The Hamler source code is parsed to generate **CST**, then CoreErlang's IR is generated after **CST -> AST -> CoreFn**'s syntax tree transformation, syntax analysis and type checking. The code is then used by the Erlang compiler to generate the final Beam bytecode.
+
+[PureScriptHamler]: https://github.com/hamler-lang/purescript
 
 ## **Installation**
 
-*Note: packages for linux and windows will be comming soon...*
+*Note: packages for linux and windows will be coming soon...*
 
 **Homebrew(macOS)**
 
-```shell
-brew tap hamler-lang/hamler
-brew install hamler
-```
+  ```shell
+  brew tap hamler-lang/hamler
+  brew install hamler
+  ```
 
 **Build from source code(macOS)**
 
 0. Install Erlang
 
-   ```shell
-   brew install erlang@22
-   ```
+  ```shell
+  brew install erlang@22
+  ```
 
 1. Install Stack
 
-   Stack tutoriall https://docs.haskellstack.org/en/stable/install_and_upgrade/
+  ```shell
+  brew install haskell-stack
+  ```
 
 2. Clone hamler from the git repo
 
-   ```shell
-   git clone https://github.com/hamler-lang/hamler.git
-   ```
+  ```shell
+  git clone https://github.com/hamler-lang/hamler.git
+  ```
 
 3. Install hamler
 
-   ```shell
-   cd hamler
-   make
-   make install
-   ```
-
-## **Try the interpreter**
-
-```shell
-hamler repl
-
-> -- List, range and enums
-> [1,2,3]
-> [1..10]
-> ['a'..'z']
-
-> -- erlang style maps
-> import Data.Map as Map
-> -- New map
-> m = #{"foo" => "bar", "bar" => "foo"}
-> -- Match Map
-> #{"foo" := a, "bar" := b} = m
-> -- get, put
-> Map.get "foo" m -- a = "bar"
-> Map.get "bar" m -- b = "foo"
-> m1 = Map.put "key" "val"
-> -- keys, values
-> keys = Map.keys m
-> values = Map.values m
-```
+  ```shell
+  cd hamler
+  make
+  make install
+  ```
 
 ## **Create a project**
 
-```shell
-mkdir demo-project
-cd demo-project
-hamler init
-make
-make run
-```
+  ```shell
+  mkdir demo-project
+  cd demo-project
+  hamler init
+  make
+  make run
+  ```
+
+## **Try the interpreter**
+
+  ```shell
+  hamler repl
+
+  > -- List, range and enums
+  > [1,2,3]
+  > [1..10]
+  > ['a'..'z']
+
+  > -- erlang style maps
+  > import Data.Map as Map
+  > -- New map
+  > m = #{"foo" => "bar", "bar" => "foo"}
+  > -- Match Map
+  > #{"foo" := a, "bar" := b} = m
+  > -- get, put
+  > Map.get "foo" m -- a = "bar"
+  > Map.get "bar" m -- b = "foo"
+  > m1 = Map.put "key" "val"
+  > -- keys, values
+  > keys = Map.keys m
+  > values = Map.values m
+  ```
 
 ### **Documentation**
 
 - [Cheatsheet](https://github.com/hamler-lang/documentation/blob/master/Cheatsheet.md)
-- [Guide](https://github.com/hamler-lang/documentation/blob/master/guides/00_TableOfContents.md)
+- [Guides](https://github.com/hamler-lang/documentation/blob/master/guides/00_TableOfContents.md)
 
 ## **Community, discussion and supports**
 
@@ -128,13 +132,17 @@ You can reach the **Hamler** community and core team via the following channels:
 
 To contribute to **Hamler** project:
 
-- Report issues: submit any bugs, issues to [hamler/issues](https://github.com/hamler-lang/hamler/issues)
-- Contribute code: Fork the project, and submit feature requests to [hamler-lang/hamler](https://github.com/hamler-lang/hamler).
-- Submit a proposal: Fork the [hamler-wiki](https://github.com/hamler-lang/hamler-wiki) project and submit pull request
+- Report issues : submit any bugs, issues to [hamler/issues][hamler-issues]
+- Contribute code: Fork the project, and submit feature requests to [hamler-lang/hamler][hamler-project]
+- Submit a proposal: Fork the [hamler-wiki][hamler-wiki] project and submit pull request
+
+[hamler-issues]: https://github.com/hamler-lang/hamler/issues
+[hamler-project]: https://github.com/hamler-lang/hamler
+[hamler-wiki]: https://github.com/hamler-lang/hamler-wiki
 
 ## **Core Team**
 
-The Hamler core team comes from [EMQ Technologies Co., Ltd.](https://emqx.io/) now.
+The Hamler core team comes from [EMQ Technologies Co., Ltd.](https://emqx.io/) now:
 
 - [Feng Lee](https://github.com/emqplus): Designer of Hamler Language
 - [Yang M](https://github.com/EMQ-YangM): Implemented Hamler Compiler
@@ -151,11 +159,10 @@ The Hamler core team comes from [EMQ Technologies Co., Ltd.](https://emqx.io/) n
 
 ## **License & Credits**
 
-We would like to express our great appreciation to the [Purescript][PureScriptSite] team and community for all years of efforts making its amazing compiler, especially **CoreFn** and its incredible adaptability.
+We would like to express our great appreciation to the [PureScript][PureScriptSite] team and community for all years of efforts making its amazing compiler, especially **CoreFn** and its incredible adaptability.
 
-The hamler project is licensed under BSD3, see [LICENSE](./LICENSE).
+The hamler language project is licensed under BSD3, see [LICENSE](./LICENSE).
 
-[PureScriptHamler]: https://github.com/hamler-lang/purescript
 [PureScriptSite]: https://www.purescript.org/
 
 ## **About EMQ**
