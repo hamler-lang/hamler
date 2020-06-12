@@ -38,7 +38,7 @@ instance Show Float where
 instance Show Char where
   show c = showCharImpl c
 
-instance Show String where
+instance Show [Char] where
   show s = s
 
 foreign import showIntImpl :: Integer -> String

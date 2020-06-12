@@ -21,9 +21,6 @@ import Data.Unit (Unit, unit)
 class Semigroup m => Monoid m where
   mempty :: m
 
-instance Monoid String where
-  mempty = ""
-
 instance Monoid (List a) where
   mempty = []
 
