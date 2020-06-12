@@ -32,7 +32,7 @@ Now all the features are avaliable in the Hamler programming language.
 
 ## **Design**
 
-The Hamler 0.1 compiler was forked from [PureScript][PureScriptSite] 0.13.6. The Hamler compiler architecture is shown as below:
+The Hamler 0.1 compiler was forked from [PureScript][PureScriptHamler] 0.13.6. The Hamler compiler architecture is shown as below:
 
 ![hamler-compiler](https://github.com/hamler-lang/hamler.github.io/blob/master/images/compiler.png)
 
@@ -134,7 +134,7 @@ To contribute to **Hamler** project:
 
 ## **Core Team**
 
-We would like to give a big shout-out to the [Purescript][PureScriptSite] team and community for all years of efforts making its amazing compiler. The Hamler core team comes from [EMQ Technologies Co., Ltd.](https://emqx.io/) now.
+The Hamler core team comes from [EMQ Technologies Co., Ltd.](https://emqx.io/) now.
 
 - [Feng Lee](https://github.com/emqplus): Designer of Hamler Language
 - [Yang M](https://github.com/EMQ-YangM): Implemented Hamler Compiler
@@ -149,12 +149,15 @@ We would like to give a big shout-out to the [Purescript][PureScriptSite] team a
 [homebrew]: https://github.com/hamler-lang/homebrew-hamler
 [rebar3_hamler]: https://github.com/hamler-lang/rebar3_hamler
 
+## **License & Credits**
+
+We would like to express our great appreciation to the [Purescript][PureScriptSite] team and community for all years of efforts making its amazing compiler, especially **CoreFn** and its incredible adaptability.
+
+The hamler project is licensed under BSD3, see [LICENSE](./LICENSE).
+
+[PureScriptHamler]: https://github.com/hamler-lang/purescript
+[PureScriptSite]: https://www.purescript.org/
+
 ## **About EMQ**
 
 [**EMQ**](https://emqx.io/) is an open source software company providing highly-scalable, real-time messaging and streaming platform for IoT applications in 5G Era.
-
-## **License**
-
-BSD3
-
-[PureScriptSite]: https://www.purescript.org/
