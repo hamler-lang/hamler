@@ -40,6 +40,8 @@ The Hamler source code is parsed to generate CST, then CoreErlang's IR is genera
 
 ## **Installation**
 
+*Note: packages for linux and windows will be comming soon...*
+
 **Homebrew(macOS)**
 
 ```shell
