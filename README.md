@@ -30,6 +30,14 @@ Now all the features are avaliable in the Hamler programming language.
 - Advanced module system
 - Built-in concurrency
 
+## **Design**
+
+The Hamler 0.1 compiler was forked from [PureScript][PureScriptSite] 0.13.6. The Hamler compiler architecture is shown as below:
+
+![hamler-compiler](https://github.com/hamler-lang/hamler.github.io/blob/master/images/compiler.png)
+
+The Hamler source code is parsed to generate CST, then CoreErlang's IR is generated after CST -> AST -> CoreFn's syntax tree transformation, syntax analysis and type checking. The code is then used by the Erlang compiler to generate the final Beam bytecode.
+
 ## **Installation**
 
 **Homebrew(macOS)**
@@ -124,7 +132,7 @@ To contribute to **Hamler** project:
 
 ## **Core Team**
 
-The Hamler core team comes from [EMQ Technologies Co., Ltd.](https://emqx.io/) now.
+We would like to give a big shout-out to the [Purescript][PureScriptSite] team and community for all years of efforts making its amazing compiler. The Hamler core team comes from [EMQ Technologies Co., Ltd.](https://emqx.io/) now.
 
 - [Feng Lee](https://github.com/emqplus): Designer of Hamler Language
 - [Yang M](https://github.com/EMQ-YangM): Implemented Hamler Compiler
@@ -147,3 +155,4 @@ The Hamler core team comes from [EMQ Technologies Co., Ltd.](https://emqx.io/) n
 
 BSD3
 
+[PureScriptSite]: https://www.purescript.org/
