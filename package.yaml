@@ -9,7 +9,7 @@ maintainer: Feng Lee <feng@emqx.io>
 copyright: (c) 2013-17 Phil Freeman, (c) 2014-19 Gary Burgess, (c) other contributors (see CONTRIBUTORS.md)
 license: BSD3
 github: hamler-lang/hamler
-homepage: http://www.hamler.io/
+homepage: http://www.hamler-lang.org/
 extra-source-files:
   - README.md
   - stack.yaml

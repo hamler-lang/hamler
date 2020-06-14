@@ -1,0 +1,12 @@
+Source: hamler
+Section: unknown
+Priority: optional
+Maintainer: hamler <contact@hamler-lang.org>
+Build-Depends: debhelper (>=9)
+Standards-Version: 3.9.6
+Homepage: https://www.hamler-lang.org
+
+Package: hamler
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, esl-erlang(>= 22.3) | erlang(>= 22.3)
+Description: Hamler - Haskell-style functional programming language running on Erlang VM. Hamler is a strongly-typed language with compile-time typechecking and built-in support for concurrency and distribution.
