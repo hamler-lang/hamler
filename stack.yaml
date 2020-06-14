@@ -1,3 +1,4 @@
+allow-different-user: true
 resolver: lts-13.26
 pvp-bounds: upper
 packages:

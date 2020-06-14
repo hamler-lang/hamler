@@ -1,0 +1,303 @@
+name: Build packages
+
+on:
+  pull_request:
+  push:
+  release:
+    types:
+      - published
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: install erlang
+          env:
+            OTP_VERSION: 22.3
+          run: |
+            curl -L -o /tmp/erlang-solutions_2.0_all.deb https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
+            && sudo dpkg -i /tmp/erlang-solutions_2.0_all.deb \
+            && curl -L -o /tmp/erlang_solutions.asc https://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc \
+            && sudo apt-key add /tmp/erlang_solutions.asc \
+            && sudo apt update \
+            && version=$(apt-cache madison esl-erlang |grep ${OTP_VERSION} | sed -n '1, 1p' | awk '{print $3}') \
+            && sudo apt install --allow-downgrades esl-erlang=${version}
+        - name: set LC_ALL
+          run: |
+            sudo apt update && sudo apt install -y locales
+            sudo locale-gen en_US.UTF-8
+            echo "::set-env name=LC_ALL::en_US.UTF-8"
+        - name: install library
+          run: |
+            sudo apt update && sudo apt install -y libtinfo-dev ghc
+            echo "::add-path::~/.local/bin"
+            curl -sSL https://get.haskellstack.org/ | sh -s - -f
+        - uses: actions/checkout@v2
+        - name: make
+          run: |
+            sed -i -r 's:^path (.*):path /usr/lib/hamler:g' Env
+            make
+            make test
+            sudo make install
+        - name: tests
+          run: |
+            mkdir test
+            cd test
+            hamler init
+            hamler build
+            hamler run
+            echo ":q" | hamler repl
+        - name: create tgz file
+          run: |
+            version=$(echo ${{ github.ref }} | sed -r  "s .*/.*/(.*) \1 g")
+            cd /usr/lib && sudo tar cvf hamler-${version}.tgz hamler && cd -
+            mkdir -p _packages
+            sudo mv /usr/lib/hamler-${version}.tgz _packages
+            cd _packages && for var in $(ls *.tgz); do bash -c "echo $(sha256sum $var | awk '{print $1}') > $var.sha256"; done && cd -
+        - uses: actions/upload-artifact@v1
+          with:
+            name: linux
+            path: _packages/.
+        - name: update github release
+          if: github.event_name == 'release'
+          run: |
+            version=$(echo ${{ github.ref }} | sed -r  "s .*/.*/(.*) \1 g")
+            for var in $(ls _packages) ; do
+              .github/workflows/script/upload_github_release_asset.sh owner=hamler-lang repo=hamler tag=$version filename=_packages/$var github_api_token=$(echo ${{ secrets.AccessToken }})
+            done
+
+    build_deb:
+      runs-on: ubuntu-latest
+
+      container:
+        image: debian:9
+
+      steps:
+      - name: install erlang
+        env:
+          OTP_VERSION: 22.3
+        run: |
+          apt-get update && apt-get install -y wget git curl build-essential debhelper
+          wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb
+          dpkg -i erlang-solutions_2.0_all.deb
+          wget https://packages.erlang-solutions.com/debian/erlang_solutions.asc
+          apt-key add erlang_solutions.asc
+          apt update
+          version=$(apt-cache madison esl-erlang |grep ${OTP_VERSION} | sed -n '1, 1p' | awk '{print $3}')
+          apt-get install -y esl-erlang=${version}
+      - name: set env
+        run: |
+          apt update && apt install -y locales
+          echo "LC_ALL=en_US.UTF-8" >> /etc/environment
+          echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+          echo "LANG=en_US.UTF-8" > /etc/locale.conf
+          locale-gen en_US.UTF-8
+          echo "::set-env name=LC_ALL::en_US.UTF-8"
+          echo "::set-env name=STACK_ROOT::$(pwd)"
+          echo "::add-path::~/.local/bin"
+      - name: install library
+        run: |
+          apt update && apt install -y libtinfo-dev ghc
+          curl -sSL https://get.haskellstack.org/ | sh -s - -f
+      - uses: actions/checkout@v1
+      - name: make
+        run: |
+          sed -i -r 's:^path (.*):path /usr/lib/hamler:g' Env
+          make pkg
+          cd deploy/packages/deb/_packages && for var in $(ls *.deb); do bash -c "echo $(sha256sum $var | awk '{print $1}') > $var.sha256"; done && cd -
+          rm -rf /usr/lib/hamler
+          rm -rf /usr/bin/hamler
+      - name: install pkg
+        run: |
+          dpkg -i deploy/packages/deb/_packages/*.deb
+          if [ $(dpkg -l |grep hamler |awk '{print $1}') != "ii" ]; then
+              echo "package install error"
+              exit 1
+          fi
+      - name: run tests
+        run: |
+          mkdir test
+          cd test
+          hamler init
+          hamler build
+          hamler run
+          echo ":q" | hamler repl
+      - name: uninstall pkg
+        shell: bash
+        run: |
+          dpkg -r hamler
+          if [ $(dpkg -l |grep hamler |awk '{print $1}') != "rc" ]; then
+              echo "package remove error"
+              exit 1
+          fi
+          dpkg -P hamler
+          if [ ! -z "$(dpkg -l |grep hamler)" ]; then
+              echo "package uninstall error"
+              exit 1
+          fi
+      - uses: actions/upload-artifact@v1
+        with:
+          name: deb
+          path: deploy/packages/deb/_packages/.
+      - name: update github release
+        if: github.event_name == 'release'
+        run: |
+          version=$(echo ${{ github.ref }} | sed -r  "s .*/.*/(.*) \1 g")
+          for var in $(ls deploy/packages/deb/_packages) ; do
+            .github/workflows/script/upload_github_release_asset.sh owner=hamler-lang repo=hamler tag=$version filename=deploy/packages/deb/_packages/$var github_api_token=$(echo ${{ secrets.AccessToken }})
+          done
+
+    build_rpm:
+      runs-on: ubuntu-latest
+
+      container:
+        image: centos:7
+
+      steps:
+      - name: install erlang
+        env:
+          OTP_VERSION: 22.3
+        run: |
+          yum groupinstall -y "Development Tools"
+          yum install -y wget git curl which ncurses-devel openssl-devel https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+          wget https://packages.erlang-solutions.com/erlang-solutions-2.0-1.noarch.rpm
+          rpm -Uvh erlang-solutions-2.0-1.noarch.rpm
+          rpm --import https://packages.erlang-solutions.com/rpm/erlang_solutions.asc
+          yum install -y erlang-${OTP_VERSION}
+      - name: set env
+        run: |
+          echo "::set-env name=LC_ALL::en_US.UTF-8"
+          echo "::set-env name=STACK_ROOT::$(pwd)"
+          echo "::add-path::~/.local/bin"
+      - name: install library
+        run: |
+          yum install -y ghc
+          curl -sSL https://get.haskellstack.org/ | sh -s - -f
+      - uses: actions/checkout@v1
+      - name: make
+        run: |
+          sed -i -r 's:^path (.*):path /usr/lib/hamler:g' Env
+          make pkg
+          cd deploy/packages/rpm/_packages && for var in $(ls *.rpm); do bash -c "echo $(sha256sum $var | awk '{print $1}') > $var.sha256"; done && cd -
+          rm -rf /usr/lib/hamler
+          rm -rf /usr/bin/hamler
+      - name: install pkg
+        run: |
+          rpm -ivh deploy/packages/rpm/_packages/*.rpm
+          if [ -z $(rpm -q hamler | grep -o hamler) ];then
+              echo "package install error"
+              exit 1
+          fi
+      - name: run tests
+        run: |
+          mkdir test
+          cd test
+          hamler init
+          hamler build
+          hamler run
+          echo ":q" | hamler repl
+      - name: uninstall pkg
+        run: |
+          rpm -e hamler
+          if [ "$(rpm -q hamler)" != "package hamler is not installed" ];then
+              echo "package uninstall error"
+              exit 1
+          fi
+      - uses: actions/upload-artifact@v1
+        with:
+          name: rpm
+          path: deploy/packages/rpm/_packages/.
+      - name: update github release
+        if: github.event_name == 'release'
+        run: |
+          version=$(echo ${{ github.ref }} | sed -r  "s .*/.*/(.*) \1 g")
+          for var in $(ls deploy/packages/rpm/_packages) ; do
+            .github/workflows/script/upload_github_release_asset.sh owner=hamler-lang repo=hamler tag=$version filename=deploy/packages/rpm/_packages/$var github_api_token=$(echo ${{ secrets.AccessToken }})
+          done
+
+    build_mac:
+      runs-on: macos-latest
+
+      steps:
+      - name: prepare
+        run: |
+          /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+          brew install gnu-sed erlang@22 haskell-stack
+          ln -s /usr/local/bin/gsed /usr/local/bin/sed
+          echo "::add-path::/usr/local/opt/erlang@22/bin"
+          echo "::add-path::/usr/local/lib/hamler/bin"
+          echo "::add-path::/usr/local/bin"
+      - uses: actions/checkout@v2
+      - name: make
+        run: |
+          sed -i -r 's:^path (.*):path /usr/local/lib/hamler:g' Env
+          make
+          make test
+          sudo make install
+      - name: tests
+        run: |
+          mkdir test
+          cd test
+          hamler init
+          hamler build
+          hamler run
+          echo ":q" | hamler repl
+      - name: create tgz file
+        run: |
+          version=$(echo ${{ github.ref }} | gsed -r  "s .*/.*/(.*) \1 g")
+          cd /usr/local/lib && sudo tar cvf hamler-${version}.tgz hamler && cd -
+          mkdir -p _packages
+          sudo mv /usr/local/lib/hamler-${version}.tgz _packages
+      - uses: actions/upload-artifact@v1
+        with:
+          name: mac
+          path: _packages/.
+      - name: set aws cli
+        if: github.event_name == 'release'
+        run: |
+          curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
+          sudo installer -pkg AWSCLIV2.pkg -target /
+          aws --version
+          aws configure set aws_access_key_id ${{ secrets.AwsAccessKeyId }}
+          aws configure set aws_secret_access_key ${{ secrets.AwsSecretAccessKey }}
+          aws configure set default.region us-west-2
+      - name: set git access
+        if: github.event_name == 'release'
+        run: |
+          echo "https://rory-z%40outlook.com:${{ secrets.AccessToken }}@github.com" >> ~/.git-credentials
+          git config --global credential.helper store
+          git config --global user.name "Rory Z"
+          git config --global user.email rory-z@outlook.com
+      - name: update homebrew
+        if: github.event_name == 'release'
+        run: |
+          git clone https://github.com/hamler-lang/homebrew-hamler homebrew-hamler
+          version=$(echo ${{ github.ref }} | sed -r  "s .*/.*/(.*) \1 g")
+          pkg=hamler-${version}.tgz
+          aws s3 cp _packages/$pkg s3://packages.emqx.io/hamler/homebrew/
+          download="https://s3-us-west-2.amazonaws.com/packages.emqx.io/hamler/homebrew/$pkg"
+          sha256=$(openssl dgst -sha256 _packages/$pkg | awk '{print $2}')
+          cd homebrew-hamler
+          gsed -i "/url/c\  url \"$download\"" ./Formula/hamler.rb
+          gsed -i "/sha256/c\  sha256 \"$sha256\"" ./Formula/hamler.rb
+          gsed -i "/version /c\  version \"${version##v}\"" ./Formula/hamler.rb
+          git add ./Formula/hamler.rb
+          git commit -m "chore: update $version"
+          git push origin master
+          git tag $version
+          git push origin $version
+
+    build_docker:
+        runs-on: ubuntu-latest
+
+        steps:
+        - uses: actions/checkout@v2
+        - name: make docker image
+          run: make docker
+        - name: push docker image
+          if: github.event_name == 'release'
+          run: |
+            echo ${{ secrets.DockerHubPassword }} | docker login -u ${{ secrets.DockerHubUser }} --password-stdin
+            version=$(echo ${{ github.ref }} | sed -r  "s .*/.*/(.*) \1 g")
+            docker push hamlerlang/hamler:$version

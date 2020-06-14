@@ -12,7 +12,7 @@ synopsis:       The Hamler Programming Language
 description:    Hamler is a functional programming language inspired by Haskell and Stardard ML, that compiles to Core Erlang.
 category:       Language, Compiler
 stability:      experimental
-homepage:       http://www.hamler.io/
+homepage:       http://www.hamler-lang.org/
 bug-reports:    https://github.com/hamler-lang/hamler/issues
 author:         Feng Lee <feng@emqx.io>
 maintainer:     Feng Lee <feng@emqx.io>
