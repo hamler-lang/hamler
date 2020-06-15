@@ -21,7 +21,8 @@ Now all the features are avaliable in the Hamler programming language.
 
 - Functional programming
 - Haskell and ML style
-- ADT and Type Checking/Inference
+- Compile-time type Checking/Inference
+- Algebraic data type (ADT)
 - Functions, higher-order functions
 - Currying and partial application
 - Pattern matching, and Guards
@@ -32,11 +33,11 @@ Now all the features are avaliable in the Hamler programming language.
 
 ## **Design**
 
-The Hamler 0.1 compiler was forked from [PureScript][PureScriptHamler] 0.13.6. The Hamler compiler architecture is shown as below:
+The Hamler compiler architecture is shown as below:
 
 ![hamler-compiler](https://github.com/hamler-lang/hamler.github.io/blob/master/images/compiler.png)
 
-The Hamler source code is parsed to generate **CST**, then CoreErlang's IR is generated after **CST -> AST -> CoreFn**'s syntax tree transformation, syntax analysis and type checking. The code is then used by the Erlang compiler to generate the final Beam bytecode.
+The Hamler 0.1 compiler was forked from [PureScript][PureScriptHamler] 0.13.6. The Hamler source code is parsed to generate **CST**, then CoreErlang's IR is generated after **CST -> AST -> CoreFn**'s syntax tree transformation, syntax analysis and type checking. The code is then used by the Erlang compiler to generate the final Beam bytecode.
 
 [PureScriptHamler]: https://github.com/hamler-lang/purescript
 
