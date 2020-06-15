@@ -9,16 +9,16 @@
 -mode(compile).
 
 -define(MOD, '$PSCI').
--define(OUTPUTDIR, ".tmp").
--define(COMOPTS, [from_core, {outdir, ?OUTPUTDIR}]).
 
 main([Pa, Pz, File]) ->
+    Outdir = filename:dirname(File),
     true = code:add_path(Pa),
     true = code:add_path(Pz),
-    true = code:add_path(?OUTPUTDIR),
-    reploop(#{file => File}).
+    true = code:add_path(Outdir),
+    Opts = [from_core, {outdir, Outdir}],
+    reploop(#{file => File, opts => Opts}).
 
-reploop(State = #{file := File}) ->
+reploop(State = #{file := File, opts := Opts}) ->
     case io:get_line("") of
         eof -> halt(0);
         ":" ++ Cmd ->
@@ -26,7 +26,7 @@ reploop(State = #{file := File}) ->
         _Expr ->
             try
                 code:purge(?MOD),
-                {ok, _} = compile:file(File, ?COMOPTS),
+                {ok, _} = compile:file(File, Opts),
                 code:load_file(?MOD),
                 print(?MOD:it())
             catch
@@ -39,7 +39,7 @@ reploop(State = #{file := File}) ->
 exec("quit" ++ _, _State) ->
     halt(0);
 exec("help" ++ _, State) ->
-    io:format("Hamler REPL 0.0.1~n"),
+    io:format("Hamler REPL 0.1.1~n"),
     State;
 exec(Cmd, State) ->
     io:format("Unknown cmd: ~s", [Cmd]),
