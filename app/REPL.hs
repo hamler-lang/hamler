@@ -26,12 +26,15 @@ import Minteractive
 import qualified Options.Applicative as Opts
 import Prelude.Compat
 import System.Console.Haskeline
-import System.Directory (doesDirectoryExist, getCurrentDirectory, listDirectory)
+import System.Directory (doesDirectoryExist, getTemporaryDirectory, createDirectory, getCurrentDirectory, listDirectory)
 import System.Exit
 import System.FilePath.Glob (glob)
 import System.IO (BufferMode (..), Handle, hGetLine, hSetBuffering)
 import System.Process
+import qualified Shelly as SS
+import qualified Data.Text as T
 import Prelude ()
+import qualified Control.Exception as CE
 
 data PSCiOptions
   = PSCiOptions
@@ -120,6 +123,15 @@ srchmfs = do
   t2 <- gethmFiles ("/usr/local/lib/hamler/lib")
   return $ t1 <> t2
 
+
+nullhmfs :: IO [FilePath]
+nullhmfs = do
+  dir <- getCurrentDirectory
+  t2 <- gethmFiles ("/usr/local/lib/hamler/lib")
+  return $ t2
+
+
+
 dout :: Handle -> IO ()
 dout h = do
   l <- hGetLine h
@@ -155,16 +167,37 @@ srcReplConfig =
       coreFilePath = ".tmp/$PSCI.core"
     }
 
+nullReplConfig :: ReplConfig
+nullReplConfig =
+  ReplConfig
+    { replsrvFilePath = "/usr/local/lib/hamler/bin/replsrv",
+      hamlerFiles = nullhmfs,
+      libBeamPath = "/usr/local/lib/hamler/ebin",
+      srcBeamPath = "/usr/local/lib/hamler/ebin",
+      coreFilePath = ".tmp/$PSCI.core"
+    }
+
+dictlist =["ebin","src","test",".deps"]
+
 commandSrc :: Opts.Parser (IO ())
-commandSrc =pure $ startReplsrv srcReplConfig
+commandSrc =pure $ do
+  c <- listDirectory "."
+  case all (\i -> i `elem` c) dictlist of
+    True -> startReplsrv srcReplConfig ".tmp"
+    False ->do
+      base <- getTemporaryDirectory
+      let nullReplConfig' = nullReplConfig {coreFilePath = base <> "/" <> "hamlerTmp/$PSCI.core"}
+      CE.bracket
+       (createDirectory (base <> "/" <> "hamlerTmp") )
+       (\_ -> SS.shelly $ SS.run_ "rm" [ "-rf", T.pack $ (base <> "/" <> "hamlerTmp")] )
+       (\_ -> startReplsrv nullReplConfig' (base <> "/hamlerTmp"))
 
 command :: Opts.Parser (IO ())
-command = pure $ startReplsrv devReplConfig
+command = pure $ startReplsrv devReplConfig ".tmp"
 
-startReplsrv :: ReplConfig -> IO ()
-startReplsrv ReplConfig {..} = do
+startReplsrv :: ReplConfig -> FilePath-> IO ()
+startReplsrv ReplConfig {..} fp = do
   fs <- hamlerFiles
-  getCurrentDirectory >>= print
   (Just hin, Just hout, Just err, _) <-
     createProcess_
       "start replsrv error!! "
@@ -187,7 +220,7 @@ startReplsrv ReplConfig {..} = do
         when (null modules) . liftIO $ do
           putStr noInputMessage
           exitFailure
-        (externs, _) <- ExceptT . runMake . make $ fmap CST.pureResult <$> modules
+        (externs, _) <- ExceptT . runMake . make fp $ fmap CST.pureResult <$> modules
         return (modules, externs)
       case psciBackend of
         Backend setup eval reload (shutdown :: state -> IO ()) ->
@@ -199,7 +232,7 @@ startReplsrv ReplConfig {..} = do
               historyFilename <- getHistoryFilename
               let settings = defaultSettings {historyFile = Just historyFilename}
                   initialState = updateLoadedExterns (const (zip (map snd modules) externs)) initialPSCiState
-                  config = PSCiConfig psciInputGlob
+                  config = PSCiConfig psciInputGlob fp
                   runner =
                     flip runReaderT config
                       . flip evalStateT initialState
