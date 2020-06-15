@@ -31,3 +31,4 @@ bin/
 .swp
 *.core
 .tmp/
+ebin/
