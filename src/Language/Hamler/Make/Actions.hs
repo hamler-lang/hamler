@@ -132,6 +132,8 @@ buildMakeActions isInline outputDir filePathMap foreigns _ =
          Right (CE.Constr ( CE.Module (CE.Atom _) _ _ efundefs )) -> do
             let ff (CE.FunDef (CE.Constr (CE.FunName (CE.Atom n,i))) (CE.Constr expr) )
                   = (pack $ (unpack $ runModuleName mn) <> "." <> n, (fromIntegral i,expr))
+                ff (CE.FunDef (CE.Constr (CE.FunName (CE.Atom n,i))) (CE.Ann expr _) )
+                  = (pack $ (unpack $ runModuleName mn) <> "." <> n, (fromIntegral i,expr))
                 ff x1 = error $ show x1
             return $ fmap ff efundefs
          x -> error $ show x
