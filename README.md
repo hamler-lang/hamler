@@ -1,6 +1,8 @@
 # The Hamler Programming Language
 
-**Hamler** - Haskell-style functional programming language running on Erlang VM. **Hamler** is a strongly-typed language with compile-time typechecking and built-in support for concurrency and distribution.
+**Hamler** - Haskell-style functional programming language running on Erlang VM.
+
+**Hamler** is a strongly-typed language with compile-time typechecking and built-in support for concurrency and distribution.
 
 **Hamler** empowers industries to build the next generation of scalable, reliable, realtime applications, especially for 5G, IoT and edge computing.
 
