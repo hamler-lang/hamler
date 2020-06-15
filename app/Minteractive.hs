@@ -58,11 +58,11 @@ runMake :: P.Make a -> IO (Either P.MultipleErrors a)
 runMake mk = fst <$> P.runMake P.defaultOptions mk
 
 -- | Rebuild a module, using the cached externs data for dependencies.
-rebuild ::
+rebuild :: FilePath ->
   [P.ExternsFile] ->
   P.Module ->
   P.Make (P.ExternsFile, P.Environment)
-rebuild loadedExterns m = do
+rebuild fp loadedExterns m = do
   externs <- P.rebuildModule buildActions loadedExterns m
   return (externs, foldl' (flip P.applyExternsFileToEnvironment) P.initEnvironment (loadedExterns ++ [externs]))
   where
@@ -70,7 +70,7 @@ rebuild loadedExterns m = do
     buildActions =
       ( H.buildMakeActions
           False
-          modulesDir
+          fp
           filePathMap
           M.empty
           False
@@ -81,10 +81,10 @@ rebuild loadedExterns m = do
     filePathMap = M.singleton (P.getModuleName m) (Left P.RebuildAlways)
 
 -- | Build the collection of modules from scratch. This is usually done on startup.
-make ::
+make :: FilePath ->
   [(FilePath, CST.PartialResult P.Module)] ->
   P.Make ([P.ExternsFile], P.Environment)
-make ms = do
+make fp1 ms = do
   foreignFiles <- inferForeignModules filePathMap
   externs <- P.make (buildActions foreignFiles) (map snd ms)
   return (externs, foldl' (flip P.applyExternsFileToEnvironment) P.initEnvironment externs)
@@ -93,7 +93,7 @@ make ms = do
     buildActions foreignFiles =
       H.buildMakeActions
         False
-        modulesDir
+        fp1
         filePathMap
         foreignFiles
         False
@@ -136,10 +136,11 @@ handleReloadState ::
 handleReloadState reload = do
   modify $ updateLets (const [])
   globs <- asks psciFileGlobs
+  dirs <- asks moduleDirs
   files <- liftIO $ concat <$> traverse glob globs
   e <- runExceptT $ do
     modules <- ExceptT . liftIO $ loadAllModules files
-    (externs, _) <- ExceptT . liftIO . runMake . make $ fmap CST.pureResult <$> modules
+    (externs, _) <- ExceptT . liftIO . runMake . make dirs $ fmap CST.pureResult <$> modules
     return (map snd modules, externs)
   case e of
     Left errs -> printErrors errs
@@ -165,7 +166,8 @@ handleExpression ::
 handleExpression (hin,hout) val = do
   st <- get
   let m = createTemporaryModule True st val
-  e <- liftIO . runMake $ rebuild (map snd (psciLoadedExterns st)) m
+  dirs <- asks moduleDirs
+  e <- liftIO . runMake $ rebuild dirs (map snd (psciLoadedExterns st)) m
   case e of
     Left errs -> printErrors errs
     Right _ -> do
@@ -185,7 +187,8 @@ handleDecls ::
 handleDecls ds = do
   st <- gets (updateLets (++ ds))
   let m = createTemporaryModule False st (P.Literal P.nullSourceSpan (P.ObjectLiteral []))
-  e <- liftIO . runMake $ rebuild (map snd (psciLoadedExterns st)) m
+  dirs <- asks moduleDirs
+  e <- liftIO . runMake $ rebuild dirs (map snd (psciLoadedExterns st)) m
   case e of
     Left err -> printErrors err
     Right _ -> put st
@@ -268,7 +271,8 @@ handleImport ::
 handleImport im = do
   st <- gets (updateImportedModules (im :))
   let m = createTemporaryModuleForImports st
-  e <- liftIO . runMake $ rebuild (map snd (psciLoadedExterns st)) m
+  dirs <- asks moduleDirs
+  e <- liftIO . runMake $ rebuild dirs (map snd (psciLoadedExterns st)) m
   case e of
     Left errs -> printErrors errs
     Right _ -> put st
@@ -282,7 +286,8 @@ handleTypeOf ::
 handleTypeOf print' val = do
   st <- get
   let m = createTemporaryModule False st val
-  e <- liftIO . runMake $ rebuild (map snd (psciLoadedExterns st)) m
+  dirs <- asks moduleDirs
+  e <- liftIO . runMake $ rebuild dirs (map snd (psciLoadedExterns st)) m
   case e of
     Left errs -> printErrors errs
     Right (_, env') ->
@@ -300,7 +305,8 @@ handleKindOf print' typ = do
   st <- get
   let m = createTemporaryModuleForKind st typ
       mName = P.ModuleName [P.ProperName "$PSCI"]
-  e <- liftIO . runMake $ rebuild (map snd (psciLoadedExterns st)) m
+  dirs <- asks moduleDirs
+  e <- liftIO . runMake $ rebuild dirs (map snd (psciLoadedExterns st)) m
   case e of
     Left errs -> printErrors errs
     Right (_, env') ->
@@ -340,7 +346,7 @@ handleBrowse print' moduleName = do
 
 -- | Return output as would be returned by tab completion, for tools integration etc.
 handleComplete ::
-  (MonadState PSCiState m, MonadIO m) =>
+  (MonadReader PSCiConfig m, MonadState PSCiState m, MonadIO m) =>
   (String -> m ()) ->
   String ->
   m ()
@@ -354,7 +360,7 @@ handleComplete print' prefix = do
 -- only be updated if the interactive print function exists and appears to
 -- work; we test it by attempting to evaluate '0'.
 handleSetInteractivePrint ::
-  (MonadState PSCiState m, MonadIO m) =>
+  (MonadReader PSCiConfig m, MonadState PSCiState m, MonadIO m) =>
   (String -> m ()) ->
   (P.ModuleName, P.Ident) ->
   m ()
@@ -364,7 +370,8 @@ handleSetInteractivePrint print' new = do
   st <- get
   let expr = P.Literal internalSpan (P.NumericLiteral (Left 0))
   let m = createTemporaryModule True st expr
-  e <- liftIO . runMake $ rebuild (map snd (psciLoadedExterns st)) m
+  dirs <- asks moduleDirs
+  e <- liftIO . runMake $ rebuild dirs (map snd (psciLoadedExterns st)) m
   case e of
     Left errs -> do
       modify (setInteractivePrint current)
@@ -376,5 +383,5 @@ handleSetInteractivePrint print' new = do
 handleSetVal ::
   (MonadState PSCiState m, MonadIO m) =>
   String -> m ()
-handleSetVal s = do 
+handleSetVal s = do
   modify (setVal (s ,s))

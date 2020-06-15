@@ -230,7 +230,7 @@ findFile1 base fp = do
 
 
 dictlist :: [FilePath]
-dictlist =["ebin","src","test",".deps",".temp"]
+dictlist =["ebin","src","test",".deps",".tmp"]
 
 helloHamler :: String
 helloHamler = concat [
