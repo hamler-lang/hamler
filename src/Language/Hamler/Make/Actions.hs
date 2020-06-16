@@ -4,6 +4,7 @@ module Language.Hamler.Make.Actions
   , RebuildPolicy(..)
   , ProgressMessage(..)
   , buildMakeActions
+  , divErlangCore
   ) where
 
 import           Prelude
@@ -19,6 +20,7 @@ import qualified Data.Map as M
 import           Data.Maybe (fromMaybe, maybeToList)
 import qualified Data.Set as S
 import qualified Data.Text as T
+import qualified Data.List as L
 import           Data.Time.Clock (UTCTime)
 import           Language.PureScript.AST
 import qualified Language.PureScript.CoreFn as CF
@@ -37,7 +39,6 @@ import qualified Data.Text.IO as TIO
 import           Data.Text (Text, unpack, pack)
 import qualified Language.CoreErlang as CE
 import           Language.Hamler.CodeGen
-import           Language.Hamler.Inline
 import           Language.PureScript.Make hiding (buildMakeActions)
 
 -- | Determines when to rebuild a module
@@ -113,33 +114,27 @@ buildMakeActions isInline outputDir filePathMap foreigns _ =
     let list = read (unpack con) :: [(String,Int)]
     return $ (mn', M.fromList $  fmap (\(a,b) -> (pack (unpack mn' <> "." <> a) ,b)) list)
 
-  myinline t = if t
-               then inline
-               else id
-
   codegen :: CF.Module CF.Ann -> Docs.Module -> ExternsFile -> SupplyT Make ()
   codegen m _ exts = do
     let mn = CF.moduleName m
     lift $ writeJSONFile (outputDir </> ( unpack (runModuleName mn) <> ".json")) exts
-    efundefs' <- case M.lookup mn foreigns of
-      Nothing -> do return []
+    (efundefs',rpart) <- case M.lookup mn foreigns of
+      Nothing -> do return ([],Nothing)
       Just fp -> do
-        con <-lift $ makeIO "read Main.core" $ TIO.readFile fp
-        case fmap (myinline isInline) $ CE.parseModule $ unpack con of
+        con' <-lift $ makeIO "read Main.core" $ TIO.readFile fp
+        let (con,respart) = divErlangCore con'
+        case CE.parseModuleHead $ unpack con of
          Left e -> do
            lift $ makeIO "read Main.core" $ print ("error of parse core file: ---> " <> fp)
            lift $ throwError $ MultipleErrors [ErrorMessage [] $ ErrorParsingModule e]
-         Right (CE.Constr ( CE.Module (CE.Atom _) _ _ efundefs )) -> do
-            let ff (CE.FunDef (CE.Constr (CE.FunName (CE.Atom n,i))) (CE.Constr expr) )
-                  = (pack $ (unpack $ runModuleName mn) <> "." <> n, (fromIntegral i,expr))
-                ff (CE.FunDef (CE.Constr (CE.FunName (CE.Atom n,i))) (CE.Ann expr _) )
-                  = (pack $ (unpack $ runModuleName mn) <> "." <> n, (fromIntegral i,expr))
-                ff x1 = error $ show x1
-            return $ fmap ff efundefs
+         Right (CE.Constr ( CE.ModuleHead (CE.Atom _) epos _ )) -> do
+            let ff (CE.FunName (CE.Atom n,i))
+                  = (pack $ (unpack $ runModuleName mn) <> "." <> n, (fromIntegral i))
+            return $ (fmap ff epos, Just respart)
          x -> error $ show x
     let mods = filter (/= mn) $  filter (/= ModuleName [ProperName "Prim"]) $  fmap snd $ CF.moduleImports m
     modInfoList <- mapM readModuleInfo mods
-    let modInfoMap = M.fromList  modInfoList
+    let modInfoMap = M.fromList modInfoList
         ((erl,_),_) = runTranslate isInline modInfoMap efundefs' $  moduleToErl m
     case erl of
       Left e -> lift $ makeIO "print error" $ print e
@@ -148,7 +143,10 @@ buildMakeActions isInline outputDir filePathMap foreigns _ =
         let mn' = runModuleName mn
         lift $ makeIO "Write core erlang file" $ TIO.writeFile
           (outputDir </>  (unpack mn' <>  (".core")))
-          (pack $ CE.prettyPrint e)
+          ( case rpart of
+              Nothing    -> pack $ CE.prettyPrint e
+              Just rep -> (T.unlines . L.init . T.lines . pack $ CE.prettyPrint e) <> rep
+          )
         lift $ makeIO "write module information " $ TIO.writeFile
           (outputDir </>  (unpack mn' <>  ".info"))
           (pack $ show $  fmap (\(CE.FunName (CE.Atom s1,i) ) -> (s1,i)) exports )
@@ -167,5 +165,11 @@ buildMakeActions isInline outputDir filePathMap foreigns _ =
   writeCacheDb = writeJSONFile cacheDbFile
 
   cacheDbFile = outputDir </> "cache-db.json"
+
+divErlangCore :: T.Text -> (T.Text,T.Text)
+divErlangCore f =
+  let (a,b) = L.span (\c -> T.head c /= '\'') $ T.lines f
+  in (T.unlines a , T.unlines b)
+
 
 
