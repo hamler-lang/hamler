@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: bc8b0044f646451870a9725fafe02058a9cee44750f8e700444d2cd619eb1f78
+-- hash: 5235cc2058185f910e81882df384c3d6ac38d5f930d47536db83d42d8186a45b
 
 name:           hamler
 version:        0.1
@@ -64,6 +64,7 @@ library
     , bytestring
     , containers
     , directory >=1.2.3
+    , file-embed
     , filepath
     , haskeline >=0.7.5.0
     , language-javascript
@@ -120,6 +121,7 @@ executable hamler
     , bytestring
     , containers
     , directory >=1.2.3
+    , file-embed
     , filepath
     , hamler
     , haskeline >=0.7.5.0
@@ -181,6 +183,7 @@ test-suite tests
     , bytestring
     , containers
     , directory >=1.2.3
+    , file-embed
     , filepath
     , hamler
     , haskeline >=0.7.5.0

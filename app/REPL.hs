@@ -33,8 +33,9 @@ import System.IO (BufferMode (..), Handle, hGetLine, hSetBuffering)
 import System.Process
 import qualified Shelly as SS
 import qualified Data.Text as T
-import Prelude ()
+import qualified Prelude as P
 import qualified Control.Exception as CE
+import Data.FileEmbed
 
 data PSCiOptions
   = PSCiOptions
@@ -120,16 +121,17 @@ srchmfs :: IO [FilePath]
 srchmfs = do
   dir <- getCurrentDirectory
   t1 <- gethmFiles (dir <> "/src")
-  t2 <- gethmFiles ("/usr/local/lib/hamler/lib")
+  hamlerlib <- hamlerlibIO
+  t2 <- gethmFiles hamlerlib
   return $ t1 <> t2
 
 
 nullhmfs :: IO [FilePath]
 nullhmfs = do
   dir <- getCurrentDirectory
-  t2 <- gethmFiles ("/usr/local/lib/hamler/lib")
+  hamlerlib <- hamlerlibIO
+  t2 <- gethmFiles hamlerlib
   return $ t2
-
 
 
 dout :: Handle -> IO ()
@@ -179,14 +181,41 @@ nullReplConfig =
 
 dictlist =["ebin","src","test",".deps"]
 
+hamlerlibIO :: IO String
+hamlerlibIO = do
+  let ls = $(embedStringFile "Env")
+  case P.words ls of
+    ["path",fp] ->return $  fp <> "/lib"
+    _ -> error $ "Env file error. "
+
+hamlerFileIO :: IO String
+hamlerFileIO = do
+  let ls = $(embedStringFile "Env")
+  case P.words ls of
+    ["path",fp] -> return $ fp
+    _ -> error $ "Env file error. "
+
+
+
+
 commandSrc :: Opts.Parser (IO ())
 commandSrc =pure $ do
   c <- listDirectory "."
   case all (\i -> i `elem` c) dictlist of
-    True -> startReplsrv srcReplConfig ".tmp"
-    False ->do
+    True -> do
+      hamlerFile <- hamlerFileIO
+      let srcReplConfig' = srcReplConfig { replsrvFilePath = hamlerFile <> "/bin/replsrv"
+                                         , libBeamPath = hamlerFile <> "/ebin"
+                                         }
+      startReplsrv srcReplConfig' ".tmp"
+    False -> do
       base <- getTemporaryDirectory
-      let nullReplConfig' = nullReplConfig {coreFilePath = base <> "/" <> "hamlerTmp/$PSCI.core"}
+      hamlerFile <- hamlerFileIO
+      let nullReplConfig' = nullReplConfig { coreFilePath = base <> "/" <> "hamlerTmp/$PSCI.core"
+                                           , replsrvFilePath = hamlerFile <> "/bin/replsrv"
+                                           , libBeamPath = hamlerFile <> "/ebin"
+                                           , srcBeamPath = hamlerFile <> "/ebin"
+                                           }
       CE.bracket
        (createDirectory (base <> "/" <> "hamlerTmp") )
        (\_ -> SS.shelly $ SS.run_ "rm" [ "-rf", T.pack $ (base <> "/" <> "hamlerTmp")] )
