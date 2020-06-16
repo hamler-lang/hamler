@@ -41,7 +41,6 @@ module Prelude
   , module System.IO
   ) where
 
-
 import Data.Atom (atom)
 import Data.Bits (band, bor, bxor, bnot, bsl, bsr)
 import Data.Bool (Bool, (&&), (||), and, or, not, otherwise)

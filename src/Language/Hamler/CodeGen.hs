@@ -48,7 +48,7 @@ type Translate = ExceptT MError (StateT GState (Writer MLog))
 data GState
   = GState
       { _gsmoduleName :: ModuleName,
-        _ffiFun :: M.Map Text (Int, E.Expr),
+        _ffiFun :: M.Map Text Int,
         _globalVar :: M.Map Text Int,
         _localVar :: M.Map Text Int,
         _letMap :: M.Map Text (Int, E.Expr),
@@ -66,7 +66,7 @@ emptyGState = GState (ModuleName []) M.empty M.empty M.empty M.empty 0 M.empty F
 runTranslate ::
   Bool ->
   (M.Map Text (M.Map Text Int)) ->
-  [(Text, (Int, E.Expr))] ->
+  [(Text, Int)] ->
   Translate a ->
   (((Either MError a), GState), MLog)
 runTranslate isinline modinfos plist translate =
@@ -90,37 +90,17 @@ moduleToErl C.Module {..} = do
     let name = showQualified runIdent $ mkQualified ident (gs ^. gsmoduleName)
         wname = runIdent ident
     case M.lookup name (gs ^. globalVar) of
-      Just args -> return $ (Nothing, FunName (Atom $ unpack wname, toInteger args))
+      Just args -> return $ FunName (Atom $ unpack wname, toInteger args)
       Nothing -> case M.lookup name (gs ^. ffiFun) of
-        Just (args, e) ->
-          return $
-            ( Just
-                ( FunDef
-                    (Constr $ FunName (Atom $ unpack wname, toInteger args))
-                    (Constr $ e)
-                ),
-              FunName (Atom $ unpack wname, toInteger args)
-            )
+        Just args ->
+          return $ FunName (Atom $ unpack wname, toInteger args)
         Nothing -> throwError $ (unpack $ runModuleName $ gs ^. gsmoduleName) <> ":The function [" <> unpack wname <> "] is not implemented!"
   return $
     E.Module
       (Atom $ unpack $ runModuleName moduleName)
-      (mm1 : mm0 : (fmap snd exports))
+      (mm1 : mm0 : exports)
       []
-      ( if gs ^. isInline
-          then (funDecls' <> (fmap (getJust . fst) $ Prelude.filter (isJust . fst) exports))
-          else
-            ( funDecls'
-                <> ( fmap
-                       ( \(name, (args, expr)) ->
-                           FunDef
-                             (Constr $ FunName (Atom $ last $ words $ fmap tcc $ unpack name, toInteger args))
-                             (Constr expr)
-                       )
-                       (M.toList $ gs ^. ffiFun)
-                   )
-            )
-      )
+      funDecls'
 
 -- | CoreFn Bind to CoreErlang FunDef
 bindToErl :: C.Bind C.Ann -> Translate [FunDef]
@@ -225,14 +205,11 @@ exprToErl (C.Var _ qi@(Qualified _ tema)) = do
           0 -> return $ E.App (Expr $ Constr $ E.Fun $ E.FunName (Atom (unpack wname), 0)) []
           x -> return $ E.Fun $ E.FunName (Atom (unpack wname), 1)
         Nothing -> case M.lookup name (gs ^. ffiFun) of
-          Just (0, e) -> return $ E.App (Expr $ Constr e) []
-          Just (x, e) ->
-            return $
-              if gs ^. isInline
-              then e
-              else let ndd =  E.Fun $ E.FunName (Atom (unpack wname), toInteger x)
+          Just 0 -> return $ E.App (Expr $ Constr $ E.Fun $ E.FunName (Atom (unpack wname), 0)) []
+          Just x -> do
+                   let ndd =  E.Fun $ E.FunName (Atom (unpack wname), toInteger x)
                        vars = fmap (\k -> E.Var $ Constr ("_" <> show k)) [0..x-1]
-                   in  netLambda vars ndd []
+                   return $  netLambda vars ndd []
           Nothing -> case qi of
             Qualified (Just mn) _ -> do
               let mn' = runModuleName mn
