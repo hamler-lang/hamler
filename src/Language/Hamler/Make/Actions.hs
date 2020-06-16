@@ -4,7 +4,6 @@ module Language.Hamler.Make.Actions
   , RebuildPolicy(..)
   , ProgressMessage(..)
   , buildMakeActions
-  , divErlangCore
   ) where
 
 import           Prelude
@@ -122,7 +121,7 @@ buildMakeActions isInline outputDir filePathMap foreigns _ =
       Nothing -> do return ([],Nothing)
       Just fp -> do
         con' <-lift $ makeIO "read Main.core" $ TIO.readFile fp
-        let (con,respart) = divErlangCore con'
+        let (con,respart) = splitErlangCore con'
         case CE.parseModuleHead $ unpack con of
          Left e -> do
            lift $ makeIO "read Main.core" $ print ("error of parse core file: ---> " <> fp)
@@ -166,8 +165,8 @@ buildMakeActions isInline outputDir filePathMap foreigns _ =
 
   cacheDbFile = outputDir </> "cache-db.json"
 
-divErlangCore :: T.Text -> (T.Text,T.Text)
-divErlangCore f =
+splitErlangCore :: T.Text -> (T.Text,T.Text)
+splitErlangCore f =
   let (a,b) = L.span (\c -> T.head c /= '\'') $ T.lines f
   in (T.unlines a , T.unlines b)
 
