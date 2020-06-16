@@ -1,8 +1,6 @@
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE OverloadedStrings #-}
 module Compile (command,initProject,runProject) where
 
 import           Control.Monad
@@ -27,7 +25,9 @@ import           Language.Hamler.Make
 import qualified Shelly as SS
 import qualified Data.List as LL
 import           Control.Concurrent.Async.Lifted
-
+import Prelude
+import qualified Prelude as P
+import Data.FileEmbed
 
 data PSCMakeOptions = PSCMakeOptions
   { pscmInput        :: [FilePath]
@@ -116,6 +116,7 @@ buildFun isIn b = if b
 buildSrc :: Bool -> IO ()
 buildSrc bl = do
   dir <- getCurrentDirectory
+  hamlerlib <- hamlerlibIO
   isExist <- doesDirectoryExist hamlerlib
   fps1 <- if isExist
           then gethmFiles hamlerlib
@@ -208,10 +209,12 @@ runProject :: Opts.Parser (IO ())
 runProject  =pure $ do
   dir <- getCurrentDirectory
   let tpath = dir <> "/ebin"
+  hamlerlib <- hamlerlibIO
+  hamlerFile <- hamlerFileIO
   isExist <- doesDirectoryExist hamlerlib
   _ <- SS.shelly $ do
     if isExist
-      then SS.setenv "ERL_LIBS" "/usr/local/lib/hamler/"
+      then SS.setenv "ERL_LIBS" (T.pack hamlerFile)
       else SS.setenv "ERL_LIBS" (T.pack $ dir <> ".deps/hamler")
     SS.run  "erl" ["-pa",T.pack (tpath), "-noshell","-s" ,"Main","main","-s","init","stop" ]
   return ()
@@ -254,8 +257,21 @@ makeFile = concat [ ".PHONY : build run\n\n"
 liblink :: T.Text
 liblink = "https://github.com/hamler-lang/hamler.git"
 
-hamlerlib :: String
-hamlerlib = "/usr/local/lib/hamler/lib"
+hamlerlibIO :: IO String
+hamlerlibIO = do
+  let ls = $(embedStringFile "Env")
+  case P.words ls of
+    ["path",fp] -> return $ fp <> "/lib"
+    _ -> error $ "Env file error. "
+
+hamlerFileIO :: IO String
+hamlerFileIO = do
+  let ls = $(embedStringFile "Env")
+  case P.words ls of
+    ["path",fp] -> return  fp
+    _ -> error $ "Env file error. "
+
+
 
 initProject :: Opts.Parser (IO ())
 initProject = pure $ do
@@ -266,6 +282,7 @@ initProject = pure $ do
   writeFile "src/Main.hm" helloHamler
   putStrLn "Generating Makefile..."
   writeFile "Makefile" makeFile
+  hamlerlib <- hamlerlibIO
   isExist <- doesDirectoryExist hamlerlib
   if isExist
     then do
