@@ -1,5 +1,5 @@
 name: hamler
-version: '0.1.1'
+version: '0.1.2'
 synopsis: The Hamler Programming Language
 description: Hamler is a functional programming language inspired by Haskell and Stardard ML,
   that compiles to Core Erlang.
