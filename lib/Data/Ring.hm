@@ -48,3 +48,7 @@ foreign import floatSub :: Float -> Float -> Float
 foreign import intDiv :: Integer -> Integer -> Integer
 foreign import floatDiv :: Float -> Float -> Float
 foreign import intRem :: Integer -> Integer -> Integer
+
+negate :: forall a. Ring a => a -> a
+negate a = zero - a
+

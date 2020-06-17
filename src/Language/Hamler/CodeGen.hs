@@ -219,7 +219,9 @@ exprToErl (C.Var _ qi@(Qualified _ tema)) = do
                     M.lookup funName r1
               case res of
                 Nothing ->
-                  throwError $ unpack (runModuleName $ gs ^. gsmoduleName) <> " --> There is no such function " <> unpack mn' <> ":" <> unpack wname
+                  if unpack mn' == "Prim" && unpack wname == "undefined"
+                  then return $ Lam [ E.Var $ Constr $  "_0"] (Expr $ Constr $ EVar $ E.Var $ Constr $ "_0")
+                  else throwError $ unpack (runModuleName $ gs ^. gsmoduleName) <> " --> There is no such function " <> unpack mn' <> ":" <> unpack wname
                 Just i -> return $ cModCall i (unpack mn') (unpack wname)
             Qualified Nothing _ ->
               throwError $ "Did not find this variable: " <> show qi <> "<-->" <> show gs
@@ -532,12 +534,12 @@ netLambda :: [Var] -> E.Expr -> [Var] ->E.Expr
 netLambda [] _ [] = error "nice"
 netLambda [x] e s= Lam [x] (Expr . Constr $ E.App (Expr . Constr $ e) (fmap (Expr . Constr . EVar) (reverse $ x:s)))
 netLambda (x:xs) e s = Lam [x] (Expr $ Constr $ netLambda xs e (x:s))
-
+netLambda _ _ _ = error "strange happend"
 
 netConst :: E.Expr -> [Var] -> [Var] ->E.Expr
 netConst c [] [] =  Tuple [Expr . Constr $ c]
 netConst c [x] s= Lam [x] (Expr $ Constr $ Tuple $ (Expr $ Constr c) : fmap (Expr . Constr . EVar) (reverse $ x:s))
 netConst c (x:xs) s = Lam [x] (Expr $ Constr $ netConst c xs (x:s))
-
+netConst _ _ _ = error "strange happend"
 
 
