@@ -59,7 +59,7 @@ concat :: forall a. [[a]] -> [a]
 concat = ffi1 :lists :concat
 
 filter :: forall a. (a -> Boolean) -> [a] -> [a]
-filter = ffi1 :lists :filter
+filter = ffi2 :lists :filter
 
 replicate :: forall a. Integer -> a -> [a]
 replicate = ffi2 :lists :duplicate
