@@ -285,6 +285,10 @@ jobs:
           git add ./Formula/hamler.rb
           git commit -m "chore: update $version"
           git push origin master
+          if [ ! -z "$(git show-ref --tags | grep -o -E "refs/tags/$version$")" ];then
+            git tag -d ${version}
+            git push origin :refs/tags/${version}
+          fi
           git tag $version
           git push origin $version
 
