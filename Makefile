@@ -23,8 +23,8 @@ ifeq ($(shell uname -s),Linux)
 endif
 	$(stack) install --local-bin-path $(HAMLER_HOME)/bin --allow-different-user
 	@cp repl/replsrv $(HAMLER_HOME)/bin/replsrv
-	@cp -r ebin  $(HAMLER_HOME)/ebin
-	@cp -r lib  $(HAMLER_HOME)/lib
+	@cp -r ebin  $(HAMLER_HOME)
+	@cp -r lib  $(HAMLER_HOME)
 
 test:
 	$(stack) test --fast $(package)
