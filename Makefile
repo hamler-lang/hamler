@@ -4,11 +4,9 @@ stack_yaml = STACK_YAML="stack.yaml"
 stack = $(stack_yaml) stack
 
 ifeq ($(shell uname -s),Darwin)
-hamler_lib := /usr/local/lib/hamler
-export HAMLER_HOME = /usr/local/lib/hamler
+HAMLER_HOME ?= /usr/local/lib/hamler
 else
-hamler_lib := /usr/local/hamler
-export HAMLER_HOME = /usr/local/hamler
+HAMLER_HOME ?= /usr/local/hamler
 endif
 
 all: build
@@ -23,10 +21,10 @@ install:
 ifeq ($(shell uname -s),Linux)
 	$(stack) install --local-bin-path /usr/bin --allow-different-user
 endif
-	$(stack) install --local-bin-path $(hamler_lib)/bin --allow-different-user
-	@cp repl/replsrv $(hamler_lib)/bin/replsrv
-	@cp -r ebin  $(hamler_lib)/ebin
-	@cp -r lib  $(hamler_lib)/lib
+	$(stack) install --local-bin-path $(HAMLER_HOME)/bin --allow-different-user
+	@cp repl/replsrv $(HAMLER_HOME)/bin/replsrv
+	@cp -r ebin  $(HAMLER_HOME)/ebin
+	@cp -r lib  $(HAMLER_HOME)/lib
 
 test:
 	$(stack) test --fast $(package)
