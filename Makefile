@@ -3,7 +3,11 @@ exe_target = hamler
 stack_yaml = STACK_YAML="stack.yaml"
 stack = $(stack_yaml) stack
 
+ifeq ($(shell uname -s),Darwin)
+hamler_lib := $(shell sed -E 's/^path (.*)/\1/g' $(CURDIR)/Env)
+else
 hamler_lib := $(shell sed -r 's/^path (.*)/\1/g' $(CURDIR)/Env)
+endif
 
 all: build
 
