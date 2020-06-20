@@ -4,9 +4,11 @@ stack_yaml = STACK_YAML="stack.yaml"
 stack = $(stack_yaml) stack
 
 ifeq ($(shell uname -s),Darwin)
-hamler_lib := $(shell sed -E 's/^path (.*)/\1/g' $(CURDIR)/Env)
+hamler_lib := /usr/local/lib/hamler
+export HAMLER_HOME = /usr/local/lib/hamler
 else
-hamler_lib := $(shell sed -r 's/^path (.*)/\1/g' $(CURDIR)/Env)
+hamler_lib := /usr/local/hamler
+export HAMLER_HOME = /usr/local/hamler
 endif
 
 all: build
