@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8ce2c9348f90d03bb5e228ff33d0914c0214209ccf7730c7ecab2ab5dd259c93
+-- hash: b4ea26b02d4354abc015973694948a06281790dd68fba9c109a6d211a2bd5f91
 
 name:           hamler
-version:        0.1.1
+version:        0.1.2
 synopsis:       The Hamler Programming Language
 description:    Hamler is a functional programming language inspired by Haskell and Stardard ML, that compiles to Core Erlang.
 category:       Language, Compiler
@@ -85,6 +85,7 @@ library
     , semigroups >=0.16.2 && <0.19
     , shelly
     , sourcemap >=0.1.6
+    , template-haskell
     , text
     , time
     , transformers >=0.3.0 && <0.6
@@ -144,6 +145,7 @@ executable hamler
     , semigroups >=0.16.2 && <0.19
     , shelly
     , sourcemap >=0.1.6
+    , template-haskell
     , text
     , time
     , transformers >=0.3.0 && <0.6
@@ -212,6 +214,7 @@ test-suite tests
     , tasty-golden
     , tasty-hspec
     , tasty-quickcheck
+    , template-haskell
     , text
     , time
     , transformers >=0.3.0 && <0.6
