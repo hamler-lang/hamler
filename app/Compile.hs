@@ -26,8 +26,7 @@ import qualified Shelly as SS
 import qualified Data.List as LL
 import           Control.Concurrent.Async.Lifted
 import Prelude
-import qualified Prelude as P
-import Data.FileEmbed
+import Version (hamlerEnv)
 
 data PSCMakeOptions = PSCMakeOptions
   { pscmInput        :: [FilePath]
@@ -116,7 +115,6 @@ buildFun isIn b = if b
 buildSrc :: Bool -> IO ()
 buildSrc bl = do
   dir <- getCurrentDirectory
-  hamlerlib <- hamlerlibIO
   isExist <- doesDirectoryExist hamlerlib
   fps1 <- if isExist
           then gethmFiles hamlerlib
@@ -209,8 +207,6 @@ runProject :: Opts.Parser (IO ())
 runProject  =pure $ do
   dir <- getCurrentDirectory
   let tpath = dir <> "/ebin"
-  hamlerlib <- hamlerlibIO
-  hamlerFile <- hamlerFileIO
   isExist <- doesDirectoryExist hamlerlib
   _ <- SS.shelly $ do
     if isExist
@@ -257,21 +253,11 @@ makeFile = concat [ ".PHONY : build run\n\n"
 liblink :: T.Text
 liblink = "https://github.com/hamler-lang/hamler.git"
 
-hamlerlibIO :: IO String
-hamlerlibIO = do
-  let ls = $(embedStringFile "Env")
-  case P.words ls of
-    ["path",fp] -> return $ fp <> "/lib"
-    _ -> error $ "Env file error. "
+hamlerlib :: String
+hamlerlib =  $hamlerEnv <> "/lib"
 
-hamlerFileIO :: IO String
-hamlerFileIO = do
-  let ls = $(embedStringFile "Env")
-  case P.words ls of
-    ["path",fp] -> return  fp
-    _ -> error $ "Env file error. "
-
-
+hamlerFile :: String
+hamlerFile = $hamlerEnv
 
 initProject :: Opts.Parser (IO ())
 initProject = pure $ do
@@ -282,7 +268,6 @@ initProject = pure $ do
   writeFile "src/Main.hm" helloHamler
   putStrLn "Generating Makefile..."
   writeFile "Makefile" makeFile
-  hamlerlib <- hamlerlibIO
   isExist <- doesDirectoryExist hamlerlib
   if isExist
     then do

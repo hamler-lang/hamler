@@ -15,8 +15,7 @@ RUN wget -qO- https://get.haskellstack.org/ | sh
 ENV PATH=/root/.local/bin:$PATH
 
 COPY . hamler
-RUN sed -i -r 's:^path (.*):path /usr/lib/hamler:g' hamler/Env \
-    && make -C hamler \
+RUN make -C hamler \
     && make -C hamler test \
     && make -C hamler install
 

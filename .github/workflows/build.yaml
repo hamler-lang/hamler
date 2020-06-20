@@ -36,7 +36,6 @@ jobs:
         - uses: actions/checkout@v2
         - name: make
           run: |
-            sed -i -r 's:^path (.*):path /usr/lib/hamler:g' Env
             make
             make test
             sudo make install
@@ -103,7 +102,6 @@ jobs:
       - uses: actions/checkout@v1
       - name: make
         run: |
-          sed -i -r 's:^path (.*):path /usr/lib/hamler:g' Env
           make pkg
           cd deploy/packages/deb/_packages && for var in $(ls *.deb); do bash -c "echo $(sha256sum $var | awk '{print $1}') > $var.sha256"; done && cd -
           rm -rf /usr/lib/hamler
@@ -177,7 +175,6 @@ jobs:
       - uses: actions/checkout@v1
       - name: make
         run: |
-          sed -i -r 's:^path (.*):path /usr/lib/hamler:g' Env
           make pkg
           cd deploy/packages/rpm/_packages && for var in $(ls *.rpm); do bash -c "echo $(sha256sum $var | awk '{print $1}') > $var.sha256"; done && cd -
           rm -rf /usr/lib/hamler
@@ -231,7 +228,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: make
         run: |
-          sed -i -r 's:^path (.*):path /usr/local/lib/hamler:g' Env
           make
           make test
           sudo make install

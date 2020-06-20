@@ -19,7 +19,7 @@ ifeq ($(ARCH),mips64)
 	ARCH:=mips64el
 endif
 
-HAMLER_LIB=$(shell sed -r 's:^path (.*):/usr/lib/hamler:g' ../../../Env)
+HAMLER_HOME ?= /usr/lib/hamler
 
 .PHONY: all
 all: | $(BUILT)
@@ -30,16 +30,15 @@ all: | $(BUILT)
 		--define "_srcdir $(SRCDIR)" \
 		--define "_version $(RPM_VSN)" \
 		--define "_release $(RPM_REL)" \
-		--define "_ostype -$(SYSTEM)" \
 		hamler.spec
 	mkdir -p _packages
 	cp $(TOPDIR)/RPMS/$(ARCH)/*.rpm _packages/
 
 $(BUILT):
 	mkdir -p $(TOPDIR) $(SRCDIR)
-	cp -r $(HAMLER_LIB)/bin $(SRCDIR)/
-	cp -r $(HAMLER_LIB)/lib $(SRCDIR)/
-	cp -r $(HAMLER_LIB)/ebin $(SRCDIR)/
+	cp -r $(HAMLER_HOME)/bin $(SRCDIR)/
+	cp -r $(HAMLER_HOME)/lib $(SRCDIR)/
+	cp -r $(HAMLER_HOME)/ebin $(SRCDIR)/
 
 clean:
 	rm -rf $(SRCDIR)

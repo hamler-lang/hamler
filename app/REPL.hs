@@ -35,7 +35,14 @@ import qualified Shelly as SS
 import qualified Data.Text as T
 import qualified Prelude as P
 import qualified Control.Exception as CE
-import Data.FileEmbed
+import Version (hamlerEnv)
+
+hamlerlib :: String
+hamlerlib =  $hamlerEnv <> "/lib"
+
+hamlerFile :: String
+hamlerFile = $hamlerEnv
+
 
 data PSCiOptions
   = PSCiOptions
@@ -121,7 +128,6 @@ srchmfs :: IO [FilePath]
 srchmfs = do
   dir <- getCurrentDirectory
   t1 <- gethmFiles (dir <> "/src")
-  hamlerlib <- hamlerlibIO
   t2 <- gethmFiles hamlerlib
   return $ t1 <> t2
 
@@ -129,7 +135,6 @@ srchmfs = do
 nullhmfs :: IO [FilePath]
 nullhmfs = do
   dir <- getCurrentDirectory
-  hamlerlib <- hamlerlibIO
   t2 <- gethmFiles hamlerlib
   return $ t2
 
@@ -181,36 +186,18 @@ nullReplConfig =
 
 dictlist =["ebin","src","test",".deps"]
 
-hamlerlibIO :: IO String
-hamlerlibIO = do
-  let ls = $(embedStringFile "Env")
-  case P.words ls of
-    ["path",fp] ->return $  fp <> "/lib"
-    _ -> error $ "Env file error. "
-
-hamlerFileIO :: IO String
-hamlerFileIO = do
-  let ls = $(embedStringFile "Env")
-  case P.words ls of
-    ["path",fp] -> return $ fp
-    _ -> error $ "Env file error. "
-
-
-
 
 commandSrc :: Opts.Parser (IO ())
 commandSrc =pure $ do
   c <- listDirectory "."
   case all (\i -> i `elem` c) dictlist of
     True -> do
-      hamlerFile <- hamlerFileIO
       let srcReplConfig' = srcReplConfig { replsrvFilePath = hamlerFile <> "/bin/replsrv"
                                          , libBeamPath = hamlerFile <> "/ebin"
                                          }
       startReplsrv srcReplConfig' ".tmp"
     False -> do
       base <- getTemporaryDirectory
-      hamlerFile <- hamlerFileIO
       let nullReplConfig' = nullReplConfig { coreFilePath = base <> "/" <> "hamlerTmp/$PSCI.core"
                                            , replsrvFilePath = hamlerFile <> "/bin/replsrv"
                                            , libBeamPath = hamlerFile <> "/ebin"

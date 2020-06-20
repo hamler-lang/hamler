@@ -3,7 +3,7 @@ TOPDIR := /tmp/hamler
 SRCDIR := $(TOPDIR)/$(PKG_VSN)
 BUILT := $(SRCDIR)/BUILT
 
-HAMLER_LIB=$(shell sed -r 's:^path (.*):/usr/lib/hamler:g' ../../../Env)
+HAMLER_HOME ?= /usr/lib/hamler
 
 .PHONY: all
 all: | $(BUILT)
@@ -16,9 +16,9 @@ all: | $(BUILT)
 
 $(BUILT):
 	mkdir -p $(TOPDIR) $(SRCDIR)
-	cp -r $(HAMLER_LIB)/bin $(SRCDIR)/
-	cp -r $(HAMLER_LIB)/lib $(SRCDIR)/
-	cp -r $(HAMLER_LIB)/ebin $(SRCDIR)
+	cp -r $(HAMLER_HOME)/bin $(SRCDIR)/
+	cp -r $(HAMLER_HOME)/lib $(SRCDIR)/
+	cp -r $(HAMLER_HOME)/ebin $(SRCDIR)
 
 clean:
 	rm -rf $(SRCDIR)
