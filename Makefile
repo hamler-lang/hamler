@@ -6,7 +6,7 @@ stack = $(stack_yaml) stack
 ifeq ($(shell uname -s),Darwin)
 export HAMLER_HOME ?= /usr/local/lib/hamler
 else
-export HAMLER_HOME ?= /usr/local/hamler
+export HAMLER_HOME ?= /usr/lib/hamler
 endif
 
 all: build
