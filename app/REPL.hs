@@ -9,6 +9,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TupleSections #-}
+{-# LANGUAGE LambdaCase #-}
 
 module REPL where
 
@@ -36,6 +37,8 @@ import qualified Data.Text as T
 import qualified Prelude as P
 import qualified Control.Exception as CE
 import Version (hamlerEnv)
+import System.FilePath.Posix ((</>))
+
 
 hamlerlib :: String
 hamlerlib =  $hamlerEnv <> "/lib"
@@ -198,13 +201,17 @@ commandSrc =pure $ do
       startReplsrv srcReplConfig' ".tmp"
     False -> do
       base <- getTemporaryDirectory
-      let nullReplConfig' = nullReplConfig { coreFilePath = base <> "/" <> "hamlerTmp/$PSCI.core"
+      let nullReplConfig' = nullReplConfig { coreFilePath = base </> "hamlerTmp/$PSCI.core"
                                            , replsrvFilePath = hamlerFile <> "/bin/replsrv"
                                            , libBeamPath = hamlerFile <> "/ebin"
                                            , srcBeamPath = hamlerFile <> "/ebin"
                                            }
       CE.bracket
-       (createDirectory (base <> "/" <> "hamlerTmp") )
+       (do 
+         let path = base </> "hamlerTmp"
+         doesDirectoryExist path >>= \case 
+           True -> return ()
+           False -> createDirectory path )
        (\_ -> SS.shelly $ SS.run_ "rm" [ "-rf", T.pack $ (base <> "/" <> "hamlerTmp")] )
        (\_ -> startReplsrv nullReplConfig' (base <> "/hamlerTmp"))
 
