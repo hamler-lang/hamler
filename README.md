@@ -120,7 +120,8 @@ The Hamler 0.1 compiler was forked from [PureScript][PureScriptHamler] 0.13.6. T
 ### **Documentation**
 
 - [Cheatsheet](https://github.com/hamler-lang/documentation/blob/master/Cheatsheet.md)
-- [Guides](https://github.com/hamler-lang/documentation/blob/master/guides/00_TableOfContents.md)
+- [Guides](https://github.com/hamler-lang/documentation/tree/master/guides/)
+- [FAQ](https://github.com/hamler-lang/documentation/blob/master/FAQ.md)
 
 ## **Community, discussion and supports**
 
