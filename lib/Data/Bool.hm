@@ -33,5 +33,5 @@ not true  = false
 not false = true
 
 -- | An alias for `true', which is used for guards.
-otherwise :: Bool
-otherwise = true
+-- otherwise :: Bool
+-- otherwise = true
