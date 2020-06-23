@@ -101,19 +101,26 @@ inline= Opts.switch $
   <> Opts.long "inline"
   <> Opts.help "Determine whether to inline functions when reading .core"
 
-
+outputDirectory :: Opts.Parser FilePath
+outputDirectory = Opts.strOption $
+     Opts.short 'o'
+  <> Opts.long "output"
+  <> Opts.value "/ebin"
+  <> Opts.showDefault
+  <> Opts.help "The output directory"
 
 command :: Opts.Parser (IO ())
 command = buildFun <$> inline
                    <*> howBuild
+                   <*> outputDirectory
 
-buildFun ::Bool -> Bool -> IO ()
-buildFun isIn b = if b
+buildFun ::Bool -> Bool -> FilePath -> IO ()
+buildFun isIn b fp = if b
                   then buildlib isIn
-                  else buildSrc isIn
+                  else buildSrc isIn fp
 
-buildSrc :: Bool -> IO ()
-buildSrc bl = do
+buildSrc :: Bool -> FilePath -> IO ()
+buildSrc bl fpath = do
   dir <- getCurrentDirectory
   isExist <- doesDirectoryExist hamlerlib
   fps1 <- if isExist
@@ -122,11 +129,17 @@ buildSrc bl = do
   fps2 <- gethmFiles (dir <> "/src")
   let fps = fps1 <> fps2
       fps2' = fmap hmToCore fps2
-  let tpath = dir <> "/ebin"
-  removeDirectoryRecursive tpath
-  createDirectory tpath
+  let tpath = if fpath == "/ebin"  
+              then dir <> "/ebin"
+              else fpath
+  isDirExis <- doesDirectoryExist tpath
+  case isDirExis of 
+    True -> do
+      removeDirectoryRecursive tpath
+      createDirectory tpath
+    False -> return ()
   compile (PSCMakeOptions { pscmInput      = fps
-                          , pscmOutputDir  = dir <>  "/ebin"
+                          , pscmOutputDir  = tpath
                           , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
                           , pscmUsePrefix  = False
                           , pscmJSONErrors = False
