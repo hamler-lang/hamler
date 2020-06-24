@@ -137,10 +137,14 @@ srchmfs = do
 
 nullhmfs :: IO [FilePath]
 nullhmfs = do
-  dir <- getCurrentDirectory
   t2 <- gethmFiles hamlerlib
   return $ t2
 
+nullhmfs' :: FilePath -> IO [FilePath]
+nullhmfs' fp = do
+  t1 <- gethmFiles fp
+  t2 <- gethmFiles hamlerlib
+  return $ t1 <> t2
 
 dout :: Handle -> IO ()
 dout h = do
@@ -189,11 +193,29 @@ nullReplConfig =
 
 dictlist =["ebin","src","test",".deps"]
 
+sourceDirectory :: Opts.Parser FilePath
+sourceDirectory = Opts.strOption $
+     Opts.short 's'
+  <> Opts.long "source"
+  <> Opts.value ""
+  <> Opts.showDefault
+  <> Opts.help "The source directory"
+
+ebinDirectory :: Opts.Parser FilePath
+ebinDirectory = Opts.strOption $
+     Opts.short 'e'
+  <> Opts.long "ebin"
+  <> Opts.value "/ebin"
+  <> Opts.showDefault
+  <> Opts.help "The ebin directory"
 
 commandSrc :: Opts.Parser (IO ())
-commandSrc =pure $ do
-  c <- listDirectory "."
-  case all (\i -> i `elem` c) dictlist of
+commandSrc = runRepl <$> sourceDirectory <*> ebinDirectory
+
+runRepl :: FilePath -> FilePath -> IO ()
+runRepl sourceDir ebinDir = do
+   c <- listDirectory "."
+   case all (\i -> i `elem` c) dictlist of
     True -> do
       let srcReplConfig' = srcReplConfig { replsrvFilePath = hamlerFile <> "/bin/replsrv"
                                          , libBeamPath = hamlerFile <> "/ebin"
@@ -201,19 +223,37 @@ commandSrc =pure $ do
       startReplsrv srcReplConfig' ".tmp"
     False -> do
       base <- getTemporaryDirectory
-      let nullReplConfig' = nullReplConfig { coreFilePath = base </> "hamlerTmp/$PSCI.core"
+      if sourceDir == "" && ebinDir == "/ebin"
+        then do 
+          let nullReplConfig' = nullReplConfig { coreFilePath = base </> "hamlerTmp/$PSCI.core"
                                            , replsrvFilePath = hamlerFile <> "/bin/replsrv"
                                            , libBeamPath = hamlerFile <> "/ebin"
                                            , srcBeamPath = hamlerFile <> "/ebin"
                                            }
-      CE.bracket
-       (do 
-         let path = base </> "hamlerTmp"
-         doesDirectoryExist path >>= \case 
-           True -> return ()
-           False -> createDirectory path )
-       (\_ -> SS.shelly $ SS.run_ "rm" [ "-rf", T.pack $ (base <> "/" <> "hamlerTmp")] )
-       (\_ -> startReplsrv nullReplConfig' (base <> "/hamlerTmp"))
+          CE.bracket
+            (do 
+              let path = base </> "hamlerTmp"
+              doesDirectoryExist path >>= \case 
+                True -> return ()
+                False -> createDirectory path )
+            (\_ -> SS.shelly $ SS.run_ "rm" [ "-rf", T.pack $ (base <> "/" <> "hamlerTmp")] )
+            (\_ -> startReplsrv nullReplConfig' (base <> "/hamlerTmp"))
+        else do 
+          let nullReplConfig' = nullReplConfig 
+                 { coreFilePath = base </> "hamlerTmp/$PSCI.core"
+                 , replsrvFilePath = hamlerFile <> "/bin/replsrv"
+                 , libBeamPath = hamlerFile <> "/ebin"
+                 , srcBeamPath = ebinDir
+                 , hamlerFiles = nullhmfs' sourceDir
+                 }
+          CE.bracket
+            (do 
+              let path = base </> "hamlerTmp"
+              doesDirectoryExist path >>= \case 
+                True -> return ()
+                False -> createDirectory path )
+            (\_ -> SS.shelly $ SS.run_ "rm" [ "-rf", T.pack $ (base <> "/" <> "hamlerTmp")] )
+            (\_ -> startReplsrv nullReplConfig' (base <> "/hamlerTmp"))
 
 command :: Opts.Parser (IO ())
 command = pure $ startReplsrv devReplConfig ".tmp"
