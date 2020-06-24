@@ -1,22 +1,22 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.31.2.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b4ea26b02d4354abc015973694948a06281790dd68fba9c109a6d211a2bd5f91
+-- hash: 978fd3e8f9c32d4f969dfa87fd066b9ade37bf2cdeacb5d030d8a610022456bf
 
 name:           hamler
-version:        0.1.2
+version:        0.1.3
 synopsis:       The Hamler Programming Language
-description:    Hamler is a functional programming language inspired by Haskell and Stardard ML, that compiles to Core Erlang.
+description:    Hamler is a functional programming language inspired by Haskell and Standard ML, that compiles to CoreErlang.
 category:       Language, Compiler
 stability:      experimental
-homepage:       http://www.hamler-lang.org/
+homepage:       https://hamler-lang.org/
 bug-reports:    https://github.com/hamler-lang/hamler/issues
 author:         Feng Lee <feng@emqx.io>
-maintainer:     Feng Lee <feng@emqx.io>
-copyright:      (c) 2013-17 Phil Freeman, (c) 2014-19 Gary Burgess, (c) other contributors (see CONTRIBUTORS.md)
+maintainer:     Feng Lee <feng@emqx.io>, Yang M <yangm@emqx.io>
+copyright:      (c) 2013-17 Phil Freeman, (c) 2014-19 Gary Burgess, (c) 2020 Feng Lee, (c) other contributors (see CONTRIBUTORS.md)
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
