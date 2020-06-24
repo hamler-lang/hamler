@@ -1,15 +1,15 @@
 name: hamler
-version: '0.1.2'
+version: '0.1.3'
 synopsis: The Hamler Programming Language
-description: Hamler is a functional programming language inspired by Haskell and Stardard ML,
-  that compiles to Core Erlang.
+description: Hamler is a functional programming language inspired by Haskell and Standard ML,
+  that compiles to CoreErlang.
 category: Language, Compiler
 author: Feng Lee <feng@emqx.io>
-maintainer: Feng Lee <feng@emqx.io>
-copyright: (c) 2013-17 Phil Freeman, (c) 2014-19 Gary Burgess, (c) other contributors (see CONTRIBUTORS.md)
+maintainer: Feng Lee <feng@emqx.io>, Yang M <yangm@emqx.io>
+copyright: (c) 2013-17 Phil Freeman, (c) 2014-19 Gary Burgess, (c) 2020 Feng Lee, (c) other contributors (see CONTRIBUTORS.md)
 license: BSD3
 github: hamler-lang/hamler
-homepage: http://www.hamler-lang.org/
+homepage: https://hamler-lang.org/
 extra-source-files:
   - README.md
   - stack.yaml
@@ -31,7 +31,7 @@ dependencies:
   - language-javascript
   - shelly
   - lens
-  - template-haskell 
+  - template-haskell
   - lifted-async >=0.10.0.3 && <0.10.1
   - lifted-base >=0.2.3 && <0.2.4
   - monad-control >=1.0.0.0 && <1.1
@@ -120,7 +120,7 @@ tests:
       - tasty
       - tasty-golden
       - tasty-hspec
-      - tasty-quickcheck    
+      - tasty-quickcheck
     default-extensions:
       - NoImplicitPrelude
       - LambdaCase
