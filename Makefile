@@ -14,6 +14,9 @@ all: build
 build:
 	$(stack) run build -- -l
 
+clean:
+	$(stack) clean
+
 run:
 	$(stack) build --fast && $(stack) exec -- $(exe_target)
 
@@ -38,4 +41,4 @@ docker:
 pkg:build test install
 	make -C deploy/packages
 
-.PHONY : build run install test repl docker pkg
+.PHONY : build clean run install test repl  docker pkg
