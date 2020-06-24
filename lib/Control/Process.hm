@@ -12,7 +12,23 @@
 -- The Erlang Process Module.
 --
 -----------------------------------------------------------------------------
-module Control.Process where
+module Control.Process
+  ( Node
+  , Module
+  , Process
+  , node
+  --, mod
+  , self
+  , selfPid
+  , selfNode
+  , spawn
+  , send
+  , receive
+  , receiveAfter
+  , link
+  , monitor
+  , isProcessAlive
+  ) where
 
 import Control.Monad
 import Data.Pid (Pid)
@@ -33,11 +49,15 @@ foreign import node :: String -> Node
 -- String to Module
 foreign import mod :: String -> Module
 
+-- An alias of selfPid.
+self :: Process Pid
+self = selfPid
+
+-- Return the Pid of calling process.
+foreign import selfPid :: Process Pid
+
 -- Return the name of this node.
 foreign import selfNode :: Process Node
-
--- Return the Pid of calling process
-foreign import selfPid :: Process Pid
 
 -- Spawn a Process.
 foreign import spawn ::forall a b. (a -> IO b) -> a -> Process Pid
