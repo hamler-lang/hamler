@@ -168,4 +168,5 @@ buildMakeActions isInline outputDir filePathMap foreigns _ =
 splitErlangCore :: T.Text -> (T.Text,T.Text)
 splitErlangCore f =
   let (a,b) = L.span (\c -> T.head c /= '\'') $ T.lines f
-  in (T.unlines a , T.unlines $ take (length b - 9)  b <> ["end"])
+      (c,_) = L.span ( /= "\'module_info\'/0 =" ) b
+  in (T.unlines a , T.unlines $ c <> ["end"])
