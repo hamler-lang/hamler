@@ -13,7 +13,7 @@
 --
 -----------------------------------------------------------------------------
 module Control.Monad
-  ( class Monad, bind, (>>=), return
+  ( class Monad, bind, (>>), (>>=), return
   , liftM1, liftM2, liftM3, liftM4
   , IO
   , discard
@@ -94,5 +94,13 @@ guardF :: Boolean  -> [Boolean]
 guardF true = [true]
 guardF false = []
 
+-- | Sequentially compose two actions, discarding any value produced
+-- by the first.
+-- This can be used to end a pipeline of monadic actions with Unit:
+-- > action1 >>= action2 >>= action3 >> pure ()
+bindUnit :: forall a b. m a -> m b -> m b
+bindUnit m k = m >>= \_ -> k
+
+infixl 1 bindUnit as >>
 
 foreign import seqio ::forall a.[IO a] -> IO [a]
