@@ -1,0 +1,47 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Control.Behaviour.GenServer
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The GenServer Behaviour.
+--
+-----------------------------------------------------------------------------
+module Control.Behaviour.GenServer
+  ( class GenServer
+  , handleCast, handleInfo
+  , startServer, call, cast
+  , module Control.OTP.GenServer.Types
+  , reply, noReply
+  ) where
+
+import Control.Behaviour.GenServer.Types (From)
+import Control.Process (Process)
+import Data.Pid (Pid)
+import Data.Unit (Unit)
+
+class GenServer m s | m -> s, s -> m where
+  handleCall :: m -> From -> s -> Process s
+  handleCast :: m -> s -> Process s
+
+foreign import startServer
+  :: forall a m s. GenServer m s
+   => (a -> Process s) -> a -> Process Pid
+
+foreign import call
+  :: forall a b. Pid -> a -> Process b
+
+foreign import cast
+  :: forall a . Pid -> a -> Process ()
+
+foreign import reply
+  :: forall a s. From -> a -> s -> Process s
+
+foreign import noReply
+  :: forall s. s -> Process s
+

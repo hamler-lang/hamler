@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.OTP.Application
+-- Module      :  Control.Behavior.Application
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -12,7 +12,7 @@
 -- The Erlang Application module.
 --
 -----------------------------------------------------------------------------
-module Control.OTP.Application where
+module Control.Behavior.Application where
 
 import Control.OTP.Application.Types
 import Control.Process (Process)

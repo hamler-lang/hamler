@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.OTP.GenStatem
+-- Module      :  Control.Behaviour.GenStatem
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -12,7 +12,7 @@
 -- The Erlang `gen_statem` Behaviour.
 --
 -----------------------------------------------------------------------------
-module Control.OTP.GenStatem where
+module Control.Behaviour.GenStatem where
 
 import Control.OTP.GenStatem.Types
 import Control.Process (Module, Node, Process)
