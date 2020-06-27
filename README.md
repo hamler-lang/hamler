@@ -82,7 +82,7 @@ The Hamler 0.1 compiler was forked from [PureScript][PureScriptHamler] 0.13.6. T
   make install
   ```
 
-**Build from source code(linux)**
+**Build from source code(linux/macOS)**
 
 0. Install [asdf-vm](https://asdf-vm.com/#/core-manage-asdf-vm?id=install)
 
