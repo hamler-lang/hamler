@@ -23,8 +23,7 @@ module Data.Either
   , hush
   ) where
 
-import Control.Applicative (class Applicative, pure)
-import Control.Monad (class Monad)
+import Control.Monad (class Applicative, class Monad, pure)
 import Data.Functor (class Functor, map)
 import Data.Function (error, const)
 import Data.Maybe (Maybe(..), maybe)

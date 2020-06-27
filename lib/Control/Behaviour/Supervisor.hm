@@ -14,7 +14,7 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.Supervisor where
 
-import Control.OTP.Supervisor.Types
+import Control.Behaviour.Supervisor.Types
 import Control.Process (Module, Node, Process)
 import Data.Pid (Pid)
 import Data.Maybe (Maybe)

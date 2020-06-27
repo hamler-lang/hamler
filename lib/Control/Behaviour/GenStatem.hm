@@ -14,7 +14,7 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenStatem where
 
-import Control.OTP.GenStatem.Types
+import Control.Behaviour.GenStatem.Types
 import Control.Process (Module, Node, Process)
 import Data.Pid (Pid)
 import Data.Timeout (Timeout)

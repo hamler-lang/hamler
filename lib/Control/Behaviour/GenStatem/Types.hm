@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.OTP.GenStatem.Types
+-- Module      :  Control.Behaviour.GenStatem.Types
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -12,7 +12,7 @@
 -- The GenStatem Types.
 --
 -----------------------------------------------------------------------------
-module Control.OTP.GenStatem.Types where
+module Control.Behaviour.GenStatem.Types where
 
 type LocalName  = Atom
 type GlobalName = Atom

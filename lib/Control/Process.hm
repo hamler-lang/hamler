@@ -28,6 +28,7 @@ module Control.Process
   , link
   , monitor
   , isProcessAlive
+  , trapExit
   ) where
 
 import Control.Monad
@@ -81,4 +82,6 @@ foreign import link :: Pid -> Process Boolean
 foreign import monitor :: Pid -> Process Reference
 
 foreign import isProcessAlive :: Pid -> Process Boolean
+
+foreign import trapExit :: Boolean -> Process Boolean
 

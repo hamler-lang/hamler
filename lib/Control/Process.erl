@@ -27,6 +27,7 @@
         , 'link'/1
         , 'monitor'/1
         , isProcessAlive/1
+        , trapExit/1
         ]).
 
 -spec(node(string()) -> atom()).
@@ -64,3 +65,5 @@ receiveAfter(Timeout) ->
 -spec(isProcessAlive(pid()) -> boolean()).
 isProcessAlive(Pid) -> erlang:is_process_alive(Pid).
 
+-spec(trapExit(boolean()) -> boolean()).
+trapExit(Flag) -> erlang:process_flag(trap_exit, Flag).

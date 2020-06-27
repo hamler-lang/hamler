@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.OTP.GenEvent.Types
+-- Module      :  Control.Behaviour.GenEvent.Types
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -12,4 +12,4 @@
 -- The GenEvent Types.
 --
 -----------------------------------------------------------------------------
-module Control.OTP.GenEvent.Types where
+module Control.Behaviour.GenEvent.Types where

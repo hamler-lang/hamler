@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.OTP.GenEvent.Behaviour
+-- Module      :  Control.Behaviour.GenEvent.Behaviour
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -12,7 +12,7 @@
 -- The GenEvent Behaviour.
 --
 -----------------------------------------------------------------------------
-module Control.OTP.GenEvent.Behaviour where
+module Control.Behaviour.GenEvent.Behaviour where
 
 import Control.Process (Process)
 

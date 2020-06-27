@@ -21,7 +21,7 @@
         , stop/1
         ]).
 
--define(MOD, 'Control.OTP.GenStatem.Behaviour').
+-define(MOD, 'Control.Behaviour.GenStatem.Behaviour').
 
 startStatem(Class, Args) ->
     {ok, Pid} = gen_statem:start_link(?MOD, [Class, Args], []),

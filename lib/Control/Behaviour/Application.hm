@@ -12,9 +12,9 @@
 -- The Erlang Application module.
 --
 -----------------------------------------------------------------------------
-module Control.Behavior.Application where
+module Control.Behaviour.Application where
 
-import Control.OTP.Application.Types
+import Control.Behaviour.Application.Types
 import Control.Process (Process)
 import Data.Maybe (Maybe)
 import Data.Pid (Pid)

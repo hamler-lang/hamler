@@ -13,18 +13,57 @@
 --
 -----------------------------------------------------------------------------
 module Control.Monad
-  ( class Monad, bind, (>>=), return
+  ( class Applicative, pure, apply, (<*>)
+    -- ^ Applicative
+  , liftA1, liftA2, liftA3, liftA4
+    -- ^ liftA
+  , class Monad, bind, (>>=), return
+    -- ^ Monad
   , liftM1, liftM2, liftM3, liftM4
+    -- ^ liftM
   , IO
   , discard
   , guardF
   , seqio
   , module Data.Functor
-  , module Control.Applicative
   ) where
 
-import Data.Functor (class Functor, map)
-import Control.Applicative (class Applicative, apply, pure)
+import Data.Functor (class Functor, map, (<$>))
+
+-----------------------------------------------------------------------------
+-- | Applicative typeclass
+-----------------------------------------------------------------------------
+
+class Functor f => Applicative f where
+  pure  :: forall a. a -> f a
+  apply :: forall a b. f (a -> b) -> f a -> f b
+
+infixl 4 apply as <*>
+
+instance Applicative List where
+  pure x = [x]
+  apply = applyListImpl
+
+foreign import applyListImpl :: forall a b. List (a -> b) -> List a -> List b
+
+-----------------------------------------------------------------------------
+-- | Lift a function.
+
+liftA1 :: forall a b f. Applicative f => (a -> b) -> f a -> f b
+liftA1 f a = pure f <*> a
+
+liftA2 :: forall a b c f. Applicative f => (a -> b -> c) -> f a -> f b -> f c
+liftA2 f a b = pure f <*> a <*> b
+
+liftA3 :: forall a b c d f. Applicative f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d
+liftA3 f a b c = pure f <*> a <*> b <*> c
+
+liftA4 :: forall a b c d e f. Applicative f => (a -> b -> c -> d -> e) -> f a -> f b -> f c -> f d -> f e
+liftA4 f a b c d = pure f <*> a <*> b <*> c <*> d
+
+-----------------------------------------------------------------------------
+-- | Monad typeclass
+-----------------------------------------------------------------------------
 
 class Applicative m => Monad m where
   bind :: forall a b. m a -> (a -> m b) -> m b
@@ -94,5 +133,5 @@ guardF :: Boolean  -> [Boolean]
 guardF true = [true]
 guardF false = []
 
-
 foreign import seqio ::forall a.[IO a] -> IO [a]
+
