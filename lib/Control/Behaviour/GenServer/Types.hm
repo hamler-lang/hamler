@@ -1,0 +1,37 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Control.Behaviour.GenServer.Types
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- Datatypes for GenServer Behaviour.
+--
+-----------------------------------------------------------------------------
+module Control.Behaviour.GenServer.Types where
+
+import Control.Process (Module, Node)
+import Data.Pid (Pid)
+
+-- | Server name is an alias of Atom.
+type ServerName = Atom
+
+-- | Server Ref
+data ServerRef
+  = ServerPid Pid
+    -- ^ The Pid of GenServer.
+  | ServerRef ServerName
+    -- ^ The GenServer is locally registered.
+  | ServerRefOn ServerName Node
+    -- ^ The GenServer is locally registered on another node.
+  | ServerGlobal ServerName
+    -- ^ The GenServer is globally registered in global.
+  | ServerVia Module ServerName
+    -- ^ The GenServer is registered in an alternative process registry.
+
+foreign import data From :: Type
+
