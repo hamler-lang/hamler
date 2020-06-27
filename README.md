@@ -92,25 +92,27 @@ The Hamler 0.1 compiler was forked from [PureScript][PureScriptHamler] 0.13.6. T
   asdf plugin-add erlang
   ```
 
-2. Install Erlang
+3. Clone hamler from the git repo and change directory
+
+  ```shell
+  git clone https://github.com/hamler-lang/hamler.git
+  cd hamler
+  ```
+
+4. Install Erlang
 
   ```shell
   asdf install
   ```
 
-3. Install [Haskell Stack](https://docs.haskellstack.org/en/stable/install_and_upgrade/)
+  Note: it's important to run it from `hamler` directory, because it requires
+  `.tool-versions` file present there.
 
+5. Install [Haskell Stack](https://docs.haskellstack.org/en/stable/install_and_upgrade/)
 
-4. Clone hamler from the git repo
-
-  ```shell
-  git clone https://github.com/hamler-lang/hamler.git
-  ```
-
-5. Install hamler
+6. Install hamler
 
   ```shell
-  cd hamler
   make
   make install
   ```
