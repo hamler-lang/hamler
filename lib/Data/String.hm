@@ -61,8 +61,8 @@ endsWith = hasSuffix
 
 foreign import hasSuffix :: String -> Suffix -> Boolean
 
-listToInteger :: String -> Integer
-listToInteger = ffi1 :erlang :list_to_integer
+toInteger :: String -> Integer
+toInteger = ffi1 :erlang :list_to_integer
 
 -----------------------------------------------------------------------------
 -- | Index, Find and Replace
