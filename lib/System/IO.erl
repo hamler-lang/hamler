@@ -14,22 +14,12 @@
 %%---------------------------------------------------------------------------
 -module('IO').
 
--export([ print/1
-        , println/1
-        ]).
-
 -export([ readFile/1
         , writeFile/2
         , appendFile/2
         ]).
 
 -type(filepath() :: string()).
-
--spec(print(string()) -> ok).
-print(S) -> io:format(S).
-
--spec(println(string()) -> ok).
-println(S) -> io:format(S ++ "~n").
 
 -spec(readFile(filepath()) -> ok).
 readFile(FilePath) ->
