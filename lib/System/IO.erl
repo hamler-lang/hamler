@@ -15,7 +15,6 @@
 -module('IO').
 
 -export([ print/1
-        , printf/1
         , println/1
         ]).
 
@@ -28,9 +27,6 @@
 
 -spec(print(string()) -> ok).
 print(S) -> io:format(S).
-
--spec(printf(string()) -> ok).
-printf(S) -> io:format(S).
 
 -spec(println(string()) -> ok).
 println(S) -> io:format(S ++ "~n").
