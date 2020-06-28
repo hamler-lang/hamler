@@ -64,6 +64,12 @@ exp = ffi1 :math :exp
 floor :: Float -> Float
 floor = ffi1 :math :floor
 
+round :: Float -> Float
+round = ffi1 :erlang :round
+
+float :: Integer -> Float
+float = ffi1 :erlang :float
+
 fmod :: Float -> Float -> Float
 fmod = ffi2 :math :fmod
 

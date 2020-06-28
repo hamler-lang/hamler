@@ -138,3 +138,5 @@ unzip = ffi1 :lists :unzip
 unzip3 :: forall a b c. [(a, b, c)] -> ([a], [b], [c])
 unzip3 = ffi1 :lists :unzip3
 
+member :: forall a. a -> [a] -> Boolean
+member = ffi2 :lists :member
