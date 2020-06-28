@@ -1,0 +1,158 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  System.IO
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The System printf Module.
+--
+-----------------------------------------------------------------------------
+
+module System.IO.Printf
+  ( print
+  , println
+  , class Printf
+  , class PrintArg
+  , render
+  , Control
+  , printf
+  ) where
+
+
+import Control.Monad (IO)
+import Data.Unit (Unit)
+import Data.Maybe (Maybe(..))
+import Data.Function (($), error)
+import Data.Semigroup ((<>))
+import Data.Show (showAny,show)
+import Data.Float (float, pow, round)
+import Data.String (listToInteger)
+import Data.List (init, last, length, member, replicate, span, (++))
+import Data.Ord ((<))
+import Data.Eq ((/=))
+import Data.Ring ((%), (-), (/))
+import Data.Semiring ((*))
+import Data.Bool (not)
+
+-- Simple IO operations
+foreign import print :: String -> IO ()
+foreign import println :: String -> IO ()
+
+
+data Dir = L | R 
+
+data Control = Control (Maybe Dir) (Maybe Integer) (Maybe Integer) Char
+
+flagCharactor :: String 
+flagCharactor = "+-"
+
+formatCharacter :: String
+formatCharacter = "cdoxXbufFgGeEs"
+
+myspan :: String -> String -> (String, String)
+myspan s ss = span (\c -> member c s) ss
+
+charToDir :: Char -> Dir 
+charToDir '+' = L 
+charToDir '-' = R 
+charToDir _ = error "error input"
+
+parse :: String -> Control
+parse ss = let  vlast = last ss 
+                initls = init ss
+                (v1,res) =  case myspan flagCharactor initls of 
+                   ([], xs) ->  (Nothing,xs)
+                   ([x], xs) ->  (Just $ charToDir x, xs)
+                   (x,_) -> error "input error"
+                (v2,v3) = case span (\c -> c /= '.') res of 
+                    ([],[]) -> (Nothing, Nothing)
+                    (a,[]) -> (Just $ listToInteger a, Nothing)
+                    ([],[_|b]) -> (Nothing, Just $ listToInteger b)
+                    (a,[_|b]) -> (Just $ listToInteger a, Just $ listToInteger b)
+           in Control v1 v2 v3 vlast
+
+class Printf t where 
+  printf :: String -> t
+
+instance Printf (IO ()) where 
+  printf s = println s
+
+instance (PrintArg a, Printf t) => Printf (a -> t) where 
+   printf s = \a -> printf (format s a)
+
+class PrintArg a where 
+  render :: Control -> a -> String
+
+partcal :: Integer -> Integer -> String
+partcal _  0 = ""
+partcal k x = let (a,b) = (x/k,x%k)
+               in  partcal k a <> rhex b
+
+rstr :: Integer -> String 
+rstr 2 = "0B"
+rstr 8 = "0O"
+rstr 10 = ""
+rstr 16 = "0X"
+rstr _ = error "error input"
+
+crestr :: Integer -> Integer -> String 
+crestr k x = rstr k <> partcal k x
+
+rhex :: Integer -> String
+rhex 10 = "A" 
+rhex 11 = "B" 
+rhex 12 = "C" 
+rhex 13 = "D" 
+rhex 14 = "E" 
+rhex 15 = "F" 
+rhex x = show x 
+
+instance PrintArg Integer where 
+  render (Control a b c d) i = 
+      let si = case d of 
+                'b' -> crestr 2 i
+                'o' -> crestr 8 i
+                'd' -> crestr 10 i
+                'x' -> crestr 16 i
+                _   -> error "error input"
+          slen = length si
+          s1 = case c of 
+                Nothing -> si
+                Just v -> if v < slen 
+                          then si 
+                          else replicate (v - slen) '0' ++ si
+      in mutilP a b s1
+
+instance PrintArg Float where 
+   render (Control  a b c d) i =
+        let s1 = case c of 
+                  Nothing -> show i
+                  Just v -> let t = pow 10.0 (float v)
+                            in show $ round (i * t) / t 
+        in mutilP a b s1
+
+instance PrintArg [Char] where 
+  render (Control a b c 's') s = mutilP a b s
+  render o _ = error $ "String don't accept the control symbal: " ++ showAny o
+
+mutilP :: (Maybe Dir) -> Maybe Integer -> String -> String
+mutilP a b s = case b of
+                 Nothing -> s 
+                 Just v -> if v < length s
+                           then s 
+                           else case a of 
+                                Just R -> s ++ replicate (v - length s) ' '
+                                _ -> replicate (v - length s) ' ' ++ s
+
+format :: forall a.PrintArg a => String -> a -> String 
+format ['%'|xs] a = let (ctr,[c|res]) = span (\c -> not $ member c formatCharacter) xs
+                    in render (parse $ ctr ++ [c]) a ++ res
+format [x|xs] a = [x| format xs a]
+format [] _ =[]
+
+
