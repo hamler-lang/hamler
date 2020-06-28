@@ -31,7 +31,7 @@ import Data.Function (($), error)
 import Data.Semigroup ((<>))
 import Data.Show (showAny,show)
 import Data.Float (float, pow, round)
-import Data.String (listToInteger)
+import Data.String (toInteger)
 import Data.List (init, last, length, member, replicate, span, (++))
 import Data.Ord ((<))
 import Data.Eq ((/=))
@@ -71,9 +71,9 @@ parse ss = let  vlast = last ss
                    (x,_) -> error "input error"
                 (v2,v3) = case span (\c -> c /= '.') res of 
                     ([],[]) -> (Nothing, Nothing)
-                    (a,[]) -> (Just $ listToInteger a, Nothing)
-                    ([],[_|b]) -> (Nothing, Just $ listToInteger b)
-                    (a,[_|b]) -> (Just $ listToInteger a, Just $ listToInteger b)
+                    (a,[]) -> (Just $ toInteger a, Nothing)
+                    ([],[_|b]) -> (Nothing, Just $ toInteger b)
+                    (a,[_|b]) -> (Just $ toInteger a, Just $ toInteger b)
            in Control v1 v2 v3 vlast
 
 class Printf t where 
