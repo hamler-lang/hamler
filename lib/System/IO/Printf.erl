@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  IO
+%% Module      :  Printf
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -17,7 +17,6 @@
 -export([ print/1
         , println/1
         ]).
-
 
 -spec(print(string()) -> ok).
 print(S) -> io:format(S).

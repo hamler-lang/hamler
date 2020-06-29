@@ -23,15 +23,15 @@
 
 -spec(readFile(filepath()) -> ok).
 readFile(FilePath) ->
-    return(file:read_file(FilePath)).
+  return(file:read_file(FilePath)).
 
 -spec(writeFile(filepath(), binary()) -> ok).
 writeFile(FilePath, Data) ->
-    return(file:write_file(FilePath, Data, [write])).
+  return(file:write_file(FilePath, Data, [write])).
 
 -spec(appendFile(filepath(), binary()) -> ok).
 appendFile(FilePath, Data) ->
-    return(file:write_file(FilePath, Data, [append])).
+  return(file:write_file(FilePath, Data, [append])).
 
 -compile({inline, [return/1]}).
 return(ok) -> ok;
