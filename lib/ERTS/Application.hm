@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.Behavior.Application
+-- Module      :  ERTS.Application
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -12,13 +12,57 @@
 -- The Erlang Application module.
 --
 -----------------------------------------------------------------------------
-module Control.Behaviour.Application where
+module ERTS.Application where
 
-import Control.Behaviour.Application.Types
-import Control.Process (Process)
+import Control.Process (Module, Node, Process)
 import Data.Maybe (Maybe)
 import Data.Pid (Pid)
+import Data.Timeout (Timeout)
 import Data.Unit (Unit)
+
+type Application = Atom
+
+data AppStartType = Normal | Takeover Node | Failover Node
+
+data AppRestartType = Permanent | Transient | Temporary
+
+-- TODO: {Par :: atom(), Val :: term()}
+foreign import data AppEnv :: Type
+
+-- TODO: [{Phase :: atom(), PhaseArgs :: term()}] | 'undefined'}
+foreign import data AppStartPhase :: Type
+
+-- TODO: PhaseArgs :: term()
+foreign import data AppPhaseArgs :: Type
+
+-- TODO: StartArgs :: term()
+foreign import data AppStartArgs :: Type
+
+-- TODO: StartError :: term()
+foreign import data AppStartError :: Type
+
+type AppSpec =
+  { name         :: Atom
+  , description  :: String
+  , vsn          :: String
+  , id           :: String
+  , modules      :: [Module]
+  , registered   :: [String]
+  , applications :: [Application]
+  , includedApps :: [Application]
+  , env          :: [AppEnv]
+  , startPhases  :: [AppStartPhase]
+  , maxT         :: Timeout
+  , maxP         :: Timeout
+  , appMod       :: Module
+  , startArgs    :: AppStartArgs
+  }
+
+type AppDescr =
+   { name :: Atom
+   , desc :: String
+   , vsn  :: String
+   }
 
 -- type StartResult = Result AppStartError [Application]
 

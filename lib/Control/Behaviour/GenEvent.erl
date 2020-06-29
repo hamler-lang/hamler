@@ -21,7 +21,7 @@
         , stop/1
         ]).
 
--define(MOD, 'Control.Behaviour.GenEvent.Behaviour').
+-define(MOD, 'Control.Behaviour.GenEvent.Proxy').
 
 startEventMgr(Class, Args) ->
     {ok, Pid} = gen_server:start_link(?MOD, [Class, Args], []),

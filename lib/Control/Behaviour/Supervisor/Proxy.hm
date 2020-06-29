@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.Behaviour.Supervisor.Behaviour
+-- Module      :  Control.Behaviour.Supervisor.Proxy
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,10 +9,10 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Supervisor Behaviour.
+-- The Supervisor Behaviour Proxy.
 --
 -----------------------------------------------------------------------------
-module Control.Behaviour.Supervisor.Behaviour where
+module Control.Behaviour.Supervisor.Proxy where
 
 import Control.Process (Process)
 
