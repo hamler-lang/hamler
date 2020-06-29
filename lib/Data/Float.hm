@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Float module.
+-- The Float datatype.
 --
 -----------------------------------------------------------------------------
 module Data.Float where
