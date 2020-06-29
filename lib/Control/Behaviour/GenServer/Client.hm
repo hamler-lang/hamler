@@ -15,9 +15,7 @@
 module Control.Behaviour.GenServer.Client
   ( abcast
   , abcastOn
-  , call
   , callTimeout
-  , cast
   , multiCall
   , multiCallOn
   ) where
@@ -33,14 +31,8 @@ foreign import abcast
 foreign import abcastOn
   :: forall req. [Node] -> ServerName -> req -> Process ()
 
-foreign import call
-  :: forall req rep. ServerRef -> req -> Process rep
-
 foreign import callTimeout
   :: forall req rep. ServerRef -> req -> Timeout -> Process rep
-
-foreign import cast
-  :: forall req. ServerRef -> req -> Process ()
 
 foreign import multiCall
   :: forall req rep. ServerName -> req -> Process rep

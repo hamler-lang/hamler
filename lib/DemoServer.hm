@@ -80,6 +80,7 @@ main = do
   inc pid
   inc pid
   inc pid
+  -- Server.cast (ServerPid pid) "Hello GenServer"
   reply <- query pid
   return reply
 
