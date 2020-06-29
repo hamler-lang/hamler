@@ -33,5 +33,20 @@ data ServerRef
   | ServerVia Module ServerName
     -- ^ The GenServer is registered in an alternative process registry.
 
-foreign import data From :: Type
+data InitResult st
+  = InitOk st
+    -- ^ {ok, State}
+  | InitHibernate st
+    -- ^ {ok, State, hibernate}
+  | InitStop Atom
+    -- ^ {stop, Reason}
+  | InitIgnore
+    -- ^ ignore
+  -- TODO: {ok,State,Timeout}
+  -- TODO: {ok,State,{continue,Continue}}
+
+data HandleResult st
+  = HandleOk st
+  | HandleStop Atom st
+  -- | HandleHibernate st
 

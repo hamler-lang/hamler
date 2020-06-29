@@ -14,7 +14,7 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.Application.Types where
 
-import Control.Process (Node, Module)
+import Control.Process (Module, Node)
 import Data.Timeout (Timeout)
 
 type Application = Atom

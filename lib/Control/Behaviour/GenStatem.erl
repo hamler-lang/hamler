@@ -14,33 +14,36 @@
 %%---------------------------------------------------------------------------
 -module('GenStatem').
 
--export([ cast/2
-        , call/2
-        , startStatem/2
+-export([ start/3
+        , startLink/3
+        , startMonitor/3
+        , replyTo/2
         , shutdown/3
         , stop/1
         ]).
 
--define(MOD, 'Control.Behaviour.GenStatem.Behaviour').
+-define(MOD, 'Control.Behaviour.GenStatem.Proxy').
 
-startStatem(Class, Args) ->
-    {ok, Pid} = gen_statem:start_link(?MOD, [Class, Args], []),
-    Pid.
+start(Class, Init, Args) ->
+  {ok, Pid} = gen_statem:start(?MOD, [Class, Init, Args], []),
+  Pid.
 
-cast(StatemRef, Msg) ->
-    gen_statem:cast(ref(StatemRef), Msg).
+startLink(Class, Init, Args) ->
+  {ok, Pid} = gen_statem:start_link(?MOD, [Class, Init, Args], []),
+  Pid.
 
-call(StatemRef, Req) ->
-    gen_statem:call(ref(StatemRef), Req).
+startMonitor(Class, Init, Args) ->
+  {ok, {Pid, Mon}} = gen_statem:start_monitor(?MOD, [Class, Init, Args], []),
+  {Pid, Mon}.
 
-stop(StatemRef) ->
-    gen_statem:stop(ref(StatemRef)).
+replyTo(From, Reply) ->
+  gen_statem:reply(From, Reply).
 
 shutdown(StatemRef, Reason, Timeout) ->
-    gen_statem:stop(ref(StatemRef), Reason, timeout(Timeout)).
+  gen_statem:stop(ref(StatemRef), Reason, timeout(Timeout)).
 
-timeout({'Infinity'}) -> infinity;
-timeout({'Timeout', I}) -> I.
+stop(StatemRef) ->
+  gen_statem:stop(ref(StatemRef)).
 
 ref({'StatemPid', Pid}) -> Pid;
 ref({'StatemRef', LocalName}) -> LocalName;
@@ -48,3 +51,5 @@ ref({'StatemRefOn', LocalName, Node}) -> {LocalName, Node};
 ref({'StatemGlobal', GlobalName}) -> GlobalName;
 ref({'StatemVia', Module, ViaName}) -> {via, Module, ViaName}.
 
+timeout({'Infinity'}) -> infinity;
+timeout({'Timeout', I}) -> I.

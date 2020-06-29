@@ -9,47 +9,57 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Erlang `gen_statem` Behaviour.
+-- The GenStatem Behaviour.
 --
 -----------------------------------------------------------------------------
-module Control.Behaviour.GenStatem where
+module Control.Behaviour.GenStatem
+  ( class GenStatem
+  , handleEvent
+  , start
+  , startLink
+  , startMonitor
+  , replyTo
+  , shutdown
+  , stop
+  , module Control.Behaviour.GenStatem.Client
+  , module Control.Behaviour.GenStatem.Types
+  ) where
 
+import Control.Behaviour.GenStatem.Client
+  ( call
+  , callTimeout
+  , cast
+  )
 import Control.Behaviour.GenStatem.Types
-import Control.Process (Module, Node, Process)
+import Control.Process (Process)
+import Control.Process.Types (From, ExitReason)
 import Data.Pid (Pid)
+import Data.Ref (Ref)
 import Data.Timeout (Timeout)
 import Data.Unit (Unit)
 
-data StatemRef
-  = StatemPid Pid
-    -- ^ The Pid of gen_statem.
-  | StatemRef LocalName
-    -- ^ The gen_statem is locally registered.
-  | StatemRefOn LocalName Node
-    -- ^ The gen_statem is locally registered on another node.
-  | StatemGlobal GlobalName
-    -- ^ The gen_statem is globally registered in global.
-  | StatemVia Module ViaName
-    -- ^ The gen_statem is registered in an alternative process registry.
-
-class GenStatem a s e | s -> e, e -> a, a -> s where
-  init :: a -> Process s
+class GenStatem e s | e -> s, s -> e where
   handleEvent :: e -> s -> Process s
 
-foreign import call :: forall req rep. StatemRef -> req -> Process rep
+foreign import start
+  :: forall a e s. GenStatem e s
+   => (a -> Process s) -> a -> Process Pid
 
-foreign import cast :: forall m. StatemRef -> m -> Process ()
+foreign import startLink
+  :: forall a e s. GenStatem e s
+   => (a -> Process s) -> a -> Process Pid
 
-foreign import startStatem :: forall a s m. GenStatem a s m => a -> Process Pid
+foreign import startMonitor
+  :: forall a e s. GenStatem e s
+  => (a -> Process s) -> a -> Process (Pid, Ref)
 
--- Shutdown the Statem process
-foreign import shutdown :: StatemRef -> ShutdownReason -> Timeout -> Process ()
+-- Shutdown the Statem Process
+foreign import shutdown
+  :: StatemRef -> ExitReason -> Timeout -> Process ()
 
--- Stop the Statem process.
+-- Stop the Statem Process.
 foreign import stop :: StatemRef -> Process ()
 
-{- TODO:
-start/3,start/4,start_link/3,start_link/4,
-reply/1,reply/2]).
--}
+foreign import replyTo
+  :: forall rep. From -> rep -> Process ()
 

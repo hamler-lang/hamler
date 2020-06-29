@@ -14,37 +14,49 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenServer
   ( class GenServer
+  , handleCall
+  , handleCast
     -- * start/stop server
+  , serverName
   , start
   , startLink
   , startMonitor
   , stop
-    -- * cast/call APIs
-  , abcast
-  , abcastOn
-  , call
-  , cast
-  , multiCall
-  , multiCallOn
-    -- * callbacks
-  , handleCall
-  , handleCast
     -- * helper funcs
   , reply
   , noReply
+  , module Control.Behaviour.GenServer.Client
   , module Control.Behaviour.GenServer.Types
   ) where
 
-import Control.Process (Node, Process)
+import Control.Process (Process)
+import Control.Process.Types (From)
 import Data.Atom (atom)
 import Data.Pid (Pid)
 import Data.Ref (Ref)
-import Data.Timeout (Timeout)
 import Data.Unit (Unit)
+import Control.Behaviour.GenServer.Client
+  ( abcast
+  , abcastOn
+  , call
+  , callTimeout
+  , cast
+  , multiCall
+  , multiCallOn
+  )
 import Control.Behaviour.GenServer.Types
+  ( ServerName
+  , ServerRef(..)
+  , InitResult(..)
+  , HandleResult(..)
+  )
+
+class GenServer m s | m -> s, s -> m where
+  handleCall :: m -> From -> s -> Process s
+  handleCast :: m -> s -> Process s
 
 -- | String to server name.
-serverName :: String -> Atom
+serverName :: String -> ServerName
 serverName = atom
 
 foreign import start
@@ -61,34 +73,9 @@ foreign import startMonitor
 
 foreign import stop :: ServerRef -> Process ()
 
-foreign import abcast
-  :: forall req. ServerName -> req -> Process ()
-
-foreign import abcastOn
-  :: forall req. [Node] -> ServerName -> req -> Process ()
-
-foreign import call
-  :: forall req rep. ServerRef -> req -> Process rep
-
-foreign import callTimeout
-  :: forall req rep. ServerRef -> req -> Timeout -> Process rep
-
-foreign import cast
-  :: forall req. ServerRef -> req -> Process ()
-
-foreign import multiCall
-  :: forall req rep. ServerName -> req -> Process rep
-
-foreign import multiCallOn
-  :: forall req rep. [Node] -> ServerName -> req -> Process rep
-
 foreign import reply
   :: forall a s. From -> a -> s -> Process s
 
 foreign import noReply
   :: forall s. s -> Process s
-
-class GenServer m s | m -> s, s -> m where
-  handleCall :: m -> From -> s -> Process s
-  handleCast :: m -> s -> Process s
 

@@ -1,0 +1,50 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Control.Behaviour.GenServer.Client
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The GenServer Client APIs.
+--
+-----------------------------------------------------------------------------
+module Control.Behaviour.GenServer.Client
+  ( abcast
+  , abcastOn
+  , call
+  , callTimeout
+  , cast
+  , multiCall
+  , multiCallOn
+  ) where
+
+import Control.Process (Node, Process)
+import Control.Behaviour.GenServer.Types
+import Data.Timeout (Timeout)
+import Data.Unit (Unit)
+
+foreign import abcast
+  :: forall req. ServerName -> req -> Process ()
+
+foreign import abcastOn
+  :: forall req. [Node] -> ServerName -> req -> Process ()
+
+foreign import call
+  :: forall req rep. ServerRef -> req -> Process rep
+
+foreign import callTimeout
+  :: forall req rep. ServerRef -> req -> Timeout -> Process rep
+
+foreign import cast
+  :: forall req. ServerRef -> req -> Process ()
+
+foreign import multiCall
+  :: forall req rep. ServerName -> req -> Process rep
+
+foreign import multiCallOn
+  :: forall req rep. [Node] -> ServerName -> req -> Process rep
+

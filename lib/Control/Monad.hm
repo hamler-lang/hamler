@@ -12,6 +12,7 @@
 -- The Monad typeclass.
 --
 -----------------------------------------------------------------------------
+
 module Control.Monad
   ( class Applicative, pure, apply, (<*>)
     -- ^ Applicative

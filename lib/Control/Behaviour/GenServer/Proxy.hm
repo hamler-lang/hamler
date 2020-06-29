@@ -1,0 +1,36 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Control.Behaviour.GenServer.Proxy
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Proxy for GenServer Behaviour.
+--
+-----------------------------------------------------------------------------
+module Control.Behaviour.GenServer.Proxy where
+
+import Control.Process (Process)
+import Control.Process.Types (From)
+
+foreign import init :: forall a state. a -> Process state
+
+foreign import handle_call
+  :: forall req state res. req -> From -> state -> Process res
+
+foreign import handle_cast
+  :: forall req state. req -> state -> Process state
+
+foreign import handle_info
+  :: forall info state. info -> state -> Process state
+
+foreign import terminate
+  :: forall reason state. reason -> Process state
+
+foreign import code_change
+  :: forall vsn state extra. vsn -> state -> extra -> Process state
+

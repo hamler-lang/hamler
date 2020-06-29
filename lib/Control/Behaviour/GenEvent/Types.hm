@@ -13,3 +13,14 @@
 --
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenEvent.Types where
+
+import Control.Process (Module, Node)
+import Data.Pid (Pid)
+
+data EventMgrRef
+  = EventMgr Atom
+  | EventMgrOn Atom Node
+  | EventMgrGlobal Atom
+  | EventMgrVia Module Atom
+  | EventMgrPid Pid
+
