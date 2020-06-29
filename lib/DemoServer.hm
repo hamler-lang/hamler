@@ -16,8 +16,17 @@ module DemoServer where
 
 import Prelude
 import ERTS.Application as App
-import Control.Behaviour.GenServer (class GenServer, HandleCall, HandleCast, InitResult(..), ServerRef(..), ServerAction(..))
-import Control.Behaviour.GenServer as Server
+import Control.Behaviour.GenServer
+  ( class GenServer
+  , CallHandler
+  , CastHandler
+  , InitResult(..)
+  , ServerAction(..)
+  , ServerRef(..)
+  , call, cast
+  , noReply, reply
+  , startServer
+  )
 
 data Request = Inc | Dec | Query
 
@@ -30,15 +39,15 @@ data State = State Integer
 -----------------------------------------------------------------------------
 
 inc :: Pid -> Process ()
-inc pid = Server.cast (ServerPid pid) Inc
+inc pid = cast (ServerPid pid) Inc
 
 dec :: Pid -> Process ()
-dec pid = Server.cast (ServerPid pid) Dec
+dec pid = cast (ServerPid pid) Dec
 
 query :: Pid -> Process Integer
 query pid = do
-  QueryResult i <- Server.call (ServerPid pid) Query
-  pure i
+  QueryResult i <- call (ServerPid pid) Query
+  return i
 
 -----------------------------------------------------------------------------
 -- | Server callbacks
@@ -49,19 +58,16 @@ instance GenServer Request Reply State where
   handleCast = handleCast
 
 init :: Integer -> Process (InitResult State)
-init n = pure $ InitOk (State n)
+init n = return $ InitOk (State n)
 
-handleCall :: HandleCall Request Reply State  
-handleCall Query (State i) = Server.reply (QueryResult i) (State i)
-handleCall req st = pure $ ServerIgnore st
+handleCall :: CallHandler Request Reply State
+handleCall Query (State i) = reply (QueryResult i) (State i)
+handleCall _ st = return $ ServerIgnore st
 
-handleCast :: HandleCast Request State
-handleCast Inc (State n) = Server.noReply $ State (n+1)
-handleCast Dec (State n) = Server.noReply $ State (n-1)
-handleCast _ st   = Server.noReply st
-
-result :: State -> Reply
-result (State i) = QueryResult i
+handleCast :: CastHandler Request State
+handleCast Inc (State n) = noReply $ State (n+1)
+handleCast Dec (State n) = noReply $ State (n-1)
+handleCast _ st = noReply st
 
 -----------------------------------------------------------------------------
 -- | main
@@ -70,11 +76,10 @@ result (State i) = QueryResult i
 main :: IO Integer
 main = do
   App.ensureStarted :sasl
-  pid <- Server.start init 10
+  pid <- startServer init 10
   inc pid
   inc pid
   inc pid
-  Server.cast (ServerPid pid) "Hello GenServer"
   reply <- query pid
-  pure reply
+  return reply
 

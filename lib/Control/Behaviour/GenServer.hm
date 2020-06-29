@@ -13,27 +13,22 @@
 --
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenServer
-  ( class GenServer
-  , handleCall
-  , handleCast
+  ( class GenServer, handleCall, handleCast
     -- * start/stop server
   , serverName
-  , start
+  , startServer
   , startLink
   , startMonitor
-  , stop
+  , stopServer
     -- * helper funcs
-  , reply
-  , noReply
+  , reply, noReply
   , module Control.Behaviour.GenServer.Client
   , module Control.Behaviour.GenServer.Types
-  , HandleCall
-  , HandleCast
+  , CallHandler, CastHandler
   ) where
 
 import Control.Monad (pure)
 import Control.Process (Process)
-import Control.Process.Types (From)
 import Data.Atom (atom)
 import Data.Pid (Pid)
 import Data.Ref (Ref)
@@ -54,31 +49,33 @@ import Control.Behaviour.GenServer.Types
   , ServerAction(..)
   )
 
+type CallHandler req rep st = req -> st -> Process (ServerAction rep st)
+
+type CastHandler req st = req -> st -> Process (ServerAction Unit st)
+
 class GenServer req rep st | req -> rep, rep -> st, st -> req where
-  handleCall :: req -> st -> Process (ServerAction rep st)
-  handleCast :: req -> st -> Process (ServerAction Unit st)
-
-
-type HandleCall req rep s = req -> s -> Process (ServerAction rep s)
-type HandleCast req s = req -> s -> Process (ServerAction Unit s)
+  -- req -> st -> Process (ServerAction rep st)
+  handleCall :: CallHandler req rep st
+  -- req -> st -> Process (ServerAction Unit st)
+  handleCast :: CastHandler req st
 
 -- | String to server name.
 serverName :: String -> ServerName
 serverName = atom
 
-foreign import start
+foreign import startServer
   :: forall a req rep st. GenServer req rep st
   => (a -> Process (InitResult st)) -> a -> Process Pid
 
 foreign import startLink
   :: forall a req rep st. GenServer req rep st
-  => (a -> Process st) -> a -> Process Pid
+  => (a -> Process (InitResult st)) -> a -> Process Pid
 
 foreign import startMonitor
   :: forall a req rep st. GenServer req rep st
-  => (a -> Process st) -> a -> Process (Pid, Ref)
+  => (a -> Process (InitResult st)) -> a -> Process (Pid, Ref)
 
-foreign import stop :: ServerRef -> Process ()
+foreign import stopServer :: ServerRef -> Process ()
 
 reply :: forall rep st. rep -> st -> Process (ServerAction rep st)
 reply rep st = pure (ServerReply rep st)

@@ -14,15 +14,15 @@
 %%---------------------------------------------------------------------------
 -module('GenServer').
 
--export([ start/3
+-export([ startServer/3
         , startLink/3
         , startMonitor/3
-        , stop/1
+        , stopServer/1
         ]).
 
 -define(MOD, 'Control.Behaviour.GenServer.Proxy').
 
-start(Class, Init, Args) ->
+startServer(Class, Init, Args) ->
   {ok, Pid} = gen_server:start(?MOD, [Class, Init, Args], []),
   Pid.
 
@@ -34,7 +34,7 @@ startMonitor(Class, Init, Args) ->
   {ok, {Pid, Mon}} = gen_server:start_monitor(?MOD, [Class, Init, Args], []),
   {Pid, Mon}.
 
-stop(ServerRef) ->
+stopServer(ServerRef) ->
   gen_server:stop(destruct(ServerRef)).
 
 -compile({inline, [destruct/1]}).
