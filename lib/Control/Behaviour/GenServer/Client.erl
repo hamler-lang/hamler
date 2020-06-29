@@ -16,11 +16,9 @@
 
 -export([ abcast/2
         , abcastOn/3
-        , call/2
         , callTimeout/3
         , multiCall/2
         , multiCallOn/3
-        , cast/2
         ]).
 
 abcast(Name, Req) ->
@@ -29,14 +27,8 @@ abcast(Name, Req) ->
 abcastOn(Nodes, Name, Req) ->
   gen_server:abcast(Nodes, Name, Req), ok.
 
-call(ServerRef, Req) ->
-  gen_server:call(destruct(ServerRef), Req).
-
 callTimeout(ServerRef, Req, Timeout) ->
   gen_server:call(destruct(ServerRef), Req, destruct(Timeout)).
-
-cast(ServerRef, Req) ->
-  gen_server:cast(destruct(ServerRef), Req).
 
 multiCall(Name, Req) ->
   gen_server:multi_call(Name, Req).

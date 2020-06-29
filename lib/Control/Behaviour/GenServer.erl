@@ -18,6 +18,8 @@
         , startLink/3
         , startMonitor/3
         , stopServer/1
+        , call/3
+        , cast/3
         ]).
 
 -define(MOD, 'Control.Behaviour.GenServer.Proxy').
@@ -45,3 +47,10 @@ destruct({'ServerGlobal', Name}) -> {global, Name};
 destruct({'ServerVia', Module, Name}) -> {via, Module, Name};
 destruct({'Infinity'}) -> infinity;
 destruct({'Timeout', I}) -> I.
+
+call(_Unused, ServerRef, Req) ->
+  gen_server:call(destruct(ServerRef), Req).
+
+cast(_Unused, ServerRef, Req) ->
+  gen_server:cast(destruct(ServerRef), Req).
+

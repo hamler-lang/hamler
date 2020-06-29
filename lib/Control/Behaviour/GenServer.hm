@@ -25,6 +25,8 @@ module Control.Behaviour.GenServer
   , module Control.Behaviour.GenServer.Client
   , module Control.Behaviour.GenServer.Types
   , CallHandler, CastHandler
+  , call
+  , cast
   ) where
 
 import Control.Monad (pure)
@@ -36,9 +38,7 @@ import Data.Unit (Unit)
 import Control.Behaviour.GenServer.Client
   ( abcast
   , abcastOn
-  , call
   , callTimeout
-  , cast
   , multiCall
   , multiCallOn
   )
@@ -83,3 +83,10 @@ reply rep st = pure (ServerReply rep st)
 noReply :: forall st. st -> Process (ServerAction Unit st)
 noReply st = pure (ServerNoReply st)
 
+foreign import call
+  :: forall req rep st. GenServer req rep st
+  => ServerRef -> req -> Process rep
+
+foreign import cast
+  :: forall req rep st. GenServer req rep st
+  => ServerRef -> req -> Process ()
