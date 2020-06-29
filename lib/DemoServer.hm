@@ -15,7 +15,6 @@
 module DemoServer where
 
 import Prelude
-import ERTS.Application as App
 import Control.Behaviour.GenServer
   ( class GenServer
   , CallHandler
@@ -27,6 +26,7 @@ import Control.Behaviour.GenServer
   , noReply, reply
   , startServer
   )
+import Kernel.Application as App
 
 data Request = Inc | Dec | Query
 

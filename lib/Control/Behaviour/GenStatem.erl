@@ -14,17 +14,22 @@
 %%---------------------------------------------------------------------------
 -module('GenStatem').
 
--export([ start/3
+-export([ startFSM/3
         , startLink/3
         , startMonitor/3
-        , replyTo/2
         , shutdown/3
-        , stop/1
+        , stopFSM/1
+        , replyTo/2
+        ]).
+
+-export([ call/2
+        , callTimeout/3
+        , cast/2
         ]).
 
 -define(MOD, 'Control.Behaviour.GenStatem.Proxy').
 
-start(Class, Init, Args) ->
+startFSM(Class, Init, Args) ->
   {ok, Pid} = gen_statem:start(?MOD, [Class, Init, Args], []),
   Pid.
 
@@ -36,14 +41,23 @@ startMonitor(Class, Init, Args) ->
   {ok, {Pid, Mon}} = gen_statem:start_monitor(?MOD, [Class, Init, Args], []),
   {Pid, Mon}.
 
-replyTo(From, Reply) ->
-  gen_statem:reply(From, Reply).
-
 shutdown(StatemRef, Reason, Timeout) ->
   gen_statem:stop(ref(StatemRef), Reason, timeout(Timeout)).
 
-stop(StatemRef) ->
-  gen_statem:stop(ref(StatemRef)).
+stopFSM(StatemRef) ->
+  gen_statem:stopFSM(ref(StatemRef)).
+
+call(StatemRef, Req) ->
+  gen_statem:call(ref(StatemRef), Req).
+
+callTimeout(StatemRef, Req, Timeout) ->
+  gen_statem:call(ref(StatemRef), Req, timeout(Timeout)).
+
+cast(StatemRef, Msg) ->
+  gen_statem:cast(ref(StatemRef), Msg).
+
+replyTo(From, Reply) ->
+  gen_statem:reply(From, Reply).
 
 ref({'StatemPid', Pid}) -> Pid;
 ref({'StatemRef', LocalName}) -> LocalName;

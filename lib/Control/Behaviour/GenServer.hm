@@ -13,7 +13,16 @@
 --
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenServer
-  ( class GenServer, handleCall, handleCast
+  ( class GenServer
+  , handleCall, handleCast
+    -- * client apis
+  , abcast
+  , abcastTo
+  , call
+  , callTimeout
+  , cast
+  , multiCall
+  , multiCallTo
     -- * start/stop server
   , serverName
   , startServer
@@ -22,26 +31,18 @@ module Control.Behaviour.GenServer
   , stopServer
     -- * helper funcs
   , reply, noReply
-  , module Control.Behaviour.GenServer.Client
-  , module Control.Behaviour.GenServer.Types
+    -- * types
   , CallHandler, CastHandler
-  , call
-  , cast
+  , module Control.Behaviour.GenServer.Types
   ) where
 
-import Control.Monad (pure)
-import Control.Process (Process)
+import Control.Monad (return)
+import Control.Process (Node, Process)
 import Data.Atom (atom)
 import Data.Pid (Pid)
 import Data.Ref (Ref)
+import Data.Timeout (Timeout)
 import Data.Unit (Unit)
-import Control.Behaviour.GenServer.Client
-  ( abcast
-  , abcastOn
-  , callTimeout
-  , multiCall
-  , multiCallOn
-  )
 import Control.Behaviour.GenServer.Types
   ( InitResult(..)
   , ServerName
@@ -59,10 +60,34 @@ class GenServer req rep st | req -> rep, rep -> st, st -> req where
   -- req -> st -> Process (ServerAction Unit st)
   handleCast :: CastHandler req st
 
+foreign import abcast
+  :: forall req. ServerName -> req -> Process ()
+
+foreign import abcastTo
+  :: forall req. [Node] -> ServerName -> req -> Process ()
+
+foreign import call
+  :: forall req rep st. GenServer req rep st
+  => ServerRef -> req -> Process rep
+
+foreign import callTimeout
+  :: forall req rep. ServerRef -> req -> Timeout -> Process rep
+
+foreign import cast
+  :: forall req rep st. GenServer req rep st
+  => ServerRef -> req -> Process ()
+
+foreign import multiCall
+  :: forall req rep. ServerName -> req -> Process rep
+
+foreign import multiCallTo
+  :: forall req rep. [Node] -> ServerName -> req -> Process rep
+
 -- | String to server name.
 serverName :: String -> ServerName
 serverName = atom
 
+-- | Start the server process.
 foreign import startServer
   :: forall a req rep st. GenServer req rep st
   => (a -> Process (InitResult st)) -> a -> Process Pid
@@ -75,18 +100,12 @@ foreign import startMonitor
   :: forall a req rep st. GenServer req rep st
   => (a -> Process (InitResult st)) -> a -> Process (Pid, Ref)
 
+-- | Stop the server process.
 foreign import stopServer :: ServerRef -> Process ()
 
 reply :: forall rep st. rep -> st -> Process (ServerAction rep st)
-reply rep st = pure (ServerReply rep st)
+reply rep st = return (ServerReply rep st)
 
 noReply :: forall st. st -> Process (ServerAction Unit st)
-noReply st = pure (ServerNoReply st)
+noReply st = return (ServerNoReply st)
 
-foreign import call
-  :: forall req rep st. GenServer req rep st
-  => ServerRef -> req -> Process rep
-
-foreign import cast
-  :: forall req rep st. GenServer req rep st
-  => ServerRef -> req -> Process ()
