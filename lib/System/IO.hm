@@ -9,18 +9,18 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The System IO Module.
+-- The System IO module.
 --
 -----------------------------------------------------------------------------
 module System.IO
-  (  readFile, writeFile, appendFile
-  , FilePath
+  ( FilePath
+  , readFile, writeFile, appendFile
   , module System.IO.Printf
   ) where
 
 import Control.Monad (IO)
 import Data.Unit (Unit)
-import System.IO.Printf (print,println,printf)
+import System.IO.Printf (print, println, printf)
 
 -- | File Path
 type FilePath = String
@@ -29,5 +29,3 @@ type FilePath = String
 foreign import readFile :: FilePath -> IO Binary
 foreign import writeFile :: FilePath -> Binary -> IO ()
 foreign import appendFile :: FilePath -> Binary -> IO ()
-
-
