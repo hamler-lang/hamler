@@ -16,9 +16,8 @@ module DemoServer where
 
 import Prelude
 import ERTS.Application as App
-import Control.Behaviour.GenServer (class GenServer, InitResult(..), ServerRef(..), ServerAction(..))
+import Control.Behaviour.GenServer (class GenServer, HandleCall, HandleCast, InitResult(..), ServerRef(..), ServerAction(..))
 import Control.Behaviour.GenServer as Server
-import Control.Process (From)
 
 data Request = Inc | Dec | Query
 
@@ -52,11 +51,11 @@ instance GenServer Request Reply State where
 init :: Integer -> Process (InitResult State)
 init n = pure $ InitOk (State n)
 
-handleCall :: Request -> From -> State -> Process (ServerAction Reply State)
-handleCall Query _ (State i) = Server.reply (QueryResult i) (State i)
-handleCall req _ st = pure $ ServerIgnore st
+handleCall :: HandleCall Request Reply State  
+handleCall Query (State i) = Server.reply (QueryResult i) (State i)
+handleCall req st = pure $ ServerIgnore st
 
-handleCast :: Request -> State -> Process (ServerAction Unit State)
+handleCast :: HandleCast Request State
 handleCast Inc (State n) = Server.noReply $ State (n+1)
 handleCast Dec (State n) = Server.noReply $ State (n-1)
 handleCast _ st   = Server.noReply st

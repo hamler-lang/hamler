@@ -27,6 +27,8 @@ module Control.Behaviour.GenServer
   , noReply
   , module Control.Behaviour.GenServer.Client
   , module Control.Behaviour.GenServer.Types
+  , HandleCall
+  , HandleCast
   ) where
 
 import Control.Monad (pure)
@@ -53,8 +55,12 @@ import Control.Behaviour.GenServer.Types
   )
 
 class GenServer req rep st | req -> rep, rep -> st, st -> req where
-  handleCall :: req -> From -> st -> Process (ServerAction rep st)
+  handleCall :: req -> st -> Process (ServerAction rep st)
   handleCast :: req -> st -> Process (ServerAction Unit st)
+
+
+type HandleCall req rep s = req -> s -> Process (ServerAction rep s)
+type HandleCast req s = req -> s -> Process (ServerAction Unit s)
 
 -- | String to server name.
 serverName :: String -> ServerName
