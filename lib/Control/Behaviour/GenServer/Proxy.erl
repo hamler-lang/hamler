@@ -42,9 +42,9 @@ init([Class, Init, Args]) ->
 init_ok(#{handleCall := HandleCall, handleCast := HandleCast}, State) ->
   #proxy{handleCall = HandleCall, handleCast = HandleCast, state = State}.
 
-handle_call(Request, From, Proxy = #proxy{handleCall = HandleCall, state = State}) ->
+handle_call(Request, _From, Proxy = #proxy{handleCall = HandleCall, state = State}) ->
   io:format("Call: ~p~n", [Request]),
-  case uncurry(HandleCall, [Request, From, State]) of
+  case uncurry(HandleCall, [Request, State]) of
     {'ServerIgnore', St} ->
       {reply, ignored, Proxy#proxy{state = St}};
     {'ServerReply', Rep, St} ->
