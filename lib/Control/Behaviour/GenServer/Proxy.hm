@@ -23,7 +23,7 @@ foreign import handle_call
   :: forall req state res. req -> From -> state -> Process res
 
 foreign import handle_cast
-  :: forall req state. req -> state -> Process state
+  :: forall req state res. req -> state -> Process res
 
 foreign import handle_info
   :: forall info state. info -> state -> Process state

@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The GenServer Behaviour.
+-- The GenServer Behaviour module.
 --
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenServer
@@ -29,6 +29,7 @@ module Control.Behaviour.GenServer
   , module Control.Behaviour.GenServer.Types
   ) where
 
+import Control.Monad (pure)
 import Control.Process (Process)
 import Control.Process.Types (From)
 import Data.Atom (atom)
@@ -45,37 +46,37 @@ import Control.Behaviour.GenServer.Client
   , multiCallOn
   )
 import Control.Behaviour.GenServer.Types
-  ( ServerName
+  ( InitResult(..)
+  , ServerName
   , ServerRef(..)
-  , InitResult(..)
-  , HandleResult(..)
+  , ServerAction(..)
   )
 
-class GenServer m s | m -> s, s -> m where
-  handleCall :: m -> From -> s -> Process s
-  handleCast :: m -> s -> Process s
+class GenServer req rep st | req -> rep, rep -> st, st -> req where
+  handleCall :: req -> From -> st -> Process (ServerAction rep st)
+  handleCast :: req -> st -> Process (ServerAction Unit st)
 
 -- | String to server name.
 serverName :: String -> ServerName
 serverName = atom
 
 foreign import start
-  :: forall a m s. GenServer m s
-  => (a -> Process s) -> a -> Process Pid
+  :: forall a req rep st. GenServer req rep st
+  => (a -> Process (InitResult st)) -> a -> Process Pid
 
 foreign import startLink
-  :: forall a m s. GenServer m s
-  => (a -> Process s) -> a -> Process Pid
+  :: forall a req rep st. GenServer req rep st
+  => (a -> Process st) -> a -> Process Pid
 
 foreign import startMonitor
-  :: forall a m s. GenServer m s
-  => (a -> Process s) -> a -> Process (Pid, Ref)
+  :: forall a req rep st. GenServer req rep st
+  => (a -> Process st) -> a -> Process (Pid, Ref)
 
 foreign import stop :: ServerRef -> Process ()
 
-foreign import reply
-  :: forall a s. From -> a -> s -> Process s
+reply :: forall rep st. rep -> st -> Process (ServerAction rep st)
+reply rep st = pure (ServerReply rep st)
 
-foreign import noReply
-  :: forall s. s -> Process s
+noReply :: forall st. st -> Process (ServerAction Unit st)
+noReply st = pure (ServerNoReply st)
 

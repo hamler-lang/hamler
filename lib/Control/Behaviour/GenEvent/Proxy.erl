@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Behaviour
+%% Module      :  Proxy
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,10 +9,10 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The GenEvent Behaviour FFI.
+%% The GenEvent Behaviour FFI module.
 %%
 %%---------------------------------------------------------------------------
--module('Behaviour').
+-module('Proxy').
 
 -behaviour(gen_event).
 
@@ -24,9 +24,9 @@
         , code_change/3
         ]).
 
-init([Class = #{init := InitFun}, Args]) ->
+init([Class, Init, Args]) ->
     io:format("~p~n", [Args]),
-    {ok, #{class => Class, st => InitFun(Args)}}.
+    {ok, #{class => Class, st => Init(Args)}}.
 
 handle_call(Request, State) ->
     io:format("Call: ~p~n", [Request]),

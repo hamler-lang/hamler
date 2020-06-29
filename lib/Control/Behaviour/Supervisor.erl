@@ -28,7 +28,7 @@
         , whichChildren/1
         ]).
 
--define(MOD, 'Control.Behaviour.Supervisor.Behaviour').
+-define(MOD, 'Control.Behaviour.Supervisor.Proxy').
 
 %% TODO:
 startSupervisor(Class, Args) ->

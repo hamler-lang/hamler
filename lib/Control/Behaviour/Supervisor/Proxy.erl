@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Behaviour
+%% Module      :  Proxy
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,10 +9,10 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Supervisor Behaviour FFI.
+%% The Supervisor Behaviour Proxy FFI.
 %%
 %%---------------------------------------------------------------------------
--module('Behaviour').
+-module('Proxy').
 
 -behaviour(supervisor).
 

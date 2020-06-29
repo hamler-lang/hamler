@@ -14,8 +14,20 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenServer.Types where
 
-import Control.Process (Module, Node)
+import Control.Process (Module, Node, ExitReason)
 import Data.Pid (Pid)
+
+data InitResult st
+  = InitOk st
+    -- ^ {ok, State}
+  | InitHibernate st
+    -- ^ {ok, State, hibernate}
+  | InitStop Atom
+    -- ^ {stop, Reason}
+  | InitIgnore
+    -- ^ ignore
+  -- TODO: {ok,State,Timeout}
+  -- TODO: {ok,State,{continue,Continue}}
 
 -- | Server name is an alias of Atom.
 type ServerName = Atom
@@ -33,20 +45,10 @@ data ServerRef
   | ServerVia Module ServerName
     -- ^ The GenServer is registered in an alternative process registry.
 
-data InitResult st
-  = InitOk st
-    -- ^ {ok, State}
-  | InitHibernate st
-    -- ^ {ok, State, hibernate}
-  | InitStop Atom
-    -- ^ {stop, Reason}
-  | InitIgnore
-    -- ^ ignore
-  -- TODO: {ok,State,Timeout}
-  -- TODO: {ok,State,{continue,Continue}}
-
-data HandleResult st
-  = HandleOk st
-  | HandleStop Atom st
-  -- | HandleHibernate st
+data ServerAction rep st
+  = ServerIgnore st
+  | ServerReply rep st
+  | ServerNoReply st
+  | ServerStop ExitReason st
+  | ServerStopReply ExitReason rep st
 

@@ -13,7 +13,8 @@
 --
 -----------------------------------------------------------------------------
 module Control.Process
-  ( Module
+  ( module Types
+  , Module
   , Node
   , Process
   , node
@@ -45,6 +46,10 @@ import Data.Pid (Pid)
 import Data.Ref (Reference)
 import Data.Unit (Unit)
 import Foreign (ffiIO0, ffiIO1, ffiIO2)
+import Control.Process.Types
+  ( From
+  , ExitReason(..)
+  ) as Types
 
 type Module = Atom
 

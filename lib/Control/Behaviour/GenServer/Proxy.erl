@@ -44,11 +44,32 @@ init_ok(#{handleCall := HandleCall, handleCast := HandleCast}, State) ->
 
 handle_call(Request, From, Proxy = #proxy{handleCall = HandleCall, state = State}) ->
   io:format("Call: ~p~n", [Request]),
-  handle_result(uncurry(HandleCall, [Request, From, State]), Proxy).
+  case uncurry(HandleCall, [Request, From, State]) of
+    {'ServerIgnore', St} ->
+      {reply, ignored, Proxy#proxy{state = St}};
+    {'ServerReply', Rep, St} ->
+      {reply, Rep, Proxy#proxy{state = St}};
+    {'ServerNoReply', St} ->
+      {noreply, Proxy#proxy{state = St}};
+    {'ServerStop', Reason, St} ->
+      {stop, Reason, Proxy#proxy{state = St}};
+    {'ServerStopReply', Reason, Rep, St} ->
+      {stop, Reason, Rep, Proxy#proxy{state = St}}
+  end.
 
 handle_cast(Msg, Proxy = #proxy{handleCast = HandleCast, state = State}) ->
   io:format("Cast: ~p~n", [Msg]),
-  handle_result(uncurry(HandleCast, [Msg, State]), Proxy).
+  case uncurry(HandleCast, [Msg, State]) of
+    {'ServerIgnore', St} ->
+      {noreply, Proxy#proxy{state = St}};
+    {'ServerNoReply', St} ->
+      {noreply, Proxy#proxy{state = St}};
+    {'ServerStop', Reason, St} ->
+      {stop, Reason, Proxy#proxy{state = St}};
+    Result ->
+      io:format("Result: ~p~n", [Result]),
+      {noreply, Proxy}
+  end.
 
 handle_info(Info, Proxy) ->
   error_logger:error_msg("Unexpected Info: ~p", [Info]),
@@ -63,11 +84,6 @@ code_change(_OldVsn, Proxy, _Extra) ->
 %%---------------------------------------------------------------------------
 %% | Internal functions
 %%---------------------------------------------------------------------------
-
-handle_result({'HandleOk', NState}, Proxy) ->
-  {noreply, Proxy#proxy{state = NState}};
-handle_result({'HandleStop', Reason, NState}, Proxy) ->
-  {stop, Reason, Proxy#proxy{state = NState}}.
 
 uncurry(Fun, [H|T]) -> uncurry(Fun(H), T);
 uncurry(Ret, []) -> Ret.

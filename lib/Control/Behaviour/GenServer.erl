@@ -17,8 +17,6 @@
 -export([ start/3
         , startLink/3
         , startMonitor/3
-        , reply/3
-        , noReply/1
         , stop/1
         ]).
 
@@ -38,11 +36,6 @@ startMonitor(Class, Init, Args) ->
 
 stop(ServerRef) ->
   gen_server:stop(destruct(ServerRef)).
-
-reply(From, Rep, State) ->
-  ok = gen_server:reply(From, Rep), State.
-
-noReply(State) -> State.
 
 -compile({inline, [destruct/1]}).
 destruct({'ServerPid', Pid}) -> Pid;
