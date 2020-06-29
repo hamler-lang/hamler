@@ -1,0 +1,65 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Control.Behaviour.GenStatem
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The GenStatem Behaviour.
+--
+-----------------------------------------------------------------------------
+module Control.Behaviour.GenStatem
+  ( class GenStatem
+  , handleEvent
+  , start
+  , startLink
+  , startMonitor
+  , replyTo
+  , shutdown
+  , stop
+  , module Control.Behaviour.GenStatem.Client
+  , module Control.Behaviour.GenStatem.Types
+  ) where
+
+import Control.Behaviour.GenStatem.Client
+  ( call
+  , callTimeout
+  , cast
+  )
+import Control.Behaviour.GenStatem.Types
+import Control.Process (Process)
+import Control.Process.Types (From, ExitReason)
+import Data.Pid (Pid)
+import Data.Ref (Ref)
+import Data.Timeout (Timeout)
+import Data.Unit (Unit)
+
+class GenStatem e s | e -> s, s -> e where
+  handleEvent :: e -> s -> Process s
+
+foreign import start
+  :: forall a e s. GenStatem e s
+   => (a -> Process s) -> a -> Process Pid
+
+foreign import startLink
+  :: forall a e s. GenStatem e s
+   => (a -> Process s) -> a -> Process Pid
+
+foreign import startMonitor
+  :: forall a e s. GenStatem e s
+  => (a -> Process s) -> a -> Process (Pid, Ref)
+
+-- Shutdown the Statem Process
+foreign import shutdown
+  :: StatemRef -> ExitReason -> Timeout -> Process ()
+
+-- Stop the Statem Process.
+foreign import stop :: StatemRef -> Process ()
+
+foreign import replyTo
+  :: forall rep. From -> rep -> Process ()
+

@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.OTP.Supervisor.Types
+-- Module      :  Control.Behaviour.Supervisor.Types
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -12,7 +12,7 @@
 -- The Supervisor types.
 --
 -----------------------------------------------------------------------------
-module Control.OTP.Supervisor.Types where
+module Control.Behaviour.Supervisor.Types where
 
 import Control.Process (Module, Process)
 import Data.Pid (Pid)

@@ -9,15 +9,14 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Erlang Process Module.
+-- The Process module.
 --
 -----------------------------------------------------------------------------
 module Control.Process
-  ( Node
-  , Module
+  ( Module
+  , Node
   , Process
   , node
-  --, mod
   , self
   , selfPid
   , selfNode
@@ -25,29 +24,38 @@ module Control.Process
   , send
   , receive
   , receiveAfter
+    -- * Registered Processes
+  , register
+  , registered
+  , whereis
+    -- * Linking and Monitoring
   , link
+  , unlink
   , monitor
   , isProcessAlive
+  , trapExit
+    -- * Process Termination
+  , exit
+  , kill
   ) where
 
 import Control.Monad
+import Data.Maybe (Maybe)
 import Data.Pid (Pid)
 import Data.Ref (Reference)
+import Data.Unit (Unit)
+import Foreign (ffiIO0, ffiIO1, ffiIO2)
 
--- Erlang Node.
-type Node = Atom
-
--- Erlang Module.
 type Module = Atom
 
--- An alias of IO.
+-- An Erlang Node.
+type Node = Atom
+
+-- An Alias of IO.
 type Process = IO
 
 -- String to Node
 foreign import node :: String -> Node
-
--- String to Module
-foreign import mod :: String -> Module
 
 -- An alias of selfPid.
 self :: Process Pid
@@ -67,7 +75,7 @@ foreign import send :: forall a. Pid -> a -> Process a
 
 infixr 1 sendc as !
 --- send pid1 ! send pid2 ! send pid3 ! send pid4  ! pure message
-sendc :: forall a.(a -> Process a) -> Process a -> Process a
+sendc :: forall a. (a -> Process a) -> Process a -> Process a
 sendc f a = a >>= f
 
 foreign import receive :: forall a. Process a
@@ -76,9 +84,41 @@ foreign import receiveAfter :: forall a. Integer -> Process a
 
 -- foreign import receiveScanlMatch :: forall a b.(a -> Process b) ->Process b
 
-foreign import link :: Pid -> Process Boolean
+-----------------------------------------------------------------------------
+-- | Registered Processes
+-----------------------------------------------------------------------------
+
+register :: Atom -> Pid -> Process ()
+register = ffiIO2 :erlang :register
+
+registered :: Process [Atom]
+registered = ffiIO0 :erlang :registered
+
+foreign import whereis :: Atom -> Process (Maybe Pid)
+
+-----------------------------------------------------------------------------
+-- | Linking and Monitoring
+-----------------------------------------------------------------------------
+
+link :: Pid -> Process ()
+link = ffiIO1 :erlang :link
+
+unlink :: Pid -> Process ()
+unlink = ffiIO1 :erlang :unlink
 
 foreign import monitor :: Pid -> Process Reference
 
-foreign import isProcessAlive :: Pid -> Process Boolean
+isProcessAlive :: Pid -> Process Boolean
+isProcessAlive = ffiIO1 :erlang :is_process_alive
+
+foreign import trapExit :: Boolean -> Process Boolean
+
+-----------------------------------------------------------------------------
+-- | Process Termination
+-----------------------------------------------------------------------------
+
+exit :: forall r. r -> Process ()
+exit = ffiIO1 :erlang :exit
+
+foreign import kill :: Pid -> Process ()
 

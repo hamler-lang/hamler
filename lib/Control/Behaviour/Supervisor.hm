@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.OTP.Supervisor
+-- Module      :  Control.Behaviour.Supervisor
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -12,9 +12,9 @@
 -- The Erlang Supervisor Behaviour.
 --
 -----------------------------------------------------------------------------
-module Control.OTP.Supervisor where
+module Control.Behaviour.Supervisor where
 
-import Control.OTP.Supervisor.Types
+import Control.Behaviour.Supervisor.Types
 import Control.Process (Module, Node, Process)
 import Data.Pid (Pid)
 import Data.Maybe (Maybe)

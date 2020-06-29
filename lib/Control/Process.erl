@@ -9,40 +9,36 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Process Module.
+%% The Process FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Process').
 
--compile({no_auto_import, [node/1, spawn/2]}).
+-compile(no_auto_import).
 
 -export([ node/1
-        , mod/1
         , selfNode/0
         , selfPid/0
         , spawn/2
         , send/2
         , 'receive'/0
         , receiveAfter/1
-        , 'link'/1
         , 'monitor'/1
-        , isProcessAlive/1
+        , trapExit/1
+        , whereis/1
+        , kill/1
         ]).
 
 -spec(node(string()) -> atom()).
-node(S) -> list_to_atom(S).
-
--spec(mod(string()) -> atom()).
-mod(S) -> list_to_existing_atom(S).
+node(S) -> erlang:list_to_atom(S).
 
 -spec(selfNode() -> node()).
-selfNode() -> node().
+selfNode() -> erlang:node().
 
 -spec(selfPid() -> pid()).
-selfPid() -> self().
+selfPid() -> erlang:self().
 
-spawn(Fun, Arg) ->
-    erlang:spawn(fun() -> Fun(Arg) end).
+spawn(Fun, Arg) -> erlang:spawn(fun() -> Fun(Arg) end).
 
 -spec(send(pid(), term()) -> term()).
 send(Pid, Msg) -> erlang:send(Pid, Msg).
@@ -55,12 +51,17 @@ send(Pid, Msg) -> erlang:send(Pid, Msg).
 receiveAfter(Timeout) ->
     receive X -> X after Timeout -> ok end.
 
--spec('link'(pid()) -> boolean()).
-'link'(Pid) -> erlang:link(Pid).
-
 -spec('monitor'(pid()) -> reference()).
 'monitor'(Pid) -> erlang:monitor(process, Pid).
 
--spec(isProcessAlive(pid()) -> boolean()).
-isProcessAlive(Pid) -> erlang:is_process_alive(Pid).
+-spec(trapExit(boolean()) -> boolean()).
+trapExit(Flag) -> erlang:process_flag(trap_exit, Flag).
+
+whereis(Name) ->
+  case erlang:whereis(Name) of
+    undefined -> {'Nothing'};
+    Pid -> {'Just', Pid}
+  end.
+
+kill(Pid) -> erlang:exit(Pid, kill).
 

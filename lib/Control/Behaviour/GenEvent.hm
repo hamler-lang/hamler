@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.OTP.GenEvent
+-- Module      :  Control.Behaviour.GenEvent
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,41 +9,32 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Erlang `gen_event` Behaviour.
+-- The GenEvent Behaviour.
 --
 -----------------------------------------------------------------------------
-module Control.OTP.GenEvent
-  ( EventMgrRef(..)
-  , class GenEvent
-  , init
+module Control.Behaviour.GenEvent
+  ( class GenEvent
   , handleEvent
-  , handleInfo
   , startEventMgr
   , notify
   , syncNotify
   , shutdown
   , stop
+  , module Control.Behaviour.GenEvent.Types
   ) where
 
-import Control.Process (Module, Node, Process)
+import Control.Behaviour.GenEvent.Types
+
+import Control.Process (Process)
 import Data.Pid (Pid)
 import Data.Unit (Unit)
 
-data EventMgrRef
-  = EventMgr Atom
-  | EventMgrOn Atom Node
-  | EventMgrGlobal Atom
-  | EventMgrVia Module Atom
-  | EventMgrPid Pid
-
-class GenEvent a s e | s -> e, e -> a, a -> s where
-  init :: a -> Process s
+class GenEvent e s | e -> s, s -> e where
   handleEvent :: e -> s -> Process s
-  handleInfo :: e -> s -> Process s
 
 -- Start an EventMgr.
 foreign import startEventMgr
-  :: forall a s e. GenEvent a s e => a -> Process Pid
+  :: forall a e s. GenEvent e s => (a -> Process s) -> a -> Process Pid
 
 foreign import notify :: forall e. EventMgrRef -> e -> Process ()
 

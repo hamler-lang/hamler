@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.OTP.GenStatem.Behaviour
+-- Module      :  Control.Behaviour.GenStatem.Proxy
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,19 +9,23 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The GenStatem behaviour.
+-- The GenStatem Behaviour Proxy.
 --
 -----------------------------------------------------------------------------
-module Control.OTP.GenStatem.Behaviour where
+module Control.Behaviour.GenStatem.Proxy where
 
 import Control.Process (Process)
 
-foreign import init :: forall a st. a -> Process st
+foreign import init
+  :: forall a state. a -> Process state
 
 foreign import callback_mode :: Atom
 
-foreign import handle_event :: forall a b c d e. a -> b -> c -> d -> Process e
+foreign import handle_event
+  :: forall a b c d e. a -> b -> c -> d -> Process e
 
-foreign import terminate :: forall r st. r -> Process st
+foreign import terminate
+  :: forall r st. r -> Process st
 
-foreign import code_change :: forall vsn state extra. vsn -> state -> extra -> Process state
+foreign import code_change
+  :: forall vsn state extra. vsn -> state -> extra -> Process state

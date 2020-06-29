@@ -22,6 +22,7 @@ module Prelude
   , module Data.Float
   , module Data.Functor
   , module Data.Function
+  , module Data.Int
   , module Data.List
   , module Data.Maybe
   , module Data.Map
@@ -34,7 +35,6 @@ module Prelude
   , module Data.Show
   , module Data.Tuple
   , module Data.Unit
-  , module Control.Applicative
   , module Control.Monad
   , module Control.Process
   , module System.Error
@@ -47,7 +47,8 @@ import Data.Bool (Bool, (&&), (||), and, or, not)
 import Data.Either (Either(..))
 import Data.Enum (class Enum, range, rangeStep)
 import Data.Eq (class Eq, eq, (==), notEq, (/=))
-import Data.List (cons,head, splitAt, last, reverse, concat, filter, (++), take, drop, zip, sort, replicate, length, init, tail)
+import Data.Int (Int)
+import Data.List (cons,head, splitAt, last, reverse, concat, filter, (++), take, drop, zip, sort, replicate, length, tail) --init,
 import Data.Float (Double)
 import Data.Functor (class Functor, map, (<$>))
 import Data.Function (($), apply, const, flip, identity, error)
@@ -61,8 +62,7 @@ import Data.Semiring (class Semiring, add, mul, one, zero, (*), (+))
 import Data.Show (class Show, show,showAny)
 import Data.Tuple (fst, snd)
 import Data.Unit (Unit,unit)
-import Control.Applicative (class Applicative, pure, (<*>))
-import Control.Monad (class Monad, return, bind, IO, discard, guardF, seqio, (>>=))
+import Control.Monad (class Applicative, pure, (<*>), class Monad, return, bind, IO, discard, guardF, seqio, (>>=))
 import System.Error (throw, try)
 import System.IO (print, printf, println, readFile, writeFile, appendFile)
 import Control.Process (Node, Process, node, self, selfPid, spawn, send, receive, link, monitor)

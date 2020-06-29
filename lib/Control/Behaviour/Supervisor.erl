@@ -28,7 +28,7 @@
         , whichChildren/1
         ]).
 
--define(MOD, 'Control.OTP.Supervisor.Behaviour').
+-define(MOD, 'Control.Behaviour.Supervisor.Behaviour').
 
 %% TODO:
 startSupervisor(Class, Args) ->

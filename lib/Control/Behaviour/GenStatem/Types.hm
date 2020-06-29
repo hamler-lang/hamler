@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.OTP.GenStatem
+-- Module      :  Control.Behaviour.GenStatem.Types
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,16 +9,19 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Erlang `gen_statem` Behaviour.
+-- The GenStatem Types.
 --
 -----------------------------------------------------------------------------
-module Control.OTP.GenStatem where
+module Control.Behaviour.GenStatem.Types where
 
-import Control.OTP.GenStatem.Types
-import Control.Process (Module, Node, Process)
+import Control.Process (Module, Node)
 import Data.Pid (Pid)
-import Data.Timeout (Timeout)
-import Data.Unit (Unit)
+
+type LocalName  = Atom
+
+type GlobalName = Atom
+
+type ViaName = Atom
 
 data StatemRef
   = StatemPid Pid
@@ -32,24 +35,4 @@ data StatemRef
   | StatemVia Module ViaName
     -- ^ The gen_statem is registered in an alternative process registry.
 
-class GenStatem a s e | s -> e, e -> a, a -> s where
-  init :: a -> Process s
-  handleEvent :: e -> s -> Process s
-
-foreign import call :: forall req rep. StatemRef -> req -> Process rep
-
-foreign import cast :: forall m. StatemRef -> m -> Process ()
-
-foreign import startStatem :: forall a s m. GenStatem a s m => a -> Process Pid
-
--- Shutdown the Statem process
-foreign import shutdown :: StatemRef -> ShutdownReason -> Timeout -> Process ()
-
--- Stop the Statem process.
-foreign import stop :: StatemRef -> Process ()
-
-{- TODO:
-start/3,start/4,start_link/3,start_link/4,
-reply/1,reply/2]).
--}
-
+data CallbackMode = HandleEventFunction | StateFunctions

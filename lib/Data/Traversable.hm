@@ -14,9 +14,8 @@
 -----------------------------------------------------------------------------
 module Data.Traversable where
 
-import Data.Functor (class Functor)
 import Data.Foldable (class Foldable)
-import Control.Applicative (class Applicative)
+import Control.Monad (class Applicative, class Functor)
 
 class (Functor t, Foldable t) => Traversable t where
   traverse :: forall a b m. Applicative m => (a -> m b) -> t a -> m (t b)

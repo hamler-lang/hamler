@@ -1,0 +1,34 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Control.Behaviour.GenStatem.Client
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The GenStatem Client APIs.
+--
+-----------------------------------------------------------------------------
+module Control.Behaviour.GenStatem.Client
+  ( call
+  , callTimeout
+  , cast
+  ) where
+
+import Control.Behaviour.GenStatem.Types
+import Control.Process (Process)
+import Data.Timeout (Timeout)
+import Data.Unit (Unit)
+
+foreign import call
+  :: forall req rep. StatemRef -> req -> Process rep
+
+foreign import callTimeout
+  :: forall req rep. StatemRef -> req -> Timeout -> Process rep
+
+foreign import cast
+  :: forall msg. StatemRef -> msg -> Process ()
+

@@ -9,16 +9,23 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Monad Module.
+%% The Monad FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Monad').
 
--export([ bindImpl/2
+-export([ applyListImpl/2
+        , bindImpl/2
         , bindListImpl/2
         , pureImpl/1
         , seqio/1
         ]).
+
+-type(mapFun() :: fun((A :: any()) -> B :: any())).
+
+-spec(applyListImpl(list(mapFun()), list(any())) -> list(any())).
+applyListImpl(Funs, L) ->
+    [F(X) || X <- L, F <- Funs].
 
 -spec(bindImpl(any(), fun((A :: term()) -> B :: term())) -> any()).
 bindImpl(X, F) -> F(X).
@@ -30,6 +37,5 @@ bindListImpl(L, F) ->
 -spec(pureImpl(any()) -> any()).
 pureImpl(X) -> X.
 
-seqio(L) when is_list(L) ->
-    L.
+seqio(L) when is_list(L) -> L.
 

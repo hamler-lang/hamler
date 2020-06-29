@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.OTP.Supervisor.Behaviour
+-- Module      :  Control.Behaviour.Supervisor.Behaviour
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -12,7 +12,7 @@
 -- The Supervisor Behaviour.
 --
 -----------------------------------------------------------------------------
-module Control.OTP.Supervisor.Behaviour where
+module Control.Behaviour.Supervisor.Behaviour where
 
 import Control.Process (Process)
 

@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Behaviour
+%% Module      :  Proxy
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -12,7 +12,7 @@
 %% The GenStatem Behaviour FFI.
 %%
 %%---------------------------------------------------------------------------
--module('Behaviour').
+-module('Proxy').
 
 -behaviour(gen_statem).
 
@@ -23,20 +23,21 @@
         , code_change/4
         ]).
 
-init([Class = #{init := InitFun}, Args]) ->
-    io:format("~p~n", [Args]),
-    {ok, #{class => Class, st => InitFun(Args)}}.
+-record(proxy, {handleEvent, state}).
+
+init([#{handleEvent := handleEvent}, Init, Args]) ->
+  {ok, idle, #proxy{handleEvent = handleEvent, state = Init(Args)}}.
 
 callback_mode() -> handle_event_function.
 
 handle_event(EventType, Event, State, Data) ->
-    %% Ignore all other events
-    io:format("EventType: ~p, Event: ~p~n", [EventType, Event]),
-    {next_state, State, Data}.
+  %% Ignore all other events
+  io:format("EventType: ~p, Event: ~p~n", [EventType, Event]),
+  {next_state, State, Data}.
 
 terminate(_Reason, _State, _Data) ->
-    void.
+  void.
 
 code_change(_Vsn, State, Data, _Extra) ->
-    {ok, State, Data}.
+  {ok, State, Data}.
 

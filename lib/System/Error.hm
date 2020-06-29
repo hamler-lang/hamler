@@ -14,8 +14,7 @@
 -----------------------------------------------------------------------------
 module System.Error where
 
-import Control.Applicative (pure)
-import Control.Monad (IO)
+import Control.Monad (IO, pure)
 import Data.Functor (map)
 import Data.Either (Either(..))
 import Data.Show (class Show)

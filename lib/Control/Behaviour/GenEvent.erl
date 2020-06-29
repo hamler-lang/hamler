@@ -21,7 +21,7 @@
         , stop/1
         ]).
 
--define(MOD, 'Control.OTP.GenEvent.Behaviour').
+-define(MOD, 'Control.Behaviour.GenEvent.Behaviour').
 
 startEventMgr(Class, Args) ->
     {ok, Pid} = gen_server:start_link(?MOD, [Class, Args], []),
