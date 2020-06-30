@@ -25,7 +25,7 @@
         , code_change/3
         ]).
 
--record(proxy, {handleCall, handleCast, state}).
+-record(proxy, {terminate, handleCall, handleCast, state}).
 
 init([Class, Init, Args]) ->
   case Init(Args) of
@@ -39,8 +39,10 @@ init([Class, Init, Args]) ->
       ignore
   end.
 
-init_ok(#{handleCall := HandleCall, handleCast := HandleCast}, State) ->
-  #proxy{handleCall = HandleCall, handleCast = HandleCast, state = State}.
+%% init_ok(#{handleCall := HandleCall, handleCast := HandleCast}, State) ->
+init_ok(#{'LifeCircle0' := LifeCircle, handleCall := HandleCall, handleCast := HandleCast}, State) ->
+  #{terminate := Terminate} = LifeCircle(any),
+    #proxy{terminate = Terminate, handleCall = HandleCall, handleCast = HandleCast, state = State}.
 
 handle_call(Request, _From, Proxy = #proxy{handleCall = HandleCall, state = State}) ->
   io:format("Call: ~p~n", [Request]),
@@ -75,8 +77,8 @@ handle_info(Info, Proxy) ->
   error_logger:error_msg("Unexpected Info: ~p", [Info]),
   {noreply, Proxy}.
 
-terminate(_Reason, _Proxy) ->
-  ok.
+terminate(Reason, _Proxy = #proxy{terminate = Terminate, state = St}) ->
+  uncurry(Terminate, [Reason, St]).
 
 code_change(_OldVsn, Proxy, _Extra) ->
   {ok, Proxy}.
