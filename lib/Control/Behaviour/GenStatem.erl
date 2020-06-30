@@ -17,7 +17,7 @@
 -export([ startFSM/3
         , startLink/3
         , startMonitor/3
-        , shutdown/3
+        , shutdownFSM/3
         , stopFSM/1
         , replyTo/2
         ]).
@@ -41,11 +41,11 @@ startMonitor(Class, Init, Args) ->
   {ok, {Pid, Mon}} = gen_statem:start_monitor(?MOD, [Class, Init, Args], []),
   {Pid, Mon}.
 
-shutdown(StatemRef, Reason, Timeout) ->
+shutdownFSM(StatemRef, Reason, Timeout) ->
   gen_statem:stop(ref(StatemRef), Reason, timeout(Timeout)).
 
 stopFSM(StatemRef) ->
-  gen_statem:stopFSM(ref(StatemRef)).
+  gen_statem:stop(ref(StatemRef)).
 
 call(StatemRef, Req) ->
   gen_statem:call(ref(StatemRef), Req).
@@ -59,11 +59,11 @@ cast(StatemRef, Msg) ->
 replyTo(From, Reply) ->
   gen_statem:reply(From, Reply).
 
-ref({'StatemPid', Pid}) -> Pid;
+ref({'ServerPid', Pid}) -> Pid;
 ref({'StatemRef', LocalName}) -> LocalName;
-ref({'StatemRefOn', LocalName, Node}) -> {LocalName, Node};
-ref({'StatemGlobal', GlobalName}) -> GlobalName;
-ref({'StatemVia', Module, ViaName}) -> {via, Module, ViaName}.
+ref({'StatemRefAt', LocalName, Node}) -> {LocalName, Node};
+ref({'StatemRefGlobal', GlobalName}) -> {global, GlobalName}.
 
 timeout({'Infinity'}) -> infinity;
 timeout({'Timeout', I}) -> I.
+

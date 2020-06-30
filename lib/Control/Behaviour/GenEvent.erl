@@ -39,12 +39,11 @@ shutdown(EventMgrRef, Reason, Timeout) ->
 stop(EventMgrRef) ->
     gen_event:stop(ref(EventMgrRef)).
 
+ref({'EventMgrPid', Pid}) -> Pid;
+ref({'EventMgrRef', Name}) -> Name;
+ref({'EventMgrRefAt', Name, Node}) -> {Name, Node};
+ref({'EventMgrRefGlobal', Name}) -> {global, Name}.
+
 timeout({'Infinity'}) -> infinity;
 timeout({'Timeout', I}) -> I.
-
-ref({'EventMgr', LocalName}) -> LocalName;
-ref({'EventMgrOn', LocalName, Node}) -> {LocalName, Node};
-ref({'EventMgrGlobal', GlobalName}) -> GlobalName;
-ref({'EventMgrVia', Module, ViaName}) -> {via, Module, ViaName};
-ref({'EventMgrPid', Pid}) -> Pid.
 
