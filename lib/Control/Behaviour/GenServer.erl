@@ -21,12 +21,15 @@
         ]).
 
 -export([ abcast/2
-        , abcastTo/3
-        , call/3
+        , abcastAt/3
+        , call/2
+        , callTo/2
         , callTimeout/3
-        , cast/3
+        , cast/2
+        , castTo/2
         , multiCall/2
-        , multiCallTo/3
+        , multiCallAt/3
+        , multiCallTimeoutAt/4
         ]).
 
 -define(MOD, 'Control.Behaviour.GenServer.Proxy').
@@ -44,35 +47,53 @@ startMonitor(Class, Init, Args) ->
   {Pid, Mon}.
 
 stopServer(ServerRef) ->
-  gen_server:stop(destruct(ServerRef)).
+  gen_server:stop(ref(ServerRef)).
 
+%% abcast :: ServerName -> req -> Process ()
 abcast(Name, Req) ->
-  gen_server:abcast(Name, Req), ok.
+  gen_server:abcast(Name, Req).
 
-abcastTo(Nodes, Name, Req) ->
-  gen_server:abcast(Nodes, Name, Req), ok.
+%% abcastAt :: [Node] -> ServerName -> req -> Process ()
+abcastAt(Nodes, Name, Req) ->
+  gen_server:abcast(Nodes, Name, Req).
 
-call(_Unused, ServerRef, Req) ->
-  gen_server:call(destruct(ServerRef), Req).
+%% call :: ServerRef -> req -> Process rep
+call(ServerRef, Req) ->
+  gen_server:call(ref(ServerRef), Req).
 
+%% callTo :: Pid -> req -> Process rep
+callTo(Pid, Req) ->
+  gen_server:call(Pid, Req).
+
+%% callTimeout :: ServerRef -> req -> Timeout -> Process rep
 callTimeout(ServerRef, Req, Timeout) ->
-  gen_server:call(destruct(ServerRef), Req, destruct(Timeout)).
+  gen_server:call(ref(ServerRef), Req, t(Timeout)).
 
-cast(_Unused, ServerRef, Req) ->
-  gen_server:cast(destruct(ServerRef), Req).
+%% cast :: ServerRef -> req -> Process ()
+cast(ServerRef, Req) ->
+  gen_server:cast(ref(ServerRef), Req).
 
+%% castTo :: Pid -> req -> Process ()
+castTo(Pid, Req) ->
+  gen_server:cast(Pid, Req).
+
+%% multiCall :: ServerName -> req -> Process [NodeReply rep]
 multiCall(Name, Req) ->
   gen_server:multi_call(Name, Req).
 
-multiCallTo(Nodes, Name, Req) ->
+%% multiCallAt :: [Node] -> ServerName -> req -> Process [NodeReply rep]
+multiCallAt(Nodes, Name, Req) ->
   gen_server:multi_call(Nodes, Name, Req).
 
--compile({inline, [destruct/1]}).
-destruct({'ServerPid', Pid}) -> Pid;
-destruct({'ServerRef', Name}) -> Name;
-destruct({'ServerRefOn', Name, Node}) -> {Name, Node};
-destruct({'ServerGlobal', Name}) -> {global, Name};
-destruct({'ServerVia', Module, Name}) -> {via, Module, Name};
-destruct({'Infinity'}) -> infinity;
-destruct({'Timeout', I}) -> I.
+multiCallTimeoutAt(Nodes, Name, Timeout, Req) ->
+  gen_server:multi_call(Nodes, Name, t(Timeout), Req).
+
+-compile({inline, [ref/1]}).
+ref({'ServerPid', Pid}) -> Pid;
+ref({'ServerRef', Name}) -> Name;
+ref({'ServerRefAt', Name, Node}) -> {Name, Node};
+ref({'ServerRefGlobal', Name}) -> {global, Name}.
+
+t({'Infinity'}) -> infinity;
+t({'Timeout', I}) -> I.
 

@@ -12,11 +12,21 @@
 -- Datatypes for GenServer Behaviour.
 --
 -----------------------------------------------------------------------------
-module Control.Behaviour.GenServer.Types where
+module Control.Behaviour.GenServer.Types
+  ( Caller
+  , InitResult(..)
+  , NodeReply(..)
+  , ServerName
+  , ServerRef(..)
+  , ServerAction(..)
+  ) where
 
-import Control.Process (Module, Node, ExitReason)
+import Control.Process (Node, ExitReason)
 import Data.Pid (Pid)
 
+foreign import data Caller :: Type
+
+-- | Init Result
 data InitResult st
   = InitOk st
     -- ^ {ok, State}
@@ -38,17 +48,21 @@ data ServerRef
     -- ^ The Pid of GenServer.
   | ServerRef ServerName
     -- ^ The GenServer is locally registered.
-  | ServerRefOn ServerName Node
-    -- ^ The GenServer is locally registered on another node.
-  | ServerGlobal ServerName
+  | ServerRefAt ServerName Node
+    -- ^ The GenServer is locally registered at another node.
+  | ServerRefGlobal ServerName
     -- ^ The GenServer is globally registered in global.
-  | ServerVia Module ServerName
-    -- ^ The GenServer is registered in an alternative process registry.
 
+-- | Server Action
 data ServerAction rep st
   = ServerIgnore st
   | ServerReply rep st
   | ServerNoReply st
   | ServerStop ExitReason st
   | ServerStopReply ExitReason rep st
+
+-- | NodeReply
+data NodeReply rep
+  = NodeReply Node rep
+  | BadNode Node
 
