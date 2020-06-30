@@ -19,13 +19,15 @@ import Control.Behaviour.GenServer
   ( class GenServer
   , class LifeCircle
   , terminateDefault
-  , CallHandler
-  , CastHandler
+  , HandleCall
+  , HandleCast
   , InitResult(..)
-  , ServerAction(..)
   , ServerRef(..)
-  , call, cast
-  , noReply, reply
+  , ServerAction(..)
+  , callTo
+  , castTo
+  , noReply
+  , reply
   , startServer
   , stopServer
   )
@@ -42,14 +44,14 @@ data State = State Integer
 -----------------------------------------------------------------------------
 
 inc :: Pid -> Process ()
-inc pid = cast (ServerPid pid) Inc
+inc pid = castTo pid Inc
 
 dec :: Pid -> Process ()
-dec pid = cast (ServerPid pid) Dec
+dec pid = castTo pid Dec
 
 query :: Pid -> Process Integer
 query pid = do
-  QueryResult i <- call (ServerPid pid) Query
+  QueryResult i <- callTo pid Query
   return i
 
 -----------------------------------------------------------------------------
@@ -66,11 +68,11 @@ instance GenServer Request Reply State where
 init :: Integer -> Process (InitResult State)
 init n = return $ InitOk (State n)
 
-handleCall :: CallHandler Request Reply State
+handleCall :: HandleCall Request Reply State
 handleCall Query (State i) = reply (QueryResult i) (State i)
 handleCall _ st = return $ ServerIgnore st
 
-handleCast :: CastHandler Request State
+handleCast :: HandleCast Request State
 handleCast Inc (State n) = noReply $ State (n+1)
 handleCast Dec (State n) = noReply $ State (n-1)
 handleCast _ st = noReply st
@@ -86,7 +88,6 @@ main = do
   inc pid
   inc pid
   inc pid
-  -- Server.cast (ServerPid pid) "Hello GenServer"
   reply <- query pid
   stopServer (ServerPid pid)
   return reply
