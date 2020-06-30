@@ -14,25 +14,21 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenStatem.Types where
 
-import Control.Process (Module, Node)
+import Control.Process (Node)
 import Data.Pid (Pid)
 
 type LocalName  = Atom
 
 type GlobalName = Atom
 
-type ViaName = Atom
-
 data StatemRef
   = StatemPid Pid
-    -- ^ The Pid of gen_statem.
+    -- ^ The Pid of GenStatem.
   | StatemRef LocalName
-    -- ^ The gen_statem is locally registered.
-  | StatemRefOn LocalName Node
-    -- ^ The gen_statem is locally registered on another node.
-  | StatemGlobal GlobalName
-    -- ^ The gen_statem is globally registered in global.
-  | StatemVia Module ViaName
-    -- ^ The gen_statem is registered in an alternative process registry.
+    -- ^ The GenStatem is locally registered.
+  | StatemRefAt LocalName Node
+    -- ^ The GenStatem is locally registered on another node.
+  | StatemRefGlobal GlobalName
+    -- ^ The GenStatem is globally registered in global.
 
 data CallbackMode = HandleEventFunction | StateFunctions
