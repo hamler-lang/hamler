@@ -17,6 +17,8 @@ module DemoServer where
 import Prelude
 import Control.Behaviour.GenServer
   ( class GenServer
+  , class LifeCircle
+  , terminateDefault
   , CallHandler
   , CastHandler
   , InitResult(..)
@@ -25,6 +27,7 @@ import Control.Behaviour.GenServer
   , call, cast
   , noReply, reply
   , startServer
+  , stopServer
   )
 import Kernel.Application as App
 
@@ -52,6 +55,9 @@ query pid = do
 -----------------------------------------------------------------------------
 -- | Server callbacks
 -----------------------------------------------------------------------------
+
+instance LifeCircle State where
+  terminate = terminateDefault
 
 instance GenServer Request Reply State where
   handleCall = handleCall
@@ -82,5 +88,5 @@ main = do
   inc pid
   -- Server.cast (ServerPid pid) "Hello GenServer"
   reply <- query pid
+  stopServer (ServerPid pid)
   return reply
-

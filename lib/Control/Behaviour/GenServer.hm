@@ -15,6 +15,7 @@
 module Control.Behaviour.GenServer
   ( class GenServer
   , handleCall, handleCast
+  , class LifeCircle, terminate, terminateDefault
     -- * client apis
   , abcast
   , abcastTo
@@ -49,12 +50,19 @@ import Control.Behaviour.GenServer.Types
   , ServerRef(..)
   , ServerAction(..)
   )
+import Control.Process.Types (ExitReason)
 
 type CallHandler req rep st = req -> st -> Process (ServerAction rep st)
 
 type CastHandler req st = req -> st -> Process (ServerAction Unit st)
 
-class GenServer req rep st | req -> rep, rep -> st, st -> req where
+class LifeCircle st where
+  terminate :: ExitReason -> st -> Process (ServerAction Unit st)
+
+terminateDefault :: forall st.ExitReason -> st -> Process (ServerAction Unit st)
+terminateDefault s st = noReply st
+
+class LifeCircle st => GenServer req rep st | req -> rep, rep -> st, st -> req where
   -- req -> st -> Process (ServerAction rep st)
   handleCall :: CallHandler req rep st
   -- req -> st -> Process (ServerAction Unit st)
