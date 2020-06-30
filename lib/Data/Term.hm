@@ -1,0 +1,19 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Ref
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Term datatype:)
+--
+-----------------------------------------------------------------------------
+module Data.Term where
+
+-- | A piece of data of any datatype is called a Term in Erlang.
+foreign import data Term :: Type
+
