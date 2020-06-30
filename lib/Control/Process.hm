@@ -27,6 +27,7 @@ module Control.Process
   , receiveAfter
     -- * Registered Processes
   , register
+  , unregister
   , registered
   , whereis
     -- * Linking and Monitoring
@@ -87,14 +88,17 @@ foreign import receive :: forall a. Process a
 
 foreign import receiveAfter :: forall a. Integer -> Process a
 
--- foreign import receiveScanlMatch :: forall a b.(a -> Process b) ->Process b
+-- foreign import receiveScanlMatch :: forall a b.(a -> Process b) -> Process b
 
 -----------------------------------------------------------------------------
--- | Registered Processes
+-- | Register/Unregister Processes
 -----------------------------------------------------------------------------
 
 register :: Atom -> Pid -> Process ()
 register = ffiIO2 :erlang :register
+
+unregister :: Atom -> Process ()
+unregister = ffiIO1 :erlang :unregister
 
 registered :: Process [Atom]
 registered = ffiIO0 :erlang :registered
