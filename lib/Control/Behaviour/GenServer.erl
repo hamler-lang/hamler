@@ -15,6 +15,7 @@
 -module('GenServer').
 
 -export([ startServer/3
+        , startServerWithName/4
         , startLink/3
         , startMonitor/3
         , stopServer/1
@@ -37,6 +38,10 @@
 startServer(Class, Init, Args) ->
   {ok, Pid} = gen_server:start(?MOD, [Class, Init, Args], []),
   Pid.
+
+startServerWithName(Class, Name, Init, Args) ->
+    {ok, Pid} = gen_server:start(nr(Name), ?MOD, [Class, Init, Args], []),
+    Pid.
 
 startLink(Class, Init, Args) ->
   {ok, Pid} = gen_server:start_link(?MOD, [Class, Init, Args], []),
@@ -97,3 +102,5 @@ ref({'ServerRefGlobal', Name}) -> {global, Name}.
 t({'Infinity'}) -> infinity;
 t({'Timeout', I}) -> I.
 
+nr({'Local', Name}) -> {local, Name};
+nr({'Global', Name}) -> {global, Name}.

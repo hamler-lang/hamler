@@ -19,6 +19,7 @@ module Control.Behaviour.GenServer.Types
   , ServerName
   , ServerRef(..)
   , ServerAction(..)
+  , NameRange(..)
   ) where
 
 import Control.Process (Node, ExitReason)
@@ -54,7 +55,7 @@ data ServerRef
     -- ^ The GenServer is globally registered in global.
 
 -- | Server Action
-data ServerAction rep st
+data ServerAction rep st --Result
   = ServerIgnore st
   | ServerReply rep st
   | ServerNoReply st
@@ -65,4 +66,8 @@ data ServerAction rep st
 data NodeReply rep
   = NodeReply Node rep
   | BadNode Node
+
+
+data NameRange = Local Atom
+               | Global Atom
 

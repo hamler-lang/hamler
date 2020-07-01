@@ -29,7 +29,11 @@ import Control.Behaviour.GenServer
   , noReply
   , reply
   , startServer
+  , startServerWithName
+  , abcast
   , stopServer
+  , multiCall
+  , NameRange(..)
   )
 import Kernel.Application as App
 
@@ -59,7 +63,10 @@ query pid = do
 -----------------------------------------------------------------------------
 
 instance LifeCircle State where
-  terminate = terminateDefault
+  terminate a b = do
+    pid <- selfPid
+    printf "node terminate %s" (showAny pid) :: IO ()
+    terminateDefault a b
 
 instance GenServer Request Reply State where
   handleCall = handleCall
@@ -90,4 +97,9 @@ main = do
   inc pid
   reply <- query pid
   stopServer (ServerPid pid)
+  pid1 <- startServerWithName (Local :test) init 100
+  abcast :test Inc
+  r <- multiCall :test Query
+  println (showAny r)
+  stopServer (ServerRef :test)
   return reply

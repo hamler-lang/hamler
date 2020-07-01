@@ -24,6 +24,7 @@ module Control.Behaviour.GenServer
   , startServer
   , startLink
   , startMonitor
+  , startServerWithName
   , stopServer
     -- * client apis
   , abcast
@@ -52,6 +53,7 @@ import Control.Behaviour.GenServer.Types
   , ServerName
   , ServerRef(..)
   , ServerAction(..)
+  , NameRange(..)
   )
 import Control.Process.Types (ExitReason)
 import Data.Atom (atom)
@@ -85,6 +87,11 @@ serverName = atom
 foreign import startServer
   :: forall a req rep st. GenServer req rep st
   => (a -> Process (InitResult st)) -> a -> Process Pid
+
+-- | Start the server process with name.
+foreign import startServerWithName
+  :: forall a req rep st. GenServer req rep st
+  => NameRange -> (a -> Process (InitResult st)) -> a -> Process Pid
 
 foreign import startLink
   :: forall a req rep st. GenServer req rep st
