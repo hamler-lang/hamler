@@ -147,8 +147,9 @@ mutilP a b s = case b of
                                 _ -> replicate (v - length s) ' ' ++ s
 
 format :: forall a.PrintArg a => String -> a -> String
-format ['%'|xs] a = let (ctr,[c|res]) = span (\c -> not $ member c formatCharacter) xs
-                    in render (parse $ ctr ++ [c]) a ++ res
+format ['%'|xs] a = case span (\c -> not $ member c formatCharacter) xs of
+                         (ctr,[c|res]) -> render (parse $ ctr ++ [c]) a ++ res
+                         _ -> error "error input"
 format [x|xs] a = [x| format xs a]
 format [] _ =[]
 
