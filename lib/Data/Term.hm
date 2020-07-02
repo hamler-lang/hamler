@@ -9,11 +9,14 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Term datatype:)
+-- The Term datatype ^_^
 --
 -----------------------------------------------------------------------------
 module Data.Term where
 
 -- | A piece of data of any datatype is called a Term in Erlang.
 foreign import data Term :: Type
+
+class ToErl a where
+  toErl :: a -> Term
 
