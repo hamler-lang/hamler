@@ -13,11 +13,15 @@
 --
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenServer
-  ( class GenServer
+  ( module Control.Behaviour.GenServer.Types
+    -- * typeclass
+  , class GenServer
+  , HandleCall
+  , HandleCast
   , handleCall
   , handleCast
     -- * start/stop server
-  , server
+  , name
   , start
   , startWith
   , startLink
@@ -39,9 +43,6 @@ module Control.Behaviour.GenServer
   , replyTo
   , reply
   , noReply
-    -- * types
-  , HandleCall, HandleCast
-  , module Control.Behaviour.GenServer.Types
   ) where
 
 import Control.Behaviour.GenServer.Types
@@ -56,25 +57,26 @@ import Control.Behaviour.GenServer.Types
   , ServerAction(..)
   )
 import Control.Monad (return)
-import Control.Process (Node, Process)
-import Control.Process.Types (ExitReason)
+import Control.Process (Node, Process, ExitReason)
 import Data.Atom (atom)
 import Data.Pid (Pid)
 import Data.Timeout (Timeout)
 import Data.Unit (Unit)
 import Foreign (ffiIO2)
 
-type HandleCall req rep st = req -> st -> Process (ServerAction rep st)
+type HandleCall req rep st
+  = req -> st -> Process (ServerAction rep st)
 
-type HandleCast req st = req -> st -> Process (ServerAction Unit st)
+type HandleCast req st
+  = req -> st -> Process (ServerAction Unit st)
 
 class GenServer req rep st | req -> rep, rep -> st, st -> req where
   handleCall :: HandleCall req rep st
   handleCast :: HandleCast req st
 
 -- | String to server name.
-server :: String -> Atom
-server = atom
+name :: String -> Atom
+name = atom
 
 -- | Start a standalone server process.
 foreign import start

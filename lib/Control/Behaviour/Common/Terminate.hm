@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.Behaviour.LifeCircle
+-- Module      :  Control.Behaviour.Common.Terminate
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,11 +9,11 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The LifeCircle of Behaviour Process.
+-- The Terminate typeclass for behaviours.
 --
 -----------------------------------------------------------------------------
-module LifeCircle
-  ( class LifeCircle
+module Control.Behaviour.Common.Terminate
+  ( class Terminate
   , terminate
   , terminateOk
   ) where
@@ -21,8 +21,8 @@ module LifeCircle
 import Control.Process (ExitReason, Process)
 import Control.Monad (return)
 
--- | The LifeCircle typeclass
-class LifeCircle st where
+-- | The Terminate typeclass
+class Terminate st where
   terminate :: ExitReason -> st -> Process st
 
 -- | The default terminate function.
