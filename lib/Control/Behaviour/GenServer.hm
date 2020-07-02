@@ -24,8 +24,10 @@ module Control.Behaviour.GenServer
   , name
   , start
   , startWith
+  , startWithGlobal
   , startLink
   , startLinkWith
+  , startLinkWithGlobal
   , stop
   , stopWith
     -- * client apis
@@ -46,12 +48,11 @@ module Control.Behaviour.GenServer
   ) where
 
 import Control.Behaviour.GenServer.Types
-  ( Caller
+  ( Caller, Name
   , InitHandler
   , InitResult(..)
   , MultiReply(..)
   , RequestId
-  , ServerName(..)
   , ServerRef(..)
   , StartRet(..)
   , ServerAction(..)
@@ -86,7 +87,11 @@ foreign import start
 -- | Start a standalone server process with registered name.
 foreign import startWith
   :: forall a req rep st. GenServer req rep st
-  => ServerName -> (InitHandler a st) -> a -> Process StartRet
+  => Name -> (InitHandler a st) -> a -> Process StartRet
+
+foreign import startWithGlobal
+  :: forall a req rep st. GenServer req rep st
+  => Name -> (InitHandler a st) -> a -> Process StartRet
 
 -- | Start a standalone server process.
 foreign import startLink
@@ -95,7 +100,11 @@ foreign import startLink
 
 foreign import startLinkWith
   :: forall a req rep st. GenServer req rep st
-  => ServerName -> (InitHandler a st) -> a -> Process StartRet
+  => Name -> (InitHandler a st) -> a -> Process StartRet
+
+foreign import startLinkWithGlobal
+  :: forall a req rep st. GenServer req rep st
+  => Name -> (InitHandler a st) -> a -> Process StartRet
 
 -- | Stop the server process.
 foreign import stop :: ServerRef -> Process ()
@@ -106,11 +115,11 @@ foreign import stopWith
 
 -- | Sends an asynchronous request to the GenServer processes.
 foreign import abcast
-  :: forall req. ServerName -> req -> Process ()
+  :: forall req. Name -> req -> Process ()
 
 -- | Sends an asynchronous request to the GenServer processes at the specified nodes.
 foreign import abcastAt
-  :: forall req. [Node] -> ServerName -> req -> Process ()
+  :: forall req. [Node] -> Name -> req -> Process ()
 
 -- | Synchronous call to the ServerRef of the GenServer process.
 foreign import call
@@ -133,13 +142,13 @@ foreign import castTo
   :: forall req. Pid -> req -> Process ()
 
 foreign import multiCall
-  :: forall req rep. ServerName -> req -> Process [MultiReply rep]
+  :: forall req rep. Name -> req -> Process [MultiReply rep]
 
 foreign import multiCallAt
-  :: forall req rep. [Node] -> ServerName -> req -> Process [MultiReply rep]
+  :: forall req rep. [Node] -> Name -> req -> Process [MultiReply rep]
 
 foreign import multiCallTimeoutAt
-  :: forall req rep. [Node] -> ServerName -> req -> Timeout -> Process [MultiReply rep]
+  :: forall req rep. [Node] -> Name -> req -> Timeout -> Process [MultiReply rep]
 
 foreign import sendRequest
   :: forall req. ServerRef -> req -> Process RequestId

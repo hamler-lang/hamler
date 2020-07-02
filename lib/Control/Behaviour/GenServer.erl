@@ -16,8 +16,10 @@
 
 -export([ start/3
         , startWith/4
+        , startWithGlobal/4
         , startLink/3
         , startLinkWith/4
+        , startLinkWithGlobal/4
         , stop/1
         , stopWith/3
         ]).
@@ -46,13 +48,19 @@ start(Class, Init, Args) ->
   startRet(gen_server:start(?MOD, [Class, Init, Args], [])).
 
 startWith(Name, Class, Init, Args) ->
-  startRet(gen_server:start(toErl(Name), ?MOD, [Class, Init, Args], [])).
+  startRet(gen_server:start({local, Name}, ?MOD, [Class, Init, Args], [])).
+
+startWithGlobal(Name, Class, Init, Args) ->
+  startRet(gen_server:start({global, Name}, ?MOD, [Class, Init, Args], [])).
 
 startLink(Class, Init, Args) ->
   startRet(gen_server:start_link(?MOD, [Class, Init, Args], [])).
 
-startLinkWith(Name, Class, Init, Args) ->
-  startRet(gen_server:start_link(toErl(Name), ?MOD, [Class, Init, Args], [])).
+startLinkWith(Class, Name, Init, Args) ->
+  startRet(gen_server:start_link({local, Name}, ?MOD, [Class, Init, Args], [])).
+
+startLinkWithGlobal(Class, Name, Init, Args) ->
+  startRet(gen_server:start_link({global, Name}, ?MOD, [Class, Init, Args], [])).
 
 stop(ServerRef) ->
   gen_server:stop(toErl(ServerRef)).

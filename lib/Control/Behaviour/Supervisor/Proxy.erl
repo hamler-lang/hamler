@@ -9,7 +9,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Supervisor Behaviour Proxy FFI.
+%% The Supervisor Proxy FFI.
 %%
 %%---------------------------------------------------------------------------
 -module('Proxy').
@@ -19,7 +19,10 @@
 %% supervisor callbacks
 -export([init/1]).
 
-init([Class = #{init := InitFun}, Args]) ->
-    io:format("~p~n", [Args]),
-    {SupFlags, [ChildSpec]} = InitFun(Args),
-    {ok, {SupFlags, [ChildSpec]}}.
+init([Init, Args]) ->
+  case Init(Args) of
+    {'InitOk', Result} ->
+      {ok, Result};
+    {'InitIgnore'} ->
+      ignore
+  end.
