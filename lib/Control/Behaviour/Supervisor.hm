@@ -9,37 +9,47 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Erlang Supervisor Behaviour.
+-- The Generic Supervisor Behaviour.
 --
 -----------------------------------------------------------------------------
-module Control.Behaviour.Supervisor where
+module Control.Behaviour.Supervisor
+  ( -- * start sup
+    startSup
+  , startSupWith
+  , startSupWithGlobal
+    -- * child api
+  , checkChildSpecs
+  , countChildren
+  , deleteChild
+  , getChildSpec
+  , restartChild
+  , startChild
+  , terminateChild
+  , terminateChildBy
+  , whichChildren
+    -- * types
+  , module Control.Behaviour.Common.Types
+  ) where
 
+import Control.Behaviour.Common.Types (Name, StartRet)
 import Control.Behaviour.Supervisor.Types
-import Control.Process (Module, Node, Process)
+import Control.Process (Process)
 import Data.Pid (Pid)
 import Data.Maybe (Maybe)
 import Data.Result (Result)
 import Data.Unit (Unit)
 
--- Supervisor ref.
-data SupRef
-  = SupName Atom
-    -- ^ The supervisor is locally registered.
-  | SupNameOn Atom Node
-    -- ^ The supervisor is locally registered at another node.
-  | SupGlobal Atom
-    -- ^ The supervisor is globally registered.
-  | SupNameVia Module Atom
-    -- ^ The supervisor is registered through an alternative process registry.
-  | SupPid Pid
-    -- ^ The supervisor pid.
+-- Start a supervisor process.
+foreign import startSup
+  :: forall a. (InitHandler a) -> a -> Process StartRet
 
-class Supervisor a s | a -> s where
-  init :: a -> Process s
+-- Start a supervisor with name.
+foreign import startSupWith
+  :: forall a. Name -> (InitHandler a) -> a -> Process StartRet
 
--- Start a Supervisor.
-foreign import startSupervisor
-  :: forall a s. Supervisor a s => a -> Process Pid
+-- Start a supervisor with global name.
+foreign import startSupWithGlobal
+  :: forall a. Name -> (InitHandler a) -> a -> Process StartRet
 
 -- Check a list of child specification.
 foreign import checkChildSpecs
@@ -70,9 +80,8 @@ foreign import terminateChild
   :: SupRef -> ChildId -> Process (Result ChildError ())
 
 -- Terminate a child process by Pid.
-foreign import terminateChildByPid
+foreign import terminateChildBy
   :: SupRef -> Pid -> Process (Result ChildError ())
 
-foreign import whichChildren
-  :: SupRef -> Process [ChildId]
+foreign import whichChildren :: SupRef -> Process [ChildId]
 

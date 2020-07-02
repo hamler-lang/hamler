@@ -14,9 +14,31 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.Supervisor.Types where
 
-import Control.Process (Module, Process)
+import Control.Behaviour.Common.Types
+import Control.Process (Module, Node, Process)
 import Data.Pid (Pid)
 import Data.Unit (Unit)
+
+-- Supervisor ref.
+data SupRef
+  = SupName Name
+    -- ^ The supervisor is locally registered.
+  | SupNameAt Name Node
+    -- ^ The supervisor is locally registered at another node.
+  | SupGlobal Name
+    -- ^ The supervisor is globally registered.
+  | SupPid Pid
+    -- ^ The supervisor pid.
+
+type InitHandler a
+  = a -> Process (InitResult (SupFlags, [ChildSpec]))
+
+-- | Init Result
+data InitResult st
+  = InitOk st
+    -- ^ {ok, State}
+  | InitIgnore
+    -- ^ ignore
 
 type Intensity = Integer
 

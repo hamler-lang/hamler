@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.Behaviour.Common.GenTypes
+-- Module      :  Control.Behaviour.Common.Types
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -12,10 +12,10 @@
 -- The Genernal Types for behaviours.
 --
 -----------------------------------------------------------------------------
-module Control.Behaviour.Common.GenTypes
-  ( Caller
+module Control.Behaviour.Common.Types
+  ( Name
+  , Caller
   , RequestId
-  , ServerName
   , ServerRef(..)
   , StartRet(..)
   ) where
@@ -25,25 +25,22 @@ import Data.Ref (Reference)
 import Control.Process (Node)
 import Control.Process.Types
 
+type Name = Atom
+
 foreign import data Caller :: Type
 
 -- | Request Id.
 type RequestId = Reference
 
--- | Server name.
-data ServerName
-  = ServerName Atom
-  | GlobalName Atom
-
--- | Server Ref
+-- | Server Ref.
 data ServerRef
   = ServerPid Pid
     -- ^ The Pid of GenServer.
-  | ServerRef Atom
+  | ServerRef Name
     -- ^ The GenServer is locally registered.
-  | ServerRefAt Atom Node
+  | ServerRefAt Name Node
     -- ^ The GenServer is locally registered at another node.
-  | ServerRefGlobal Atom
+  | ServerRefGlobal Name
     -- ^ The GenServer is globally registered in global.
 
 data StartRet
