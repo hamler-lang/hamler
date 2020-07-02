@@ -17,10 +17,10 @@ module Control.Behaviour.GenServer.Types
   , InitResult(..)
   , MultiReply(..)
   , ServerAction(..)
-  , module Control.Behaviour.GenTypes
+  , module Control.Behaviour.Common.GenTypes
   ) where
 
-import Control.Behaviour.GenTypes
+import Control.Behaviour.Common.GenTypes
 import Control.Process (Node, Process, ExitReason)
 import Data.Maybe (Maybe)
 

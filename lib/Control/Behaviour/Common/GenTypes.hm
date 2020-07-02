@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.Behaviour.GenTypes
+-- Module      :  Control.Behaviour.Common.GenTypes
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -12,7 +12,7 @@
 -- The Genernal Types for behaviours.
 --
 -----------------------------------------------------------------------------
-module Control.Behaviour.GenTypes
+module Control.Behaviour.Common.GenTypes
   ( Caller
   , RequestId
   , ServerName
