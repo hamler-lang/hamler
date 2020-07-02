@@ -14,9 +14,15 @@
 -----------------------------------------------------------------------------
 module Control.Process.Types where
 
+-- | -type priority_level() :: low | normal | high | max.
+data PriorityLevel = Low | Normal | High | Max
+
+-- | -type message_queue_data() :: off_heap | on_heap.
+data MsgQueueData = OnHeap | OffHeap
+
 foreign import data From :: Type
 
 data ExitReason
-  = ExitReason Atom
+  = ExitNormal
   | ExitShutdown
-  | ExitNormal
+  | ExitReason Atom

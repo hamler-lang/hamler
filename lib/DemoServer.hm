@@ -17,19 +17,18 @@ module DemoServer where
 import Prelude
 import Control.Behaviour.GenServer
   ( class GenServer
-  , class LifeCircle
-  , terminateDefault
   , HandleCall
   , HandleCast
   , InitResult(..)
   , ServerRef(..)
   , ServerAction(..)
+  , StartRet(..)
   , callTo
   , castTo
   , noReply
   , reply
-  , startServer
-  , stopServer
+  , start
+  , stop
   )
 import Kernel.Application as App
 
@@ -58,9 +57,6 @@ query pid = do
 -- | Server callbacks
 -----------------------------------------------------------------------------
 
-instance LifeCircle State where
-  terminate = terminateDefault
-
 instance GenServer Request Reply State where
   handleCall = handleCall
   handleCast = handleCast
@@ -84,10 +80,14 @@ handleCast _ st = noReply st
 main :: IO Integer
 main = do
   App.ensureStarted :sasl
-  pid <- startServer init 10
-  inc pid
-  inc pid
-  inc pid
-  reply <- query pid
-  stopServer (ServerPid pid)
-  return reply
+  ret <- start init 10
+  case ret of
+    (StartOk pid) -> do
+      inc pid
+      inc pid
+      inc pid
+      reply <- query pid
+      stop (ServerPid pid)
+      return reply
+    _ -> return 0
+

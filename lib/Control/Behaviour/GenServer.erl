@@ -14,10 +14,12 @@
 %%---------------------------------------------------------------------------
 -module('GenServer').
 
--export([ startServer/3
+-export([ start/3
+        , startWith/4
         , startLink/3
-        , startMonitor/3
-        , stopServer/1
+        , startLinkWith/4
+        , stop/1
+        , stopWith/3
         ]).
 
 -export([ abcast/2
@@ -30,24 +32,37 @@
         , multiCall/2
         , multiCallAt/3
         , multiCallTimeoutAt/4
+        , sendRequest/2
+        , waitResponse/2
         ]).
 
 -define(MOD, 'Control.Behaviour.GenServer.Proxy').
 
-startServer(Class, Init, Args) ->
-  {ok, Pid} = gen_server:start(?MOD, [Class, Init, Args], []),
-  Pid.
+%%---------------------------------------------------------------------------
+%% | Start/stop server
+%%---------------------------------------------------------------------------
+
+start(Class, Init, Args) ->
+  startRet(gen_server:start(?MOD, [Class, Init, Args], [])).
+
+startWith(Name, Class, Init, Args) ->
+  startRet(gen_server:start(toErl(Name), ?MOD, [Class, Init, Args], [])).
 
 startLink(Class, Init, Args) ->
-  {ok, Pid} = gen_server:start_link(?MOD, [Class, Init, Args], []),
-  Pid.
+  startRet(gen_server:start_link(?MOD, [Class, Init, Args], [])).
 
-startMonitor(Class, Init, Args) ->
-  {ok, {Pid, Mon}} = gen_server:start_monitor(?MOD, [Class, Init, Args], []),
-  {Pid, Mon}.
+startLinkWith(Name, Class, Init, Args) ->
+  startRet(gen_server:start_link(toErl(Name), ?MOD, [Class, Init, Args], [])).
 
-stopServer(ServerRef) ->
-  gen_server:stop(ref(ServerRef)).
+stop(ServerRef) ->
+  gen_server:stop(toErl(ServerRef)).
+
+stopWith(ServerRef, ExitReason, Timeout) ->
+  gen_server:stop(toErl(ServerRef), toErl(ExitReason), toErl(Timeout)).
+
+%%---------------------------------------------------------------------------
+%% | GenServer APIs
+%%---------------------------------------------------------------------------
 
 %% abcast :: ServerName -> req -> Process ()
 abcast(Name, Req) ->
@@ -59,7 +74,7 @@ abcastAt(Nodes, Name, Req) ->
 
 %% call :: ServerRef -> req -> Process rep
 call(ServerRef, Req) ->
-  gen_server:call(ref(ServerRef), Req).
+  gen_server:call(toErl(ServerRef), Req).
 
 %% callTo :: Pid -> req -> Process rep
 callTo(Pid, Req) ->
@@ -67,11 +82,11 @@ callTo(Pid, Req) ->
 
 %% callTimeout :: ServerRef -> req -> Timeout -> Process rep
 callTimeout(ServerRef, Req, Timeout) ->
-  gen_server:call(ref(ServerRef), Req, t(Timeout)).
+  gen_server:call(toErl(ServerRef), Req, toErl(Timeout)).
 
 %% cast :: ServerRef -> req -> Process ()
 cast(ServerRef, Req) ->
-  gen_server:cast(ref(ServerRef), Req).
+  gen_server:cast(toErl(ServerRef), Req).
 
 %% castTo :: Pid -> req -> Process ()
 castTo(Pid, Req) ->
@@ -86,14 +101,35 @@ multiCallAt(Nodes, Name, Req) ->
   gen_server:multi_call(Nodes, Name, Req).
 
 multiCallTimeoutAt(Nodes, Name, Timeout, Req) ->
-  gen_server:multi_call(Nodes, Name, t(Timeout), Req).
+  gen_server:multi_call(Nodes, Name, toErl(Timeout), Req).
 
--compile({inline, [ref/1]}).
-ref({'ServerPid', Pid}) -> Pid;
-ref({'ServerRef', Name}) -> Name;
-ref({'ServerRefAt', Name, Node}) -> {Name, Node};
-ref({'ServerRefGlobal', Name}) -> {global, Name}.
+sendRequest(ServerRef, Request) ->
+  gen_server:send_request(toErl(ServerRef), Request).
 
-t({'Infinity'}) -> infinity;
-t({'Timeout', I}) -> I.
+waitResponse(RequestId, Timeout) ->
+  case gen_server:wait_response(RequestId, toErl(Timeout)) of
+    {reply, Reply} -> Reply;
+    timeout -> error(timeout);
+    {error, Reason} -> error(Reason)
+  end.
 
+%%---------------------------------------------------------------------------
+%% | Internal functions
+%%---------------------------------------------------------------------------
+
+-compile({inline, [toErl/1]}).
+toErl({'ServerPid', Pid}) -> Pid;
+toErl({'ServerRef', Name}) -> Name;
+toErl({'ServerRefAt', Name, Node}) -> {Name, Node};
+toErl({'ServerRefGlobal', Name}) -> {global, Name};
+
+toErl({'ExitReason', Reason}) -> Reason;
+toErl({'ExitNormal'}) -> normal;
+toErl({'ExitShutdown'}) -> shutdown;
+
+toErl({'Infinity'}) -> infinity;
+toErl({'Timeout', I}) -> I.
+
+startRet({ok, Pid}) -> {'StartOk', Pid};
+startRet(ignore) -> {'StartIgnore'};
+startRet({error, Reason}) -> {'StartError', Reason}.

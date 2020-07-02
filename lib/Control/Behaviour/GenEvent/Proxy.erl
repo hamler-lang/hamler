@@ -25,8 +25,14 @@
         ]).
 
 init([Class, Init, Args]) ->
-    io:format("~p~n", [Args]),
-    {ok, #{class => Class, st => Init(Args)}}.
+  case Init(Args) of
+    {'InitOk', State} ->
+      {ok, #{class => Class, state => State}};
+    {'InitHibernate', State} ->
+      {ok, #{class => Class, state => State}, hibernate};
+    {'InitError', Reason} ->
+      {error, Reason}
+  end.
 
 handle_call(Request, State) ->
     io:format("Call: ~p~n", [Request]),

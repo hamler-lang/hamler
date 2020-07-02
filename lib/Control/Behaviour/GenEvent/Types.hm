@@ -15,6 +15,7 @@
 module Control.Behaviour.GenEvent.Types where
 
 import Control.Process (Node)
+import Control.Process.Types (ExitReason)
 import Data.Pid (Pid)
 
 type Name = Atom
@@ -24,4 +25,9 @@ data EventMgrRef
   | EventMgrRef Name
   | EventMgrRefAt Name Node
   | EventMgrRefGlobal Name
+
+data InitResult st
+  = InitOk st
+  | InitHibernate st
+  | InitError ExitReason
 

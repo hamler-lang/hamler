@@ -31,12 +31,12 @@ init([Class, Init, Args]) ->
   case Init(Args) of
     {'InitOk', State} ->
       {ok, init_ok(Class, State)};
-    {'InitHibernate', State} ->
+    {'InitOkHibernate', State} ->
       {ok, init_ok(Class, State), hibernate};
-    {'InitStop', Reason} ->
-      {stop, Reason};
     {'InitIgnore'} ->
-      ignore
+      ignore;
+    {'InitStop', Reason} ->
+      {stop, Reason}
   end.
 
 %% init_ok(#{handleCall := HandleCall, handleCast := HandleCast}, State) ->
