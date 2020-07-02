@@ -16,15 +16,14 @@ module Control.Behaviour.GenServer
   ( class GenServer
   , handleCall
   , handleCast
-  , class LifeCircle
-  , terminate
-  , terminateDefault
     -- * start/stop server
-  , serverName
-  , startServer
+  , server
+  , start
+  , startWith
   , startLink
-  , startMonitor
-  , stopServer
+  , startLinkWith
+  , stop
+  , stopWith
     -- * client apis
   , abcast
   , abcastAt
@@ -35,28 +34,32 @@ module Control.Behaviour.GenServer
   , castTo
   , multiCall
   , multiCallAt
+  , sendRequest
     -- * helper funcs
   , replyTo
-  , reply, noReply
+  , reply
+  , noReply
     -- * types
   , HandleCall, HandleCast
   , module Control.Behaviour.GenServer.Types
   ) where
 
-import Control.Monad (return)
-import Control.Process (Node, Process)
 import Control.Behaviour.GenServer.Types
   ( Caller
+  , InitHandler
   , InitResult(..)
-  , NodeReply(..)
-  , ServerName
+  , MultiReply(..)
+  , RequestId
+  , ServerName(..)
   , ServerRef(..)
+  , StartRet(..)
   , ServerAction(..)
   )
+import Control.Monad (return)
+import Control.Process (Node, Process)
 import Control.Process.Types (ExitReason)
 import Data.Atom (atom)
 import Data.Pid (Pid)
-import Data.Ref (Ref)
 import Data.Timeout (Timeout)
 import Data.Unit (Unit)
 import Foreign (ffiIO2)
@@ -65,37 +68,39 @@ type HandleCall req rep st = req -> st -> Process (ServerAction rep st)
 
 type HandleCast req st = req -> st -> Process (ServerAction Unit st)
 
-class LifeCircle st where
-  terminate :: ExitReason -> st -> Process (ServerAction Unit st)
-
-terminateDefault :: forall st.ExitReason -> st -> Process (ServerAction Unit st)
-terminateDefault s st = noReply st
-
-class LifeCircle st => GenServer req rep st | req -> rep, rep -> st, st -> req where
-  -- req -> st -> Process (ServerAction rep st)
+class GenServer req rep st | req -> rep, rep -> st, st -> req where
   handleCall :: HandleCall req rep st
-  -- req -> st -> Process (ServerAction Unit st)
   handleCast :: HandleCast req st
 
 -- | String to server name.
-serverName :: String -> ServerName
-serverName = atom
+server :: String -> Atom
+server = atom
 
--- | Start the server process.
-foreign import startServer
+-- | Start a standalone server process.
+foreign import start
   :: forall a req rep st. GenServer req rep st
-  => (a -> Process (InitResult st)) -> a -> Process Pid
+  => (InitHandler a st) -> a -> Process StartRet
 
+-- | Start a standalone server process with registered name.
+foreign import startWith
+  :: forall a req rep st. GenServer req rep st
+  => ServerName -> (InitHandler a st) -> a -> Process StartRet
+
+-- | Start a standalone server process.
 foreign import startLink
   :: forall a req rep st. GenServer req rep st
-  => (a -> Process (InitResult st)) -> a -> Process Pid
+  => (InitHandler a st) -> a -> Process StartRet
 
-foreign import startMonitor
+foreign import startLinkWith
   :: forall a req rep st. GenServer req rep st
-  => (a -> Process (InitResult st)) -> a -> Process (Pid, Ref)
+  => ServerName -> (InitHandler a st) -> a -> Process StartRet
 
 -- | Stop the server process.
-foreign import stopServer :: ServerRef -> Process ()
+foreign import stop :: ServerRef -> Process ()
+
+-- | Stop the server process with exit reason.
+foreign import stopWith
+  :: ServerRef -> ExitReason -> Timeout -> Process ()
 
 -- | Sends an asynchronous request to the GenServer processes.
 foreign import abcast
@@ -126,13 +131,19 @@ foreign import castTo
   :: forall req. Pid -> req -> Process ()
 
 foreign import multiCall
-  :: forall req rep. ServerName -> req -> Process [NodeReply rep]
+  :: forall req rep. ServerName -> req -> Process [MultiReply rep]
 
 foreign import multiCallAt
-  :: forall req rep. [Node] -> ServerName -> req -> Process [NodeReply rep]
+  :: forall req rep. [Node] -> ServerName -> req -> Process [MultiReply rep]
 
 foreign import multiCallTimeoutAt
-  :: forall req rep. [Node] -> ServerName -> req -> Timeout -> Process [NodeReply rep]
+  :: forall req rep. [Node] -> ServerName -> req -> Timeout -> Process [MultiReply rep]
+
+foreign import sendRequest
+  :: forall req. ServerRef -> req -> Process RequestId
+
+foreign import waitResponse
+  :: forall rep. RequestId -> Timeout -> Process rep
 
 -- | Send a reply to the caller explicitly.
 replyTo :: forall rep. Caller -> rep -> Process ()

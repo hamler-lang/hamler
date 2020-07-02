@@ -13,45 +13,29 @@
 --
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenServer.Types
-  ( Caller
+  ( InitHandler
   , InitResult(..)
-  , NodeReply(..)
-  , ServerName
-  , ServerRef(..)
+  , MultiReply(..)
   , ServerAction(..)
+  , module Control.Behaviour.GenTypes
   ) where
 
-import Control.Process (Node, ExitReason)
-import Data.Pid (Pid)
+import Control.Behaviour.GenTypes
+import Control.Process (Node, Process, ExitReason)
+import Data.Maybe (Maybe)
 
-foreign import data Caller :: Type
+type InitHandler a st = a -> Process (InitResult st)
 
 -- | Init Result
 data InitResult st
   = InitOk st
     -- ^ {ok, State}
-  | InitHibernate st
+  | InitOkHibernate st
     -- ^ {ok, State, hibernate}
-  | InitStop Atom
-    -- ^ {stop, Reason}
   | InitIgnore
     -- ^ ignore
-  -- TODO: {ok,State,Timeout}
-  -- TODO: {ok,State,{continue,Continue}}
-
--- | Server name is an alias of Atom.
-type ServerName = Atom
-
--- | Server Ref
-data ServerRef
-  = ServerPid Pid
-    -- ^ The Pid of GenServer.
-  | ServerRef ServerName
-    -- ^ The GenServer is locally registered.
-  | ServerRefAt ServerName Node
-    -- ^ The GenServer is locally registered at another node.
-  | ServerRefGlobal ServerName
-    -- ^ The GenServer is globally registered in global.
+  | InitStop Atom
+    -- ^ {stop, Reason}
 
 -- | Server Action
 data ServerAction rep st
@@ -61,8 +45,6 @@ data ServerAction rep st
   | ServerStop ExitReason st
   | ServerStopReply ExitReason rep st
 
--- | NodeReply
-data NodeReply rep
-  = NodeReply Node rep
-  | BadNode Node
+-- | MultiReply
+data MultiReply rep = MultiReply Node (Maybe rep)
 
