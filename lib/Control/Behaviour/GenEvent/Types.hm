@@ -16,10 +16,10 @@ module Control.Behaviour.GenEvent.Types
   ( EMgrRef(..)
   , InitHandler
   , InitResult(..)
-  , module Control.Behaviour.Common.Types
-  ) where
+  , module Control.Behaviour.GenTypes
+  )  where
 
-import Control.Behaviour.Common.Types
+import Control.Behaviour.GenTypes
 import Control.Process (ExitReason, Node, Process)
 import Data.Pid (Pid)
 
@@ -36,3 +36,4 @@ data InitResult st
   = InitOk st
   | InitOkHib st
   | InitError ExitReason
+

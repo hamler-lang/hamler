@@ -34,6 +34,7 @@
         , multiCall/2
         , multiCallAt/3
         , multiCallTimeoutAt/4
+        , replyTo/2
         , sendRequest/2
         , waitResponse/2
         ]).
@@ -111,6 +112,9 @@ multiCallAt(Nodes, Name, Req) ->
 multiCallTimeoutAt(Nodes, Name, Timeout, Req) ->
   gen_server:multi_call(Nodes, Name, toErl(Timeout), Req).
 
+replyTo(From, Reply) ->
+  gen_statem:reply(From, Reply).
+
 sendRequest(ServerRef, Request) ->
   gen_server:send_request(toErl(ServerRef), Request).
 
@@ -125,6 +129,10 @@ waitResponse(RequestId, Timeout) ->
 %% | Internal functions
 %%---------------------------------------------------------------------------
 
+startRet({ok, Pid}) -> {'StartOk', Pid};
+startRet(ignore) -> {'StartIgnore'};
+startRet({error, Reason}) -> {'StartError', Reason}.
+
 -compile({inline, [toErl/1]}).
 toErl({'ServerPid', Pid}) -> Pid;
 toErl({'ServerRef', Name}) -> Name;
@@ -137,7 +145,3 @@ toErl({'ExitShutdown'}) -> shutdown;
 
 toErl({'Infinity'}) -> infinity;
 toErl({'Timeout', I}) -> I.
-
-startRet({ok, Pid}) -> {'StartOk', Pid};
-startRet(ignore) -> {'StartIgnore'};
-startRet({error, Reason}) -> {'StartError', Reason}.

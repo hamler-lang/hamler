@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.Behaviour.Common.Terminate
+-- Module      :  Control.Behaviour.Terminate
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -12,7 +12,7 @@
 -- The Terminate typeclass for behaviours.
 --
 -----------------------------------------------------------------------------
-module Control.Behaviour.Common.Terminate
+module Control.Behaviour.Terminate
   ( class Terminate
   , terminate
   , terminateOk

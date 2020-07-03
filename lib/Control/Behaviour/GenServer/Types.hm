@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- Datatypes for GenServer Behaviour.
+-- The GenServer Types.
 --
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenServer.Types
@@ -17,14 +17,17 @@ module Control.Behaviour.GenServer.Types
   , InitResult(..)
   , MultiReply(..)
   , ServerAction(..)
-  , module Control.Behaviour.Common.Types
+  , ServerRef(..)
+  , module Control.Behaviour.GenTypes
   ) where
 
-import Control.Behaviour.Common.Types
-import Control.Process (Node, Process, ExitReason)
+import Control.Behaviour.GenTypes
+import Control.Process (ExitReason, Node, Process)
 import Data.Maybe (Maybe)
+import Data.Pid (Pid)
 
-type InitHandler a st = a -> Process (InitResult st)
+type InitHandler a st
+  = a -> Process (InitResult st)
 
 -- | Init Result
 data InitResult st
@@ -37,6 +40,10 @@ data InitResult st
   | InitStop Atom
     -- ^ {stop, Reason}
 
+-- | MultiReply
+data MultiReply rep
+  = MultiReply Node (Maybe rep)
+
 -- | Server Action
 data ServerAction rep st
   = ServerIgnore st
@@ -45,6 +52,13 @@ data ServerAction rep st
   | ServerStop ExitReason st
   | ServerStopReply ExitReason rep st
 
--- | MultiReply
-data MultiReply rep = MultiReply Node (Maybe rep)
-
+-- | Server Ref.
+data ServerRef
+  = ServerPid Pid
+    -- ^ The Pid of GenServer.
+  | ServerRef Name
+    -- ^ The GenServer is locally registered.
+  | ServerRefAt Name Node
+    -- ^ The GenServer is locally registered at another node.
+  | ServerRefGlobal Name
+    -- ^ The GenServer is globally registered in global.
