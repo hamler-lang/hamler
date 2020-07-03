@@ -14,39 +14,86 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenEvent
   ( class GenEvent
+  , HandleEvent
   , handleEvent
-  , startEventMgr
-  , notify
-  , syncNotify
-  , shutdown
+    -- * start event mgr
+  , start
+  , startWith
+  , startWithGlobal
+  , startLink
+  , startLinkWith
+  , startLinkWithGlobal
   , stop
+  , stopWith
+    -- * api
+  , addHandler
+  , notify
+  , notifyTo
+  , syncNotify
+  , syncNotifyTo
   , module Control.Behaviour.GenEvent.Types
   ) where
 
 import Control.Behaviour.GenEvent.Types
-
-import Control.Process (Process)
+import Control.Process (ExitReason, Process)
 import Data.Pid (Pid)
+import Data.Timeout (Timeout)
 import Data.Unit (Unit)
 
-class GenEvent e s | e -> s, s -> e where
-  handleEvent :: e -> s -> Process s
+type HandleEvent e st = e -> st -> Process st
 
--- Start an EventMgr.
-foreign import startEventMgr
-  :: forall a e s. GenEvent e s => (a -> Process s) -> a -> Process Pid
+class GenEvent e st | e -> st, st -> e where
+  handleEvent :: e -> st -> Process st
 
-foreign import notify :: forall e. EventMgrRef -> e -> Process ()
+foreign import start
+  :: forall a e st. GenEvent e st
+  => (InitHandler a st) -> a -> Process StartRet
 
-foreign import syncNotify :: forall e. EventMgrRef -> e -> Process ()
+foreign import startWith
+  :: forall a e st. GenEvent e st
+  => Name -> (InitHandler a st) -> a -> Process StartRet
 
-foreign import shutdown :: forall r. EventMgrRef -> r -> Process ()
+foreign import startWithGlobal
+  :: forall a e st. GenEvent e st
+  => Name -> (InitHandler a st) -> a -> Process StartRet
 
-foreign import stop :: EventMgrRef -> Process ()
+foreign import startLink
+  :: forall a e st. GenEvent e st
+  => (InitHandler a st) -> a -> Process StartRet
+
+foreign import startLinkWith
+  :: forall a e st. GenEvent e st
+  => Name -> (InitHandler a st) -> a -> Process StartRet
+
+foreign import startLinkWithGlobal
+  :: forall a e st. GenEvent e st
+  => Name -> (InitHandler a st) -> a -> Process StartRet
+
+foreign import stop :: EMgrRef -> Process ()
+
+foreign import stopWith
+  :: EMgrRef -> ExitReason -> Timeout -> Process ()
+
+foreign import addHandler
+  :: forall a e st. GenEvent e st
+  => EMgrRef -> (InitHandler a st) -> a -> Process ()
+
+foreign import notify
+  :: forall e. EMgrRef -> e -> Process ()
+
+foreign import notifyTo
+  :: forall e. Pid -> e -> Process ()
+
+foreign import syncNotify
+  :: forall e. EMgrRef -> e -> Process ()
+
+foreign import syncNotifyTo
+  :: forall e. Pid -> e -> Process ()
 
 {- TODO
-start/0, start/1, start/2,
-start_link/0, start_link/1, start_link/2,
-add_handler/3, add_sup_handler/3, delete_handler/3, swap_handler/3,
-swap_sup_handler/3, which_handlers/1, call/3, call/4
+add_sup_handler/3,
+delete_handler/3,
+swap_handler/3,
+swap_sup_handler/3,
+which_handlers/1
 -}

@@ -24,32 +24,34 @@
         , code_change/3
         ]).
 
-init([Class, Init, Args]) ->
+-import('Curry', [uncurry/2]).
+
+-record(proxy, {handleEvent, state}).
+
+init([#{handleEvent := HandleEvent}, Init, Args]) ->
   case Init(Args) of
     {'InitOk', State} ->
-      {ok, #{class => Class, state => State}};
-    {'InitHibernate', State} ->
-      {ok, #{class => Class, state => State}, hibernate};
+      {ok, #proxy{handleEvent = HandleEvent, state = State}};
+    {'InitOkHib', State} ->
+      {ok, #proxy{handleEvent = HandleEvent, state = State}, hibernate};
     {'InitError', Reason} ->
       {error, Reason}
   end.
 
-handle_call(Request, State) ->
-    io:format("Call: ~p~n", [Request]),
-    Reply = ok,
-    {ok, Reply, State}.
+handle_call(_Request, Proxy) ->
+  {ok, ignored, Proxy}.
 
-handle_event(Event, State) ->
-    io:format("Event: ~p~n", [Event]),
-    {ok, State}.
+handle_event(Event, Proxy = #proxy{handleEvent = HandleEvent, state = State}) ->
+  NState = uncurry(HandleEvent, [Event, State]),
+  {ok, Proxy#proxy{state = NState}}.
 
-handle_info(Info, State) ->
-    io:format("Info: ~p~n", [Info]),
-    {ok, State}.
+handle_info(Info, Proxy) ->
+  error_logger:error_msg("Unexpected Info: ~p", [Info]),
+  {ok, Proxy}.
 
-terminate(_Arg, _State) ->
-    ok.
+terminate(_Arg, _Proxy) ->
+  ok.
 
-code_change(_OldVsn, State, _Extra) ->
-    {ok, State}.
+code_change(_OldVsn, Proxy, _Extra) ->
+  {ok, Proxy}.
 
