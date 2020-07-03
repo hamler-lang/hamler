@@ -9,10 +9,13 @@ else
 export HAMLER_HOME ?= /usr/lib/hamler
 endif
 
-all: build
+all: build foreign
 
 build:
 	$(stack) run build -- -l
+
+foreign:
+	@erlc -o ebin lib/Foreign/*.erl
 
 clean:
 	$(stack) clean
