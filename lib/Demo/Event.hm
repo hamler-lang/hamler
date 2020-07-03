@@ -1,0 +1,53 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Demo.Event
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The GenEvent Demo.
+--
+-----------------------------------------------------------------------------
+module Demo.Event where
+
+import Prelude
+import Control.Behaviour.GenEvent
+  ( class GenEvent
+  , InitResult(..)
+  , HandleEvent
+  , StartRet(..)
+  , notifyTo
+  , start
+  )
+import Kernel.Application (ensureStarted)
+
+data Event = EventA | EventB
+data State = State [Event]
+
+instance GenEvent Event State where
+  handleEvent = handleEvent
+
+init :: Integer -> Process (InitResult State)
+init _ = return $ InitOk (State [])
+
+handleEvent :: HandleEvent Event State
+handleEvent e (State events) = do
+  println "Event"
+  return $ State [e|events]
+
+main :: IO ()
+main = do
+  ensureStarted :sasl
+  ret <- start init 10
+  case ret of
+    StartOk pid -> do
+      notifyTo pid EventA
+      notifyTo pid EventB
+      notifyTo pid EventA
+      notifyTo pid EventB
+    _ -> error "Failed to start GenEvent"
+
