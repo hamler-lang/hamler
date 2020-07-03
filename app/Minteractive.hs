@@ -1,6 +1,7 @@
 {-# LANGUAGE DoAndIfThenElse #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module Minteractive
   ( handleCommand,
@@ -45,6 +46,11 @@ import Prelude ()
 import qualified Shelly as SS
 import System.IO (BufferMode (..), Handle, hFlush, hClose, hGetChar, hGetLine, hPutStrLn,hPutStr, hSetBuffering)
 import Control.Concurrent
+import Version (hamlerEnv)
+
+
+hamlerFile :: FilePath
+hamlerFile = $hamlerEnv
 
 -- | Pretty-print errors
 printErrors :: MonadIO m => P.MultipleErrors -> m ()
@@ -58,17 +64,19 @@ runMake :: P.Make a -> IO (Either P.MultipleErrors a)
 runMake mk = fst <$> P.runMake P.defaultOptions mk
 
 -- | Rebuild a module, using the cached externs data for dependencies.
-rebuild :: FilePath ->
+rebuild :: [(P.ModuleName, (FilePath, Bool))] -> 
+  FilePath ->
   [P.ExternsFile] ->
   P.Module ->
   P.Make (P.ExternsFile, P.Environment)
-rebuild fp loadedExterns m = do
+rebuild conf fp loadedExterns m = do
   externs <- P.rebuildModule buildActions loadedExterns m
   return (externs, foldl' (flip P.applyExternsFileToEnvironment) P.initEnvironment (loadedExterns ++ [externs]))
   where
     buildActions :: P.MakeActions P.Make
     buildActions =
       ( H.buildMakeActions
+          hamlerFile
           False
           fp
           filePathMap
@@ -77,28 +85,36 @@ rebuild fp loadedExterns m = do
       )
         { P.progress = const (return ())
         }
+    decPolic x mfp = case x of 
+                    True -> Left P.RebuildNever
+                    False -> Right mfp
+    fls = fmap (\(a,(b,c)) -> (a, decPolic c b) ) conf
     filePathMap :: M.Map P.ModuleName (Either P.RebuildPolicy FilePath)
-    filePathMap = M.singleton (P.getModuleName m) (Left P.RebuildAlways)
+    filePathMap = M.fromList $ ((P.getModuleName m),(Left P.RebuildAlways)) :fls
 
 -- | Build the collection of modules from scratch. This is usually done on startup.
 make :: FilePath ->
-  [(FilePath, CST.PartialResult P.Module)] ->
+  [(FilePath, CST.PartialResult P.Module,Bool)] ->
   P.Make ([P.ExternsFile], P.Environment)
 make fp1 ms = do
   foreignFiles <- inferForeignModules filePathMap
-  externs <- P.make (buildActions foreignFiles) (map snd ms)
+  externs <- P.make (buildActions foreignFiles) (map (\(_,b,_) -> b) ms)
   return (externs, foldl' (flip P.applyExternsFileToEnvironment) P.initEnvironment externs)
   where
     buildActions :: M.Map P.ModuleName FilePath -> P.MakeActions P.Make
     buildActions foreignFiles =
       H.buildMakeActions
+        hamlerFile 
         False
         fp1
         filePathMap
         foreignFiles
         False
     filePathMap :: M.Map P.ModuleName (Either P.RebuildPolicy FilePath)
-    filePathMap = M.fromList $ map (\(fp, m) -> (P.getModuleName $ CST.resPartial m, Right fp)) ms
+    filePathMap = M.fromList $ map (\(fp, m,c) -> case c of 
+                                                    False -> (P.getModuleName $ CST.resPartial m, Right fp)
+                                                    True -> (P.getModuleName $ CST.resPartial m, Left H.RebuildNever)
+                                   ) ms
 
 -- | Performs a PSCi command
 handleCommand ::
@@ -137,11 +153,11 @@ handleReloadState reload = do
   modify $ updateLets (const [])
   globs <- asks psciFileGlobs
   dirs <- asks moduleDirs
-  files <- liftIO $ concat <$> traverse glob globs
+  files <- liftIO $ concat <$> traverse (\(f,b) -> (fmap (\x -> (x,b) )) <$> glob f ) (fmap snd globs)
   e <- runExceptT $ do
-    modules <- ExceptT . liftIO $ loadAllModules files
-    (externs, _) <- ExceptT . liftIO . runMake . make dirs $ fmap CST.pureResult <$> modules
-    return (map snd modules, externs)
+    modules <- ExceptT . liftIO $ loadAllModules' files
+    (externs, _) <- ExceptT . liftIO . runMake . make dirs $ fmap (\(a,b,c) -> (a, CST.pureResult b, c)) modules
+    return (map (\(_, b, _) -> b) modules, externs)
   case e of
     Left errs -> printErrors errs
     Right (modules, externs) -> do
@@ -167,7 +183,8 @@ handleExpression (hin,hout) val = do
   st <- get
   let m = createTemporaryModule True st val
   dirs <- asks moduleDirs
-  e <- liftIO . runMake $ rebuild dirs (map snd (psciLoadedExterns st)) m
+  conf <- asks psciFileGlobs
+  e <- liftIO . runMake $ rebuild conf dirs (map snd (psciLoadedExterns st)) m
   case e of
     Left errs -> printErrors errs
     Right _ -> do
@@ -188,7 +205,8 @@ handleDecls ds = do
   st <- gets (updateLets (++ ds))
   let m = createTemporaryModule False st (P.Literal P.nullSourceSpan (P.ObjectLiteral []))
   dirs <- asks moduleDirs
-  e <- liftIO . runMake $ rebuild dirs (map snd (psciLoadedExterns st)) m
+  conf <- asks psciFileGlobs
+  e <- liftIO . runMake $ rebuild conf dirs (map snd (psciLoadedExterns st)) m
   case e of
     Left err -> printErrors err
     Right _ -> put st
@@ -272,7 +290,8 @@ handleImport im = do
   st <- gets (updateImportedModules (im :))
   let m = createTemporaryModuleForImports st
   dirs <- asks moduleDirs
-  e <- liftIO . runMake $ rebuild dirs (map snd (psciLoadedExterns st)) m
+  conf <- asks psciFileGlobs
+  e <- liftIO . runMake $ rebuild conf dirs (map snd (psciLoadedExterns st)) m
   case e of
     Left errs -> printErrors errs
     Right _ -> put st
@@ -287,7 +306,8 @@ handleTypeOf print' val = do
   st <- get
   let m = createTemporaryModule False st val
   dirs <- asks moduleDirs
-  e <- liftIO . runMake $ rebuild dirs (map snd (psciLoadedExterns st)) m
+  conf <- asks psciFileGlobs
+  e <- liftIO . runMake $ rebuild conf dirs (map snd (psciLoadedExterns st)) m
   case e of
     Left errs -> printErrors errs
     Right (_, env') ->
@@ -306,7 +326,8 @@ handleKindOf print' typ = do
   let m = createTemporaryModuleForKind st typ
       mName = P.ModuleName [P.ProperName "$PSCI"]
   dirs <- asks moduleDirs
-  e <- liftIO . runMake $ rebuild dirs (map snd (psciLoadedExterns st)) m
+  conf <- asks psciFileGlobs
+  e <- liftIO . runMake $ rebuild conf dirs (map snd (psciLoadedExterns st)) m
   case e of
     Left errs -> printErrors errs
     Right (_, env') ->
@@ -371,7 +392,8 @@ handleSetInteractivePrint print' new = do
   let expr = P.Literal internalSpan (P.NumericLiteral (Left 0))
   let m = createTemporaryModule True st expr
   dirs <- asks moduleDirs
-  e <- liftIO . runMake $ rebuild dirs (map snd (psciLoadedExterns st)) m
+  conf <- asks psciFileGlobs
+  e <- liftIO . runMake $ rebuild conf dirs (map snd (psciLoadedExterns st)) m
   case e of
     Left errs -> do
       modify (setInteractivePrint current)

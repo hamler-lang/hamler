@@ -29,7 +29,7 @@ import Prelude
 import Version (hamlerEnv)
 
 data PSCMakeOptions = PSCMakeOptions
-  { pscmInput        :: [FilePath]
+  { pscmInput        :: [(FilePath, Bool)]
   , pscmOutputDir    :: FilePath
   , pscmOpts         :: P.Options
   , pscmUsePrefix    :: Bool
@@ -67,26 +67,32 @@ compile PSCMakeOptions{..} = do
   moduleFiles <- readUTF8FilesT input
   (makeErrors, makeWarnings) <- runMake pscmOpts $ do
     ms <- CST.parseModulesFromFiles id moduleFiles
-    let filePathMap = M.fromList $ map (\(fp, pm) -> (P.getModuleName $ CST.resPartial pm, Right fp)) ms
+    let filePathMap = M.fromList $ map (\(fp, pm) -> (P.getModuleName $ CST.resPartial pm, inpRebPol fp pscmInput) ) ms
     foreigns <- inferForeignModules filePathMap
-    let makeActions = buildMakeActions isInline pscmOutputDir filePathMap foreigns pscmUsePrefix
+    let makeActions = buildMakeActions hamlerFile isInline pscmOutputDir filePathMap foreigns pscmUsePrefix
     -- P.make makeActions (map snd ms)
     make makeActions (map snd ms)
   printWarningsAndErrors (P.optionsVerboseErrors pscmOpts) pscmJSONErrors makeWarnings makeErrors
   -- exitSuccess
 
+inpRebPol :: FilePath -> [(FilePath, Bool)] -> Either RebuildPolicy FilePath
+inpRebPol fp xs = case LL.lookup fp xs of 
+                    Nothing -> error "strange error"
+                    Just b -> if b
+                              then Left RebuildNever 
+                              else Right fp
+
 warnFileTypeNotFound :: String -> IO ()
 warnFileTypeNotFound = hPutStrLn stderr . ("hamler compile: No files found using pattern: " ++)
 
-globWarningOnMisses :: (String -> IO ()) -> [FilePath] -> IO [FilePath]
+globWarningOnMisses :: (String -> IO ()) -> [(FilePath, Bool)] -> IO [FilePath]
 globWarningOnMisses warn = concatMapM globWithWarning
   where
-  globWithWarning pattern' = do
+  globWithWarning (pattern', _) = do
     paths <- glob pattern'
     when (null paths) $ warn pattern'
     return paths
   concatMapM f = fmap concat . mapM f
-
 
 howBuild :: Opts.Parser Bool
 howBuild= Opts.switch $
@@ -127,17 +133,11 @@ buildSrc bl fpath = do
           then gethmFiles hamlerlib
           else gethmFiles (dir <> "/.deps/hamler/lib")
   fps2 <- gethmFiles (dir <> "/src")
-  let fps = fps1 <> fps2
+  let fps = fmap (\v -> (v, True)) fps1 <> fmap (\v -> (v, False)) fps2
       fps2' = fmap hmToCore fps2
   let tpath = if fpath == "/ebin"  
               then dir <> "/ebin"
               else fpath
-  isDirExis <- doesDirectoryExist tpath
-  case isDirExis of 
-    True -> do
-      removeDirectoryRecursive tpath
-      createDirectory tpath
-    False -> return ()
   compile (PSCMakeOptions { pscmInput      = fps
                           , pscmOutputDir  = tpath
                           , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
@@ -150,18 +150,6 @@ buildSrc bl fpath = do
   forM_ (filter (`elem` fps2') cfs) $ \fp -> do
     SS.shelly $ SS.command_ "erlc" ["-o" ,T.pack tpath] [T.pack $ tpath <> "/" <> fp]
     SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
-
-  ifs <- findFile1 ".info" tpath
-  forM_ ifs $ \fp -> do
-    SS.shelly $ SS.run_ "rm" [T.pack $ tpath <> "/" <> fp]
-
-  ifs1 <- findFile1 ".core" tpath
-  forM_ ifs1 $ \fp -> do
-    SS.shelly $ SS.run_ "rm" [T.pack $ tpath <> "/" <> fp]
-
-  jfs <- findFile1 ".json" tpath
-  forM_ jfs $ \fp -> do
-    SS.shelly $ SS.run_ "rm" [T.pack $ tpath <> "/" <> fp]
 
   exitSuccess
 
@@ -178,7 +166,7 @@ buildlib :: Bool -> IO ()
 buildlib bl = do
   dir <- getCurrentDirectory
   fps1 <- gethmFiles (dir <> "/lib")
-  let fps = fps1
+  let fps = fmap (\v -> (v, False)) fps1
       tpath = dir <> "/ebin"
   r <- doesDirectoryExist tpath
   if r
@@ -186,10 +174,6 @@ buildlib bl = do
     else createDirectory tpath
 
   recErlc (dir <> "/lib")
-
-  list <- findFile1 ".beam" tpath
-  forM_ list $ \fp -> do
-    SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
 
   compile (PSCMakeOptions { pscmInput      = fps
                           , pscmOutputDir  = dir <>  "/ebin"
@@ -204,14 +188,6 @@ buildlib bl = do
   SS.shelly $ SS.command_ "erlc" ["-o" ,T.pack tpath] (fmap (\fp -> T.pack $ tpath <> "/" <> fp) cfs)
 
   forM_ cfs $ \fp -> do
-    SS.shelly $ SS.run_ "rm" [T.pack $ tpath <> "/" <> fp]
-
-  ifs <- findFile1 ".info" tpath
-  forM_ ifs $ \fp -> do
-    SS.shelly $ SS.run_ "rm" [T.pack $ tpath <> "/" <> fp]
-
-  jfs <- findFile1 ".json" tpath
-  forM_ jfs $ \fp -> do
     SS.shelly $ SS.run_ "rm" [T.pack $ tpath <> "/" <> fp]
 
   exitSuccess
@@ -242,7 +218,7 @@ findFile1 base fp = do
 
 
 dictlist :: [FilePath]
-dictlist =["ebin","src","test",".deps",".tmp"]
+dictlist =["ebin","src","test",".deps"]
 
 helloHamler :: String
 helloHamler = concat [

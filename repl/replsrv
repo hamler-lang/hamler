@@ -12,9 +12,9 @@
 
 main([Pa, Pz, File]) ->
     Outdir = filename:dirname(File),
+    true = code:add_path(Outdir),
     true = code:add_path(Pa),
     [_ = code:add_path(P) || P <- string:tokens(Pz, ": ")],
-    true = code:add_path(Outdir),
     Opts = [from_core, {outdir, Outdir}],
     reploop(#{file => File, opts => Opts}).
 
