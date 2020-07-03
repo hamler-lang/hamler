@@ -9,41 +9,103 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The GenEvent FFI Module.
+%% The GenEvent FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('GenEvent').
 
--export([ startEventMgr/2
-        , notify/2
-        , syncNotify/2
-        , shutdown/3
+-export([ start/3
+        , startWith/4
+        , startWithGlobal/4
+        , startLink/3
+        , startLinkWith/4
+        , startLinkWithGlobal/4
         , stop/1
+        , stopWith/3
+        ]).
+
+-export([ addHandler/4
+        , notify/2
+        , notifyTo/2
+        , syncNotify/2
+        , syncNotifyTo/2
         ]).
 
 -define(MOD, 'Control.Behaviour.GenEvent.Proxy').
 
-startEventMgr(Class, Args) ->
-    {ok, Pid} = gen_server:start_link(?MOD, [Class, Args], []),
-    Pid.
+%%---------------------------------------------------------------------------
+%% | Start/Stop
+%%---------------------------------------------------------------------------
 
-notify(EventMgrRef, Event) ->
-    gen_event:notify(ref(EventMgrRef), Event).
+start(Class, Init, Args) ->
+  doStart(fun gen_event:start/0, Class, Init, Args).
 
-syncNotify(EventMgrRef, Event) ->
-    gen_event:sync_notify(ref(EventMgrRef), Event).
+startWith(Class, Name, Init, Args) ->
+  doStartWith(fun gen_event:start/1, {local, Name}, Class, Init, Args).
 
-shutdown(EventMgrRef, Reason, Timeout) ->
-    gen_event:stop(ref(EventMgrRef), Reason, timeout(Timeout)).
+startWithGlobal(Class, Name, Init, Args) ->
+  doStartWith(fun gen_event:start/1, {global, Name}, Class, Init, Args).
 
-stop(EventMgrRef) ->
-    gen_event:stop(ref(EventMgrRef)).
+startLink(Class, Init, Args) ->
+  doStart(fun gen_event:start_link/0, Class, Init, Args).
 
-ref({'EventMgrPid', Pid}) -> Pid;
-ref({'EventMgrRef', Name}) -> Name;
-ref({'EventMgrRefAt', Name, Node}) -> {Name, Node};
-ref({'EventMgrRefGlobal', Name}) -> {global, Name}.
+startLinkWith(Class, Name, Init, Args) ->
+  doStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init, Args).
 
-timeout({'Infinity'}) -> infinity;
-timeout({'Timeout', I}) -> I.
+startLinkWithGlobal(Class, Name, Init, Args) ->
+  doStartWith(fun gen_event:start_link/1, {global, Name}, Class, Init, Args).
+
+stop(EMgrRef) ->
+  gen_event:stop(toErl(EMgrRef)).
+
+stopWith(EMgrRef, Reason, Timeout) ->
+  apply(gen_event, stop, [toErl(A) || A <- [EMgrRef, Reason, Timeout]]).
+
+%%---------------------------------------------------------------------------
+%% | GenEvent APIs
+%%---------------------------------------------------------------------------
+
+addHandler(Class, EMgrRef, Init, Args) ->
+  case gen_event:add_handler(EMgrRef, {?MOD, Class}, [Class, Init, Args]) of
+    ok -> ok;
+    {'EXIT', Reason} -> error(Reason)
+  end.
+
+notify(EMgrRef, Event) ->
+  gen_event:notify(toErl(EMgrRef), Event).
+
+notifyTo(Pid, Event) ->
+  gen_event:notify(Pid, Event).
+
+syncNotify(EMgrRef, Event) ->
+  gen_event:sync_notify(toErl(EMgrRef), Event).
+
+syncNotifyTo(Pid, Event) ->
+  gen_event:sync_notify(Pid, Event).
+
+%%---------------------------------------------------------------------------
+%% | Internal functions
+%%---------------------------------------------------------------------------
+
+doStart(Start, Class, Init, Args) ->
+  {ok, Pid} = Start(),
+  ok = addHandler(Class, Pid, Init, Args),
+  {'StartOk', Pid}.
+
+doStartWith(Start, Name, Class, Init, Args) ->
+  case Start(Name) of
+    {ok, Pid} ->
+      ok = addHandler(Class, Pid, Init, Args),
+      {'StartOk', Pid};
+    {error, Reason} ->
+      {'StartError', Reason}
+  end.
+
+toErl({'EMgrPid', Pid}) -> Pid;
+toErl({'EMgrRef', Name}) -> Name;
+toErl({'EMgrRefAt', Name, Node}) -> {Name, Node};
+toErl({'EMgrRefGlobal', Name}) -> {global, Name};
+
+toErl({'Infinity'}) -> infinity;
+toErl({'Timeout', I}) -> I.
 

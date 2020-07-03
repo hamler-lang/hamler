@@ -58,5 +58,3 @@ ffiIO7(Mod, Fun, A, B, C, D, E, F, G) -> ffi7(Mod, Fun, A, B, C, D, E, F, G).
 ffiApply(Mod, Fun, Args) ->
     erlang:apply(Mod, Fun, Args).
 
-%% curry(M, F, A, 0) -> erlang:apply(M, F, lists:reverse(A));
-%% curry(M, F, A, N) -> fun(X) -> curry(M, F, [X|A], N-1) end.

@@ -12,22 +12,27 @@
 -- The GenEvent Types.
 --
 -----------------------------------------------------------------------------
-module Control.Behaviour.GenEvent.Types where
+module Control.Behaviour.GenEvent.Types
+  ( EMgrRef(..)
+  , InitHandler
+  , InitResult(..)
+  , module Control.Behaviour.Common.Types
+  ) where
 
-import Control.Process (Node)
-import Control.Process.Types (ExitReason)
+import Control.Behaviour.Common.Types
+import Control.Process (ExitReason, Node, Process)
 import Data.Pid (Pid)
 
-type Name = Atom
+data EMgrRef
+  = EMgrPid Pid
+  | EMgrRef Name
+  | EMgrRefAt Name Node
+  | EMgrRefGlobal Name
 
-data EventMgrRef
-  = EventMgrPid Pid
-  | EventMgrRef Name
-  | EventMgrRefAt Name Node
-  | EventMgrRefGlobal Name
+type InitHandler a st
+  = a -> Process (InitResult st)
 
 data InitResult st
   = InitOk st
-  | InitHibernate st
+  | InitOkHib st
   | InitError ExitReason
-

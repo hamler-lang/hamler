@@ -11,7 +11,7 @@
 %%
 %% The GenServer Proxy FFI module.
 %%
-%---------------------------------------------------------------------------
+%%---------------------------------------------------------------------------
 -module('Proxy').
 
 -behaviour(gen_server).
@@ -25,7 +25,9 @@
         , code_change/3
         ]).
 
--record(proxy, {terminate, handleCall, handleCast, state}).
+-import('Curry', [uncurry/2]).
+
+-record(proxy, {handleCall, handleCast, state}).
 
 init([Class, Init, Args]) ->
   case Init(Args) of
@@ -40,12 +42,10 @@ init([Class, Init, Args]) ->
   end.
 
 %% init_ok(#{handleCall := HandleCall, handleCast := HandleCast}, State) ->
-init_ok(#{'LifeCircle0' := LifeCircle, handleCall := HandleCall, handleCast := HandleCast}, State) ->
-  #{terminate := Terminate} = LifeCircle(any),
-    #proxy{terminate = Terminate, handleCall = HandleCall, handleCast = HandleCast, state = State}.
+init_ok(#{handleCall := HandleCall, handleCast := HandleCast}, State) ->
+  #proxy{handleCall = HandleCall, handleCast = HandleCast, state = State}.
 
 handle_call(Request, _From, Proxy = #proxy{handleCall = HandleCall, state = State}) ->
-  io:format("Call: ~p~n", [Request]),
   case uncurry(HandleCall, [Request, State]) of
     {'ServerIgnore', St} ->
       {reply, ignored, Proxy#proxy{state = St}};
@@ -60,25 +60,20 @@ handle_call(Request, _From, Proxy = #proxy{handleCall = HandleCall, state = Stat
   end.
 
 handle_cast(Msg, Proxy = #proxy{handleCast = HandleCast, state = State}) ->
-  io:format("Cast: ~p~n", [Msg]),
   case uncurry(HandleCast, [Msg, State]) of
     {'ServerIgnore', St} ->
       {noreply, Proxy#proxy{state = St}};
     {'ServerNoReply', St} ->
       {noreply, Proxy#proxy{state = St}};
     {'ServerStop', Reason, St} ->
-      {stop, Reason, Proxy#proxy{state = St}};
-    Result ->
-      io:format("Result: ~p~n", [Result]),
-      {noreply, Proxy}
+      {stop, Reason, Proxy#proxy{state = St}}
   end.
 
 handle_info(Info, Proxy) ->
   error_logger:error_msg("Unexpected Info: ~p", [Info]),
   {noreply, Proxy}.
 
-terminate(Reason, _Proxy = #proxy{terminate = Terminate, state = St}) ->
-  uncurry(Terminate, [Reason, St]).
+terminate(_Reason, _Proxy) -> ok.
 
 code_change(_OldVsn, Proxy, _Extra) ->
   {ok, Proxy}.
@@ -86,7 +81,4 @@ code_change(_OldVsn, Proxy, _Extra) ->
 %%---------------------------------------------------------------------------
 %% | Internal functions
 %%---------------------------------------------------------------------------
-
-uncurry(Fun, [H|T]) -> uncurry(Fun(H), T);
-uncurry(Ret, []) -> Ret.
 
