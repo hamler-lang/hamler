@@ -12,23 +12,47 @@
 -- The GenStatem Types.
 --
 -----------------------------------------------------------------------------
-module Control.Behaviour.GenStatem.Types where
+module Control.Behaviour.GenStatem.Types
+  ( InitHandler
+  , InitResult(..)
+  , StatemRef(..)
+  , StatemAction(..)
+  , module Control.Behaviour.GenTypes
+  ) where
 
-import Control.Process (Node)
+import Control.Behaviour.GenTypes
+import Control.Process (ExitReason, Node, Process)
 import Data.Pid (Pid)
 
-type LocalName  = Atom
+type InitHandler a st
+  = a -> Process (InitResult st)
 
-type GlobalName = Atom
+-- | Init Result
+data InitResult st
+  = InitOk st
+    -- ^ {ok, State}
+  | InitOkHib st
+    -- ^ {ok, State, hibernate}
+  | InitIgnore
+    -- ^ ignore
+  | InitStop Atom
+    -- ^ {stop, Reason}
+
+-- | StateM Action
+data StatemAction st
+  = StatemIgnore st
+  | StatemReply st
+  | StatemNoReply st
+  | StatemStop ExitReason st
+  | StatemStopReply ExitReason st
 
 data StatemRef
   = StatemPid Pid
     -- ^ The Pid of GenStatem.
-  | StatemRef LocalName
+  | StatemRef Name
     -- ^ The GenStatem is locally registered.
-  | StatemRefAt LocalName Node
+  | StatemRefAt Name Node
     -- ^ The GenStatem is locally registered on another node.
-  | StatemRefGlobal GlobalName
+  | StatemRefGlobal Name
     -- ^ The GenStatem is globally registered in global.
 
-data CallbackMode = HandleEventFunction | StateFunctions

@@ -14,56 +14,96 @@
 %%---------------------------------------------------------------------------
 -module('GenStatem').
 
--export([ startFSM/3
+-export([ start/3
+        , startWith/4
+        , startWithGlobal/4
         , startLink/3
-        , startMonitor/3
-        , shutdownFSM/3
-        , stopFSM/1
-        , replyTo/2
+        , startLinkWith/4
+        , startLinkWithGlobal/4
+        , stop/1
+        , stopWith/3
         ]).
 
 -export([ call/2
+        , callTo/2
         , callTimeout/3
         , cast/2
+        , castTo/2
+        , replyTo/2
         ]).
 
 -define(MOD, 'Control.Behaviour.GenStatem.Proxy').
 
-startFSM(Class, Init, Args) ->
-  {ok, Pid} = gen_statem:start(?MOD, [Class, Init, Args], []),
-  Pid.
+%%---------------------------------------------------------------------------
+%% | Start/stop statem
+%%---------------------------------------------------------------------------
+
+start(Class, Init, Args) ->
+  startRet(gen_statem:start(?MOD, [Class, Init, Args], [])).
+
+startWith(Name, Class, Init, Args) ->
+  startRet(gen_statem:start({local, Name}, ?MOD, [Class, Init, Args], [])).
+
+startWithGlobal(Name, Class, Init, Args) ->
+  startRet(gen_statem:start({global, Name}, ?MOD, [Class, Init, Args], [])).
 
 startLink(Class, Init, Args) ->
-  {ok, Pid} = gen_statem:start_link(?MOD, [Class, Init, Args], []),
-  Pid.
+  startRet(gen_statem:start_link(?MOD, [Class, Init, Args], [])).
 
-startMonitor(Class, Init, Args) ->
-  {ok, {Pid, Mon}} = gen_statem:start_monitor(?MOD, [Class, Init, Args], []),
-  {Pid, Mon}.
+startLinkWith(Class, Name, Init, Args) ->
+  startRet(gen_statem:start_link({local, Name}, ?MOD, [Class, Init, Args], [])).
 
-shutdownFSM(StatemRef, Reason, Timeout) ->
-  gen_statem:stop(ref(StatemRef), Reason, timeout(Timeout)).
+startLinkWithGlobal(Class, Name, Init, Args) ->
+  startRet(gen_statem:start_link({global, Name}, ?MOD, [Class, Init, Args], [])).
 
-stopFSM(StatemRef) ->
-  gen_statem:stop(ref(StatemRef)).
+stop(ServerRef) ->
+  gen_statem:stop(toErl(ServerRef)).
+
+stopWith(ServerRef, ExitReason, Timeout) ->
+  gen_statem:stop(toErl(ServerRef), toErl(ExitReason), toErl(Timeout)).
+
+%%---------------------------------------------------------------------------
+%% | Statem APIs
+%%---------------------------------------------------------------------------
 
 call(StatemRef, Req) ->
-  gen_statem:call(ref(StatemRef), Req).
+  gen_statem:call(toErl(StatemRef), Req).
+
+%% callTo :: Pid -> req -> Process rep
+callTo(Pid, Req) ->
+  gen_statem:call(Pid, Req).
 
 callTimeout(StatemRef, Req, Timeout) ->
-  gen_statem:call(ref(StatemRef), Req, timeout(Timeout)).
+  gen_statem:call(toErl(StatemRef), Req, toErl(Timeout)).
 
 cast(StatemRef, Msg) ->
-  gen_statem:cast(ref(StatemRef), Msg).
+  gen_statem:cast(toErl(StatemRef), Msg).
+
+%% castTo :: Pid -> req -> Process ()
+castTo(Pid, Req) ->
+  gen_statem:cast(Pid, Req).
 
 replyTo(From, Reply) ->
   gen_statem:reply(From, Reply).
 
-ref({'ServerPid', Pid}) -> Pid;
-ref({'StatemRef', LocalName}) -> LocalName;
-ref({'StatemRefAt', LocalName, Node}) -> {LocalName, Node};
-ref({'StatemRefGlobal', GlobalName}) -> {global, GlobalName}.
+%%---------------------------------------------------------------------------
+%% | Internal functions
+%%---------------------------------------------------------------------------
 
-timeout({'Infinity'}) -> infinity;
-timeout({'Timeout', I}) -> I.
+startRet({ok, Pid}) -> {'StartOk', Pid};
+startRet(ignore) -> {'StartIgnore'};
+startRet({error, Reason}) -> {'StartError', Reason}.
+
+-compile({inline, [toErl/1]}).
+toErl({'StatemPid', Pid}) -> Pid;
+toErl({'StatemRef', Name}) -> Name;
+toErl({'StatemRefAt', Name, Node}) -> {Name, Node};
+toErl({'StatemRefGlobal', Name}) -> {global, Name};
+
+toErl({'ExitReason', Reason}) -> Reason;
+toErl({'ExitNormal'}) -> normal;
+toErl({'ExitShutdown'}) -> shutdown;
+
+toErl({'Infinity'}) -> infinity;
+toErl({'Timeout', I}) -> I.
 

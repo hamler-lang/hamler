@@ -28,10 +28,9 @@ module Control.Behaviour.Supervisor
   , terminateChildBy
   , whichChildren
     -- * types
-  , module Control.Behaviour.Common.Types
+  , module Control.Behaviour.Supervisor.Types
   ) where
 
-import Control.Behaviour.Common.Types (Name, StartRet)
 import Control.Behaviour.Supervisor.Types
 import Control.Process (Process)
 import Data.Pid (Pid)

@@ -12,51 +12,30 @@
 -- The Supervisor types.
 --
 -----------------------------------------------------------------------------
-module Control.Behaviour.Supervisor.Types where
+module Control.Behaviour.Supervisor.Types
+  ( ChildId
+  , ChildPid
+  , ChildType
+  , ChildRestart
+  , ChildShutdown
+  , ChildSpec
+  , Child
+  , ChildCounts
+  , ChildError
+  , ChildSpecError
+  , InitHandler
+  , InitResult
+  , Intensity
+  , RestartStrategy
+  , SupFlags
+  , SupRef
+  , module Control.Behaviour.GenTypes
+  ) where
 
-import Control.Behaviour.Common.Types
+import Control.Behaviour.GenTypes
 import Control.Process (Module, Node, Process)
 import Data.Pid (Pid)
 import Data.Unit (Unit)
-
--- Supervisor ref.
-data SupRef
-  = SupName Name
-    -- ^ The supervisor is locally registered.
-  | SupNameAt Name Node
-    -- ^ The supervisor is locally registered at another node.
-  | SupGlobal Name
-    -- ^ The supervisor is globally registered.
-  | SupPid Pid
-    -- ^ The supervisor pid.
-
-type InitHandler a
-  = a -> Process (InitResult (SupFlags, [ChildSpec]))
-
--- | Init Result
-data InitResult st
-  = InitOk st
-    -- ^ {ok, State}
-  | InitIgnore
-    -- ^ ignore
-
-type Intensity = Integer
-
-data RestartStrategy
-  = OneForAll
-  -- ^ Restart all child processes if one terminated.
-  | OneForOne
-  -- ^ Restart only the child processs terminated.
-  | RestForOne
-  -- ^ TODO: comment...
-  | SimpleOneForOne
-  -- ^ TODO: comment...
-
-type SupFlags =
-  { strategy  :: RestartStrategy
-  , intensity :: Intensity
-  , period    :: Integer
-  }
 
 -- Child Id
 type ChildId = String
@@ -123,3 +102,41 @@ data ChildSpecError
   | ChildSpecMissingStart
   | ChildSpecError
 
+type InitHandler a
+  = a -> Process (InitResult (SupFlags, [ChildSpec]))
+
+-- | Init Result
+data InitResult st
+  = InitOk st
+    -- ^ {ok, State}
+  | InitIgnore
+    -- ^ ignore
+
+type Intensity = Integer
+
+data RestartStrategy
+  = OneForAll
+  -- ^ Restart all child processes if one terminated.
+  | OneForOne
+  -- ^ Restart only the child processs terminated.
+  | RestForOne
+  -- ^ TODO: comment...
+  | SimpleOneForOne
+  -- ^ TODO: comment...
+
+type SupFlags =
+  { strategy  :: RestartStrategy
+  , intensity :: Intensity
+  , period    :: Integer
+  }
+
+-- Supervisor ref.
+data SupRef
+  = SupName Name
+    -- ^ The supervisor is locally registered.
+  | SupNameAt Name Node
+    -- ^ The supervisor is locally registered at another node.
+  | SupGlobal Name
+    -- ^ The supervisor is globally registered.
+  | SupPid Pid
+    -- ^ The supervisor pid.
