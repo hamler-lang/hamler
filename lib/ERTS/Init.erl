@@ -14,24 +14,34 @@
 %%---------------------------------------------------------------------------
 -module('Init').
 
--export([ getArgument/1
-        , getArguments/0
+-export([ getArguments/0
+        , getArgument/1
         , getStatus/0
+        , restartWith/1
         ]).
 
-getArgument(Flag) ->
-    case catch init:get_argument(list_to_existing_atom(Flag)) of
-        {ok, Arg} -> {'Just', Arg};
-        error -> {'Nothing'};
-        {'EXIT', _} -> {'Nothing'}
-    end.
-
 getArguments() ->
-    [{atom_to_list(Flag), Values} || {Flag, Values} <- init:get_arguments()].
+  [{Flag, Values} || {Flag, Values} <- init:get_arguments()].
+
+getArgument(Flag) ->
+  case catch init:get_argument(list_to_existing_atom(Flag)) of
+    {ok, Arg} -> {'Just', Arg};
+    error -> {'Nothing'};
+    {'EXIT', _} -> {'Nothing'}
+  end.
 
 getStatus() ->
     {InternalStatus, ProvidedStatus} = init:get_status(),
     {constr(InternalStatus), atom_to_list(ProvidedStatus)}.
+
+%%---------------------------------------------------------------------------
+%% Internal functions
+%%---------------------------------------------------------------------------
+
+restartWith({'Embedded'}) ->
+  init:restart([{mode, embedded}]);
+restartWith({'Interactive'}) ->
+  init:restart([{mode, interactive}]).
 
 constr(starting) -> {'Starting'};
 constr(started)  -> {'Started'};
