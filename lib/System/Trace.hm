@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Data.Port
+-- Module      :  System.Trace
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,11 +9,10 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Erlang Port Module
+-- The System Trace module.
 --
 -----------------------------------------------------------------------------
-module Data.Port where
+module System.Trace where
 
--- | Erlang Port
-foreign import data Port :: Type
+-- erlang:trace(PidPortSpec, How, FlagList) -> integer()
 

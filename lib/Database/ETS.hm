@@ -14,8 +14,8 @@
 -----------------------------------------------------------------------------
 module Database.ETS where
 
+import Control.Distributed.Node (Node)
 import Control.Monad (IO)
-import Control.Process (Node)
 import Data.Pid (Pid)
 import Data.Maybe (Maybe)
 import Data.Ref (Reference)

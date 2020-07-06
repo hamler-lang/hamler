@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  VM
+%% Module      :  Port
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,19 +9,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Erlang VM FFI module.
+%% The Port FFI module.
 %%
 %%---------------------------------------------------------------------------
--module('VM').
-
--compile(no_auto_import).
-
--export([ memory/0
-        , otpRelease/0
-        ]).
-
-memory() -> maps:from_list(erlang:memory()).
-
--spec(otpRelease() -> string()).
-otpRelease() -> erlang:system_info(otp_release).
-
+-module('Port').

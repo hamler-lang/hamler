@@ -22,7 +22,8 @@ module Control.Behaviour.GenServer.Types
   ) where
 
 import Control.Behaviour.GenTypes
-import Control.Process (ExitReason, Node, Process)
+import Control.Distributed.Node (Node)
+import Control.Process (Process, ExitReason)
 import Data.Maybe (Maybe)
 import Data.Pid (Pid)
 

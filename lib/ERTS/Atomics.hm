@@ -40,7 +40,7 @@ put :: forall a. AtomicsRef -> Integer -> a -> IO ()
 put = ffiIO3 :atomics :put
 
 -- | Read atomic value.
-get :: forall a.  AtomicsRef -> Integer -> IO a
+get :: forall a. AtomicsRef -> Integer -> IO a
 get = ffiIO2 :atomics :get
 
 -- | Add Incr to atomic.

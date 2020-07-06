@@ -27,6 +27,8 @@ instance Show Error where
 
 foreign import showErrorImpl :: Error -> String
 
+-- erlang:raise(Class, Reason, Stacktrace) -> no_return()
+
 throw :: forall a. String -> IO a
 throw s = throwException (s)
 
@@ -44,4 +46,9 @@ foreign import name :: Error -> String
 foreign import throwException :: forall a. String -> IO a
 
 foreign import catchException :: forall a. (Error -> IO a) -> IO a -> IO a
+
+{-
+throw(Any) -> no_return()
+
+-}
 

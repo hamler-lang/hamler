@@ -1,0 +1,105 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Control.Process.Infos
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Process Infos module.
+--
+-----------------------------------------------------------------------------
+module Control.Process.Infos where
+
+-- TODO:
+foreign import data ProcessInfo :: Type
+
+-- process_info(Pid) -> Info
+-- process_info(Pid, Item) -> InfoTuple | [] | undefined
+-- process_info(Pid, ItemList) -> InfoTupleList | [] | undefined
+
+{-
+Info = [InfoTuple] | undefined
+InfoTuple = process_info_result_item()
+process_info_result_item() =
+    {backtrace, Bin :: binary()} |
+    {binary,
+     BinInfo ::
+         [{integer() >= 0,
+           integer() >= 0,
+           integer() >= 0}]} |
+    {catchlevel, CatchLevel :: integer() >= 0} |
+    {current_function,
+     {Module :: module(), Function :: atom(), Arity :: arity()} |
+     undefined} |
+    {current_location,
+     {Module :: module(),
+      Function :: atom(),
+      Arity :: arity(),
+      Location ::
+          [{file, Filename :: string()} |
+           {line, Line :: integer() >= 1}]}} |
+    {current_stacktrace, Stack :: [stack_item()]} |
+    {dictionary, Dictionary :: [{Key :: term(), Value :: term()}]} |
+    {error_handler, Module :: module()} |
+    {garbage_collection, GCInfo :: [{atom(), integer() >= 0}]} |
+    {garbage_collection_info,
+     GCInfo :: [{atom(), integer() >= 0}]} |
+    {group_leader, GroupLeader :: pid()} |
+    {heap_size, Size :: integer() >= 0} |
+    {initial_call, mfa()} |
+    {links, PidsAndPorts :: [pid() | port()]} |
+    {last_calls, false | (Calls :: [mfa()])} |
+    {memory, Size :: integer() >= 0} |
+    {message_queue_len, MessageQueueLen :: integer() >= 0} |
+    {messages, MessageQueue :: [term()]} |
+    {min_heap_size, MinHeapSize :: integer() >= 0} |
+    {min_bin_vheap_size, MinBinVHeapSize :: integer() >= 0} |
+    {max_heap_size, MaxHeapSize :: max_heap_size()} |
+    {monitored_by,
+     MonitoredBy :: [pid() | port() | nif_resource()]} |
+    {monitors,
+     Monitors ::
+         [{process | port,
+           Pid ::
+               pid() |
+               port() |
+               {RegName :: atom(), Node :: node()}}]} |
+    {message_queue_data, MQD :: message_queue_data()} |
+    {priority, Level :: priority_level()} |
+    {reductions, Number :: integer() >= 0} |
+    {registered_name, [] | (Atom :: atom())} |
+    {sequential_trace_token,
+     [] | (SequentialTraceToken :: term())} |
+    {stack_size, Size :: integer() >= 0} |
+    {status,
+     Status ::
+         exiting | garbage_collecting | waiting | running |
+         runnable | suspended} |
+    {suspending,
+     SuspendeeList ::
+         [{Suspendee :: pid(),
+           ActiveSuspendCount :: integer() >= 0,
+           OutstandingSuspendCount :: integer() >= 0}]} |
+    {total_heap_size, Size :: integer() >= 0} |
+    {trace, InternalTraceFlags :: integer() >= 0} |
+    {trap_exit, Boolean :: boolean()}
+priority_level() = low | normal | high | max
+stack_item() =
+    {Module :: module(),
+     Function :: atom(),
+     Arity :: arity() | (Args :: [term()]),
+     Location ::
+         [{file, Filename :: string()} |
+          {line, Line :: integer() >= 1}]}
+max_heap_size() =
+    integer() >= 0 |
+    #{size => integer() >= 0,
+      kill => boolean(),
+      error_logger => boolean()}
+message_queue_data() = off_heap | on_heap
+-}
+

@@ -9,13 +9,17 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Ref FFI Module.
+%% The Ref FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Ref').
 
--export([makeRef/0]).
+-export([ makeRef/0
+        , showRefImpl/1
+        ]).
 
 -spec(makeRef() -> reference()).
 makeRef() -> erlang:make_ref().
 
+-spec(showRefImpl(reference()) -> string()).
+showRefImpl(Ref) -> ref_to_list(Ref).

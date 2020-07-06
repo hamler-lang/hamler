@@ -15,6 +15,7 @@
 module Data.String where
 
 import Data.Maybe (Maybe)
+import Data.Pid (Pid)
 import Data.Semiring ((+))
 import Foreign (ffi1, ffi2)
 
@@ -61,8 +62,23 @@ endsWith = hasSuffix
 
 foreign import hasSuffix :: String -> Suffix -> Boolean
 
+-----------------------------------------------------------------------------
+-- | String to Atom, Integer, Float, and Pid
+
+toAtom :: String -> Atom
+toAtom = ffi1 :erlang :list_to_atom
+
+toExistingAtom :: String -> Atom
+toExistingAtom = ffi1 :erlang :list_to_existing_atom
+
 toInteger :: String -> Integer
 toInteger = ffi1 :erlang :list_to_integer
+
+toFloat :: String -> Float
+toFloat = ffi1 :erlang :list_to_float
+
+toPid :: String -> Pid
+toPid = ffi1 :erlang :list_to_pid
 
 -----------------------------------------------------------------------------
 -- | Index, Find and Replace

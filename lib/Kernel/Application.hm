@@ -14,7 +14,8 @@
 -----------------------------------------------------------------------------
 module Kernel.Application where
 
-import Control.Process (Module, Node, Process)
+import Control.Distributed.Node (Node)
+import Control.Process (Module, Process)
 import Data.Maybe (Maybe)
 import Data.Pid (Pid)
 import Data.Timeout (Timeout)

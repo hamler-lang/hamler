@@ -21,7 +21,8 @@ module Control.Behaviour.GenStatem.Types
   ) where
 
 import Control.Behaviour.GenTypes
-import Control.Process (ExitReason, Node, Process)
+import Control.Distributed.Node (Node)
+import Control.Process (ExitReason, Process)
 import Data.Pid (Pid)
 
 type InitHandler a st

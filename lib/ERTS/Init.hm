@@ -72,3 +72,14 @@ stop = ffiIO0 :init :stop
 stopWith :: Integer -> IO ()
 stopWith = ffiIO1 :init :stop
 
+{-
+  halt() -> no_return()
+  halt(Status) -> no_return()
+  halt(Status, Options) -> no_return()
+  Status must be a non-negative integer, a string, or the atom abort.
+    Halts the Erlang runtime system. Has no return value.
+      Depending on Status, the following occurs:
+-}
+
+
+

@@ -1,0 +1,41 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Control.Process.Flags
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Process Flags module.
+--
+-----------------------------------------------------------------------------
+module Control.Process.Flags
+  ( Flag(..)
+  , MsgQueueData(..)
+  , PriorityLevel(..)
+  ) where
+
+data Flag
+  = TrapExit Boolean
+  | ErrorHandler Atom
+  | MinHeapSize Integer
+  | MinBinVheapSize Integer
+  | MaxHeapSize Integer
+  | MsgQueueData MsgQueueData
+  | Priority PriorityLevel
+  | SaveCalls Integer
+  | Sensitive Boolean
+
+data MsgQueueData
+  = OffHeap
+  | OnHeap
+
+data PriorityLevel
+  = Low
+  | Normal
+  | High
+  | Max
+

@@ -14,9 +14,46 @@
 -----------------------------------------------------------------------------
 module Data.Binary where
 
-import Foreign (ffi2)
+import Data.Term (Term)
+import Foreign (ffi1, ffi2)
+
+type BitString = Binary
+
+-- | Returns the size in bits of Bitstring.
+bitSize :: BitString -> Integer
+bitSize = ffi1 :erlang :bit_size
+
+-- | Returns the size in bytes of Bitstring.
+byteSize :: BitString -> Integer
+byteSize = ffi1 :erlang :bit_size
 
 -- | Split a binary into a list binaries.
 split :: Binary -> Binary -> [Binary]
 split = ffi2 :binary :split
+
+-- | Binary to Atom.
+toAtom :: Binary -> Atom
+toAtom = ffi1 :erlang :binary_to_atom
+
+-- | Binary to existing Atom.
+toExistingAtom :: Binary -> Atom -- TODO: exception?
+toExistingAtom = ffi1 :erlang :binary_to_existing_atom
+
+-- | Binary to Float.
+toFloat :: Binary -> Float -- TODO: exception?
+toFloat = ffi1 :erlang :binary_to_float
+
+-- | Binary to Integer
+toInteger :: Binary -> Integer
+toInteger = ffi1 :erlang :binary_to_integer
+
+toList :: Binary -> List Integer
+toList = ffi1 :erlang :binary_to_list
+
+toTerm :: Binary -> Term
+toTerm = ffi1 :erlang :binary_to_term
+
+{-
+ binary_to_atom(Binary, Encoding) -> atom()
+-}
 

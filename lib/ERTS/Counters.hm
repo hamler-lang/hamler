@@ -15,11 +15,10 @@
 module ERTS.Counters where
 
 import Control.Monad (IO)
-import Data.Ref (Reference)
 import Data.Unit (Unit)
 import Foreign (ffiIO1, ffiIO2, ffiIO3)
 
-type CountersRef = Reference
+foreign import data CountersRef :: Type
 
 data CountersOpt = Atomics | WriteConcurrency
 

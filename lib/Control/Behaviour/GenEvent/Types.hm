@@ -20,7 +20,8 @@ module Control.Behaviour.GenEvent.Types
   )  where
 
 import Control.Behaviour.GenTypes
-import Control.Process (ExitReason, Node, Process)
+import Control.Distributed.Node (Node)
+import Control.Process (Process, ExitReason)
 import Data.Pid (Pid)
 
 data EMgrRef

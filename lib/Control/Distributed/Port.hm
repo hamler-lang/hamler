@@ -1,0 +1,47 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Control.Distributed.Port
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Erlang Port module.
+--
+-----------------------------------------------------------------------------
+module Control.Distributed.Port
+  ( Port
+  , ports
+  , close
+  ) where
+
+import Control.Monad (IO)
+import Data.Unit (Unit)
+import Foreign (ffiIO0, ffiIO1)
+
+-- | Erlang Port.
+foreign import data Port :: Type
+
+ports :: IO [Port]
+ports = ffiIO0 :erlang :ports
+
+-- open ::
+-- open_port(PortName, PortSettings) -> port()
+
+-- call ::
+-- erlang:port_call(Port, Operation, Data) -> term()
+
+close :: Port -> IO ()
+close = ffiIO1 :erlang :port_close
+
+-- port_command(Port, Data) -> true
+-- port_command(Port, Data, OptionList) -> boolean()
+-- port_connect(Port, Pid) -> true
+-- port_control(Port, Operation, Data) -> iodata() | binary()
+-- erlang:port_info(Port) -> Result
+-- erlang:port_info(Port, Item :: connected) ->
+
+

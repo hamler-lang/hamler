@@ -9,10 +9,12 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Integer DataType.
+-- The Integer dataType.
 --
 -----------------------------------------------------------------------------
 module Data.Int where
+
+import Foreign (ffi1)
 
 -- | An alias for `Integer`
 type Int = Integer
@@ -29,3 +31,8 @@ type UInt16 = Integer
 type UInt32 = Integer
 type UInt64 = Integer
 
+toBinary :: Integer -> Binary
+toBinary = ffi1 :erlang :integer_to_binary
+
+toString :: Integer -> String
+toString = ffi1 :erlang :integer_to_list
