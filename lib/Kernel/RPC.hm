@@ -1,0 +1,73 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Kernel.RPC
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The RPC module.
+--
+-----------------------------------------------------------------------------
+module Kernel.RPC
+  ( RequestId
+  , call
+  , callTimeout
+  , cast
+  , multiCall
+  , multiCallTimeout
+  , multicast
+  , receiveResponse
+  , receiveResponseTimeout
+  , sendRequest
+  , waitResponse
+  , waitResponseTimeout
+  ) where
+
+import Control.Process (Node)
+import Data.Maybe (Maybe)
+import Data.Ref (Reference)
+import Data.Timeout (Timeout)
+import Data.Unit (Unit)
+import Control.Monad (IO)
+
+import Foreign (ffiIO1, ffiIO2)
+
+type RequestId = Reference
+
+call :: forall res. Node -> IO () -> IO res
+call = ffiIO2 :erpc :call
+
+foreign import callTimeout
+  :: forall res. Node -> IO () -> Timeout -> IO res
+
+cast :: Node -> IO () -> IO ()
+cast = ffiIO2 :erpc :cast
+
+multiCall :: forall res. [Node] -> IO () -> IO res
+multiCall = ffiIO2 :erpc :multicall
+
+foreign import multiCallTimeout
+  :: forall res. [Node] -> IO () -> Timeout -> IO res
+
+multicast :: [Node] -> IO () -> IO ()
+multicast = ffiIO2 :erpc :multicast
+
+receiveResponse :: forall res. RequestId -> IO res
+receiveResponse = ffiIO1 :erpc :receive_response
+
+foreign import receiveResponseTimeout
+  :: forall res. RequestId -> Timeout -> IO res
+
+sendRequest :: Node -> IO () -> IO RequestId
+sendRequest = ffiIO2 :erpc :send_request
+
+foreign import waitResponse
+  :: forall res. RequestId -> IO (Maybe res)
+
+foreign import waitResponseTimeout
+  :: forall res. RequestId -> Timeout -> IO (Maybe res)
+
