@@ -12,11 +12,192 @@
 -- The Erlang VM module.
 --
 -----------------------------------------------------------------------------
-module System.VM where
+module System.VM
+  ( memory
+  , memoryOf
+  ) where
 
 import Control.Monad (IO)
+-- import Data.Function (compose)
+import Data.Map (Map)
+
+import Foreign (ffiIO1)
+
+foreign import memory :: IO (Map Atom Integer)
+
+memoryOf :: Atom -> IO Integer
+memoryOf = ffiIO1 :erlang :memory
 
 -- foreign import info :: IO VmInfo
 
 foreign import otpRelease :: IO String
 
+{-
+statistics(Item :: context_switches) -> {ContextSwitches, 0}
+statistics(Item :: exact_reductions) ->
+statistics(Item :: garbage_collection) ->
+statistics(Item :: io) -> {{input, Input}, {output, Output}}
+statistics(Item :: reductions) ->
+statistics(Item :: run_queue_lengths) -> [RunQueueLength]
+erlang:system_flag(Flag :: backtrace_depth, Depth) -> OldDepth
+erlang:system_flag(Flag :: cpu_topology, CpuTopology) ->
+erlang:system_flag(Flag :: dirty_cpu_schedulers_online,
+erlang:system_flag(Flag :: fullsweep_after, Number) -> OldNumber
+erlang:system_flag(Flag :: erts_alloc, Value :: {Alloc, F, V}) ->
+erlang:system_flag(Flag :: microstate_accounting, Action) ->
+erlang:system_flag(Flag :: min_heap_size, MinHeapSize) ->
+erlang:system_flag(Flag :: min_bin_vheap_size, MinBinVHeapSize) ->
+erlang:system_flag(Flag :: max_heap_size, MaxHeapSize) ->
+erlang:system_flag(Flag :: multi_scheduling, BlockState) ->
+erlang:system_flag(Flag :: scheduler_bind_type, How) ->
+erlang:system_flag(Flag :: scheduler_wall_time, Boolean) ->
+erlang:system_flag(Flag :: schedulers_online, SchedulersOnline) ->
+erlang:system_flag(Flag :: system_logger, Logger) -> PrevLogger
+erlang:system_flag(Flag :: trace_control_word, TCW) -> OldTCW
+erlang:system_flag(Flag :: time_offset, Value :: finalize) ->
+erlang:system_info(Item :: overview) -> boolean()
+
+erlang:system_info(Item :: allocated_areas) -> [tuple()]
+erlang:system_info(Item :: allocator) ->
+                      {Allocator, Version, Features, Settings}
+erlang:system_info(Item :: {allocator, Alloc}) -> [term()]
+erlang:system_info(Item :: alloc_util_allocators) -> [Alloc]
+erlang:system_info(Item :: {allocator_sizes, Alloc}) -> [term()]
+erlang:system_info(Item :: elib_malloc) -> false
+
+
+erlang:system_info(Item :: cpu_topology) -> CpuTopology
+erlang:system_info(Item ::
+                       {cpu_topology, defined | detected | used}) ->
+                      CpuTopology
+erlang:system_info(Item ::
+                       logical_processors |
+                       logical_processors_available |
+                       logical_processors_online) ->
+                      unknown | integer() >= 1
+erlang:system_info(Item :: update_cpu_info) -> changed | unchanged
+erlang:system_info(Item :: fullsweep_after) ->
+                      {fullsweep_after, integer() >= 0}
+erlang:system_info(Item :: garbage_collection) ->
+                      [{atom(), integer()}]
+erlang:system_info(Item :: heap_sizes) -> [integer() >= 0]
+erlang:system_info(Item :: heap_type) -> private
+erlang:system_info(Item :: max_heap_size) ->
+                      {max_heap_size,
+                       MaxHeapSize :: max_heap_size()}
+erlang:system_info(Item :: message_queue_data) ->
+                      message_queue_data()
+erlang:system_info(Item :: min_heap_size) ->
+                      {min_heap_size,
+                       MinHeapSize :: integer() >= 1}
+erlang:system_info(Item :: min_bin_vheap_size) ->
+                      {min_bin_vheap_size,
+                       MinBinVHeapSize :: integer() >= 1}
+erlang:system_info(Item :: procs) -> binary()
+
+erlang:system_info(Item :: atom_count) -> integer() >= 1
+erlang:system_info(Item :: atom_limit) -> integer() >= 1
+erlang:system_info(Item :: ets_count) -> integer() >= 1
+erlang:system_info(Item :: ets_limit) -> integer() >= 1
+erlang:system_info(Item :: port_count) -> integer() >= 0
+erlang:system_info(Item :: port_limit) -> integer() >= 1
+erlang:system_info(Item :: process_count) -> integer() >= 1
+erlang:system_info(Item :: process_limit) -> integer() >= 1
+
+erlang:system_info(Item :: end_time) -> integer() >= 0
+erlang:system_info(Item :: os_monotonic_time_source) ->
+                      [{atom(), term()}]
+erlang:system_info(Item :: os_system_time_source) ->
+                      [{atom(), term()}]
+erlang:system_info(Item :: start_time) -> integer()
+erlang:system_info(Item :: time_correction) -> true | false
+erlang:system_info(Item :: time_offset) ->
+                      preliminary | final | volatile
+erlang:system_info(Item :: time_warp_mode) ->
+                      no_time_warp | single_time_warp |
+                      multi_time_warp
+erlang:system_info(Item :: tolerant_timeofday
+erlang:system_info(Item :: dirty_cpu_schedulers) ->
+                      integer() >= 0
+erlang:system_info(Item :: dirty_cpu_schedulers_online) ->
+                      integer() >= 0
+erlang:system_info(Item :: dirty_io_schedulers) ->
+                      integer() >= 0
+erlang:system_info(Item :: multi_scheduling) ->
+                      disabled | blocked | blocked_normal |
+                      enabled
+erlang:system_info(Item :: multi_scheduling_blockers) ->
+                      [Pid :: pid()]
+erlang:system_info(Item :: otp_release) -> string()
+OTP 19.0
+erlang:system_info(Item :: scheduler_bind_type) ->
+                      spread | processor_spread | thread_spread |
+                      thread_no_node_processor_spread |
+                      no_node_processor_spread |
+                      no_node_thread_spread | no_spread | unbound
+erlang:system_info(Item :: scheduler_bindings) -> tuple()
+erlang:system_info(Item :: scheduler_id) ->
+                      SchedulerId :: integer() >= 1
+erlang:system_info(Item :: schedulers | schedulers_online) ->
+                      integer() >= 1
+erlang:system_info(Item :: smp_support) -> boolean()
+erlang:system_info(Item :: threads) -> boolean()
+erlang:system_info(Item :: thread_pool_size) -> integer() >= 0
+erlang:system_info(Item :: creation) -> integer()
+erlang:system_info(Item :: delayed_node_table_gc) ->
+                      infinity | integer() >= 0
+erlang:system_info(Item :: dist) -> binary()
+erlang:system_info(Item :: dist_buf_busy_limit) ->
+                      integer() >= 0
+erlang:system_info(Item :: dist_ctrl) ->
+                      {Node :: node(),
+                       ControllingEntity :: port() | pid()}
+
+
+erlang:system_info(Item :: build_type) ->
+                      opt | debug | purify | quantify | purecov |
+                      gcov | valgrind | gprof | lcnt | frmptr
+OTP R14B
+erlang:system_info(Item :: c_compiler_used) -> {atom(), term()}
+erlang:system_info(Item :: check_io) -> [term()]
+erlang:system_info(Item :: compat_rel) -> integer()
+erlang:system_info(Item :: debug_compiled) -> boolean()
+erlang:system_info(Item :: driver_version) -> string()
+erlang:system_info(Item :: dynamic_trace) ->
+                      none | dtrace | systemtap
+erlang:system_info(Item :: dynamic_trace_probes) -> boolean()
+erlang:system_info(Item :: info) -> binary()
+erlang:system_info(Item :: kernel_poll) -> boolean()
+erlang:system_info(Item :: loaded) -> binary()
+erlang:system_info(Item :: machine) -> string()
+erlang:system_info(Item :: modified_timing_level) ->
+                      integer() | undefined
+erlang:system_info(Item :: nif_version) -> string()
+erlang:system_info(Item :: otp_release) -> string()
+erlang:system_info(Item :: port_parallelism) -> boolean()
+erlang:system_info(Item :: system_architecture) -> string()
+erlang:system_info(Item :: system_logger) ->
+                      logger | undefined | pid()
+erlang:system_info(Item :: system_version) -> string()
+erlang:system_info(Item :: trace_control_word) ->
+                      integer() >= 0
+erlang:system_info(Item :: version) -> string()
+erlang:system_info(Item ::
+                       wordsize |
+                       {wordsize, internal} |
+                       {wordsize, external}) ->
+                      4 | 8
+
+-}
+
+{-
+erlang:system_monitor() -> MonSettings
+erlang:system_monitor(Arg) -> MonSettings
+erlang:system_monitor(MonitorPid, Options) -> MonSettings
+erlang:system_profile() -> ProfilerSettings
+erlang:system_profile(ProfilerPid, Options) -> ProfilerSettings
+erlang:system_time() -> integer()
+erlang:system_time(Unit) -> integer()
+
+
+-}

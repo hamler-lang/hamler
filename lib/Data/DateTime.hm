@@ -1,0 +1,30 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.DateTime
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The DataTime datatype.
+--
+-----------------------------------------------------------------------------
+module Data.DateTime where
+
+-- erlang:localtime() -> DateTime
+-- erlang:localtime_to_universaltime(Localtime) -> Universaltime
+-- erlang:localtime_to_universaltime(Localtime, IsDst) ->
+
+-- erlang:monotonic_time() -> integer()
+-- erlang:monotonic_time(Unit) -> integer()
+
+-- now() -> Timestamp
+-- erlang:time_offset() -> integer()
+-- erlang:time_offset(Unit) -> integer()
+-- erlang:timestamp() -> Timestamp
+
+-- erlang:universaltime() -> DateTime
+-- erlang:universaltime_to_localtime(Universaltime) -> Localtime

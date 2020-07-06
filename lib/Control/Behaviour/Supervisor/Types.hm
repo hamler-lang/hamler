@@ -33,7 +33,8 @@ module Control.Behaviour.Supervisor.Types
   ) where
 
 import Control.Behaviour.GenTypes
-import Control.Process (Module, Node, Process)
+import Control.Distributed.Node (Node)
+import Control.Process (Module, Process)
 import Data.Pid (Pid)
 import Data.Unit (Unit)
 

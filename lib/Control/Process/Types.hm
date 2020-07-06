@@ -12,13 +12,20 @@
 -- The Process Types module.
 --
 -----------------------------------------------------------------------------
-module Control.Process.Types where
+module Control.Process.Types
+  ( Module
+  , Process
+  , From
+  , ExitReason
+  ) where
 
--- | -type priority_level() :: low | normal | high | max.
-data PriorityLevel = Low | Normal | High | Max
+import Control.Monad (IO)
 
--- | -type message_queue_data() :: off_heap | on_heap.
-data MsgQueueData = OnHeap | OffHeap
+-- ???
+type Module = Atom
+
+-- An Alias of IO.
+type Process = IO
 
 foreign import data From :: Type
 

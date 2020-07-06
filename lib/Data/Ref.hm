@@ -14,6 +14,8 @@
 -----------------------------------------------------------------------------
 module Data.Ref where
 
+import Data.Show (class Show)
+
 -- | An alias for erlang `Reference`
 type Ref = Reference
 
@@ -24,4 +26,9 @@ type Ref = Reference
 foreign import data Reference :: Type
 
 foreign import makeRef :: Reference
+
+instance Show Reference where
+  show = showRefImpl
+
+foreign import showRefImpl :: Ref -> String
 

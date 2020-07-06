@@ -14,12 +14,24 @@
 -----------------------------------------------------------------------------
 module Data.Atom where
 
+import Foreign (ffi1)
+
 -- String to Atom.
 foreign import atom :: String -> Atom
 
 -- String to existing Atom.
 foreign import existingAtom :: String -> Atom
 
+-- | Atom to Binary.
+toBinary :: Atom -> Binary
+toBinary = ffi1 :erlang :atom_to_binary
+
 -- Atom to String.
 foreign import toString :: Atom -> String
+
+{-
+atom_to_binary(Atom, Encoding) -> binary()
+Atom = atom()
+Encoding = latin1 | unicode | utf8
+-}
 

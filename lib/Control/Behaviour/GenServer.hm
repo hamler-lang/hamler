@@ -47,8 +47,9 @@ module Control.Behaviour.GenServer
   ) where
 
 import Control.Behaviour.GenServer.Types
+import Control.Distributed.Node (Node)
 import Control.Monad (return)
-import Control.Process (Node, Process, ExitReason)
+import Control.Process (Process, ExitReason)
 import Data.Pid (Pid)
 import Data.Timeout (Timeout)
 import Data.Unit (Unit)
