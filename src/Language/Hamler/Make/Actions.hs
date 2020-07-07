@@ -45,7 +45,8 @@ renderProgressMessage :: ProgressMessage -> String
 renderProgressMessage (CompilingModule mn) = "Compiling " ++ T.unpack (runModuleName mn)
 -- | A set of make actions that read and write modules from the given directory.
 buildMakeActions
-  :: Bool
+  :: HasCallStack => FilePath
+  -> Bool
   -> FilePath
   -- ^ the output directory
   -> M.Map ModuleName (Either RebuildPolicy FilePath)
@@ -55,7 +56,7 @@ buildMakeActions
   -> Bool
   -- ^ Generate a prefix comment?
   -> MakeActions Make
-buildMakeActions isInline outputDir filePathMap foreigns _ =
+buildMakeActions libfp isInline outputDir filePathMap foreigns _ =
     MakeActions getInputTimestampsAndHashes getOutputTimestamp readExterns codegen ffiCodegen progress readCacheDb writeCacheDb outputPrimDocs
   where
 
@@ -78,26 +79,26 @@ buildMakeActions isInline outputDir filePathMap foreigns _ =
   outputFilename :: ModuleName -> String -> FilePath
   outputFilename mn fn =
     let filePath = T.unpack (runModuleName mn)
-    in outputDir </> filePath </> fn
+    in outputDir </> filePath <> fn
 
-  targetFilename :: ModuleName -> CodegenTarget -> FilePath
-  targetFilename mn = \case
-    -- JS -> outputFilename mn ((T.unpack $ runModuleName mn) ++ ".core")
-    JS -> outputFilename mn ((T.unpack $ runModuleName mn) ++ ".core")
-    JSSourceMap -> outputFilename mn "index.js.map"
-    CoreFn -> outputFilename mn "corefn.json"
-    Docs -> outputFilename mn "docs.json"
+  getFilePath :: HasCallStack => String -> ModuleName -> M.Map ModuleName (Either RebuildPolicy FilePath) -> FilePath
+  getFilePath suffix mn tfilePathMap = 
+    case M.lookup mn tfilePathMap of 
+      Nothing -> error $ "there is no module name: " ++ show mn ++ show tfilePathMap
+      Just v -> case v of 
+          Left RebuildNever -> libfp </> "ebin"  </> T.unpack (runModuleName  mn) <> suffix
+          _ -> outputDir </> (T.unpack (runModuleName  mn) <> suffix)
 
   getOutputTimestamp :: ModuleName -> Make (Maybe UTCTime)
   getOutputTimestamp mn = do
-    codegenTargets <- asks optionsCodegenTargets
-    let outputPaths = [outputFilename mn "externs.json"] <> fmap (targetFilename mn) (S.toList codegenTargets)
+    let fp = getFilePath ".json" mn filePathMap 
+    let outputPaths = [fp ] -- <> fmap (targetFilename mn) (S.toList codegenTargets)
     timestamps <- traverse getTimestampMaybe outputPaths
     pure $ fmap minimum . NEL.nonEmpty =<< sequence timestamps
 
   readExterns :: ModuleName -> Make (FilePath, Maybe ExternsFile)
   readExterns mn = do
-    let path = outputDir </> (T.unpack (runModuleName mn) <> ".json")
+    let path = getFilePath ".json" mn filePathMap
     (path, ) <$> readExternsFile path
 
   outputPrimDocs :: Make ()
@@ -106,14 +107,15 @@ buildMakeActions isInline outputDir filePathMap foreigns _ =
     when (S.member Docs codegenTargets) $ for_ Docs.Prim.primModules $ \docsMod@Docs.Module{..} ->
       writeJSONFile (outputFilename modName "docs.json") docsMod
 
-  readModuleInfo :: ModuleName -> SupplyT Make (Text, M.Map Text Int)   -- (Text,[(Text,Int)])
+  readModuleInfo :: HasCallStack => ModuleName -> SupplyT Make (Text, M.Map Text Int)   -- (Text,[(Text,Int)])
   readModuleInfo mn = do
     let mn' = runModuleName mn
-    con <-lift $ makeIO "read module infor" $ TIO.readFile (outputDir </>  (unpack mn' <>  ".info"))
+        path = getFilePath ".info" mn filePathMap
+    con <-lift $ makeIO "read module infor" $ TIO.readFile path
     let list = read (unpack con) :: [(String,Int)]
     return $ (mn', M.fromList $  fmap (\(a,b) -> (pack (unpack mn' <> "." <> a) ,b)) list)
 
-  codegen :: CF.Module CF.Ann -> Docs.Module -> ExternsFile -> SupplyT Make ()
+  codegen :: HasCallStack => CF.Module CF.Ann -> Docs.Module -> ExternsFile -> SupplyT Make ()
   codegen m _ exts = do
     let mn = CF.moduleName m
     lift $ writeJSONFile (outputDir </> ( unpack (runModuleName mn) <> ".json")) exts

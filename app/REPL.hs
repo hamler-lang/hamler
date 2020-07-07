@@ -49,7 +49,7 @@ hamlerFile = $hamlerEnv
 
 data PSCiOptions
   = PSCiOptions
-      { psciInputGlob :: [String],
+      { psciInputGlob :: [(String, Bool)],
         psciBackend :: Backend
       }
 
@@ -122,29 +122,29 @@ gethmFiles basePath = do
           else return []
   return $ concat r
 
-hmfs :: IO [FilePath]
+hmfs :: IO [(FilePath, Bool)]
 hmfs = do
   dir <- getCurrentDirectory
-  gethmFiles (dir <> "/lib")
+  fmap (\x -> (x, False)) <$> gethmFiles (dir <> "/lib")
 
-srchmfs :: IO [FilePath]
+srchmfs :: IO [(FilePath, Bool)]
 srchmfs = do
   dir <- getCurrentDirectory
   t1 <- gethmFiles (dir <> "/src")
   t2 <- gethmFiles hamlerlib
-  return $ t1 <> t2
+  return $ ( zip t1 $ repeat False) <> (zip t2 $ repeat True)
 
 
-nullhmfs :: IO [FilePath]
+nullhmfs :: IO [(FilePath, Bool)]
 nullhmfs = do
   t2 <- gethmFiles hamlerlib
-  return $ t2
+  return $ (zip t2 $ repeat True)
 
-nullhmfs' :: FilePath -> IO [FilePath]
+nullhmfs' :: FilePath -> IO [(FilePath, Bool)]
 nullhmfs' fp = do
   t1 <- gethmFiles fp
   t2 <- gethmFiles hamlerlib
-  return $ t1 <> t2
+  return $ ( zip t1 $ repeat False) <> (zip t2 $ repeat True)
 
 dout :: Handle -> IO ()
 dout h = do
@@ -155,7 +155,7 @@ dout h = do
 data ReplConfig
   = ReplConfig
       { replsrvFilePath :: FilePath,
-        hamlerFiles :: IO [FilePath],
+        hamlerFiles :: IO [(FilePath, Bool)],
         libBeamPath :: FilePath,
         srcBeamPath :: FilePath,
         coreFilePath :: FilePath
@@ -168,7 +168,7 @@ devReplConfig =
       hamlerFiles = hmfs,
       libBeamPath = "ebin",
       srcBeamPath = "ebin",
-      coreFilePath = ".tmp/$PSCI.core"
+      coreFilePath = "ebin/$PSCI.core"
     }
 
 srcReplConfig :: ReplConfig
@@ -178,7 +178,7 @@ srcReplConfig =
       hamlerFiles = srchmfs,
       libBeamPath = "/usr/local/lib/hamler/ebin",
       srcBeamPath = "ebin",
-      coreFilePath = ".tmp/$PSCI.core"
+      coreFilePath = "ebin/$PSCI.core"
     }
 
 nullReplConfig :: ReplConfig
@@ -188,7 +188,7 @@ nullReplConfig =
       hamlerFiles = nullhmfs,
       libBeamPath = "/usr/local/lib/hamler/ebin",
       srcBeamPath = "/usr/local/lib/hamler/ebin",
-      coreFilePath = ".tmp/$PSCI.core"
+      coreFilePath = "ebin/$PSCI.core"
     }
 
 dictlist =["ebin","src","test",".deps"]
@@ -220,7 +220,7 @@ runRepl sourceDir ebinDir = do
       let srcReplConfig' = srcReplConfig { replsrvFilePath = hamlerFile <> "/bin/replsrv"
                                          , libBeamPath = hamlerFile <> "/ebin"
                                          }
-      startReplsrv srcReplConfig' ".tmp"
+      startReplsrv srcReplConfig' "ebin"
     False -> do
       base <- getTemporaryDirectory
       if sourceDir == "" && ebinDir == "/ebin"
@@ -256,7 +256,7 @@ runRepl sourceDir ebinDir = do
             (\_ -> startReplsrv nullReplConfig' (base <> "/hamlerTmp"))
 
 command :: Opts.Parser (IO ())
-command = pure $ startReplsrv devReplConfig ".tmp"
+command = pure $ startReplsrv devReplConfig "ebin"
 
 startReplsrv :: ReplConfig -> FilePath-> IO ()
 startReplsrv ReplConfig {..} fp = do
@@ -277,13 +277,13 @@ startReplsrv ReplConfig {..} fp = do
   where
     loop :: Handle -> Handle -> PSCiOptions -> IO ()
     loop hin hout PSCiOptions {..} = do
-      inputFiles <- concat <$> traverse glob psciInputGlob
+      inputFiles <- concat <$> traverse (\(x, b) -> fmap (\v -> fmap (\k -> (k,b)) v ) $ glob x) psciInputGlob
       e <- runExceptT $ do
-        modules <- ExceptT (loadAllModules inputFiles)
+        modules <- ExceptT (loadAllModules' inputFiles)
         when (null modules) . liftIO $ do
           putStr noInputMessage
           exitFailure
-        (externs, _) <- ExceptT . runMake . make fp $ fmap CST.pureResult <$> modules
+        (externs, _) <- ExceptT . runMake . make fp $ fmap (\(a, b, c) -> (a, CST.pureResult b, c)) modules
         return (modules, externs)
       case psciBackend of
         Backend setup eval reload (shutdown :: state -> IO ()) ->
@@ -294,8 +294,8 @@ startReplsrv ReplConfig {..} fp = do
             Right (modules, externs) -> do
               historyFilename <- getHistoryFilename
               let settings = defaultSettings {historyFile = Just historyFilename}
-                  initialState = updateLoadedExterns (const (zip (map snd modules) externs)) initialPSCiState
-                  config = PSCiConfig psciInputGlob fp
+                  initialState = updateLoadedExterns (const (zip (map (\(_,b,_) -> b) modules) externs)) initialPSCiState
+                  config = PSCiConfig (fmap (\(tfp, md, b) -> (P.getModuleName md ,(tfp, b))) modules) fp
                   runner =
                     flip runReaderT config
                       . flip evalStateT initialState
