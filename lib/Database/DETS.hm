@@ -1,0 +1,113 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Database.DETS
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Erlang DETS database.
+--
+-----------------------------------------------------------------------------
+module Database.DETS
+  ( TableName
+  , TableInfo
+    -- * APIs
+  , all
+  , close
+  , delete
+  , deleteAllObjects
+  , deleteObject
+  , first
+  , next
+  , fromETS
+  , info
+  , insert
+  , insertNew
+  , lookup
+  , toETS
+  ) where
+
+import Control.Monad (IO)
+import Data.Maybe (Maybe)
+import Data.Unit (Unit)
+import Foreign (ffiIO0, ffiIO1)
+import System.File (Filename)
+
+import Database.ETS as ETS
+
+type TableName = Atom
+
+type TableInfo =
+  { fileSize  :: Integer
+  , fileName  :: Filename
+  , keyPos    :: Integer
+  , size      :: Integer
+  , tableType :: ETS.TableType
+  }
+
+all :: IO [TableName]
+all = ffiIO0 :dets :all
+
+close :: TableName -> IO ()
+close = ffiIO1 :dets :close
+
+foreign import delete :: forall k. TableName -> k -> IO ()
+
+foreign import deleteAllObjects :: TableName -> IO ()
+
+foreign import deleteObject :: TableName -> IO ()
+
+foreign import first :: TableName -> forall k. IO (Maybe k)
+
+foreign import next :: forall k. TableName -> k -> IO (Maybe k)
+
+foreign import fromETS :: TableName -> ETS.TableId -> IO ()
+
+foreign import info :: TableName -> IO (Maybe TableInfo)
+
+foreign import insert :: forall v. TableName -> [v] -> IO ()
+
+foreign import insertNew :: forall v. TableName -> [v] -> IO Boolean
+
+foreign import lookup :: forall k v. TableName -> k -> IO [v]
+
+foreign import toETS :: TableName -> ETS.TableId -> IO ()
+
+{- TODO
+bchunk/2
+delete_object/2
+first/1
+foldl/3
+foldr/3
+info/2
+init_table/2
+init_table/3
+is_compatible_bchunk_format/2
+is_dets_file/1
+match/1
+match/2
+match/3
+match_delete/2
+match_object/1
+match_object/2
+match_object/3
+open_file/1
+open_file/2
+pid2name/1
+repair_continuation/2
+safe_fixtable/2
+select/1
+select/2
+select/3
+select_delete/2
+slot/2
+sync/1
+table/1
+table/2
+traverse/2
+update_counter/3
+-}

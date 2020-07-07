@@ -12,68 +12,108 @@
 -- The Erlang ETS Database.
 --
 -----------------------------------------------------------------------------
-module Database.ETS where
+module Database.ETS
+  ( TableId
+  , TableInfo
+  , TableAccess(..)
+  , TableType(..)
+  , TableOptions
+  , options
+    -- * APIs
+  , all
+  , delete
+  , deleteAllObjects
+  , deleteObject
+  , deleteTable
+  , file2tab
+  , first
+  , fromDETS
+  , giveAway
+  , info
+  , insert
+  , insertObjects
+  , insertNew
+  , insertNewObjects
+  , last
+  , lookup
+  , lookupElement
+  , member
+  , new
+  , next
+  , prev
+  , rename
+  , tab2file
+  , tab2list
+  , take
+  , toDETS
+  , whereis
+    -- Tests
+  , tNew
+  ) where
 
-import Control.Distributed.Node (Node)
 import Control.Monad (IO)
 import Data.Pid (Pid)
-import Data.Maybe (Maybe)
+import Data.Maybe (Maybe(..))
 import Data.Ref (Reference)
-import Foreign
+import Data.Term (Term)
+import Data.Unit (Unit)
+import Foreign (ffiIO0, ffiIO1, ffiIO2, ffiIO3)
+import System.File (Filename)
 
-type Table = String
+-- | Table name is an Atom.
+type TableName = Atom
 
+-- TableId Reference | TableName Atom
 foreign import data TableId :: Type
 
-data AccessType = Public | Protected | Private
+data TableAccess = Public | Protected | Private
 
 data TableType = Set | OrderedSet | Bag | DuplicateBag
 
 type TableOptions =
-  { ttype            :: TableType
-  , access           :: AccessType
-  , named            :: Boolean
+  { tableType        :: TableType
+  , access           :: TableAccess
+  , namedTable       :: Boolean
   , keyPos           :: Integer
+  , heir             :: Maybe (Pid, Term)
+  , compressed       :: Boolean
   , readConcurrency  :: Boolean
   , writeConcurrency :: Boolean
-  , compressed       :: Boolean
+  , decentralizedCounters :: Boolean
   }
 
 type TableInfo =
   { id               :: Reference
-  , name             :: TableId
+  , name             :: Atom
   , size             :: Integer
-  , node             :: Node
+  , node             :: Atom
   , memory           :: Integer
   , owner            :: Pid
+  , heir             :: Maybe Pid
+  , tableType        :: TableType
   , namedTable       :: Boolean
-  , ttype            :: TableType
   , keypos           :: Integer
-  , protection       :: AccessType
+  , protection       :: TableAccess
+  , compressed       :: Boolean
   , readConcurrency  :: Boolean
   , writeConcurrency :: Boolean
-  , compressed       :: Boolean
+  , decentralizedCounters :: Boolean
   }
 
-foreign import new :: Table -> TableOptions -> IO TableId
+options :: TableOptions
+options = { tableType = Set
+          , access = Protected
+          , namedTable = true
+          , keyPos = 1
+          , heir = Nothing
+          , compressed = false
+          , readConcurrency = false
+          , writeConcurrency = false
+          , decentralizedCounters = false
+          }
 
 all :: IO [TableId]
 all = ffiIO0 :ets :all
-
--- | Delete an ETS table
-deleteTable :: TableId -> IO Boolean
-deleteTable = ffiIO1 :ets :delete
-
--- | Delete a record.
-delete :: forall k. TableId -> k -> IO Boolean
-delete = ffiIO2 :ets :delete
-
--- | Delete all records of a table.
-deleteAllObjects :: TableId -> IO Boolean
-deleteAllObjects = ffiIO1 :ets :delete_all_objects
-
-deleteObject :: forall a. TableId -> a -> IO Boolean
-deleteObject = ffiIO2 :ets :delete_object
 
 -- | Displays information about all ETS tables on a terminal.
 browse :: IO String
@@ -83,37 +123,92 @@ browse = ffiIO0 :ets :i
 browseTable :: TableId -> IO String
 browseTable = ffiIO1 :ets :i
 
--- file2tab/1
--- file2tab/2
--- first/1
--- foldl/3
--- foldr/3
--- from_dets/2
--- fun2ms/1
--- give_away/3
+-- | Delete the entire table.
+deleteTable :: TableId -> IO ()
+deleteTable = ffiIO1 :ets :delete
+
+-- | Delete a record.
+delete :: forall k. TableId -> k -> IO ()
+delete = ffiIO2 :ets :delete
+
+-- | Delete all records of a table.
+deleteAllObjects :: TableId -> IO ()
+deleteAllObjects = ffiIO1 :ets :delete_all_objects
+
+deleteObject :: forall o. TableId -> o -> IO ()
+deleteObject = ffiIO2 :ets :delete_object
+
+foreign import file2tab :: Filename -> IO TableId
+
+-- TODO: file2tab(Filename, Options) -> {ok, Tab} | {error, Reason}
+
+foreign import first :: TableId -> forall k. IO (Maybe k)
+
+-- TODO: foldl/3
+-- TODO: foldr/3
+
+fromDETS :: TableId -> TableName -> IO ()
+fromDETS = ffiIO2 :ets :from_dets
+
+-- TODO: fun2ms/1
+
+giveAway :: forall a. TableId -> Pid -> a -> IO ()
+giveAway = ffiIO3 :ets :give_away
 
 foreign import info :: TableId -> IO (Maybe TableInfo)
 
--- info/2
--- init_table/2
+-- TODO: info/2
+-- TODO: init_table/2
 
-insert :: forall o. TableId -> o -> IO Boolean
+insert :: forall v. TableId -> v -> IO ()
 insert = ffiIO2 :ets :insert
 
-insertObjects :: forall o. TableId -> [o] -> IO Boolean
+insertObjects :: forall v. TableId -> [v] -> IO Boolean
 insertObjects = ffiIO2 :ets :insert
 
-insertNew :: forall o. TableId -> o -> IO Boolean
+insertNew :: forall v. TableId -> v -> IO Boolean
 insertNew = ffiIO2 :ets :insert_new
 
-insertNewObjects :: forall o. TableId -> [o] -> IO Boolean
+insertNewObjects :: forall v. TableId -> [v] -> IO Boolean
 insertNewObjects = ffiIO2 :ets :insert_new
 
-{-
--- is_compiled_ms/1
--- last/1
-lookup/2
-lookup_element/3
+foreign import last :: forall k. TableId -> IO (Maybe k)
+
+lookup :: forall k v. TableId -> k -> IO [v]
+lookup = ffiIO2 :ets :lookup
+
+lookupElement :: forall k v. TableId -> k -> Integer -> IO v
+lookupElement = ffiIO3 :ets :lookup_element
+
+member :: forall k. TableId -> k -> IO Boolean
+member = ffiIO2 :ets :member
+
+-- | Creates a new table.
+foreign import new :: Atom -> TableOptions -> IO TableId
+
+foreign import next :: forall k. TableId -> k -> IO (Maybe k)
+
+foreign import prev :: forall k. TableId -> k -> IO (Maybe k)
+
+rename :: TableId -> Atom -> IO Atom
+rename = ffiIO2 :ets :rename
+
+foreign import tab2file :: TableId -> Filename -> IO ()
+
+tab2list :: forall v. TableId -> IO [v]
+tab2list = ffiIO1 :ets :tab2list
+
+take :: forall k v. TableId -> k -> IO [v]
+take = ffiIO2 :ets :take
+
+toDETS :: TableId -> Atom -> IO Atom
+toDETS = ffiIO2 :ets :to_dets
+
+whereis :: Atom -> IO TableId
+whereis = ffiIO1 :ets :whereis
+
+{- TODO:
+is_compiled_ms/1
 match/1
 match/2
 match/3
@@ -123,11 +218,6 @@ match_object/2
 match_object/3
 match_spec_compile/1
 match_spec_run/2
-member/2
-new/2
-next/2
-prev/2
-rename/2
 repair_continuation/2
 safe_fixtable/2
 select/1
@@ -153,15 +243,7 @@ to_dets/2
 update_counter/3
 update_counter/4
 update_element/3
-whereis/1
 -}
 
 tNew :: IO TableId
-tNew = new "xtab" { ttype: Set,
-                    access: Public,
-                    named: true,
-                    keyPos: 1,
-                    compressed: true,
-                    readConcurrency : false,
-                    writeConcurrency : false
-                   }
+tNew = new :tab (options {namedTable = true})

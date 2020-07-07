@@ -9,93 +9,153 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The ETS FFI Module.
+%% The ETS FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('ETS').
 
--export([new/2, info/1]).
+-export([ new/2
+        , info/1
+        , file2tab/1
+        , first/1
+        , last/1
+        , next/2
+        , prev/2
+        , tab2file/2
+        ]).
 
--spec(new(string(), map()) -> ets:tab()).
-new(Table, Options) ->
-    ets:new(list_to_atom(Table), parseOpts(Options)).
+new(Name, Options) when is_atom(Name) ->
+  ets:new(Name, parseOpts(maps:to_list(Options), [])).
 
--spec(info(ets:tab()) -> {'Nothing'} | {'Just', map()}).
-info(TableId) ->
-    case ets:info(TableId) of
-        undefined -> {'Nothing'};
-        Info -> {'Just', info2Map(Info, #{})}
-    end.
+info(Tab) ->
+  case ets:info(Tab) of
+    undefined -> {'Nothing'};
+    Info -> {'Just', infoRec(Info, #{})}
+  end.
 
-parseOpts(#{ttype := Type,
-            access := Access,
-            keyPos := KeyPos,
-            readConcurrency := R,
-            writeConcurrency := W,
-            compressed := Compressed
-           }) ->
-    Opts = [ttype(Type),
-            access(Access),
-            named_table,
-            {keypos, KeyPos},
-            {read_concurrency, R},
-            {write_concurrency, W}
-           ],
-    case Compressed of
-        true  -> [compressed | Opts];
-        false -> Opts
-    end.
+file2tab(Filename) ->
+  case ets:file2tab(Filename) of
+    {ok, Tab} -> Tab;
+    {error, Reason} -> error(Reason)
+  end.
 
-info2Map([{id, Id}|Info], M) ->
-    info2Map(Info, maps:put(id, Id, M));
-info2Map([{read_concurrency, R}|Info], M) ->
-    info2Map(Info, maps:put(readConcurrency, R, M));
-info2Map([{write_concurrency, W}|Info], M) ->
-    info2Map(Info, maps:put(writeConcurrency, W, M));
-info2Map([{compressed, C}|Info], M) ->
-    info2Map(Info, maps:put(compressed, C, M));
-info2Map([{memory, Size}|Info], M) ->
-    info2Map(Info, maps:put(memory, Size, M));
-info2Map([{owner, Pid}|Info], M) ->
-    info2Map(Info, maps:put(owner, Pid, M));
-info2Map([{name, Name}|Info], M) ->
-    info2Map(Info, maps:put(name, Name, M));
-info2Map([{size, Size}|Info], M) ->
-    info2Map(Info, maps:put(size, Size, M));
-info2Map([{node, Node}|Info], M) ->
-    info2Map(Info, maps:put(node, Node, M));
-info2Map([{named_table, Bool}|Info], M) ->
-    info2Map(Info, maps:put(namedTable, Bool, M));
-info2Map([{type, Type}|Info], M) ->
-    info2Map(Info, maps:put(ttype, ttype(Type), M));
-info2Map([{keypos, Pos}|Info], M) ->
-    info2Map(Info, maps:put(keyPos, Pos, M));
-info2Map([{protection, Access}|Info], M) ->
-    info2Map(Info, maps:put(protection, access(Access), M));
-info2Map([_|Info], M) ->
-    info2Map(Info, M);
-info2Map([], M) -> M.
+first(Tab) ->
+  case ets:first(Tab) of
+    '$end_of_table' -> {'Nothing'};
+    Key -> {'Just', Key}
+  end.
+
+last(Tab) ->
+  case ets:last(Tab) of
+    '$end_of_table' -> {'Nothing'};
+    Key -> {'Just', Key}
+  end.
+
+next(Tab, Key1) ->
+  case ets:next(Tab, Key1) of
+    '$end_of_table' -> {'Nothing'};
+    Key2 -> {'Just', Key2}
+  end.
+
+prev(Tab, Key1) ->
+  case ets:prev(Tab, Key1) of
+    '$end_of_table' -> {'Nothing'};
+    Key2 -> {'Just', Key2}
+  end.
+
+tab2file(Tab, Filename) ->
+  case ets:tab2file(Tab, Filename) of
+    ok -> ok;
+    {error, Reason} -> error(Reason)
+  end.
 
 %%---------------------------------------------------------------------------
-%% Transform Options
+%% | Internal functions
 %%---------------------------------------------------------------------------
 
-%-compile({inline, [access/1]}).
-access({'Public'})    -> public;
-access({'Protected'}) -> protected;
-access({'Private'})   -> private;
+parseOpts([{tableType, {'Set'}}|Opts], Acc) ->
+  parseOpts(Opts, [set|Acc]);
+parseOpts([{tableType, {'OrderedSet'}}|Opts], Acc) ->
+  parseOpts(Opts, [ordered_set|Acc]);
+parseOpts([{tableType, {'Bag'}}|Opts], Acc) ->
+  parseOpts(Opts, [bag|Acc]);
+parseOpts([{tableType, {'DuplicateBag'}}|Opts], Acc) ->
+  parseOpts(Opts, [duplicate_bag|Acc]);
+parseOpts([{access, {'Public'}}|Opts], Acc) ->
+  parseOpts(Opts, [public|Acc]);
+parseOpts([{access, {'Protected'}}|Opts], Acc) ->
+  parseOpts(Opts, [protected|Acc]);
+parseOpts([{access, {'Private'}}|Opts], Acc) ->
+  parseOpts(Opts, [private|Acc]);
+parseOpts([{namedTable, true}|Opts], Acc) ->
+  parseOpts(Opts, [named_table|Acc]);
+parseOpts([{namedTable, false}|Opts], Acc) ->
+  parseOpts(Opts, Acc);
+parseOpts([{keyPos, Pos}|Opts], Acc) ->
+  parseOpts(Opts, [{keypos, Pos}|Acc]);
+parseOpts([{heir, {'Nothing'}}|Opts], Acc) ->
+  parseOpts(Opts, [{heir, none}|Acc]);
+parseOpts([{heir, {'Just', {Pid, Data}}}|Opts], Acc) ->
+  parseOpts(Opts, [{heir, Pid, Data}|Acc]);
+parseOpts([{compressed, true}|Opts], Acc) ->
+  parseOpts(Opts, [compressed|Acc]);
+parseOpts([{readConcurrency, Bool}|Opts], Acc) ->
+  parseOpts(Opts, [{read_concurrency, Bool}|Acc]);
+parseOpts([{writeConcurrency, Bool}|Opts], Acc) ->
+  parseOpts(Opts, [{write_concurrency, Bool}|Acc]);
+parseOpts([{compressed, false}|Opts], Acc) ->
+  parseOpts(Opts, Acc);
+parseOpts([{decentralizedCounters, Bool}|Opts], Acc) ->
+  parseOpts(Opts, [{decentralized_counters, Bool}|Acc]);
+parseOpts([], Acc) -> Acc.
 
-access(public)        -> {'Public'};
-access(protected)     -> {'Protected'};
-access(private)       -> {'Private'}.
+infoRec([{id, Id}|Info], M) ->
+  infoRec(Info, M#{id => Id});
+infoRec([{name, Name}|Info], M) ->
+  infoRec(Info, M#{name => Name});
+infoRec([{size, Size}|Info], M) ->
+  infoRec(Info, M#{size => Size});
+infoRec([{node, Node}|Info], M) ->
+  infoRec(Info, M#{node => Node});
+infoRec([{memory, Size}|Info], M) ->
+  infoRec(Info, M#{memory => Size});
+infoRec([{owner, Pid}|Info], M) ->
+  infoRec(Info, M#{owner => Pid});
+infoRec([{heir, none}|Info], M) ->
+  infoRec(Info, M#{heir => {'Nothing'}});
+infoRec([{heir, Pid}|Info], M) ->
+  infoRec(Info, M#{heir => {'Just', Pid}});
+infoRec([{type, set}|Info], M) ->
+  infoRec(Info, M#{tableType => {'Set'}});
+infoRec([{type, ordered_set}|Info], M) ->
+  infoRec(Info, M#{tableType => {'OrderedSet'}});
+infoRec([{type, bag}|Info], M) ->
+  infoRec(Info, M#{tableType => {'Bag'}});
+infoRec([{type, duplicate_bag}|Info], M) ->
+  infoRec(Info, M#{tableType => {'DuplicateBag'}});
+infoRec([{named_table, Bool}|Info], M) ->
+  infoRec(Info, M#{namedTable => Bool});
+infoRec([{keypos, Pos}|Info], M) ->
+  infoRec(Info, M#{keyPos => Pos});
+infoRec([{protection, public}|Info], M) ->
+  infoRec(Info, M#{protection => {'Public'}});
+infoRec([{protection, protected}|Info], M) ->
+  infoRec(Info, M#{protection => {'Protected'}});
+infoRec([{protection, private}|Info], M) ->
+  infoRec(Info, M#{protection => {'Private'}});
+infoRec([{compressed, Bool}|Info], M) ->
+  infoRec(Info, M#{compressed => Bool});
+infoRec([{read_concurrency, Bool}|Info], M) ->
+  infoRec(Info, M#{readConcurrency => Bool});
+infoRec([{write_concurrency, Bool}|Info], M) ->
+  infoRec(Info, M#{writeConcurrency => Bool});
+infoRec([{decentralized_counters, Bool}|Info], M) ->
+  infoRec(Info, M#{decentralizedCounters => Bool});
+infoRec([_|Info], M) ->
+  infoRec(Info, M);
+infoRec([], M) -> M.
 
-%-compile({inline, [ttype/1]}).
-ttype({'Set'})          -> set;
-ttype({'OrderedSet'})   -> ordered_set;
-ttype({'Bag'})          -> bag;
-ttype({'DuplicateBag'}) -> duplicate_bag;
+%%---------------------------------------------------------------------------
+%% Internal functions
+%%---------------------------------------------------------------------------
 
-ttype(set)              -> {'Set'};
-ttype(ordered_set)      -> {'OrderedSet'};
-ttype(bag)              -> {'Bag'};
-ttype(duplicate_bag)    -> {'DuplicateBag'}.
