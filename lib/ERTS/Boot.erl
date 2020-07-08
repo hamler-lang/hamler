@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Init
+%% Module      :  Boot
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,10 +9,10 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Init FFI module.
+%% The Boot FFI module.
 %%
 %%---------------------------------------------------------------------------
--module('Init').
+-module('Boot').
 
 -export([ getArguments/0
         , getArgument/1

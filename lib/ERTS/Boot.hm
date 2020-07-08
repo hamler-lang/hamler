@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  ERTS.Init
+-- Module      :  ERTS.Boot
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -12,7 +12,7 @@
 -- The Erlang Init module.
 --
 -----------------------------------------------------------------------------
-module ERTS.Init
+module ERTS.Boot
   ( Arguments
   , InternalStatus(..)
   , Flags
@@ -24,6 +24,7 @@ module ERTS.Init
   , getPlainArguments
   , restart
   , restartWith
+  , reboot
   , stop
   , stopWith
   ) where
@@ -80,6 +81,5 @@ stopWith = ffiIO1 :init :stop
     Halts the Erlang runtime system. Has no return value.
       Depending on Status, the following occurs:
 -}
-
 
 
