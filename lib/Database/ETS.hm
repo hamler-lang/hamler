@@ -15,6 +15,7 @@
 module Database.ETS
   ( TableId
   , TableInfo
+  , TableName
   , TableAccess(..)
   , TableType(..)
   , TableOptions
