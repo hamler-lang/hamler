@@ -1,0 +1,66 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Array
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Array datatype.
+--
+-----------------------------------------------------------------------------
+module Data.Array where
+
+foreign import data Array :: Type -> Type
+
+{- TODO: typeclass
+Eq
+Ord
+Show
+Functor
+Foldable
+Traversable
+-}
+
+{- TODO:
+Construct
+Fold
+Index and Access
+Accumulate
+Updates
+-}
+
+{- TODO: functions
+default/1
+fix/1
+foldl/3
+foldr/3
+from_list/1
+from_list/2
+from_orddict/1
+from_orddict/2
+get/2
+is_array/1
+is_fix/1
+map/2
+new/0
+new/1
+new/2
+relax/1
+reset/2
+resize/1
+resize/2
+set/3
+size/1
+sparse_foldl/3
+sparse_foldr/3
+sparse_map/2
+sparse_size/1
+sparse_to_list/1
+sparse_to_orddict/1
+to_list/1
+to_orddict/1
+-}

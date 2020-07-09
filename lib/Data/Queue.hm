@@ -1,0 +1,106 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Queue
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The FIFO Queue datatype.
+--
+-----------------------------------------------------------------------------
+module Data.Queue where
+
+import Data.Maybe (Maybe)
+import Foreign (ffi0, ffi1, ffi2)
+
+foreign import data Queue :: Type -> Type
+
+-- | Inserts Item at the head of queue Q1.
+cons :: forall e. e -> Queue e -> Queue e
+cons = ffi2 :queue :cons
+
+-- | Returns the tail item of queue Q.
+foreign import daeh :: forall e. Queue e -> Maybe e
+
+-- | Remove the font element from Q.
+drop :: forall e. Queue e -> Queue e
+drop = ffi1 :queue :drop
+
+-- | Remove the last element from Q.
+dropR :: forall e. Queue e -> Queue e
+dropR = ffi1 :queue :drop_r
+
+filter :: forall e. (e -> Boolean) -> Queue e -> Queue e
+filter = ffi2 :queue :filter
+
+fromList :: forall e. List e -> Queue e
+fromList = ffi1 :queue :from_list
+
+-- | Return the front element of Queue.
+get :: forall e. Queue e -> e
+get = ffi1 :queue :get
+
+-- | TODO: Return the ....
+getR :: forall e. Queue e -> e
+getR = ffi1 :queue :get_r
+
+-- | Return the head element of Queue.
+head :: forall e. Queue e -> e
+head = ffi1 :queue :head
+
+-- TODO: in/2
+inR :: forall e. e -> Queue e -> Queue e
+inR = ffi2 :queue :in_r
+
+init :: forall e. Queue e -> Queue e
+init = ffi1 :queue :init
+
+isEmpty :: forall e. Queue e -> Boolean
+isEmpty = ffi1 :queue :is_empty
+
+join :: forall e. Queue e -> Queue e -> Queue e
+join = ffi2 :queue :join
+
+lait :: forall e. Queue e -> Queue e
+lait = ffi1 :queue :lait
+
+last :: forall e. Queue e -> e
+last = ffi1 :queue :last
+
+len :: forall e. Queue e -> Integer
+len = ffi1 :queue :len
+
+liat :: forall e. Queue e -> Queue e
+liat = ffi1 :queue :liat
+
+member :: forall e. e -> Queue e -> Boolean
+member = ffi2 :queue :member
+
+new :: forall e. Queue e
+new = ffi0 :queue :new
+
+foreign import out :: forall e. Queue e -> (Maybe e, Queue e)
+
+foreign import outR :: forall e. Queue e -> (Maybe e, Queue e)
+foreign import peek :: forall e. Queue e -> Maybe e
+foreign import peekR :: forall e. Queue e -> Maybe e
+
+reverse :: forall e. e -> Queue e -> Queue e
+reverse = ffi1 :queue :reverse
+
+snoc :: forall e. Queue e -> e -> Queue e
+snoc = ffi2 :queue :snoc
+
+split :: forall e. Integer -> Queue e -> (Queue e, Queue e)
+split = ffi2 :queue :split
+
+tail :: forall e. Queue e -> Queue e
+tail = ffi1 :queue :tail
+
+toList :: forall e. Queue e -> List e
+toList = ffi1 :queue :to_list
+

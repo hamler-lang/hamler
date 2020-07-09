@@ -106,4 +106,3 @@ tanh = ffi1 :math :tanh
 trunc :: Float -> Float
 trunc = ffi1 :erlang :trunc
 
-
