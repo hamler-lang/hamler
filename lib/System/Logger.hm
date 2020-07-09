@@ -1,0 +1,84 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  System.Logger
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The System Logger module.
+--
+-----------------------------------------------------------------------------
+module System.Logger
+  ( Level(..)
+  , debug
+  , info
+  , notice
+  , warning
+  , error
+  , alert
+  , critical
+  , emergency
+  , log
+  ) where
+
+import Control.Monad (IO)
+import Data.Unit (Unit)
+import Foreign (ffiIO1, ffiIO2)
+
+data Level
+  = DEBUG
+  | INFO
+  | NOTICE
+  | WARNING
+  | ERROR
+  | CRITICAL
+  | ALERT
+  | EMERGENCY
+
+debug :: String -> IO ()
+debug = ffiIO1 :logger :debug
+
+{- TODO: debug/2,debug/3 -}
+
+info :: String -> IO ()
+info = ffiIO1 :logger :info
+
+{- TODO: info/2,info/3 -}
+
+notice :: String -> IO ()
+notice = ffiIO1 :logger :notice
+
+{- TODO: notice/2,notice/3 -}
+
+warning :: String -> IO ()
+warning = ffiIO1 :logger :warning
+
+{- TODO: warning/2,warning/3 -}
+
+error :: String -> IO ()
+error = ffiIO1 :logger :error
+
+{- TODO error/2,error/3 -}
+
+alert :: String -> IO ()
+alert = ffiIO1 :logger :alert
+
+{- TODO: alert/2,alert/3 -}
+
+critical :: String -> IO ()
+critical = ffiIO1 :logger :critical
+
+{- TODO: critical/2,critical/3 -}
+
+emergency :: String -> IO ()
+emergency = ffiIO1 :logger :emergency
+
+{- TODO: emergency/2,emergency/3 -}
+
+log :: Level -> String -> IO ()
+log = ffiIO2 :logger :log
+
