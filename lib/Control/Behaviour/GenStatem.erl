@@ -71,10 +71,10 @@ startMonitorWithGlobal(Class, Name, Init, Args) ->
   retPid(gen_statem:start_monitor({global, Name}, ?MOD, [Class, Init, Args], [])).
 
 supStart(Class, Init, Args) ->
-  gen_statem:start(?MOD, [Class, Init, Args], []).
+  gen_statem:start_link(?MOD, [Class, Init, Args], []).
 
 supStartWith(Name, Class, Init, Args) ->
-  gen_statem:start({local, Name}, ?MOD, [Class, Init, Args], []).
+  gen_statem:start_link({local, Name}, ?MOD, [Class, Init, Args], []).
 
 stop(ServerRef) ->
   gen_statem:stop(toErl(ServerRef)).

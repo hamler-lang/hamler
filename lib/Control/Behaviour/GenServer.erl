@@ -81,7 +81,7 @@ supStart(Class, Init, Args) ->
   gen_server:start_link(?MOD, [Class, Init, Args], []).
 
 supStartWith(Name, Class, Init, Args) ->
-  gen_server:start({local, Name}, ?MOD, [Class, Init, Args], []).
+  gen_server:start_link({local, Name}, ?MOD, [Class, Init, Args], []).
 
 stop(ServerRef) ->
   gen_server:stop(toErl(ServerRef)).
