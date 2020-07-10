@@ -25,6 +25,9 @@ module Data.Show
 class Show a where
   show :: a -> String
 
+instance Show Atom where
+  show = showAtomImpl
+
 instance Show Boolean where
   show true = "true"
   show false = "false"
@@ -41,6 +44,7 @@ instance Show Char where
 instance Show [Char] where
   show s = s
 
+foreign import showAtomImpl :: Atom -> String
 foreign import showIntImpl :: Integer -> String
 foreign import showFloatImpl :: Float -> String
 foreign import showCharImpl :: Char -> String

@@ -9,28 +9,33 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Show module.
+%% The Show FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Show').
 
--export([ showIntImpl/1
+-export([ showAtomImpl/1
+        , showIntImpl/1
         , showFloatImpl/1
         , showNumImpl/1
         , showCharImpl/1
         , showAny/1
         ]).
 
-%% showInt :: Integer -> String
+%% Atom -> String
+-spec(showAtomImpl(atom()) -> string()).
+showAtomImpl(A) -> atom_to_list(A).
+
+%% Integer -> String
 -spec(showIntImpl(integer()) -> string()).
 showIntImpl(I) -> integer_to_list(I).
 
-%% showFloat :: Number -> String
+%% Float -> String
 -spec(showFloatImpl(float()) -> string()).
 showFloatImpl(F) ->
    erlang:float_to_list(F, [{decimals,precision(abs(F), 0)}]).
 
-%% showNumber :: Number -> String
+%% Float -> String
 -spec(showNumImpl(number()) -> string()).
 showNumImpl(N) when is_integer(N) ->
     showIntImpl(N);
