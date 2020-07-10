@@ -13,18 +13,3 @@
 %%
 %%---------------------------------------------------------------------------
 -module('Atom').
-
--export([ atom/1
-        , existingAtom/1
-        , toString/1
-        ]).
-
--spec(atom(string()) -> atom()).
-atom(S) -> list_to_atom(S).
-
--spec(existingAtom(string()) -> atom()).
-existingAtom(S) -> list_to_existing_atom(S).
-
--spec(toString(atom()) -> string()).
-toString(A) -> atom_to_list(A).
-
