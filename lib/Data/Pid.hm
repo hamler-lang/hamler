@@ -14,6 +14,11 @@
 -----------------------------------------------------------------------------
 module Data.Pid (Pid) where
 
+import Data.Eq (class Eq)
+import Data.Ord
+  ( class Ord
+  , Ordering(..)
+  )
 import Data.Show (class Show)
 
 -- | Erlang process id.
@@ -21,8 +26,24 @@ foreign import data Pid :: Type
 
 -- pid :: Int -> Int -> Int -> Pid
 
+instance Eq Pid where
+  eq = eqPidImpl
+
+instance Ord Pid where
+  compare = cmpPidImpl LT EQ GT
+
 instance Show Pid where
   show = showPidImpl
+
+foreign import eqPidImpl :: Pid -> Pid -> Boolean
+
+foreign import cmpPidImpl
+  :: Ordering
+  -> Ordering
+  -> Ordering
+  -> Pid
+  -> Pid
+  -> Ordering
 
 foreign import showPidImpl :: Pid -> String
 
