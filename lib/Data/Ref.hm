@@ -9,11 +9,16 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Erlang Reference Data Type.
+-- The Erlang Reference datatype.
 --
 -----------------------------------------------------------------------------
 module Data.Ref where
 
+import Data.Eq (class Eq)
+import Data.Ord
+  ( class Ord
+  , Ordering(..)
+  )
 import Data.Show (class Show)
 
 -- | An alias for erlang `Reference`
@@ -27,8 +32,25 @@ foreign import data Reference :: Type
 
 foreign import makeRef :: Reference
 
+instance Eq Reference where
+  eq = eqRefImpl
+
+instance Ord Reference where
+  compare = cmpRefImpl LT EQ GT
+
 instance Show Reference where
   show = showRefImpl
 
-foreign import showRefImpl :: Ref -> String
+foreign import eqRefImpl
+  :: Reference -> Reference -> Boolean
+
+foreign import cmpRefImpl
+  :: Ordering
+  -> Ordering
+  -> Ordering
+  -> Reference
+  -> Reference
+  -> Ordering
+
+foreign import showRefImpl :: Reference -> String
 
