@@ -34,7 +34,7 @@ type InitHandler a st
 data InitResult st
   = InitOk st
     -- ^ {ok, State}
-  | InitOkHibernate st
+  | InitOkHib st
     -- ^ {ok, State, hibernate}
   | InitIgnore
     -- ^ ignore

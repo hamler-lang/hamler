@@ -33,7 +33,7 @@ init([Class, Init, Args]) ->
   case Init(Args) of
     {'InitOk', State} ->
       {ok, init_ok(Class, State)};
-    {'InitOkHibernate', State} ->
+    {'InitOkHib', State} ->
       {ok, init_ok(Class, State), hibernate};
     {'InitIgnore'} ->
       ignore;
