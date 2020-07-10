@@ -13,7 +13,7 @@
 --
 -----------------------------------------------------------------------------
 module System.Logger
-  ( Level(..)
+  ( Priority(..)
   , debug
   , info
   , notice
@@ -29,7 +29,7 @@ import Control.Monad (IO)
 import Data.Unit (Unit)
 import Foreign (ffiIO1, ffiIO2)
 
-data Level
+data Priority
   = DEBUG
   | INFO
   | NOTICE
@@ -79,6 +79,6 @@ emergency = ffiIO1 :logger :emergency
 
 {- TODO: emergency/2,emergency/3 -}
 
-log :: Level -> String -> IO ()
+log :: Priority -> String -> IO ()
 log = ffiIO2 :logger :log
 
