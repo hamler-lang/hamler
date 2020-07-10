@@ -16,6 +16,8 @@ module Data.Time where
 
 import Control.Monad
 
+type Time = Integer
+
 -- TODO:...
 foreign import data UTCTime :: Type
 
