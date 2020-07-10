@@ -44,6 +44,7 @@ module Control.Behaviour.GenServer
   , multiCallAt
   , sendRequest
     -- * helper funcs
+  , initOk
   , replyTo
   , reply
   , noReply
@@ -168,6 +169,9 @@ foreign import sendRequest
 
 foreign import waitResponse
   :: forall rep. RequestId -> Timeout -> Process rep
+
+initOk :: forall st. st -> InitResult st
+initOk st = InitOk st
 
 -- | Send a reply to the caller explicitly.
 foreign import replyTo :: forall rep. Caller -> rep -> Process ()
