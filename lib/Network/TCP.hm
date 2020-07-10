@@ -1,0 +1,51 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Network.TCP
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The TCP Socket module.
+--
+-----------------------------------------------------------------------------
+module Network.TCP where
+
+import Control.Monad (IO)
+import Network.Socket (IpAddress, PortNumber, Socket)
+import Data.Unit (Unit)
+import Foreign (ffiIO1)
+
+type Length = Integer
+type Timeout = Integer
+
+-- TODO: Fixme later
+foreign import data Options :: Type
+foreign import data Packet :: Type
+
+foreign import accept :: Socket -> IO (Socket)
+
+foreign import acceptTimeout :: Socket -> Timeout -> IO (Socket)
+
+close :: Socket -> IO ()
+close = ffiIO1 :gen_tcp :close
+
+foreign import connect
+  :: IpAddress -> PortNumber -> Options -> IO Socket
+
+foreign import connectTimeout
+  :: IpAddress -> PortNumber -> Options -> Timeout -> IO Socket
+
+foreign import listen :: PortNumber -> Options -> IO Socket
+
+foreign import recv :: Socket -> Length -> IO Packet
+
+foreign import recvTimeout
+  :: Socket -> Length -> Timeout -> IO Packet
+
+foreign import send :: Socket -> Packet -> IO ()
+
+foreign import shutdown :: Socket -> Atom -> IO ()

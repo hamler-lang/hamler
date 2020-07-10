@@ -1,0 +1,83 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Network.UDP
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The UDP Socket module.
+--
+-----------------------------------------------------------------------------
+module Network.UDP
+  ( close
+  , open
+  , openWith
+  , recv
+  , recvTimeout
+  , send
+  , Options
+  , module Network.Socket
+  ) where
+
+import Control.Monad (IO)
+import Network.Socket (IpAddress, PortNumber, Socket)
+import Data.Unit (Unit)
+import Foreign (ffiIO1)
+
+-- TODO: Fixme later
+foreign import data Options :: Type
+
+{-
+{active,          true | false | once | -32768..32767} |
+{add_membership,  {inet:ip_address(), inet:ip_address()}} |
+{broadcast,       boolean()} |
+{buffer,          non_neg_integer()} |
+{deliver,         port | term} |
+{dontroute,       boolean()} |
+{drop_membership, {inet:ip_address(), inet:ip_address()}} |
+{header,          non_neg_integer()} |
+{high_msgq_watermark, pos_integer()} |
+{low_msgq_watermark, pos_integer()} |
+{mode,            list | binary} | list | binary |
+{multicast_if,    inet:ip_address()} |
+{multicast_loop,  boolean()} |
+{multicast_ttl,   non_neg_integer()} |
+{priority,        non_neg_integer()} |
+{raw,
+Protocol :: non_neg_integer(),
+OptionNum :: non_neg_integer(),
+ValueBin :: binary()} |
+{read_packets,    non_neg_integer()} |
+{recbuf,          non_neg_integer()} |
+{reuseaddr,       boolean()} |
+{sndbuf,          non_neg_integer()} |
+{tos,             non_neg_integer()} |
+{tclass,          non_neg_integer()} |
+{ttl,             non_neg_integer()} |
+{recvtos,         boolean()} |
+{recvtclass,      boolean()} |
+{recvttl,         boolean()} |
+{ipv6_v6only,     boolean()}.
+-}
+
+-- | Close a UDP socket.
+close :: Socket -> IO ()
+close = ffiIO1 :gen_udp :close
+
+foreign import open :: PortNumber -> IO Socket
+
+-- | TODO: options?
+foreign import openWith :: PortNumber -> Options -> IO Socket
+
+foreign import recv
+  :: Socket -> Integer -> IO (IpAddress, PortNumber, Binary)
+
+foreign import recvTimeout
+  :: Socket -> Integer -> Integer -> IO (IpAddress, PortNumber, Binary)
+
+foreign import send :: Socket -> IpAddress -> PortNumber -> Binary -> IO ()
+
