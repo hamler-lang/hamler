@@ -58,10 +58,10 @@ startLinkWithGlobal(Class, Name, Init, Args) ->
   doStartWith(fun gen_event:start_link/1, {global, Name}, Class, Init, Args).
 
 supStart(Class, Init, Args) ->
-  doSupStart(fun gen_event:start/0, Class, Init, Args).
+  doSupStart(fun gen_event:start_link/0, Class, Init, Args).
 
 supStartWith(Class, Name, Init, Args) ->
-  doSupStartWith(fun gen_event:start/1, {local, Name}, Class, Init, Args).
+  doSupStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init, Args).
 
 stop(EMgrRef) ->
   gen_event:stop(toErl(EMgrRef)).
