@@ -23,6 +23,11 @@ module Control.Behaviour.GenStatem
   , startLink
   , startLinkWith
   , startLinkWithGlobal
+  , startMonitor
+  , startMonitorWith
+  , startMonitorWithGlobal
+  , supStart
+  , supStartWith
   , stop
   , stopWith
     -- * client apis
@@ -39,6 +44,7 @@ module Control.Behaviour.GenStatem
 import Control.Behaviour.GenStatem.Types
 import Control.Process (Process, ExitReason)
 import Data.Pid (Pid)
+import Data.Ref (Reference)
 import Data.Timeout (Timeout)
 import Data.Unit (Unit)
 
@@ -50,25 +56,45 @@ class GenStatem e st | e -> st, st -> e where
 
 foreign import start
   :: forall a e st. GenStatem e st
-  => (InitHandler a st) -> a -> Process StartRet
+  => (InitHandler a st) -> a -> Process Pid
 
 foreign import startWith
   :: forall a e st. GenStatem e st
-  => Name -> (InitHandler a st) -> a -> Process StartRet
+  => Name -> (InitHandler a st) -> a -> Process Pid
 
 foreign import startWithGlobal
   :: forall a e st. GenStatem e st
-  => Name -> (InitHandler a st) -> a -> Process StartRet
+  => Name -> (InitHandler a st) -> a -> Process Pid
 
 foreign import startLink
   :: forall a e st. GenStatem e st
-  => (InitHandler a st) -> a -> Process StartRet
+  => (InitHandler a st) -> a -> Process Pid
 
 foreign import startLinkWith
   :: forall a e st. GenStatem e st
-  => Name -> (InitHandler a st) -> a -> Process StartRet
+  => Name -> (InitHandler a st) -> a -> Process Pid
 
 foreign import startLinkWithGlobal
+  :: forall a e st. GenStatem e st
+  => Name -> (InitHandler a st) -> a -> Process Pid
+
+foreign import startMonitor
+  :: forall a e st. GenStatem e st
+  => (InitHandler a st) -> a -> Process (Pid, Reference)
+
+foreign import startMonitorWith
+  :: forall a e st. GenStatem e st
+  => Name -> (InitHandler a st) -> a -> Process (Pid, Reference)
+
+foreign import startMonitorWithGlobal
+  :: forall a e st. GenStatem e st
+  => Name -> (InitHandler a st) -> a -> Process (Pid, Reference)
+
+foreign import supStart
+  :: forall a e st. GenStatem e st
+  => (InitHandler a st) -> a -> Process StartRet
+
+foreign import supStartWith
   :: forall a e st. GenStatem e st
   => Name -> (InitHandler a st) -> a -> Process StartRet
 
