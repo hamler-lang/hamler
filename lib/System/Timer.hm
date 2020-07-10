@@ -1,0 +1,43 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  System.Timer
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The System Timer module.
+--
+-----------------------------------------------------------------------------
+module System.Timer
+  ( TimerRef
+  , startTimer
+  , cancelTimer
+  , sendAfter
+  , readTimer
+  ) where
+
+import Control.Monad (IO)
+import Data.Maybe (Maybe)
+import Data.Pid (Pid)
+import Data.Ref (Reference)
+import Data.Time (Time)
+import Data.Unit (Unit)
+import Foreign (ffiIO1, ffiIO3)
+
+type TimerRef = Reference
+
+startTimer :: forall m. Time -> Pid -> m -> IO TimerRef
+startTimer = ffiIO3 :erlang :start_timer
+
+cancelTimer :: TimerRef -> IO ()
+cancelTimer = ffiIO1 :erlang :cancel_timer
+
+sendAfter :: forall m. Time -> Pid -> m -> IO TimerRef
+sendAfter = ffiIO3 :erlang :send_after
+
+foreign import readTimer :: TimerRef -> IO (Maybe Time)
+
