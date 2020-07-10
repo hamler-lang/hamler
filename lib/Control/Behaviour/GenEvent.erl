@@ -20,6 +20,8 @@
         , startLink/3
         , startLinkWith/4
         , startLinkWithGlobal/4
+        , supStart/3
+        , supStartWith/4
         , stop/1
         , stopWith/3
         ]).
@@ -54,6 +56,12 @@ startLinkWith(Class, Name, Init, Args) ->
 
 startLinkWithGlobal(Class, Name, Init, Args) ->
   doStartWith(fun gen_event:start_link/1, {global, Name}, Class, Init, Args).
+
+supStart(Class, Init, Args) ->
+  doSupStart(fun gen_event:start/0, Class, Init, Args).
+
+supStartWith(Class, Name, Init, Args) ->
+  doSupStartWith(fun gen_event:start/1, {local, Name}, Class, Init, Args).
 
 stop(EMgrRef) ->
   gen_event:stop(toErl(EMgrRef)).
@@ -90,15 +98,29 @@ syncNotifyTo(Pid, Event) ->
 doStart(Start, Class, Init, Args) ->
   {ok, Pid} = Start(),
   ok = addHandler(Class, Pid, Init, Args),
-  {'StartOk', Pid}.
+  Pid.
 
 doStartWith(Start, Name, Class, Init, Args) ->
   case Start(Name) of
     {ok, Pid} ->
       ok = addHandler(Class, Pid, Init, Args),
-      {'StartOk', Pid};
+      Pid;
     {error, Reason} ->
-      {'StartError', Reason}
+      error(Reason)
+  end.
+
+doSupStart(Start, Class, Init, Args) ->
+  {ok, Pid} = Start(),
+  ok = addHandler(Class, Pid, Init, Args),
+  {ok, Pid}.
+
+doSupStartWith(Start, Name, Class, Init, Args) ->
+  case Start(Name) of
+    {ok, Pid} ->
+      ok = addHandler(Class, Pid, Init, Args),
+      {ok, Pid};
+    {error, Reason} ->
+      {error, Reason}
   end.
 
 toErl({'EMgrPid', Pid}) -> Pid;

@@ -17,25 +17,27 @@ module Control.Behaviour.GenTypes
   , name
   , Caller
   , RequestId
-  , StartRet(..)
+  , StartRet
   ) where
 
 import Data.Atom (atom)
-import Data.Pid (Pid)
 import Data.Ref (Reference)
-import Control.Process (ExitReason)
 
 type Name = Atom
 
 foreign import data Caller :: Type
 
+foreign import data StartRet :: Type
+
 -- | Request Id.
 type RequestId = Reference
 
+{-
 data StartRet
   = StartOk Pid
   | StartIgnore
   | StartError ExitReason
+-}
 
 -- | String to server name.
 name :: String -> Name

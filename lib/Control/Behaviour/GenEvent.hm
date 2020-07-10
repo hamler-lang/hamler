@@ -23,6 +23,8 @@ module Control.Behaviour.GenEvent
   , startLink
   , startLinkWith
   , startLinkWithGlobal
+  , supStart
+  , supStartWith
   , stop
   , stopWith
     -- * api
@@ -48,25 +50,33 @@ class GenEvent e st | e -> st, st -> e where
 
 foreign import start
   :: forall a e st. GenEvent e st
-  => (InitHandler a st) -> a -> Process StartRet
+  => (InitHandler a st) -> a -> Process Pid
 
 foreign import startWith
   :: forall a e st. GenEvent e st
-  => Name -> (InitHandler a st) -> a -> Process StartRet
+  => Name -> (InitHandler a st) -> a -> Process Pid
 
 foreign import startWithGlobal
   :: forall a e st. GenEvent e st
-  => Name -> (InitHandler a st) -> a -> Process StartRet
+  => Name -> (InitHandler a st) -> a -> Process Pid
 
 foreign import startLink
   :: forall a e st. GenEvent e st
-  => (InitHandler a st) -> a -> Process StartRet
+  => (InitHandler a st) -> a -> Process Pid
 
 foreign import startLinkWith
   :: forall a e st. GenEvent e st
-  => Name -> (InitHandler a st) -> a -> Process StartRet
+  => Name -> (InitHandler a st) -> a -> Process Pid
 
 foreign import startLinkWithGlobal
+  :: forall a e st. GenEvent e st
+  => Name -> (InitHandler a st) -> a -> Process Pid
+
+foreign import supStart
+  :: forall a e st. GenEvent e st
+  => (InitHandler a st) -> a -> Process StartRet
+
+foreign import supStartWith
   :: forall a e st. GenEvent e st
   => Name -> (InitHandler a st) -> a -> Process StartRet
 

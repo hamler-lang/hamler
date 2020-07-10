@@ -20,6 +20,11 @@
         , startLink/3
         , startLinkWith/4
         , startLinkWithGlobal/4
+        , startMonitor/3
+        , startMonitorWith/4
+        , startMonitorWithGlobal/4
+        , supStart/3
+        , supStartWith/4
         , stop/1
         , stopWith/3
         ]).
@@ -46,22 +51,37 @@
 %%---------------------------------------------------------------------------
 
 start(Class, Init, Args) ->
-  startRet(gen_server:start(?MOD, [Class, Init, Args], [])).
+  retPid(gen_server:start(?MOD, [Class, Init, Args], [])).
 
 startWith(Name, Class, Init, Args) ->
-  startRet(gen_server:start({local, Name}, ?MOD, [Class, Init, Args], [])).
+  retPid(gen_server:start({local, Name}, ?MOD, [Class, Init, Args], [])).
 
 startWithGlobal(Name, Class, Init, Args) ->
-  startRet(gen_server:start({global, Name}, ?MOD, [Class, Init, Args], [])).
+  retPid(gen_server:start({global, Name}, ?MOD, [Class, Init, Args], [])).
 
 startLink(Class, Init, Args) ->
-  startRet(gen_server:start_link(?MOD, [Class, Init, Args], [])).
+  retPid(gen_server:start_link(?MOD, [Class, Init, Args], [])).
 
 startLinkWith(Class, Name, Init, Args) ->
-  startRet(gen_server:start_link({local, Name}, ?MOD, [Class, Init, Args], [])).
+  retPid(gen_server:start_link({local, Name}, ?MOD, [Class, Init, Args], [])).
 
 startLinkWithGlobal(Class, Name, Init, Args) ->
-  startRet(gen_server:start_link({global, Name}, ?MOD, [Class, Init, Args], [])).
+  retPid(gen_server:start_link({global, Name}, ?MOD, [Class, Init, Args], [])).
+
+startMonitor(Class, Init, Args) ->
+  retPid(gen_server:start_monitor(?MOD, [Class, Init, Args], [])).
+
+startMonitorWith(Class, Name, Init, Args) ->
+  retPid(gen_server:start_monitor({local, Name}, ?MOD, [Class, Init, Args], [])).
+
+startMonitorWithGlobal(Class, Name, Init, Args) ->
+  retPid(gen_server:start_monitor({global, Name}, ?MOD, [Class, Init, Args], [])).
+
+supStart(Class, Init, Args) ->
+  gen_server:start_link(?MOD, [Class, Init, Args], []).
+
+supStartWith(Name, Class, Init, Args) ->
+  gen_server:start({local, Name}, ?MOD, [Class, Init, Args], []).
 
 stop(ServerRef) ->
   gen_server:stop(toErl(ServerRef)).
@@ -129,9 +149,9 @@ waitResponse(RequestId, Timeout) ->
 %% | Internal functions
 %%---------------------------------------------------------------------------
 
-startRet({ok, Pid}) -> {'StartOk', Pid};
-startRet(ignore) -> {'StartIgnore'};
-startRet({error, Reason}) -> {'StartError', Reason}.
+retPid({ok, Pid}) -> Pid;
+retPid(ignore) -> error(ignore);
+retPid({error, Reason}) -> error(Reason).
 
 -compile({inline, [toErl/1]}).
 toErl({'ServerPid', Pid}) -> Pid;
