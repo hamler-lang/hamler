@@ -20,6 +20,7 @@
         , pureImpl/1
         , seqio/1
         , unsafePerformIO/1
+        , replApply/1
         ]).
 
 -type(mapFun() :: fun((A :: any()) -> B :: any())).
@@ -38,7 +39,12 @@ bindListImpl(L, F) ->
 -spec(pureImpl(any()) -> any()).
 pureImpl(X) -> fun() -> X end.
 
-seqio(L) when is_list(L) -> L.
+seqio(L) when is_list(L) -> [V() || V <- L].
 
 unsafePerformIO(L) -> L().
 
+replApply(F) ->
+  case is_function(F) andalso (element(2, erlang:fun_info(F, arity)) == 0) of
+    true -> F();
+    false -> F
+  end.

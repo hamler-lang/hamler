@@ -28,6 +28,7 @@ module Control.Monad
   , seqio
   , module Data.Functor
   , unsafePerformIO
+  , replApply
   ) where
 
 import Data.Functor (class Functor, map, (<$>))
@@ -138,3 +139,5 @@ guardF false = []
 foreign import seqio ::forall a.[IO a] -> IO [a]
 
 foreign import unsafePerformIO :: forall a. IO a -> a
+
+foreign import replApply :: forall a. a -> a
