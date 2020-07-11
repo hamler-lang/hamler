@@ -14,6 +14,8 @@
 %%---------------------------------------------------------------------------
 -module('GenStatem').
 
+-include("../../Foreign.hrl").
+
 -export([ start/3
         , startWith/4
         , startWithGlobal/4
@@ -44,67 +46,67 @@
 %%---------------------------------------------------------------------------
 
 start(Class, Init, Args) ->
-  retPid(gen_statem:start(?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_statem:start(?MOD, [Class, Init, Args], []))).
 
 startWith(Name, Class, Init, Args) ->
-  retPid(gen_statem:start({local, Name}, ?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_statem:start({local, Name}, ?MOD, [Class, Init, Args], []))).
 
 startWithGlobal(Name, Class, Init, Args) ->
-  retPid(gen_statem:start({global, Name}, ?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_statem:start({global, Name}, ?MOD, [Class, Init, Args], []))).
 
 startLink(Class, Init, Args) ->
-  retPid(gen_statem:start_link(?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_statem:start_link(?MOD, [Class, Init, Args], []))).
 
 startLinkWith(Class, Name, Init, Args) ->
-  retPid(gen_statem:start_link({local, Name}, ?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_statem:start_link({local, Name}, ?MOD, [Class, Init, Args], []))).
 
 startLinkWithGlobal(Class, Name, Init, Args) ->
-  retPid(gen_statem:start_link({global, Name}, ?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_statem:start_link({global, Name}, ?MOD, [Class, Init, Args], []))).
 
 startMonitor(Class, Init, Args) ->
-  retPid(gen_statem:start_monitor(?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_statem:start_monitor(?MOD, [Class, Init, Args], []))).
 
 startMonitorWith(Class, Name, Init, Args) ->
-  retPid(gen_statem:start_monitor({local, Name}, ?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_statem:start_monitor({local, Name}, ?MOD, [Class, Init, Args], []))).
 
 startMonitorWithGlobal(Class, Name, Init, Args) ->
-  retPid(gen_statem:start_monitor({global, Name}, ?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_statem:start_monitor({global, Name}, ?MOD, [Class, Init, Args], []))).
 
 supStart(Class, Init, Args) ->
-  gen_statem:start_link(?MOD, [Class, Init, Args], []).
+  ?IO(gen_statem:start_link(?MOD, [Class, Init, Args], [])).
 
 supStartWith(Name, Class, Init, Args) ->
-  gen_statem:start_link({local, Name}, ?MOD, [Class, Init, Args], []).
+  ?IO(gen_statem:start_link({local, Name}, ?MOD, [Class, Init, Args], [])).
 
 stop(ServerRef) ->
-  gen_statem:stop(toErl(ServerRef)).
+  ?IO(gen_statem:stop(toErl(ServerRef))).
 
 stopWith(ServerRef, ExitReason, Timeout) ->
-  gen_statem:stop(toErl(ServerRef), toErl(ExitReason), toErl(Timeout)).
+  ?IO(gen_statem:stop(toErl(ServerRef), toErl(ExitReason), toErl(Timeout))).
 
 %%---------------------------------------------------------------------------
 %% | Statem APIs
 %%---------------------------------------------------------------------------
 
 call(StatemRef, Req) ->
-  gen_statem:call(toErl(StatemRef), Req).
+  ?IO(gen_statem:call(toErl(StatemRef), Req)).
 
 %% callTo :: Pid -> req -> Process rep
 callTo(Pid, Req) ->
-  gen_statem:call(Pid, Req).
+  ?IO(gen_statem:call(Pid, Req)).
 
 callTimeout(StatemRef, Req, Timeout) ->
-  gen_statem:call(toErl(StatemRef), Req, toErl(Timeout)).
+  ?IO(gen_statem:call(toErl(StatemRef), Req, toErl(Timeout))).
 
 cast(StatemRef, Msg) ->
-  gen_statem:cast(toErl(StatemRef), Msg).
+  ?IO(gen_statem:cast(toErl(StatemRef), Msg)).
 
 %% castTo :: Pid -> req -> Process ()
 castTo(Pid, Req) ->
-  gen_statem:cast(Pid, Req).
+  ?IO(gen_statem:cast(Pid, Req)).
 
 replyTo(From, Reply) ->
-  gen_statem:reply(From, Reply).
+  ?IO(gen_statem:reply(From, Reply)).
 
 %%---------------------------------------------------------------------------
 %% | Internal functions
@@ -126,4 +128,3 @@ toErl({'ExitShutdown'}) -> shutdown;
 
 toErl({'Infinity'}) -> infinity;
 toErl({'Timeout', I}) -> I.
-

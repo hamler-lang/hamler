@@ -9,10 +9,12 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Erlang Env Module.
+%% The Erlang Env module.
 %%
 %%---------------------------------------------------------------------------
 -module('Env').
+
+-include("../Foreign.hrl").
 
 -export([ getAllEnv/0
         , getEnv/1
@@ -21,22 +23,25 @@
         , unsetEnv/1
         ]).
 
+%% getAllEnv :: IO (List (String, String))
 getAllEnv() ->
-    [list_to_tuple(string:split(Env, "=")) || Env <- os:getenv()].
+  ?IO([list_to_tuple(string:split(Env, "=")) || Env <- os:getenv()]).
 
 getEnv(Name) ->
-    case os:getenv(Name) of
-        false -> error("EnvDoesNotExistError");
+  ?IO(case os:getenv(Name) of
+        false -> error('EnvDoesNotExist');
         Value -> Value
-    end.
+      end).
 
 lookupEnv(Name) ->
-    case os:getenv(Name) of
+  ?IO(case os:getenv(Name) of
         false -> {'Nothing'};
         Value -> {'Just', Value}
-    end.
+      end).
 
-setEnv(Name, Value) -> os:putenv(Name, Value).
+setEnv(Name, Value) ->
+  ?IO(os:putenv(Name, Value)).
 
-unsetEnv(Name) -> os:unsetenv(Name).
+unsetEnv(Name) ->
+  ?IO(os:unsetenv(Name)).
 

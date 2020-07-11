@@ -14,6 +14,8 @@
 %%---------------------------------------------------------------------------
 -module('Supervisor').
 
+-include("../../Foreign.hrl").
+
 -compile({no_auto_import, [error/1]}).
 
 -export([ startSup/2
@@ -35,68 +37,68 @@
 -define(MOD, 'Control.Behaviour.Supervisor.Proxy').
 
 startSup(Init, Args) ->
-  startRet(supervisor:start_link(?MOD, [Init, Args])).
+  ?IO(startRet(supervisor:start_link(?MOD, [Init, Args]))).
 
 startSupWith(Name, Init, Args) ->
-  startRet(supervisor:start_link({local, Name}, ?MOD, [Init, Args])).
+  ?IO(startRet(supervisor:start_link({local, Name}, ?MOD, [Init, Args]))).
 
 startSupWithGlobal(Name, Init, Args) ->
-  startRet(supervisor:start_link({global, Name}, ?MOD, [Init, Args])).
+  ?IO(startRet(supervisor:start_link({global, Name}, ?MOD, [Init, Args]))).
 
 %% TODO: destruct childspecs
 checkChildSpecs(ChildSpecs) ->
-  case supervisor:check_childspecs(ChildSpecs) of
-    ok -> ok();
-    {error, Reason} ->
-      err(childSpecError(Reason))
-    end.
+  ?IO(case supervisor:check_childspecs(ChildSpecs) of
+        ok -> ok();
+        {error, Reason} ->
+          err(childSpecError(Reason))
+      end).
 
 countChildren(SupRef) ->
-  maps:from_list(supervisor:count_children(toErl(SupRef))).
+  ?IO(maps:from_list(supervisor:count_children(toErl(SupRef)))).
 
 deleteChild(SupRef, Id) ->
-  case supervisor:delete_child(toErl(SupRef), Id) of
-    ok -> ok();
-    {error, Reason} ->
-      err(childError(Reason))
-  end.
+  ?IO(case supervisor:delete_child(toErl(SupRef), Id) of
+        ok -> ok();
+        {error, Reason} ->
+          err(childError(Reason))
+      end).
 
 getChildSpec(SupRef, Id) ->
-  case supervisor:get_childspec(toErl(SupRef), Id) of
-    {ok, ChildSpec} ->
-      just(childSpecRecord(ChildSpec));
-    {error, not_found} -> nothing()
-  end.
+  ?IO(case supervisor:get_childspec(toErl(SupRef), Id) of
+        {ok, ChildSpec} ->
+          just(childSpecRecord(ChildSpec));
+        {error, not_found} -> nothing()
+      end).
 
 restartChild(SupRef, Id) ->
-  case supervisor:restartChild(toErl(SupRef), Id) of
-    {ok, Child} ->
-        ok(childRecord(Child));
-    {error, Reason} ->
-      err(childError(Reason))
-  end.
+  ?IO(case supervisor:restartChild(toErl(SupRef), Id) of
+        {ok, Child} ->
+          ok(childRecord(Child));
+        {error, Reason} ->
+          err(childError(Reason))
+      end).
 
 startChild(SupRef, ChildSpec) ->
-  case supervisor:start_child(toErl(SupRef), ChildSpec) of
-    {ok, ChildPid} ->
-      ok(ChildPid);
-    {error, Reason} ->
-      err(childError(Reason))
-  end.
+  ?IO(case supervisor:start_child(toErl(SupRef), ChildSpec) of
+        {ok, ChildPid} ->
+          ok(ChildPid);
+        {error, Reason} ->
+          err(childError(Reason))
+      end).
 
 terminateChild(SupRef, Id) ->
-  case supervisor:terminate_child(toErl(SupRef), Id) of
-    ok -> ok();
-    {error, Reason} ->
-      err(childError(Reason))
-  end.
+  ?IO(case supervisor:terminate_child(toErl(SupRef), Id) of
+        ok -> ok();
+        {error, Reason} ->
+          err(childError(Reason))
+      end).
 
 terminateChildBy(SupRef, Pid) ->
-  terminateChild(SupRef, Pid).
+  ?IO(terminateChild(SupRef, Pid)).
 
 %% TODO: fixme later...
 whichChildren(SupRef) ->
-  [Id || {Id, _, _, _} <- supervisor:which_children(toErl(SupRef))].
+  ?IO([Id || {Id, _, _, _} <- supervisor:which_children(toErl(SupRef))]).
 
 %%---------------------------------------------------------------------------
 %% | Internal functions

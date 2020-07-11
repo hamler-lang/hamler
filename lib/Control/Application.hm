@@ -68,16 +68,19 @@ type AppDescr =
 -- type StartResult = Result AppStartError [Application]
 
 -- Ensure to start an application with its dependencies.
-foreign import ensureAllStarted :: Application -> Process [Application]
+foreign import ensureAllStarted
+  :: Application -> Process [Application]
 
 -- Ensure to restart an application with its dependencies.
-foreign import ensureAllRestarted :: Application -> AppRestartType -> Process [Application]
+foreign import ensureAllRestarted
+  :: Application -> AppRestartType -> Process [Application]
 
 -- Ensure to start an application.
 foreign import ensureStarted :: Application -> Process ()
 
 -- Ensure to restart an application.
-foreign import ensureRestarted :: Application -> AppRestartType -> Process ()
+foreign import ensureRestarted
+  :: Application -> AppRestartType -> Process ()
 
 {-
 get_all_env() -> Env

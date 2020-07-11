@@ -14,6 +14,8 @@
 %%---------------------------------------------------------------------------
 -module('Error').
 
+-include("../Foreign.hrl").
+
 -export([showErrorImpl/1]).
 
 -export([ throwException/1
@@ -21,8 +23,8 @@
         ]).
 
 showErrorImpl(Error) ->
-    lists:flatten(io_lib:format("~p", [Error])).
+  lists:flatten(io_lib:format("~p", [Error])).
 
-throwException(Ex) -> throw(Ex).
+throwException(Ex) -> ?IO(throw(Ex)).
 
 catchException(_X, _Y) -> ok.

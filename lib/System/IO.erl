@@ -14,6 +14,8 @@
 %%---------------------------------------------------------------------------
 -module('IO').
 
+-include("../Foreign.hrl").
+
 -export([ readFile/1
         , writeFile/2
         , appendFile/2
@@ -23,15 +25,15 @@
 
 -spec(readFile(filepath()) -> ok).
 readFile(FilePath) ->
-  return(file:read_file(FilePath)).
+  ?IO(return(file:read_file(FilePath))).
 
 -spec(writeFile(filepath(), binary()) -> ok).
 writeFile(FilePath, Data) ->
-  return(file:write_file(FilePath, Data, [write])).
+  ?IO(return(file:write_file(FilePath, Data, [write]))).
 
 -spec(appendFile(filepath(), binary()) -> ok).
 appendFile(FilePath, Data) ->
-  return(file:write_file(FilePath, Data, [append])).
+  ?IO(return(file:write_file(FilePath, Data, [append]))).
 
 -compile({inline, [return/1]}).
 return(ok) -> ok;

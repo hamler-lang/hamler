@@ -14,25 +14,29 @@
 %%---------------------------------------------------------------------------
 -module('Node').
 
+-include("../../Foreign.hrl").
+
 -export([ nodesOf/1
         , disconnect/1
         , getCookie/0
         , setCookie/2
         ]).
 
-nodesOf(Type) -> erlang:nodes(toErl(Type)).
+nodesOf(Type) ->
+  ?IO(erlang:nodes(toErl(Type))).
 
 disconnect(Node) ->
-  case erlang:disconnect_node(Node) of
-    true    -> {'Just', true};
-    false   -> {'Just', false};
-    ignored -> {'Nothing'}
-  end.
+  ?IO(case erlang:disconnect_node(Node) of
+        true    -> {'Just', true};
+        false   -> {'Just', false};
+        ignored -> {'Nothing'}
+      end).
 
-getCookie() -> atom_to_list(erlang:get_cookie()).
+getCookie() ->
+  ?IO(atom_to_list(erlang:get_cookie())).
 
 setCookie(Node, Cookie) ->
-  erlang:set_cookie(Node, list_to_atom(Cookie)).
+  ?IO(erlang:set_cookie(Node, list_to_atom(Cookie))).
 
 toErl({'VisibleNode'}) -> visible;
 toErl({'HiddenNode'}) -> hidden;

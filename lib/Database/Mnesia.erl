@@ -9,10 +9,12 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Mnesia Database FFI.
+%% The Mnesia Database FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Mnesia').
+
+-include("../Foreign.hrl").
 
 -export([ addTableCopy/3
         , addTableIndex/2
@@ -35,67 +37,67 @@
         ]).
 
 addTableCopy(Tab, N, ST) ->
-  return(mnesia:add_table_copy(Tab, N, toErl(ST))).
+  ?IO(return(mnesia:add_table_copy(Tab, N, toErl(ST)))).
 
 addTableIndex(Tab, I) ->
-  return(mnesia:add_table_index(Tab, I)).
+  ?IO(return(mnesia:add_table_index(Tab, I))).
 
 clearTable(Tab) ->
-  return(mnesia:clear_table(Tab)).
+  ?IO(return(mnesia:clear_table(Tab))).
 
 createSchema(Nodes) ->
-  case mnesia:create_schema(Nodes) of
-    ok -> ok;
-    {error, Reason} -> error(Reason)
-  end.
+  ?IO(case mnesia:create_schema(Nodes) of
+        ok -> ok;
+        {error, Reason} -> error(Reason)
+      end).
 
 createTable(Name, Options) ->
-  return(mnesia:create_table(Name, parseOpts(maps:to_list(Options), []))).
+  ?IO(return(mnesia:create_table(Name, parseOpts(maps:to_list(Options), [])))).
 
 delTableCopy(Tab, Node) ->
-  return(mnesia:del_table_copy(Tab, Node)).
+  ?IO(return(mnesia:del_table_copy(Tab, Node))).
 
 delTableIndex(Tab, I) ->
-  return(mnesia:delTableIndex(Tab, I)).
+  ?IO(return(mnesia:delTableIndex(Tab, I))).
 
 delete(Tab, Key) ->
-  mnesia:delete(Tab, Key, write).
+  ?IO(mnesia:delete(Tab, Key, write)).
 
 deleteWithLock(Tab, Key, Lock) ->
-  mnesia:delete(Tab, Key, toErl(Lock)).
+  ?IO(mnesia:delete(Tab, Key, toErl(Lock))).
 
 deleteObject(Tab, Rec) ->
-  mnesia:delete_object(Tab, Rec, write).
+  ?IO(mnesia:delete_object(Tab, Rec, write)).
 
 deleteObjectWithLock(Tab, Rec, Lock) ->
-  mnesia:delete_object(Tab, Rec, toErl(Lock)).
+  ?IO(mnesia:delete_object(Tab, Rec, toErl(Lock))).
 
 deleteTable(Tab) ->
-  return(mnesia:delete_table(Tab)).
+  ?IO(return(mnesia:delete_table(Tab))).
 
 dirtyDeleteObject(Tab, Rec) ->
-  mnesia:dirty_delete_object(Tab, Rec).
+  ?IO(mnesia:dirty_delete_object(Tab, Rec)).
 
 next(Tab, Key1) ->
-  case mnesia:next(Tab, Key1) of
-    '$end_of_table' -> {'Nothing'};
-    Key2 -> {'Just', Key2}
-  end.
+  ?IO(case mnesia:next(Tab, Key1) of
+        '$end_of_table' -> {'Nothing'};
+        Key2 -> {'Just', Key2}
+      end).
 
 prev(Tab, Key1) ->
-  case mnesia:prev(Tab, Key1) of
-    '$end_of_table' -> {'Nothing'};
-    Key2 -> {'Just', Key2}
-  end.
+  ?IO(case mnesia:prev(Tab, Key1) of
+        '$end_of_table' -> {'Nothing'};
+        Key2 -> {'Just', Key2}
+      end).
 
 wread(Tab, Key) ->
-  mnesia:read(Tab, Key, write).
+  ?IO(mnesia:read(Tab, Key, write)).
 
 write(Tab, Rec) ->
-  mnesia:write(Tab, Rec, write).
+  ?IO(mnesia:write(Tab, Rec, write)).
 
 writeWithLock(Tab, Rec, Lock) ->
-  mnesia:write(Tab, Rec, toErl(Lock)).
+  ?IO(mnesia:write(Tab, Rec, toErl(Lock))).
 
 %%---------------------------------------------------------------------------
 %% | Internal functions

@@ -14,6 +14,7 @@
 -----------------------------------------------------------------------------
 module Data.Ref where
 
+import Control.Monad (IO)
 import Data.Eq (class Eq)
 import Data.Ord
   ( class Ord
@@ -30,7 +31,7 @@ type Ref = Reference
 --
 foreign import data Reference :: Type
 
-foreign import makeRef :: Reference
+foreign import makeRef :: IO Reference
 
 instance Eq Reference where
   eq = eqRefImpl
