@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Kernel.Application
+-- Module      :  Control.Application
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,10 +9,10 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Erlang Application module.
+-- The Application module.
 --
 -----------------------------------------------------------------------------
-module Kernel.Application where
+module Control.Application where
 
 import Control.Distributed.Node (Node)
 import Control.Process (Module, Process)
