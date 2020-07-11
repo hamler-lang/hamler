@@ -14,7 +14,10 @@
 %%---------------------------------------------------------------------------
 -module('Curry').
 
--export([uncurry/2]).
+-export([uncurry/2, uncurryIO/2]).
+
+uncurryIO(Fun, [H|T]) -> uncurryIO(Fun(H), T);
+uncurryIO(Ret, []) -> Ret().
 
 uncurry(Fun, [H|T]) -> uncurry(Fun(H), T);
 uncurry(Ret, []) -> Ret.

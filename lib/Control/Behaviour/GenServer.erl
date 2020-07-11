@@ -16,7 +16,7 @@
 
 -include("../../Foreign.hrl").
 
--export([ start/3
+-export([ start/2
         , startWith/4
         , startWithGlobal/4
         , startLink/3
@@ -52,8 +52,8 @@
 %% | Start/stop server
 %%---------------------------------------------------------------------------
 
-start(Class, Init, Args) ->
-  ?IO(retPid(gen_server:start(?MOD, [Class, Init, Args], []))).
+start(Class, Init) ->
+  ?IO(retPid(gen_server:start(?MOD, [Class, Init, []], []))).
 
 startWith(Name, Class, Init, Args) ->
   ?IO(retPid(gen_server:start({local, Name}, ?MOD, [Class, Init, Args], []))).

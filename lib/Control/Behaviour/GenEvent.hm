@@ -49,36 +49,36 @@ class GenEvent e st | e -> st, st -> e where
   handleEvent :: HandleEvent e st
 
 foreign import start
-  :: forall a e st. GenEvent e st
-  => (InitHandler a st) -> a -> Process Pid
+  :: forall e st. GenEvent e st
+  => (InitHandler st) -> Process Pid
 
 foreign import startWith
-  :: forall a e st. GenEvent e st
-  => Name -> (InitHandler a st) -> a -> Process Pid
+  :: forall e st. GenEvent e st
+  => Name -> (InitHandler st) -> Process Pid
 
 foreign import startWithGlobal
-  :: forall a e st. GenEvent e st
-  => Name -> (InitHandler a st) -> a -> Process Pid
+  :: forall e st. GenEvent e st
+  => Name -> (InitHandler st) -> Process Pid
 
 foreign import startLink
-  :: forall a e st. GenEvent e st
-  => (InitHandler a st) -> a -> Process Pid
+  :: forall e st. GenEvent e st
+  => (InitHandler st) -> Process Pid
 
 foreign import startLinkWith
-  :: forall a e st. GenEvent e st
-  => Name -> (InitHandler a st) -> a -> Process Pid
+  :: forall e st. GenEvent e st
+  => Name -> (InitHandler st) -> Process Pid
 
 foreign import startLinkWithGlobal
-  :: forall a e st. GenEvent e st
-  => Name -> (InitHandler a st) -> a -> Process Pid
+  :: forall e st. GenEvent e st
+  => Name -> (InitHandler st) -> Process Pid
 
 foreign import supStart
-  :: forall a e st. GenEvent e st
-  => (InitHandler a st) -> a -> Process StartRet
+  :: forall e st. GenEvent e st
+  => (InitHandler st) -> Process StartRet
 
 foreign import supStartWith
-  :: forall a e st. GenEvent e st
-  => Name -> (InitHandler a st) -> a -> Process StartRet
+  :: forall e st. GenEvent e st
+  => Name -> (InitHandler st) -> Process StartRet
 
 foreign import stop :: EMgrRef -> Process ()
 
@@ -86,8 +86,8 @@ foreign import stopWith
   :: EMgrRef -> ExitReason -> Timeout -> Process ()
 
 foreign import addHandler
-  :: forall a e st. GenEvent e st
-  => EMgrRef -> (InitHandler a st) -> a -> Process ()
+  :: forall e st. GenEvent e st
+  => EMgrRef -> (InitHandler st) -> Process ()
 
 foreign import notify
   :: forall e. EMgrRef -> e -> Process ()

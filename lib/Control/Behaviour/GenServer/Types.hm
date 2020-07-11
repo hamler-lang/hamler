@@ -27,8 +27,8 @@ import Control.Process (Process, ExitReason)
 import Data.Maybe (Maybe)
 import Data.Pid (Pid)
 
-type InitHandler a st
-  = a -> Process (InitResult st)
+type InitHandler st
+  = Process (InitResult st)
 
 -- | Init Result
 data InitResult st
