@@ -9,7 +9,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Foreign Module.
+%% The Foreign FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Foreign').
@@ -35,14 +35,14 @@
         ]).
 
 %% Pure FFI
-ffi0(Mod, Fun) -> ffiApply(Mod, Fun, []).
-ffi1(Mod, Fun, A) -> ffiApply(Mod, Fun, [A]).
-ffi2(Mod, Fun, A, B) -> ffiApply(Mod, Fun, [A, B]).
-ffi3(Mod, Fun, A, B, C) -> ffiApply(Mod, Fun, [A, B, C]).
-ffi4(Mod, Fun, A, B, C, D) -> ffiApply(Mod, Fun, [A, B, C, D]).
-ffi5(Mod, Fun, A, B, C, D, E) -> ffiApply(Mod, Fun, [A, B, C, D, E]).
-ffi6(Mod, Fun, A, B, C, D, E, F) -> ffiApply(Mod, Fun, [A, B, C, D, E, F]).
-ffi7(Mod, Fun, A, B, C, D, E, F, G) -> ffiApply(Mod, Fun, [A, B, C, D, E, F, G]).
+ffi0(Mod, Fun) -> Mod:Fun().
+ffi1(Mod, Fun, A) -> Mod:Fun(A).
+ffi2(Mod, Fun, A, B) -> Mod:Fun(A, B).
+ffi3(Mod, Fun, A, B, C) -> Mod:Fun(A, B, C).
+ffi4(Mod, Fun, A, B, C, D) -> Mod:Fun(A, B, C, D).
+ffi5(Mod, Fun, A, B, C, D, E) -> Mod:Fun(A, B, C, D, E).
+ffi6(Mod, Fun, A, B, C, D, E, F) -> Mod:Fun(A, B, C, D, E, F).
+ffi7(Mod, Fun, A, B, C, D, E, F, G) -> Mod:Fun(A, B, C, D, E, F, G).
 
 %% FFI with Effect
 ffiIO0(Mod, Fun) -> ffi0(Mod, Fun).
@@ -53,8 +53,3 @@ ffiIO4(Mod, Fun, A, B, C, D) -> ffi4(Mod, Fun, A, B, C, D).
 ffiIO5(Mod, Fun, A, B, C, D, E) -> ffi5(Mod, Fun, A, B, C, D, E).
 ffiIO6(Mod, Fun, A, B, C, D, E, F) -> ffi6(Mod, Fun, A, B, C, D, E, F).
 ffiIO7(Mod, Fun, A, B, C, D, E, F, G) -> ffi7(Mod, Fun, A, B, C, D, E, F, G).
-
--compile({inline, [ffiApply/3]}).
-ffiApply(Mod, Fun, Args) ->
-    erlang:apply(Mod, Fun, Args).
-
