@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  ERTS.PersistentTerm
+-- Module      :  Data.Term.Persistent
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,10 +9,10 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The PersistentTerm module.
+-- The Persistent Terms module.
 --
 -----------------------------------------------------------------------------
-module ERTS.PersistentTerm where
+module Data.Term.Persistent where
 
 import Control.Monad (IO)
 import Data.Unit (Unit)

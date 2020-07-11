@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Atomics
+%% Module      :  Counters
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,13 +9,18 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Atomics Module.
+%% The Counters FFI module.
 %%
 %%---------------------------------------------------------------------------
--module('Atomics').
+-module('Counters').
 
 -export([new/2]).
 
--spec(new(pos_integer(), boolean()) -> atomics:atomics_ref()).
-new(Arity, Signed) ->
-    atomics:new(Arity, [{signed, Signed}]).
+new(Size, Options) ->
+    counters:new(Size, parseOpts(Options, [])).
+
+parseOpts([{'Atomics'}|T], Acc) ->
+    parseOpts(T, [atomics|Acc]);
+parseOpts([{'WriteConcurrency'}|T], Acc) ->
+    parseOpts(T, [write_concurrency|Acc]);
+parseOpts([], Acc) -> Acc.

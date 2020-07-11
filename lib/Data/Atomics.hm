@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  ERTS.Atomics
+-- Module      :  Data.Atomics
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,15 +9,15 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Atomics Module.
+-- The Atomics module.
 --
 -----------------------------------------------------------------------------
-module ERTS.Atomics where
+module Data.Atomics where
 
 import Control.Monad (IO)
 import Data.Ref (Reference)
 import Data.Unit (Unit)
-import Foreign
+import Foreign (ffiIO1, ffiIO2, ffiIO3, ffiIO4)
 
 type AtomicsRef = Reference
 

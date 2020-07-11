@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  ERTS.Counters
+-- Module      :  Data.Counters
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -12,7 +12,7 @@
 -- The Counters module.
 --
 -----------------------------------------------------------------------------
-module ERTS.Counters where
+module Data.Counters where
 
 import Control.Monad (IO)
 import Data.Unit (Unit)
