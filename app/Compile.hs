@@ -201,7 +201,7 @@ runProject  =pure $ do
     if isExist
       then SS.setenv "ERL_LIBS" (T.pack hamlerFile)
       else SS.setenv "ERL_LIBS" (T.pack $ dir <> ".deps/hamler")
-    SS.run  "erl" ["-pa",T.pack (tpath), "-noshell","-s" ,"Main","main","-s","init","stop" ]
+    SS.run  "erl" ["-pa",T.pack (tpath), "-noshell","-eval" ,"('Main':main())()","-s","init","stop" ]
   return ()
 
 -- | isFile  ".core" "Main.core"   -> True
