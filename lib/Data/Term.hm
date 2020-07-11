@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Data.Ref
+-- Module      :  Data.Term
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -17,6 +17,6 @@ module Data.Term where
 -- | A piece of data of any datatype is called a Term in Erlang.
 foreign import data Term :: Type
 
-class ToErl a where
-  toErl :: a -> Term
+class ToTerm a where
+  toTerm :: a -> Term
 
