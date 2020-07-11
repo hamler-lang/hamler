@@ -19,6 +19,7 @@
         , bindListImpl/2
         , pureImpl/1
         , seqio/1
+        , unsafePerformIO/1
         ]).
 
 -type(mapFun() :: fun((A :: any()) -> B :: any())).
@@ -28,14 +29,16 @@ applyListImpl(Funs, L) ->
     [F(X) || X <- L, F <- Funs].
 
 -spec(bindImpl(any(), fun((A :: term()) -> B :: term())) -> any()).
-bindImpl(X, F) -> F(X).
+bindImpl(X, F) -> fun() -> (F(X()))() end.
 
 -spec(bindListImpl(list(term()), fun((term()) -> list(term()))) -> list(term())).
 bindListImpl(L, F) ->
     lists:append(lists:map(F, L)).
 
 -spec(pureImpl(any()) -> any()).
-pureImpl(X) -> X.
+pureImpl(X) -> fun() -> X end.
 
 seqio(L) when is_list(L) -> L.
+
+unsafePerformIO(L) -> L().
 
