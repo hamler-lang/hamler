@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Foreign FFI module.
+-- The Foreign module.
 --
 -----------------------------------------------------------------------------
 module Foreign where
