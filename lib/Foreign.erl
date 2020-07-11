@@ -14,6 +14,8 @@
 %%---------------------------------------------------------------------------
 -module('Foreign').
 
+-include("Foreign.hrl").
+
 -export([ ffi0/2
         , ffi1/3
         , ffi2/4
@@ -45,11 +47,11 @@ ffi6(Mod, Fun, A, B, C, D, E, F) -> Mod:Fun(A, B, C, D, E, F).
 ffi7(Mod, Fun, A, B, C, D, E, F, G) -> Mod:Fun(A, B, C, D, E, F, G).
 
 %% FFI with Effect
-ffiIO0(Mod, Fun) -> ffi0(Mod, Fun).
-ffiIO1(Mod, Fun, A) -> ffi1(Mod, Fun, A).
-ffiIO2(Mod, Fun, A, B) -> ffi2(Mod, Fun, A, B).
-ffiIO3(Mod, Fun, A, B, C) -> ffi3(Mod, Fun, A, B, C).
-ffiIO4(Mod, Fun, A, B, C, D) -> ffi4(Mod, Fun, A, B, C, D).
-ffiIO5(Mod, Fun, A, B, C, D, E) -> ffi5(Mod, Fun, A, B, C, D, E).
-ffiIO6(Mod, Fun, A, B, C, D, E, F) -> ffi6(Mod, Fun, A, B, C, D, E, F).
-ffiIO7(Mod, Fun, A, B, C, D, E, F, G) -> ffi7(Mod, Fun, A, B, C, D, E, F, G).
+ffiIO0(Mod, Fun) -> ?IO(ffi0(Mod, Fun)).
+ffiIO1(Mod, Fun, A) -> ?IO(ffi1(Mod, Fun, A)).
+ffiIO2(Mod, Fun, A, B) -> ?IO(ffi2(Mod, Fun, A, B)).
+ffiIO3(Mod, Fun, A, B, C) -> ?IO(ffi3(Mod, Fun, A, B, C)).
+ffiIO4(Mod, Fun, A, B, C, D) -> ?IO(ffi4(Mod, Fun, A, B, C, D)).
+ffiIO5(Mod, Fun, A, B, C, D, E) -> ?IO(ffi5(Mod, Fun, A, B, C, D, E)).
+ffiIO6(Mod, Fun, A, B, C, D, E, F) -> ?IO(ffi6(Mod, Fun, A, B, C, D, E, F)).
+ffiIO7(Mod, Fun, A, B, C, D, E, F, G) -> ?IO(ffi7(Mod, Fun, A, B, C, D, E, F, G)).
