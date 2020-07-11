@@ -24,12 +24,12 @@
         , code_change/3
         ]).
 
--import('Curry', [uncurry/2]).
+-import('Curry', [uncurry/2, uncurryIO/2]).
 
 -record(proxy, {handleEvent, state}).
 
-init([#{handleEvent := HandleEvent}, Init, Args]) ->
-  case Init(Args) of
+init([#{handleEvent := HandleEvent}, Init, []]) ->
+  case Init() of
     {'InitOk', State} ->
       {ok, #proxy{handleEvent = HandleEvent, state = State}};
     {'InitOkHib', State} ->
@@ -42,7 +42,7 @@ handle_call(_Request, Proxy) ->
   {ok, ignored, Proxy}.
 
 handle_event(Event, Proxy = #proxy{handleEvent = HandleEvent, state = State}) ->
-  NState = uncurry(HandleEvent, [Event, State]),
+  NState = uncurryIO(HandleEvent, [Event, State]),
   {ok, Proxy#proxy{state = NState}}.
 
 handle_info(Info, Proxy) ->

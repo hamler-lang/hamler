@@ -30,8 +30,8 @@ data EMgrRef
   | EMgrRefAt Name Node
   | EMgrRefGlobal Name
 
-type InitHandler a st
-  = a -> Process (InitResult st)
+type InitHandler st
+  = Process (InitResult st)
 
 data InitResult st
   = InitOk st

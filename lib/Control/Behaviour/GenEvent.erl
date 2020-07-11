@@ -16,7 +16,7 @@
 
 -include("../../Foreign.hrl").
 
--export([ start/3
+-export([ start/2
         , startWith/4
         , startWithGlobal/4
         , startLink/3
@@ -41,8 +41,8 @@
 %% | Start/Stop
 %%---------------------------------------------------------------------------
 
-start(Class, Init, Args) ->
-  ?IO(doStart(fun gen_event:start/0, Class, Init, Args)).
+start(Class, Init) ->
+  ?IO(doStart(fun gen_event:start/0, Class, Init, [])).
 
 startWith(Class, Name, Init, Args) ->
   ?IO(doStartWith(fun gen_event:start/1, {local, Name}, Class, Init, Args)).
@@ -99,13 +99,13 @@ syncNotifyTo(Pid, Event) ->
 
 doStart(Start, Class, Init, Args) ->
   {ok, Pid} = Start(),
-  ok = addHandler(Class, Pid, Init, Args),
+  ok = (addHandler(Class, Pid, Init, Args))(),
   Pid.
 
 doStartWith(Start, Name, Class, Init, Args) ->
   case Start(Name) of
     {ok, Pid} ->
-      ok = addHandler(Class, Pid, Init, Args),
+      ok = (addHandler(Class, Pid, Init, Args))(),
       Pid;
     {error, Reason} ->
       error(Reason)
@@ -113,13 +113,13 @@ doStartWith(Start, Name, Class, Init, Args) ->
 
 doSupStart(Start, Class, Init, Args) ->
   {ok, Pid} = Start(),
-  ok = addHandler(Class, Pid, Init, Args),
+  ok = (addHandler(Class, Pid, Init, Args))(),
   {ok, Pid}.
 
 doSupStartWith(Start, Name, Class, Init, Args) ->
   case Start(Name) of
     {ok, Pid} ->
-      ok = addHandler(Class, Pid, Init, Args),
+      ok = (addHandler(Class, Pid, Init, Args))(),
       {ok, Pid};
     {error, Reason} ->
       {error, Reason}
