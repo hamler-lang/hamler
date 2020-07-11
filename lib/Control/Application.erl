@@ -14,6 +14,8 @@
 %%---------------------------------------------------------------------------
 -module('Application').
 
+-include("../Foreign.hrl").
+
 -export([ ensureAllStarted/1
         , ensureAllRestarted/2
         , ensureStarted/1
@@ -31,99 +33,87 @@
         ]).
 
 ensureAllStarted(Application) ->
-    case application:ensure_all_started(Application) of
-        {ok, Started} -> Started;
-        {error, Reason} -> error(Reason)
-    end.
+  ?IO(return(application:ensure_all_started(Application))).
 
 ensureAllRestarted(Application, Type) ->
-    case application:ensure_all_started(Application, restartType(Type)) of
-        {ok, Started} -> Started;
-        {error, Reason} -> error(Reason)
-    end.
+  ?IO(return(application:ensure_all_started(Application, restartType(Type)))).
 
 ensureStarted(Application) ->
-    case application:ensure_started(Application) of
-        ok -> ok;
-        {error, Reason} -> error(Reason)
-    end.
+  ?IO(return(application:ensure_started(Application))).
 
 ensureRestarted(Application, Type) ->
-    case application:ensure_started(Application, restartType(Type)) of
-        ok -> ok;
-        {error, Reason} -> error(Reason)
-    end.
+  ?IO(return(application:ensure_started(Application, restartType(Type)))).
 
 getApplication() ->
-    case application:get_application() of
+  ?IO(case application:get_application() of
         undefined -> {'Nothing'};
         {ok, App} -> {'Just', App}
-    end.
+      end).
 
 getApplicationOfPid(Pid) ->
-    case application:get_application(Pid) of
+  ?IO(case application:get_application(Pid) of
         undefined -> {'Nothing'};
         {ok, App} -> {'Just', App}
-    end.
+      end).
 
 load(Application) ->
-    case catch application:load(Application) of
+  ?IO(case catch application:load(Application) of
         ok -> ok;
         {error, {already_loaded, _}} -> ok;
         {error, Reason} -> error(Reason);
         {'EXIT', _} -> error('AppNotFound')
-    end.
+      end).
 
 loadedApplications() ->
-    lists:map(fun appDescr/1, application:loaded_applications()).
+  ?IO(lists:map(fun appDescr/1, application:loaded_applications())).
 
 start(Application) ->
-    case catch application:start(Application) of
+  ?IO(case catch application:start(Application) of
         ok -> ok;
         {error, {already_started, _}} -> ok;
         {error, Reason} -> error(Reason);
         {'EXIT', {"no such file or directory", _}} ->
             error('AppNotFound')
-    end.
+      end).
 
 restart(Application, Type) ->
-    case catch application:start(Application, restartType(Type)) of
+  ?IO(case catch application:start(Application, restartType(Type)) of
         ok -> ok;
         {error, {already_started, _}} -> ok;
         {error, Reason} -> error(Reason);
         {'EXIT', {"no such file or directory", _}} ->
-            error('AppNotFound')
-    end.
+          error('AppNotFound')
+    end).
 
 stop(Application) ->
-    case catch application:stop(Application) of
+  ?IO(case catch application:stop(Application) of
         ok -> ok;
         {error, {not_started, _}} ->
-            error('AppNotStarted');
+          error('AppNotStarted');
         {'EXIT', _} ->
-            error('AppNotFound')
-    end.
+          error('AppNotFound')
+      end).
 
 takeover(Application, Type) ->
-    case catch application:takeover(Application, restartType(Type)) of
+  ?IO(case catch application:takeover(Application, restartType(Type)) of
         ok -> ok;
         {error, Reason} ->
-            error(Reason);
+          error(Reason);
         {'EXIT', _} ->
-            error('AppNotFound')
-    end.
+          error('AppNotFound')
+    end).
 
 unload(Application) ->
-    case catch application:unload(Application) of
+  ?IO(case catch application:unload(Application) of
         ok -> ok;
         {error, {not_loaded, _}} ->
-            error('AppNotLoaded');
+          error('AppNotLoaded');
         {'EXIT', _} ->
-            error('AppNotFound')
-    end.
+          error('AppNotFound')
+      end).
 
 whichApplications() ->
-    lists:map(fun appDescr/1, application:which_applications()).
+  ?IO(lists:map(fun appDescr/1, application:which_applications())).
 
 restartType({'Permanent'}) -> permanent;
 restartType({'Transient'}) -> transient;
@@ -132,5 +122,9 @@ restartType({'Temporary'}) -> temporary.
 %% appStartError(_Reason) -> {'AppStartError'}.
 
 appDescr({App, Descr, Vsn}) ->
-    #{name => App, desc => Descr, vsn => Vsn}.
+  #{name => App, desc => Descr, vsn => Vsn}.
+
+return(ok) -> ok;
+return({ok, Result}) -> Result;
+return({error, Reason}) -> error(Reason).
 

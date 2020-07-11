@@ -14,13 +14,12 @@
 %%---------------------------------------------------------------------------
 -module('Printf').
 
+-include("../../Foreign.hrl").
+
 -export([ print/1
         , println/1
         ]).
 
--spec(print(string()) -> ok).
-print(S) -> fun() -> io:format(S) end.
+print(S) -> ?IO(io:format(S)).
 
--spec(println(string()) -> ok).
-println(S) -> fun() -> io:format(S ++ "~n") end.
-
+println(S) -> ?IO(io:format(S ++ "~n")).

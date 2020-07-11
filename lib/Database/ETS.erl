@@ -14,6 +14,8 @@
 %%---------------------------------------------------------------------------
 -module('ETS').
 
+-include("../Foreign.hrl").
+
 -export([ new/2
         , info/1
         , file2tab/1
@@ -25,49 +27,49 @@
         ]).
 
 new(Name, Options) when is_atom(Name) ->
-  ets:new(Name, parseOpts(maps:to_list(Options), [])).
+  ?IO(ets:new(Name, parseOpts(maps:to_list(Options), []))).
 
 info(Tab) ->
-  case ets:info(Tab) of
-    undefined -> {'Nothing'};
-    Info -> {'Just', infoRec(Info, #{})}
-  end.
+  ?IO(case ets:info(Tab) of
+        undefined -> {'Nothing'};
+        Info -> {'Just', infoRec(Info, #{})}
+      end).
 
 file2tab(Filename) ->
-  case ets:file2tab(Filename) of
-    {ok, Tab} -> Tab;
-    {error, Reason} -> error(Reason)
-  end.
+  ?IO(case ets:file2tab(Filename) of
+        {ok, Tab} -> Tab;
+        {eror, Reason} -> error(Reason)
+      end).
 
 first(Tab) ->
-  case ets:first(Tab) of
-    '$end_of_table' -> {'Nothing'};
-    Key -> {'Just', Key}
-  end.
+  ?IO(case ets:first(Tab) of
+        '$end_of_table' -> {'Nothing'};
+        Key -> {'Just', Key}
+      end).
 
 last(Tab) ->
-  case ets:last(Tab) of
-    '$end_of_table' -> {'Nothing'};
-    Key -> {'Just', Key}
-  end.
+  ?IO(case ets:last(Tab) of
+        '$end_of_table' -> {'Nothing'};
+        Key -> {'Just', Key}
+      end).
 
 next(Tab, Key1) ->
-  case ets:next(Tab, Key1) of
-    '$end_of_table' -> {'Nothing'};
-    Key2 -> {'Just', Key2}
-  end.
+  ?IO(case ets:next(Tab, Key1) of
+        '$end_of_table' -> {'Nothing'};
+        Key2 -> {'Just', Key2}
+      end).
 
 prev(Tab, Key1) ->
-  case ets:prev(Tab, Key1) of
-    '$end_of_table' -> {'Nothing'};
-    Key2 -> {'Just', Key2}
-  end.
+  ?IO(case ets:prev(Tab, Key1) of
+        '$end_of_table' -> {'Nothing'};
+        Key2 -> {'Just', Key2}
+      end).
 
 tab2file(Tab, Filename) ->
-  case ets:tab2file(Tab, Filename) of
-    ok -> ok;
-    {error, Reason} -> error(Reason)
-  end.
+  ?IO(case ets:tab2file(Tab, Filename) of
+        ok -> ok;
+        {error, Reason} -> error(Reason)
+      end).
 
 %%---------------------------------------------------------------------------
 %% | Internal functions

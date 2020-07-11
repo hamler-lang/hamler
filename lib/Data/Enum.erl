@@ -39,4 +39,3 @@ enumIntegerRangeStep(Start, Next, Stop) ->
 -compile({inline, [range/3]}).
 range(Start, Stop, Step) ->
     lists:seq(Start, Stop, Step).
-

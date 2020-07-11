@@ -14,14 +14,15 @@
 %%---------------------------------------------------------------------------
 -module('Ref').
 
+-include("../Foreign.hrl").
+
 -export([ makeRef/0
         , eqRefImpl/2
         , cmpRefImpl/3
         , showRefImpl/1
         ]).
 
--spec(makeRef() -> reference()).
-makeRef() -> erlang:make_ref().
+makeRef() -> ?IO(erlang:make_ref()).
 
 -spec(eqRefImpl(reference(), reference()) -> boolean()).
 eqRefImpl(Ref1, Ref2) -> Ref1 == Ref2.

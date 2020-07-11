@@ -151,7 +151,7 @@ foreign import listenWithBacklog :: Socket -> Integer -> IO ()
 foreign import numberOf :: IO Integer
 
 -- | Creates an socket for communication.
-foreign import open :: Domain -> SocketType -> Socket
+foreign import open :: Domain -> SocketType -> IO Socket
 
 -- | Receive a message from a socket.
 foreign import recv :: Socket -> IO Binary
@@ -162,7 +162,7 @@ foreign import recvWithFlags :: Socket -> Integer -> [RecvFlag] -> IO Binary
 
 foreign import recvWithTimeout :: Socket -> Integer -> Timeout -> IO Binary
 
-foreign import recvFrom :: Socket -> (Maybe SockAddr, Binary)
+foreign import recvFrom :: Socket -> IO (Maybe SockAddr, Binary)
 
 -- | Send a message on a connected socket.
 foreign import send :: Socket -> Binary -> IO ()

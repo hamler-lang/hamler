@@ -14,7 +14,9 @@
 %%---------------------------------------------------------------------------
 -module('Time').
 
+-include("../Foreign.hrl").
+
 -export([getCurrentTime/0]).
 
 %% TODO:...
-getCurrentTime() -> erlang:timestamp().
+getCurrentTime() -> ?IO(erlang:timestamp()).

@@ -14,6 +14,8 @@
 %%---------------------------------------------------------------------------
 -module('GenServer').
 
+-include("../../Foreign.hrl").
+
 -export([ start/3
         , startWith/4
         , startWithGlobal/4
@@ -51,43 +53,43 @@
 %%---------------------------------------------------------------------------
 
 start(Class, Init, Args) ->
-  retPid(gen_server:start(?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_server:start(?MOD, [Class, Init, Args], []))).
 
 startWith(Name, Class, Init, Args) ->
-  retPid(gen_server:start({local, Name}, ?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_server:start({local, Name}, ?MOD, [Class, Init, Args], []))).
 
 startWithGlobal(Name, Class, Init, Args) ->
-  retPid(gen_server:start({global, Name}, ?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_server:start({global, Name}, ?MOD, [Class, Init, Args], []))).
 
 startLink(Class, Init, Args) ->
-  retPid(gen_server:start_link(?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_server:start_link(?MOD, [Class, Init, Args], []))).
 
 startLinkWith(Class, Name, Init, Args) ->
-  retPid(gen_server:start_link({local, Name}, ?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_server:start_link({local, Name}, ?MOD, [Class, Init, Args], []))).
 
 startLinkWithGlobal(Class, Name, Init, Args) ->
-  retPid(gen_server:start_link({global, Name}, ?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_server:start_link({global, Name}, ?MOD, [Class, Init, Args], []))).
 
 startMonitor(Class, Init, Args) ->
-  retPid(gen_server:start_monitor(?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_server:start_monitor(?MOD, [Class, Init, Args], []))).
 
 startMonitorWith(Class, Name, Init, Args) ->
-  retPid(gen_server:start_monitor({local, Name}, ?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_server:start_monitor({local, Name}, ?MOD, [Class, Init, Args], []))).
 
 startMonitorWithGlobal(Class, Name, Init, Args) ->
-  retPid(gen_server:start_monitor({global, Name}, ?MOD, [Class, Init, Args], [])).
+  ?IO(retPid(gen_server:start_monitor({global, Name}, ?MOD, [Class, Init, Args], []))).
 
 supStart(Class, Init, Args) ->
-  gen_server:start_link(?MOD, [Class, Init, Args], []).
+  ?IO(gen_server:start_link(?MOD, [Class, Init, Args], [])).
 
 supStartWith(Name, Class, Init, Args) ->
-  gen_server:start_link({local, Name}, ?MOD, [Class, Init, Args], []).
+  ?IO(gen_server:start_link({local, Name}, ?MOD, [Class, Init, Args], [])).
 
 stop(ServerRef) ->
-  gen_server:stop(toErl(ServerRef)).
+  ?IO(gen_server:stop(toErl(ServerRef))).
 
 stopWith(ServerRef, ExitReason, Timeout) ->
-  gen_server:stop(toErl(ServerRef), toErl(ExitReason), toErl(Timeout)).
+  ?IO(gen_server:stop(toErl(ServerRef), toErl(ExitReason), toErl(Timeout))).
 
 %%---------------------------------------------------------------------------
 %% | GenServer APIs
@@ -95,55 +97,55 @@ stopWith(ServerRef, ExitReason, Timeout) ->
 
 %% abcast :: ServerName -> req -> Process ()
 abcast(Name, Req) ->
-  gen_server:abcast(Name, Req).
+  ?IO(gen_server:abcast(Name, Req)).
 
 %% abcastAt :: [Node] -> ServerName -> req -> Process ()
 abcastAt(Nodes, Name, Req) ->
-  gen_server:abcast(Nodes, Name, Req).
+  ?IO(gen_server:abcast(Nodes, Name, Req)).
 
 %% call :: ServerRef -> req -> Process rep
 call(ServerRef, Req) ->
-  gen_server:call(toErl(ServerRef), Req).
+  ?IO(gen_server:call(toErl(ServerRef), Req)).
 
 %% callTo :: Pid -> req -> Process rep
 callTo(Pid, Req) ->
-  gen_server:call(Pid, Req).
+  ?IO(gen_server:call(Pid, Req)).
 
 %% callTimeout :: ServerRef -> req -> Timeout -> Process rep
 callTimeout(ServerRef, Req, Timeout) ->
-  gen_server:call(toErl(ServerRef), Req, toErl(Timeout)).
+  ?IO(gen_server:call(toErl(ServerRef), Req, toErl(Timeout))).
 
 %% cast :: ServerRef -> req -> Process ()
 cast(ServerRef, Req) ->
-  gen_server:cast(toErl(ServerRef), Req).
+  ?IO(gen_server:cast(toErl(ServerRef), Req)).
 
 %% castTo :: Pid -> req -> Process ()
 castTo(Pid, Req) ->
-  gen_server:cast(Pid, Req).
+  ?IO(gen_server:cast(Pid, Req)).
 
 %% multiCall :: ServerName -> req -> Process [NodeReply rep]
 multiCall(Name, Req) ->
-  gen_server:multi_call(Name, Req).
+  ?IO(gen_server:multi_call(Name, Req)).
 
 %% multiCallAt :: [Node] -> ServerName -> req -> Process [NodeReply rep]
 multiCallAt(Nodes, Name, Req) ->
-  gen_server:multi_call(Nodes, Name, Req).
+  ?IO(gen_server:multi_call(Nodes, Name, Req)).
 
 multiCallTimeoutAt(Nodes, Name, Timeout, Req) ->
-  gen_server:multi_call(Nodes, Name, toErl(Timeout), Req).
+  ?IO(gen_server:multi_call(Nodes, Name, toErl(Timeout), Req)).
 
 replyTo(From, Reply) ->
-  gen_statem:reply(From, Reply).
+  ?IO(gen_statem:reply(From, Reply)).
 
 sendRequest(ServerRef, Request) ->
-  gen_server:send_request(toErl(ServerRef), Request).
+  ?IO(gen_server:send_request(toErl(ServerRef), Request)).
 
 waitResponse(RequestId, Timeout) ->
-  case gen_server:wait_response(RequestId, toErl(Timeout)) of
-    {reply, Reply} -> Reply;
-    timeout -> error(timeout);
-    {error, Reason} -> error(Reason)
-  end.
+  ?IO(case gen_server:wait_response(RequestId, toErl(Timeout)) of
+        {reply, Reply} -> Reply;
+        timeout -> error(timeout);
+        {error, Reason} -> error(Reason)
+      end).
 
 %%---------------------------------------------------------------------------
 %% | Internal functions

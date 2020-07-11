@@ -14,6 +14,8 @@
 %%---------------------------------------------------------------------------
 -module('File').
 
+-include("../Foreign.hrl").
+
 -export([ open/2
         , read/2
         , write/2
@@ -21,20 +23,20 @@
         ]).
 
 open(Filename, Mode) ->
-    return(file:open(Filename, modes(Mode))).
+  ?IO(return(file:open(Filename, modes(Mode)))).
 
 read(IoDevice, Lengh) ->
-    case file:read(IoDevice, Lengh) of
+  ?IO(case file:read(IoDevice, Lengh) of
         eof -> {'Nothing'};
         {ok, Data} -> {'Just', Data};
         {error, Reason} -> error(Reason)
-    end.
+      end).
 
 write(IoDevice, Data) ->
-    return(file:write(IoDevice, Data)).
+  ?IO(return(file:write(IoDevice, Data))).
 
 close(IoDevice) ->
-    return(file:close(IoDevice)).
+  ?IO(return(file:close(IoDevice))).
 
 modes({'ReadMode'}) -> [read];
 modes({'WriteMode'}) -> [write];

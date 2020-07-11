@@ -14,13 +14,15 @@
 %%---------------------------------------------------------------------------
 -module('Timer').
 
+-include("../Foreign.hrl").
+
 -export([readTimer/1]).
 
 readTimer(TimerRef) ->
-  case erlang:read_timer(TimerRef) of
-    false -> {'Nothing'};
-    Time -> {'Just', Time}
-  end.
+  ?IO(case erlang:read_timer(TimerRef) of
+        false -> {'Nothing'};
+        Time -> {'Just', Time}
+      end).
 
 %% erlang:cancel_timer(TimerRef) -> Result
 %% erlang:cancel_timer(TimerRef, Options) -> Result | ok

@@ -14,6 +14,8 @@
 %%---------------------------------------------------------------------------
 -module('RPC').
 
+-include("../../Foreign.hrl").
+
 -export([ callTimeout/3
         , multiCallTimeout/3
         , receiveResponseTimeout/2
@@ -24,23 +26,23 @@
 -import('ToErl', [toErl/1]).
 
 callTimeout(Node, Fun, Timeout) ->
-  erpc:call(Node, Fun, toErl(Timeout)).
+  ?IO(erpc:call(Node, Fun, toErl(Timeout))).
 
 multiCallTimeout(Nodes, Fun, Timeout) ->
-  erpc:multicall(Nodes, Fun, toErl(Timeout)).
+  ?IO(erpc:multicall(Nodes, Fun, toErl(Timeout))).
 
 receiveResponseTimeout(RequestId, Timeout) ->
-  erpc:receive_response(RequestId, toErl(Timeout)).
+  ?IO(erpc:receive_response(RequestId, toErl(Timeout))).
 
 waitResponse(RequestId) ->
-  case erpc:wait_response(RequestId) of
-    {response, Result} -> {'Just', Result};
-    no_response -> {'Nothing'}
-  end.
+  ?IO(case erpc:wait_response(RequestId) of
+        {response, Result} -> {'Just', Result};
+        no_response -> {'Nothing'}
+      end).
 
 waitResponseTimeout(RequestId, Timeout) ->
-  case erpc:wait_response(RequestId, toErl(Timeout)) of
-    {response, Result} -> {'Just', Result};
-    no_response -> {'Nothing'}
-  end.
+  ?IO(case erpc:wait_response(RequestId, toErl(Timeout)) of
+        {response, Result} -> {'Just', Result};
+        no_response -> {'Nothing'}
+      end).
 

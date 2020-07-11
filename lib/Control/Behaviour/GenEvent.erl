@@ -14,6 +14,8 @@
 %%---------------------------------------------------------------------------
 -module('GenEvent').
 
+-include("../../Foreign.hrl").
+
 -export([ start/3
         , startWith/4
         , startWithGlobal/4
@@ -40,56 +42,56 @@
 %%---------------------------------------------------------------------------
 
 start(Class, Init, Args) ->
-  doStart(fun gen_event:start/0, Class, Init, Args).
+  ?IO(doStart(fun gen_event:start/0, Class, Init, Args)).
 
 startWith(Class, Name, Init, Args) ->
-  doStartWith(fun gen_event:start/1, {local, Name}, Class, Init, Args).
+  ?IO(doStartWith(fun gen_event:start/1, {local, Name}, Class, Init, Args)).
 
 startWithGlobal(Class, Name, Init, Args) ->
-  doStartWith(fun gen_event:start/1, {global, Name}, Class, Init, Args).
+  ?IO(doStartWith(fun gen_event:start/1, {global, Name}, Class, Init, Args)).
 
 startLink(Class, Init, Args) ->
-  doStart(fun gen_event:start_link/0, Class, Init, Args).
+  ?IO(doStart(fun gen_event:start_link/0, Class, Init, Args)).
 
 startLinkWith(Class, Name, Init, Args) ->
-  doStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init, Args).
+  ?IO(doStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init, Args)).
 
 startLinkWithGlobal(Class, Name, Init, Args) ->
-  doStartWith(fun gen_event:start_link/1, {global, Name}, Class, Init, Args).
+  ?IO(doStartWith(fun gen_event:start_link/1, {global, Name}, Class, Init, Args)).
 
 supStart(Class, Init, Args) ->
-  doSupStart(fun gen_event:start_link/0, Class, Init, Args).
+  ?IO(doSupStart(fun gen_event:start_link/0, Class, Init, Args)).
 
 supStartWith(Class, Name, Init, Args) ->
-  doSupStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init, Args).
+  ?IO(doSupStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init, Args)).
 
 stop(EMgrRef) ->
-  gen_event:stop(toErl(EMgrRef)).
+  ?IO(gen_event:stop(toErl(EMgrRef))).
 
 stopWith(EMgrRef, Reason, Timeout) ->
-  apply(gen_event, stop, [toErl(A) || A <- [EMgrRef, Reason, Timeout]]).
+  ?IO(apply(gen_event, stop, [toErl(A) || A <- [EMgrRef, Reason, Timeout]])).
 
 %%---------------------------------------------------------------------------
 %% | GenEvent APIs
 %%---------------------------------------------------------------------------
 
 addHandler(Class, EMgrRef, Init, Args) ->
-  case gen_event:add_handler(EMgrRef, {?MOD, Class}, [Class, Init, Args]) of
-    ok -> ok;
-    {'EXIT', Reason} -> error(Reason)
-  end.
+  ?IO(case gen_event:add_handler(EMgrRef, {?MOD, Class}, [Class, Init, Args]) of
+        ok -> ok;
+        {'EXIT', Reason} -> error(Reason)
+      end).
 
 notify(EMgrRef, Event) ->
-  gen_event:notify(toErl(EMgrRef), Event).
+  ?IO(gen_event:notify(toErl(EMgrRef), Event)).
 
 notifyTo(Pid, Event) ->
-  gen_event:notify(Pid, Event).
+  ?IO(gen_event:notify(Pid, Event)).
 
 syncNotify(EMgrRef, Event) ->
-  gen_event:sync_notify(toErl(EMgrRef), Event).
+  ?IO(gen_event:sync_notify(toErl(EMgrRef), Event)).
 
 syncNotifyTo(Pid, Event) ->
-  gen_event:sync_notify(Pid, Event).
+  ?IO(gen_event:sync_notify(Pid, Event)).
 
 %%---------------------------------------------------------------------------
 %% | Internal functions

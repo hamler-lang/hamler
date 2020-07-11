@@ -14,8 +14,10 @@
 %%---------------------------------------------------------------------------
 -module('Atomics').
 
+-include("../Foreign.hrl").
+
 -export([new/2]).
 
 -spec(new(pos_integer(), boolean()) -> atomics:atomics_ref()).
 new(Arity, Signed) ->
-    atomics:new(Arity, [{signed, Signed}]).
+  ?IO(atomics:new(Arity, [{signed, Signed}])).

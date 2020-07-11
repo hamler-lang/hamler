@@ -14,10 +14,13 @@
 %%---------------------------------------------------------------------------
 -module('Dir').
 
+-include("../Foreign.hrl").
+
 -export([mkdir/1]).
 
+%% mkdir :: FilePath -> IO ()
 mkdir(FilePath) ->
-    case file:make_dir(FilePath) of
+  ?IO(case file:make_dir(FilePath) of
         ok -> ok;
         {error, Reason} -> error(Reason)
-    end.
+      end).

@@ -14,13 +14,15 @@
 %%---------------------------------------------------------------------------
 -module('Counters').
 
+-include("../Foreign.hrl").
+
 -export([new/2]).
 
 new(Size, Options) ->
-    counters:new(Size, parseOpts(Options, [])).
+  ?IO(counters:new(Size, parseOpts(Options, []))).
 
 parseOpts([{'Atomics'}|T], Acc) ->
-    parseOpts(T, [atomics|Acc]);
+  parseOpts(T, [atomics|Acc]);
 parseOpts([{'WriteConcurrency'}|T], Acc) ->
-    parseOpts(T, [write_concurrency|Acc]);
+  parseOpts(T, [write_concurrency|Acc]);
 parseOpts([], Acc) -> Acc.

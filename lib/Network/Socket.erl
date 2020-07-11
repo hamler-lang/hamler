@@ -14,6 +14,8 @@
 %%---------------------------------------------------------------------------
 -module('Socket').
 
+-include("../Foreign.hrl").
+
 -export([ accept/1
         , acceptTimeout/2
         , bind/2
@@ -44,106 +46,87 @@
         , getSockName/1
         ]).
 
--type(sockAddr() :: tuple()).
-
--spec(accept(socket:socket()) -> socket:socket()).
 accept(LSocket) ->
-    return(socket:accept(LSocket)).
+  ?IO(return(socket:accept(LSocket))).
 
--spec(acceptTimeout(socket:socket(), timeout()) -> socket:socket()).
 acceptTimeout(LSocket, Timeout) ->
-    return(socket:accept(LSocket, Timeout)).
+  ?IO(return(socket:accept(LSocket, Timeout))).
 
--spec(bind(socket:socket(), sockAddr()) -> socket:port_number()).
 bind(Socket, SockAddr) ->
-    return(socket:bind(Socket, destruct(SockAddr))).
+  ?IO(return(socket:bind(Socket, destruct(SockAddr)))).
 
--spec(bindAny(socket:socket()) -> socket:port_number()).
 bindAny(Socket) ->
-    return(socket:bind(Socket, any)).
+  ?IO(return(socket:bind(Socket, any))).
 
--spec(bindBroadcast(socket:socket()) -> socket:port_number()).
 bindBroadcast(Socket) ->
-    return(socket:bind(Socket, broadcast)).
+  ?IO(return(socket:bind(Socket, broadcast))).
 
--spec(bindLoopback(socket:socket()) -> socket:port_number()).
 bindLoopback(Socket) ->
-    return(socket:bind(Socket, loopback)).
+  ?IO(return(socket:bind(Socket, loopback))).
 
--spec(cancel(socket:socket(), socket:select_info()) -> ok).
 cancel(Socket, SelectInfo) ->
-    return(socket:cancel(Socket, destruct(SelectInfo))).
+  ?IO(return(socket:cancel(Socket, destruct(SelectInfo)))).
 
 -spec(close(socket:socket()) -> ok).
 close(Socket) ->
-    return(socket:close(Socket)).
+  ?IO(return(socket:close(Socket))).
 
--spec(connect(socket:socket(), sockAddr()) -> ok).
 connect(Socket, SockAddr) ->
-    return(socket:connect(Socket, destruct(SockAddr))).
+  ?IO(return(socket:connect(Socket, destruct(SockAddr)))).
 
--spec(connectTimeout(socket:socket(), sockAddr(), timeout()) -> ok).
 connectTimeout(Socket, SockAddr, Timeout) ->
-    return(socket:connect(Socket, destruct(SockAddr), Timeout)).
+  ?IO(return(socket:connect(Socket, destruct(SockAddr), Timeout))).
 
--spec(getOpt(socket:socket(), string(), string()) -> term()).
 getOpt(Socket, Level, Key) ->
-    return(socket:getopt(Socket, atom(Level), atom(Key))).
+  ?IO(return(socket:getopt(Socket, atom(Level), atom(Key)))).
 
--spec(getPeerName(socket:socket()) -> socket:sockaddr()).
 getPeerName(Socket) ->
-    return(socket:peername(Socket), fun construct/1).
+  ?IO(return(socket:peername(Socket), fun construct/1)).
 
--spec(getSockName(socket:socket()) -> socket:sockaddr()).
 getSockName(Socket) ->
-    return(socket:sockname(Socket), fun construct/1).
+  ?IO(return(socket:sockname(Socket), fun construct/1)).
 
--spec(info(socket:socket()) -> socket:socket_info()).
-info(Socket) -> socket:info(Socket).
+info(Socket) -> ?IO(socket:info(Socket)).
 
--spec(listen(socket:socket()) -> ok).
-listen(Socket) -> return(socket:listen(Socket)).
+listen(Socket) -> ?IO(return(socket:listen(Socket))).
 
--spec(listenWithBacklog(socket:socket(), pos_integer()) -> ok).
 listenWithBacklog(Socket, Backlog) ->
-    return(socket:listen(Socket, Backlog)).
+  ?IO(return(socket:listen(Socket, Backlog))).
 
--spec(numberOf() -> integer()).
-numberOf() -> socket:number_of().
+numberOf() -> ?IO(socket:number_of()).
 
--spec(open(socket:domain(), socket:type()) -> socket:socket()).
-open(Domain, Type) -> return(socket:open(destruct(Domain), destruct(Type))).
+open(Domain, Type) ->
+  ?IO(return(socket:open(destruct(Domain), destruct(Type)))).
 
-recv(Socket) -> return(socket:recv(Socket)).
+recv(Socket) -> ?IO(return(socket:recv(Socket))).
 
 recvWithLen(Socket, Length) ->
-    return(socket:recv(Socket, Length)).
+  ?IO(return(socket:recv(Socket, Length))).
 
 recvWithFlags(Socket, Length, Flags) ->
-    return(socket:recv(Socket, Length, [destruct(Flag) || Flag <- Flags])).
+  ?IO(return(socket:recv(Socket, Length, [destruct(Flag) || Flag <- Flags]))).
 
 recvWithTimeout(Socket, Length, Timeout) ->
-    return(socket:recv(Socket, Length, Timeout)).
+  ?IO(return(socket:recv(Socket, Length, Timeout))).
 
 recvFrom(Socket) ->
-    Construct = fun({undefined, Data}) ->
+  ?IO(begin
+        Construct = fun({undefined, Data}) ->
                         {'Nothing', Data};
-                   ({Source, Data}) ->
+                       ({Source, Data}) ->
                         {{'Just', construct(Source)}, Data}
-                end,
-    return(socket:recvFrom(Socket), Construct).
+                    end,
+        return(socket:recvFrom(Socket), Construct)
+      end).
 
--spec(send(socket:socket(), binary()) -> ok).
 send(Socket, Data) ->
-    return(socket:send(Socket, Data)).
+  ?IO(return(socket:send(Socket, Data))).
 
--spec(sendTo(socket:socket(), binary(), sockAddr()) -> ok).
 sendTo(Socket, Data, Dest) ->
-    return(socket:sendto(Socket, Data, destruct(Dest))).
+  ?IO(return(socket:sendto(Socket, Data, destruct(Dest)))).
 
--spec(shutdown(socket:socket(), string()) -> ok).
 shutdown(Socket, How) ->
-    return(socket:shutdown(Socket, atom(How))).
+  ?IO(return(socket:shutdown(Socket, atom(How)))).
 
 %%---------------------------------------------------------------------------
 %% Erlang -> Hamler

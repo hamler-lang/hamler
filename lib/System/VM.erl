@@ -14,14 +14,18 @@
 %%---------------------------------------------------------------------------
 -module('VM').
 
+-include("../Foreign.hrl").
+
 -compile(no_auto_import).
 
 -export([ memory/0
         , otpRelease/0
         ]).
 
-memory() -> maps:from_list(erlang:memory()).
+memory() ->
+  ?IO(maps:from_list(erlang:memory())).
 
 -spec(otpRelease() -> string()).
-otpRelease() -> erlang:system_info(otp_release).
+otpRelease() ->
+  ?IO(erlang:system_info(otp_release)).
 

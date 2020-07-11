@@ -14,6 +14,8 @@
 %%---------------------------------------------------------------------------
 -module('OS').
 
+-include("../Foreign.hrl").
+
 -export([ getPid/0
         , osName/0
         , osFamily/0
@@ -22,30 +24,28 @@
         , version/0
         ]).
 
--spec(getPid() -> integer()).
-getPid() -> list_to_integer(os:getpid()).
+getPid() ->
+  ?IO(list_to_integer(os:getpid())).
 
--spec(osName() -> string()).
 osName() ->
-    atom_to_list(element(2, os:type())).
+  ?IO(atom_to_list(element(2, os:type()))).
 
--spec(osFamily() -> string()).
 osFamily() ->
-    atom_to_list(element(1, os:type())).
+  ?IO(atom_to_list(element(1, os:type()))).
 
 setSignal(Signal, Option) ->
-    os:set_signal(destruct(Signal), destruct(Option)).
+  ?IO(os:set_signal(destruct(Signal), destruct(Option))).
 
--spec(runCmd(string()) -> string()).
-runCmd(Command) -> os:cmd(Command).
+runCmd(Command) ->
+  ?IO(os:cmd(Command)).
 
 -spec(version() -> string()).
 version() ->
-    case os:version() of
+  ?IO(case os:version() of
         {Major, Minor, Release} ->
-            string:join([integer_to_list(I) || I <- [Major, Minor, Release]]);
+          string:join([integer_to_list(I) || I <- [Major, Minor, Release]], ".");
         VersionString -> VersionString
-    end.
+      end).
 
 destruct({'Sighup'})  -> sighup;
 destruct({'Sigquit'}) -> sigquit;
