@@ -19,8 +19,8 @@
         ]).
 
 -spec(print(string()) -> ok).
-print(S) -> io:format(S).
+print(S) -> fun() -> io:format(S) end.
 
 -spec(println(string()) -> ok).
-println(S) -> io:format(S ++ "~n").
+println(S) -> fun() -> io:format(S ++ "~n") end.
 
