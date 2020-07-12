@@ -21,13 +21,10 @@ module Control.Behaviour.GenServer
     -- * start/stop server
   , start
   , startWith
-  , startWithGlobal
   , startLink
   , startLinkWith
-  , startLinkWithGlobal
   , startMonitor
   , startMonitorWith
-  , startMonitorWithGlobal
   , supStart
   , supStartWith
   , stop
@@ -74,51 +71,39 @@ class GenServer req rep st | req -> rep, rep -> st, st -> req where
 -- | Start a standalone server process.
 foreign import start
   :: forall req rep st. GenServer req rep st
-  => (InitHandler st) -> Process Pid
+  => (Init st) -> Process Pid
 
 -- | Start a standalone server process with registered name.
 foreign import startWith
   :: forall req rep st. GenServer req rep st
-  => Name -> (InitHandler st) -> Process Pid
-
-foreign import startWithGlobal
-  :: forall req rep st. GenServer req rep st
-  => Name -> (InitHandler st) -> Process Pid
+  => Name -> (Init st) -> Process Pid
 
 -- | Start a standalone server process.
 foreign import startLink
   :: forall req rep st. GenServer req rep st
-  => (InitHandler st) -> Process Pid
+  => (Init st) -> Process Pid
 
 foreign import startLinkWith
   :: forall req rep st. GenServer req rep st
-  => Name -> (InitHandler st) -> Process Pid
-
-foreign import startLinkWithGlobal
-  :: forall req rep st. GenServer req rep st
-  => Name -> (InitHandler st) -> Process Pid
+  => Name -> (Init st) -> Process Pid
 
 foreign import startMonitor
   :: forall req rep st. GenServer req rep st
-  => (InitHandler st) -> Process (Pid, Reference)
+  => (Init st) -> Process (Pid, Reference)
 
 foreign import startMonitorWith
   :: forall req rep st. GenServer req rep st
-  => Name -> (InitHandler st) -> Process (Pid, Reference)
-
-foreign import startMonitorWithGlobal
-  :: forall req rep st. GenServer req rep st
-  => Name -> (InitHandler st) -> Process (Pid, Reference)
+  => Name -> (Init st) -> Process (Pid, Reference)
 
 -- | Start a supervised server process.
 foreign import supStart
   :: forall req rep st. GenServer req rep st
-  => (InitHandler st) -> Process StartRet
+  => (Init st) -> Process StartRet
 
 -- | Start a supervised server process with registered name.
 foreign import supStartWith
   :: forall req rep st. GenServer req rep st
-  => Name -> (InitHandler st) -> Process StartRet
+  => Name -> (Init st) -> Process StartRet
 
 -- | Stop the server process.
 foreign import stop :: ServerRef -> Process ()

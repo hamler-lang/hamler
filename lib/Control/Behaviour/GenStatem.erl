@@ -16,17 +16,14 @@
 
 -include("../../Foreign.hrl").
 
--export([ start/3
-        , startWith/4
-        , startWithGlobal/4
-        , startLink/3
-        , startLinkWith/4
-        , startLinkWithGlobal/4
-        , startMonitor/3
-        , startMonitorWith/4
-        , startMonitorWithGlobal/4
-        , supStart/3
-        , supStartWith/4
+-export([ start/2
+        , startWith/3
+        , startLink/2
+        , startLinkWith/3
+        , startMonitor/2
+        , startMonitorWith/3
+        , supStart/2
+        , supStartWith/3
         , stop/1
         , stopWith/3
         ]).
@@ -45,38 +42,29 @@
 %% | Start/stop statem
 %%---------------------------------------------------------------------------
 
-start(Class, Init, Args) ->
-  ?IO(retPid(gen_statem:start(?MOD, [Class, Init, Args], []))).
+start(Class, Init) ->
+  ?IO(retPid(gen_statem:start(?MOD, [Class, Init], []))).
 
-startWith(Name, Class, Init, Args) ->
-  ?IO(retPid(gen_statem:start({local, Name}, ?MOD, [Class, Init, Args], []))).
+startWith(Name, Class, Init) ->
+  ?IO(retPid(gen_statem:start({local, Name}, ?MOD, [Class, Init], []))).
 
-startWithGlobal(Name, Class, Init, Args) ->
-  ?IO(retPid(gen_statem:start({global, Name}, ?MOD, [Class, Init, Args], []))).
+startLink(Class, Init) ->
+  ?IO(retPid(gen_statem:start_link(?MOD, [Class, Init], []))).
 
-startLink(Class, Init, Args) ->
-  ?IO(retPid(gen_statem:start_link(?MOD, [Class, Init, Args], []))).
+startLinkWith(Class, Name, Init) ->
+  ?IO(retPid(gen_statem:start_link({local, Name}, ?MOD, [Class, Init], []))).
 
-startLinkWith(Class, Name, Init, Args) ->
-  ?IO(retPid(gen_statem:start_link({local, Name}, ?MOD, [Class, Init, Args], []))).
+startMonitor(Class, Init) ->
+  ?IO(retPid(gen_statem:start_monitor(?MOD, [Class, Init], []))).
 
-startLinkWithGlobal(Class, Name, Init, Args) ->
-  ?IO(retPid(gen_statem:start_link({global, Name}, ?MOD, [Class, Init, Args], []))).
+startMonitorWith(Class, Name, Init) ->
+  ?IO(retPid(gen_statem:start_monitor({local, Name}, ?MOD, [Class, Init], []))).
 
-startMonitor(Class, Init, Args) ->
-  ?IO(retPid(gen_statem:start_monitor(?MOD, [Class, Init, Args], []))).
+supStart(Class, Init) ->
+  ?IO(gen_statem:start_link(?MOD, [Class, Init], [])).
 
-startMonitorWith(Class, Name, Init, Args) ->
-  ?IO(retPid(gen_statem:start_monitor({local, Name}, ?MOD, [Class, Init, Args], []))).
-
-startMonitorWithGlobal(Class, Name, Init, Args) ->
-  ?IO(retPid(gen_statem:start_monitor({global, Name}, ?MOD, [Class, Init, Args], []))).
-
-supStart(Class, Init, Args) ->
-  ?IO(gen_statem:start_link(?MOD, [Class, Init, Args], [])).
-
-supStartWith(Name, Class, Init, Args) ->
-  ?IO(gen_statem:start_link({local, Name}, ?MOD, [Class, Init, Args], [])).
+supStartWith(Name, Class, Init) ->
+  ?IO(gen_statem:start_link({local, Name}, ?MOD, [Class, Init], [])).
 
 stop(ServerRef) ->
   ?IO(gen_statem:stop(toErl(ServerRef))).

@@ -13,7 +13,7 @@
 --
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenStatem.Types
-  ( InitHandler
+  ( Init
   , InitResult(..)
   , StatemRef(..)
   , StatemAction(..)
@@ -25,8 +25,7 @@ import Control.Distributed.Node (Node)
 import Control.Process (ExitReason, Process)
 import Data.Pid (Pid)
 
-type InitHandler a st
-  = a -> Process (InitResult st)
+type Init st = Process (InitResult st)
 
 -- | Init Result
 data InitResult st

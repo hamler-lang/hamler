@@ -14,7 +14,7 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenEvent.Types
   ( EMgrRef(..)
-  , InitHandler
+  , Init
   , InitResult(..)
   , module Control.Behaviour.GenTypes
   )  where
@@ -30,8 +30,7 @@ data EMgrRef
   | EMgrRefAt Name Node
   | EMgrRefGlobal Name
 
-type InitHandler st
-  = Process (InitResult st)
+type Init st = Process (InitResult st)
 
 data InitResult st
   = InitOk st

@@ -28,7 +28,7 @@
 
 -record(proxy, {handleEvent, state}).
 
-init([#{handleEvent := HandleEvent}, Init, []]) ->
+init([#{handleEvent := HandleEvent}, Init]) ->
   case Init() of
     {'InitOk', State} ->
       {ok, #proxy{handleEvent = HandleEvent, state = State}};

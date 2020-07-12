@@ -25,8 +25,8 @@
 
 -record(proxy, {handleEvent, state}).
 
-init([#{handleEvent := handleEvent}, Init, Args]) ->
-  {ok, idle, #proxy{handleEvent = handleEvent, state = Init(Args)}}.
+init([#{handleEvent := handleEvent}, Init]) ->
+  {ok, idle, #proxy{handleEvent = handleEvent, state = Init()}}.
 
 callback_mode() -> handle_event_function.
 

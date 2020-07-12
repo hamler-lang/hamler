@@ -17,18 +17,16 @@
 -include("../../Foreign.hrl").
 
 -export([ start/2
-        , startWith/4
-        , startWithGlobal/4
-        , startLink/3
-        , startLinkWith/4
-        , startLinkWithGlobal/4
-        , supStart/3
-        , supStartWith/4
+        , startWith/3
+        , startLink/2
+        , startLinkWith/3
+        , supStart/2
+        , supStartWith/3
         , stop/1
         , stopWith/3
         ]).
 
--export([ addHandler/4
+-export([ addHandler/3
         , notify/2
         , notifyTo/2
         , syncNotify/2
@@ -42,28 +40,25 @@
 %%---------------------------------------------------------------------------
 
 start(Class, Init) ->
-  ?IO(doStart(fun gen_event:start/0, Class, Init, [])).
+  ?IO(doStart(fun gen_event:start/0, Class, Init)).
 
-startWith(Class, Name, Init, Args) ->
-  ?IO(doStartWith(fun gen_event:start/1, {local, Name}, Class, Init, Args)).
+startWith(Class, Name, Init) ->
+  ?IO(doStartWith(fun gen_event:start/1, {local, Name}, Class, Init)).
 
-startWithGlobal(Class, Name, Init, Args) ->
-  ?IO(doStartWith(fun gen_event:start/1, {global, Name}, Class, Init, Args)).
+startLink(Class, Init) ->
+  ?IO(doStart(fun gen_event:start_link/0, Class, Init)).
 
-startLink(Class, Init, Args) ->
-  ?IO(doStart(fun gen_event:start_link/0, Class, Init, Args)).
+startLinkWith(Class, Name, Init) ->
+  ?IO(doStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init)).
 
-startLinkWith(Class, Name, Init, Args) ->
-  ?IO(doStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init, Args)).
+startLinkWithGlobal(Class, Name, Init) ->
+  ?IO(doStartWith(fun gen_event:start_link/1, {global, Name}, Class, Init)).
 
-startLinkWithGlobal(Class, Name, Init, Args) ->
-  ?IO(doStartWith(fun gen_event:start_link/1, {global, Name}, Class, Init, Args)).
+supStart(Class, Init) ->
+  ?IO(doSupStart(fun gen_event:start_link/0, Class, Init)).
 
-supStart(Class, Init, Args) ->
-  ?IO(doSupStart(fun gen_event:start_link/0, Class, Init, Args)).
-
-supStartWith(Class, Name, Init, Args) ->
-  ?IO(doSupStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init, Args)).
+supStartWith(Class, Name, Init) ->
+  ?IO(doSupStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init)).
 
 stop(EMgrRef) ->
   ?IO(gen_event:stop(toErl(EMgrRef))).
@@ -75,8 +70,8 @@ stopWith(EMgrRef, Reason, Timeout) ->
 %% | GenEvent APIs
 %%---------------------------------------------------------------------------
 
-addHandler(Class, EMgrRef, Init, Args) ->
-  ?IO(case gen_event:add_handler(EMgrRef, {?MOD, Class}, [Class, Init, Args]) of
+addHandler(Class, EMgrRef, Init) ->
+  ?IO(case gen_event:add_handler(EMgrRef, {?MOD, Class}, [Class, Init]) of
         ok -> ok;
         {'EXIT', Reason} -> error(Reason)
       end).
@@ -97,29 +92,29 @@ syncNotifyTo(Pid, Event) ->
 %% | Internal functions
 %%---------------------------------------------------------------------------
 
-doStart(Start, Class, Init, Args) ->
+doStart(Start, Class, Init) ->
   {ok, Pid} = Start(),
-  ok = (addHandler(Class, Pid, Init, Args))(),
+  ok = (addHandler(Class, Pid, Init))(),
   Pid.
 
-doStartWith(Start, Name, Class, Init, Args) ->
+doStartWith(Start, Name, Class, Init) ->
   case Start(Name) of
     {ok, Pid} ->
-      ok = (addHandler(Class, Pid, Init, Args))(),
+      ok = (addHandler(Class, Pid, Init))(),
       Pid;
     {error, Reason} ->
       error(Reason)
   end.
 
-doSupStart(Start, Class, Init, Args) ->
+doSupStart(Start, Class, Init) ->
   {ok, Pid} = Start(),
-  ok = (addHandler(Class, Pid, Init, Args))(),
+  ok = (addHandler(Class, Pid, Init))(),
   {ok, Pid}.
 
-doSupStartWith(Start, Name, Class, Init, Args) ->
+doSupStartWith(Start, Name, Class, Init) ->
   case Start(Name) of
     {ok, Pid} ->
-      ok = (addHandler(Class, Pid, Init, Args))(),
+      ok = (addHandler(Class, Pid, Init))(),
       {ok, Pid};
     {error, Reason} ->
       {error, Reason}
