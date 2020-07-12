@@ -19,10 +19,8 @@ module Control.Behaviour.GenEvent
     -- * start event mgr
   , start
   , startWith
-  , startWithGlobal
   , startLink
   , startLinkWith
-  , startLinkWithGlobal
   , supStart
   , supStartWith
   , stop
@@ -49,36 +47,22 @@ class GenEvent e st | e -> st, st -> e where
   handleEvent :: HandleEvent e st
 
 foreign import start
-  :: forall e st. GenEvent e st
-  => (InitHandler st) -> Process Pid
+  :: forall e st. GenEvent e st => (Init st) -> Process Pid
 
 foreign import startWith
-  :: forall e st. GenEvent e st
-  => Name -> (InitHandler st) -> Process Pid
-
-foreign import startWithGlobal
-  :: forall e st. GenEvent e st
-  => Name -> (InitHandler st) -> Process Pid
+  :: forall e st. GenEvent e st => Name -> (Init st) -> Process Pid
 
 foreign import startLink
-  :: forall e st. GenEvent e st
-  => (InitHandler st) -> Process Pid
+  :: forall e st. GenEvent e st => (Init st) -> Process Pid
 
 foreign import startLinkWith
-  :: forall e st. GenEvent e st
-  => Name -> (InitHandler st) -> Process Pid
-
-foreign import startLinkWithGlobal
-  :: forall e st. GenEvent e st
-  => Name -> (InitHandler st) -> Process Pid
+  :: forall e st. GenEvent e st => Name -> (Init st) -> Process Pid
 
 foreign import supStart
-  :: forall e st. GenEvent e st
-  => (InitHandler st) -> Process StartRet
+  :: forall e st. GenEvent e st => (Init st) -> Process StartRet
 
 foreign import supStartWith
-  :: forall e st. GenEvent e st
-  => Name -> (InitHandler st) -> Process StartRet
+  :: forall e st. GenEvent e st => Name -> (Init st) -> Process StartRet
 
 foreign import stop :: EMgrRef -> Process ()
 
@@ -86,8 +70,7 @@ foreign import stopWith
   :: EMgrRef -> ExitReason -> Timeout -> Process ()
 
 foreign import addHandler
-  :: forall e st. GenEvent e st
-  => EMgrRef -> (InitHandler st) -> Process ()
+  :: forall e st. GenEvent e st => EMgrRef -> (Init st) -> Process ()
 
 foreign import notify
   :: forall e. EMgrRef -> e -> Process ()

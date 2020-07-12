@@ -25,11 +25,11 @@
         , code_change/3
         ]).
 
--import('Curry', [uncurry/2, uncurryIO/2]).
+-import('Curry', [uncurryIO/2]).
 
 -record(proxy, {handleCall, handleCast, state}).
 
-init([Class, Init, []]) ->
+init([Class, Init]) ->
   case Init() of
     {'InitOk', State} ->
       {ok, init_ok(Class, State)};

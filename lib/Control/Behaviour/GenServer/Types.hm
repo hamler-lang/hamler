@@ -13,7 +13,7 @@
 --
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenServer.Types
-  ( InitHandler
+  ( Init
   , InitResult(..)
   , MultiReply(..)
   , ServerAction(..)
@@ -27,8 +27,7 @@ import Control.Process (Process, ExitReason)
 import Data.Maybe (Maybe)
 import Data.Pid (Pid)
 
-type InitHandler st
-  = Process (InitResult st)
+type Init st = Process (InitResult st)
 
 -- | Init Result
 data InitResult st

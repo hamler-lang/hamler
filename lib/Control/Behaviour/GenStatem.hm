@@ -19,13 +19,10 @@ module Control.Behaviour.GenStatem
     -- * start and stop
   , start
   , startWith
-  , startWithGlobal
   , startLink
   , startLinkWith
-  , startLinkWithGlobal
   , startMonitor
   , startMonitorWith
-  , startMonitorWithGlobal
   , supStart
   , supStartWith
   , stop
@@ -55,48 +52,29 @@ class GenStatem e st | e -> st, st -> e where
   handleEvent :: HandleEvent e st
 
 foreign import start
-  :: forall a e st. GenStatem e st
-  => (InitHandler a st) -> a -> Process Pid
+  :: forall e st. GenStatem e st => (Init st) -> Process Pid
 
 foreign import startWith
-  :: forall a e st. GenStatem e st
-  => Name -> (InitHandler a st) -> a -> Process Pid
-
-foreign import startWithGlobal
-  :: forall a e st. GenStatem e st
-  => Name -> (InitHandler a st) -> a -> Process Pid
+  :: forall e st. GenStatem e st => Name -> (Init st) -> Process Pid
 
 foreign import startLink
-  :: forall a e st. GenStatem e st
-  => (InitHandler a st) -> a -> Process Pid
+  :: forall e st. GenStatem e st => (Init st) -> Process Pid
 
 foreign import startLinkWith
-  :: forall a e st. GenStatem e st
-  => Name -> (InitHandler a st) -> a -> Process Pid
-
-foreign import startLinkWithGlobal
-  :: forall a e st. GenStatem e st
-  => Name -> (InitHandler a st) -> a -> Process Pid
+  :: forall e st. GenStatem e st => Name -> (Init st) -> Process Pid
 
 foreign import startMonitor
-  :: forall a e st. GenStatem e st
-  => (InitHandler a st) -> a -> Process (Pid, Reference)
+  :: forall e st. GenStatem e st => (Init st) -> Process (Pid, Reference)
 
 foreign import startMonitorWith
-  :: forall a e st. GenStatem e st
-  => Name -> (InitHandler a st) -> a -> Process (Pid, Reference)
-
-foreign import startMonitorWithGlobal
-  :: forall a e st. GenStatem e st
-  => Name -> (InitHandler a st) -> a -> Process (Pid, Reference)
+  :: forall e st. GenStatem e st
+  => Name -> (Init st) -> Process (Pid, Reference)
 
 foreign import supStart
-  :: forall a e st. GenStatem e st
-  => (InitHandler a st) -> a -> Process StartRet
+  :: forall e st. GenStatem e st => (Init st) -> Process StartRet
 
 foreign import supStartWith
-  :: forall a e st. GenStatem e st
-  => Name -> (InitHandler a st) -> a -> Process StartRet
+  :: forall e st. GenStatem e st => Name -> (Init st) -> Process StartRet
 
 -- Stop the Statem Process.
 foreign import stop :: StatemRef -> Process ()
