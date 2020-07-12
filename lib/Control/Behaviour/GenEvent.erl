@@ -51,9 +51,6 @@ startLink(Class, Init) ->
 startLinkWith(Class, Name, Init) ->
   ?IO(doStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init)).
 
-startLinkWithGlobal(Class, Name, Init) ->
-  ?IO(doStartWith(fun gen_event:start_link/1, {global, Name}, Class, Init)).
-
 supStart(Class, Init) ->
   ?IO(doSupStart(fun gen_event:start_link/0, Class, Init)).
 
