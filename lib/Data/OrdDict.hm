@@ -1,0 +1,39 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.OrdDict
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Ordered dictionary datatype.
+--
+-----------------------------------------------------------------------------
+module Data.OrdDict where
+
+{- TODO:
+append/3
+append_list/3
+erase/2
+fetch/2
+fetch_keys/1
+filter/2
+find/2
+fold/3
+from_list/1
+is_empty/1
+is_key/2
+map/2
+merge/3
+new/0
+size/1
+store/3
+take/2
+to_list/1
+update/3
+update/4
+update_counter/3
+-}

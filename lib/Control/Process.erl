@@ -23,6 +23,7 @@
         , send/2
         , 'receive'/0
         , receiveAfter/1
+        , register/2
         , 'monitor'/1
         , erase/1
         , eraseAll/0
@@ -50,6 +51,9 @@ send(Pid, Msg) -> ?IO(erlang:send(Pid, Msg)).
 -spec(receiveAfter(integer()) -> term()).
 receiveAfter(Timeout) ->
   ?IO(receive X -> X after Timeout -> ok end).
+
+register(Name, Pid) ->
+  true = erlang:register(Name, Pid), ok.
 
 -spec('monitor'(pid()) -> reference()).
 'monitor'(Pid) ->

@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Counters
+%% Module      :  Code
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,17 +9,12 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Counters FFI module.
+%% The Code FFI module.
 %%
 %%---------------------------------------------------------------------------
--module('Counters').
+-module('Code').
 
 -include("../Foreign.hrl").
 
--export([new/2]).
+%% FFI of code.erl
 
-new(Size, Option) ->
-  ?IO(counters:new(Size, parseOpt(Option))).
-
-parseOpt({'Atomics'}) -> [atomics];
-parseOpt({'WriteConcurrency'}) -> [write_concurrency].

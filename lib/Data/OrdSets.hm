@@ -1,0 +1,36 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.OrdSets
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Ordered set datatype.
+--
+-----------------------------------------------------------------------------
+module Data.OrdSets where
+
+{- TODO:
+add_element/2
+del_element/2
+filter/2
+fold/3
+from_list/1
+intersection/1
+intersection/2
+is_disjoint/2
+is_element/2
+is_empty/1
+is_set/1
+is_subset/2
+new/0
+size/1
+subtract/2
+to_list/1
+union/1
+union/2
+-}
