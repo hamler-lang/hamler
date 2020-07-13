@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Counters
+%% Module      :  Global
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,17 +9,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Counters FFI module.
+%% The Global FFI module.
 %%
 %%---------------------------------------------------------------------------
--module('Counters').
-
--include("../Foreign.hrl").
-
--export([new/2]).
-
-new(Size, Option) ->
-  ?IO(counters:new(Size, parseOpt(Option))).
-
-parseOpt({'Atomics'}) -> [atomics];
-parseOpt({'WriteConcurrency'}) -> [write_concurrency].
+-module('Global').

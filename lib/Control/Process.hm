@@ -86,8 +86,7 @@ foreign import receiveAfter :: forall a. Integer -> Process a
 -- | Register/Unregister Processes
 -----------------------------------------------------------------------------
 
-register :: Atom -> Pid -> Process ()
-register = ffiIO2 :erlang :register
+foreign import register :: Atom -> Pid -> Process ()
 
 unregister :: Atom -> Process ()
 unregister = ffiIO1 :erlang :unregister

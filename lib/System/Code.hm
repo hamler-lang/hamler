@@ -1,0 +1,66 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  System.Code
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The System Code module.
+--
+-----------------------------------------------------------------------------
+module System.Code where
+
+-- import Control.Monad (IO)
+-- import Data.Unit (Unit)
+
+{- TODO:
+add_path/1
+add_patha/1
+add_paths/1
+add_pathsa/1
+add_pathsz/1
+add_pathz/1
+all_available/0
+all_loaded/0
+atomic_load/1
+clash/0
+compiler_dir/0
+del_path/1
+delete/1
+ensure_loaded/1
+ensure_modules_loaded/1
+finish_loading/1
+get_doc/1
+get_mode/0
+get_object_code/1
+get_path/0
+is_loaded/1
+is_module_native/1
+is_sticky/1
+lib_dir/0
+lib_dir/1
+lib_dir/2
+load_abs/1
+load_binary/3
+load_file/1
+modified_modules/0
+module_status/0
+module_status/1
+objfile_extension/0
+prepare_loading/1
+priv_dir/1
+purge/1
+replace_path/2
+root_dir/0
+set_path/1
+soft_purge/1
+stick_dir/1
+unstick_dir/1
+where_is_file/1
+which/1
+-}
+

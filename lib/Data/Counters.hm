@@ -29,7 +29,7 @@ type CountersInfo =
     -- ^ Approximate memory consumption for the array in bytes.
   }
 
-foreign import new :: Integer -> [CountersOpt] -> IO CountersRef
+foreign import new :: Integer -> CountersOpt -> IO CountersRef
 
 get :: CountersRef -> Integer -> IO Integer
 get = ffiIO2 :counters :get

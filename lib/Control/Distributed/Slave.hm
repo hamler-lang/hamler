@@ -1,0 +1,31 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Control.Distributed.Slave
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Slave node controlling module.
+--
+-----------------------------------------------------------------------------
+module Control.Distributed.Slave where
+
+-- slave.erl: Functions for starting and controlling slave nodes.
+
+{-
+pseudo/1
+pseudo/2
+relay/1
+start/1
+start/2
+start/3
+start_link/1
+start_link/2
+start_link/3
+stop/1
+-}
+

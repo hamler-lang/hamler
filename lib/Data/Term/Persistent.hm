@@ -35,8 +35,8 @@ get = ffiIO1 :persistent_term :get
 
 -- | Retrieve the value for the persistent term associated with the key Key.
 -- Return Default if no term has been stored with the key Key.
-get2 :: forall k d v. k -> d -> IO v
-get2 = ffiIO2 :persistent_term :get
+getWithDefault :: forall k d v. k -> d -> IO v
+getWithDefault = ffiIO2 :persistent_term :get
 
 -- TODO: | Retrieve the keys and values for all persistent terms.
 -- getAll :: forall k v. IO (List (k, v))
