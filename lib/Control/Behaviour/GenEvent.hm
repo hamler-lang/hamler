@@ -31,6 +31,8 @@ module Control.Behaviour.GenEvent
   , notifyTo
   , syncNotify
   , syncNotifyTo
+    -- * helper funcs
+  , initOk
     -- * types
   , module Control.Behaviour.GenEvent.Types
   ) where
@@ -83,6 +85,9 @@ foreign import syncNotify
 
 foreign import syncNotifyTo
   :: forall e. Pid -> e -> Process ()
+
+initOk :: forall st. st -> InitResult st
+initOk st = InitOk st
 
 {- TODO
 add_sup_handler/3,
