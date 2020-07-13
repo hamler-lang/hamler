@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.31.2.
+-- This file has been generated from package.yaml by hpack version 0.33.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 978fd3e8f9c32d4f969dfa87fd066b9ade37bf2cdeacb5d030d8a610022456bf
+-- hash: cb9853b84a153c16b915b45cd6dace6f6b558b4bcdd6bdda8d1f7b9693cd2d9a
 
 name:           hamler
 version:        0.1.3
@@ -38,7 +38,6 @@ library
   exposed-modules:
       Language.Hamler
       Language.Hamler.CodeGen
-      Language.Hamler.Inline
       Language.Hamler.Make
       Language.Hamler.Make.Actions
       Language.Hamler.Util
