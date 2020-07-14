@@ -16,7 +16,6 @@ module Control.Behaviour.Supervisor
   ( -- * start sup
     startSup
   , startSupWith
-  , startSupWithGlobal
     -- * child api
   , checkChildSpecs
   , countChildren
@@ -39,16 +38,13 @@ import Data.Result (Result)
 import Data.Unit (Unit)
 
 -- Start a supervisor process.
-foreign import startSup
-  :: forall a. (InitHandler a) -> a -> Process StartRet
+foreign import startSup :: Init -> Process StartRet
 
 -- Start a supervisor with name.
-foreign import startSupWith
-  :: forall a. Name -> (InitHandler a) -> a -> Process StartRet
+foreign import startSupWith :: Name -> Init -> Process StartRet
 
 -- Start a supervisor with global name.
-foreign import startSupWithGlobal
-  :: forall a. Name -> (InitHandler a) -> a -> Process StartRet
+-- foreign import startSupWithGlobal :: Name -> Init -> Process StartRet
 
 -- Check a list of child specification.
 foreign import checkChildSpecs

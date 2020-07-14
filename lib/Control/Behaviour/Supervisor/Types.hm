@@ -15,20 +15,21 @@
 module Control.Behaviour.Supervisor.Types
   ( ChildId
   , ChildPid
-  , ChildType
-  , ChildRestart
-  , ChildShutdown
+  , ChildType(..)
+  , ChildRestart(..)
+  , ChildShutdown(..)
   , ChildSpec
   , Child
   , ChildCounts
-  , ChildError
-  , ChildSpecError
-  , InitHandler
-  , InitResult
+  , ChildError(..)
+  , ChildSpecError(..)
+  , Init
+  , InitResult(..)
   , Intensity
-  , RestartStrategy
+  , RestartStrategy(..)
   , SupFlags
-  , SupRef
+  , SupRef(..)
+  , SupSpec
   , module Control.Behaviour.GenTypes
   ) where
 
@@ -36,7 +37,6 @@ import Control.Behaviour.GenTypes
 import Control.Distributed.Node (Node)
 import Control.Process (Module, Process)
 import Data.Pid (Pid)
-import Data.Unit (Unit)
 
 -- Child Id
 type ChildId = String
@@ -56,7 +56,7 @@ data ChildShutdown = BrutalKill | Infinity | Shutdown Integer
 -- Child Specification
 type ChildSpec =
   { childId   :: ChildId
-  , startFun  :: Process () -- ???
+  , startFun  :: Process StartRet -- ???
   , restart   :: ChildRestart
   , shutdown  :: ChildShutdown
   , childType :: ChildType
@@ -103,8 +103,12 @@ data ChildSpecError
   | ChildSpecMissingStart
   | ChildSpecError
 
-type InitHandler a
-  = a -> Process (InitResult (SupFlags, [ChildSpec]))
+type SupSpec =
+  { supFlags :: SupFlags
+  , childSpecs :: List ChildSpec
+  }
+
+type Init = Process SupSpec
 
 -- | Init Result
 data InitResult st

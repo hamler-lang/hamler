@@ -14,7 +14,11 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.Supervisor.Proxy where
 
+import Control.Monad (IO)
 import Control.Process (Process)
+import Control.Behaviour.GenTypes (StartRet)
+import Data.Unit (Unit)
 
 foreign import init :: forall a st. a -> Process st
 
+foreign import mfargs :: IO () -> Process StartRet
