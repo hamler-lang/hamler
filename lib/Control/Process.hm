@@ -66,7 +66,7 @@ self = selfPid
 foreign import selfPid :: Process Pid
 
 -- Spawn a Process.
-foreign import spawn ::forall a b. (a -> IO b) -> a -> Process Pid
+foreign import spawn ::forall a. IO a -> Process Pid
 
 -- Send a message to a Process.
 foreign import send :: forall a. Pid -> a -> Process a

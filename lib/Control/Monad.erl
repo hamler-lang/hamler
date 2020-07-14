@@ -39,7 +39,7 @@ bindListImpl(L, F) ->
 -spec(pureImpl(any()) -> any()).
 pureImpl(X) -> fun() -> X end.
 
-seqio(L) when is_list(L) -> [V() || V <- L].
+seqio(L) when is_list(L) -> fun() -> [V() || V <- L] end.
 
 unsafePerformIO(L) -> L().
 

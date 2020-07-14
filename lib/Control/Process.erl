@@ -19,7 +19,7 @@
 -compile(no_auto_import).
 
 -export([ selfPid/0
-        , spawn/2
+        , spawn/1
         , send/2
         , 'receive'/0
         , receiveAfter/1
@@ -38,8 +38,8 @@
 -spec(selfPid() -> pid()).
 selfPid() -> ?IO(erlang:self()).
 
-spawn(Fun, Arg) ->
-  ?IO(erlang:spawn(fun() -> Fun(Arg) end)).
+spawn(Fun) ->
+  ?IO(erlang:spawn(fun() -> Fun() end)).
 
 -spec(send(pid(), term()) -> term()).
 send(Pid, Msg) -> ?IO(erlang:send(Pid, Msg)).
