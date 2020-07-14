@@ -18,9 +18,8 @@
 
 -compile({no_auto_import, [error/1]}).
 
--export([ startSup/2
-        , startSupWith/3
-        , startSupWithGlobal/3
+-export([ startSup/1
+        , startSupWith/2
         ]).
 
 -export([ checkChildSpecs/1
@@ -36,14 +35,11 @@
 
 -define(MOD, 'Control.Behaviour.Supervisor.Proxy').
 
-startSup(Init, Args) ->
-  ?IO(startRet(supervisor:start_link(?MOD, [Init, Args]))).
+startSup(Init) ->
+  ?IO(startRet(supervisor:start_link(?MOD, [Init]))).
 
-startSupWith(Name, Init, Args) ->
-  ?IO(startRet(supervisor:start_link({local, Name}, ?MOD, [Init, Args]))).
-
-startSupWithGlobal(Name, Init, Args) ->
-  ?IO(startRet(supervisor:start_link({global, Name}, ?MOD, [Init, Args]))).
+startSupWith(Name, Init) ->
+  ?IO(startRet(supervisor:start_link({local, Name}, ?MOD, [Init]))).
 
 %% TODO: destruct childspecs
 checkChildSpecs(ChildSpecs) ->
