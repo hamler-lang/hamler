@@ -28,6 +28,10 @@ foreign import data Port :: Type
 ports :: IO [Port]
 ports = ffiIO0 :erlang :ports
 
+foreign import linkPort :: Port -> IO ()
+
+foreign import unlinkPort :: Port -> IO ()
+
 -- open ::
 -- open_port(PortName, PortSettings) -> port()
 
