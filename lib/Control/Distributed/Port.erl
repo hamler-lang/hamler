@@ -13,3 +13,17 @@
 %%
 %%---------------------------------------------------------------------------
 -module('Port').
+
+-include("../../Foreign.hrl").
+
+-export([ linkPort/1
+        , unlinkPort/1
+        ]).
+
+linkPort(Port) ->
+  ?IO(ok(erlang:link(Port))).
+
+unlinkPort(Port) ->
+  ?IO(ok(erlang:unlink(Port))).
+
+ok(true) -> ok.
