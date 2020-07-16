@@ -14,18 +14,36 @@
 -----------------------------------------------------------------------------
 module Control.Distributed.PG where
 
-{- TODO: pg.erl module
-get_local_members/1
-get_local_members/2
-get_members/1
-get_members/2
-join/2
-join/3
-leave/2
-leave/3
-start/1
-start_link/0
-start_link/1
-which_groups/0
-which_groups/1
--}
+import Control.Process (Process)
+import Data.Pid (Pid)
+import Data.Unit (Unit)
+
+type Scope = Atom
+
+type Group = String
+
+foreign import startLink :: Process Pid
+
+foreign import startScope :: Scope -> Process Pid
+
+foreign import startLinkScope :: Scope -> Process Pid
+
+foreign import join :: Group -> List Pid -> Process ()
+
+foreign import joinScope :: Scope -> Group -> List Pid -> Process ()
+
+foreign import leave :: Group -> [Pid] -> Process ()
+
+foreign import leaveScope :: Scope -> Group -> [Pid] -> Process ()
+
+foreign import getLocalMembers :: Group -> Process [Pid]
+
+foreign import getLocalMembersIn :: Scope -> Group -> Process [Pid]
+
+foreign import getMembers :: Group -> Process [Pid]
+
+foreign import getMembersIn :: Scope -> Group -> Process [Pid]
+
+foreign import whichGroups :: Process [Group]
+
+foreign import whichGroupsIn :: Scope -> Process [Group]
