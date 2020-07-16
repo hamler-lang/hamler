@@ -22,22 +22,9 @@
 -define(MOD, 'Control.Behaviour.Supervisor.Proxy').
 
 init([Init]) ->
-  SupSpec = Init(),
-  io:format("~p~n", [SupSpec]),
-  {ok, trans(SupSpec)}.
-
-trans(#{supFlags := SupFlags,
-        childSpecs := ChildSpecs}) ->
-  {trans(SupFlags), trans(ChildSpecs)};
-
-trans(#{strategy := Strategy,
-        intensity := Intensity,
-        period := Period
-       }) ->
-  #{strategy => trans(Strategy),
-    intensity => Intensity,
-    period => Period
-   };
+  {'Supervisor', Restart, ChildSpecs} = Init(),
+  SupFlags = {trans(Restart), 10, 100},
+  {ok, {SupFlags, trans(ChildSpecs)}}.
 
 trans({'OneForAll'}) ->
   one_for_all;
@@ -57,7 +44,7 @@ trans({'Infinity'}) -> infinity;
 trans({'Shutdown', I}) -> I;
 
 trans({'Worker'}) -> worker;
-trans({'Supervisor'}) -> supervisor;
+trans({'Superviso'}) -> supervisor;
 
 trans(ChildSpecs) when is_list(ChildSpecs) ->
   [childSpec(Spec) || Spec <- ChildSpecs].

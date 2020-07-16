@@ -1,0 +1,42 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Control.Behaviour.Supervisor.Impl
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Supervisor Implementent module.
+--
+-----------------------------------------------------------------------------
+module Control.Behaviour.Supervisor.Impl where
+
+import Control.Process (From, Process)
+
+-- | supervisor api
+foreign import start_link :: forall a b c. a -> b -> Process c
+foreign import start_link_with :: forall a b c d. a -> b -> c -> Process d
+foreign import start_child :: forall a b c. a -> b -> Process c
+foreign import restart_child :: forall a b c. a -> b -> Process c
+foreign import delete_child :: forall a b c. a -> b -> Process c
+foreign import terminate_child :: forall a b c. a -> b -> Process c
+foreign import which_children :: forall a b. a -> Process b
+foreign import count_children :: forall a b. a -> Process b
+-- foreign import find_child :: forall a b c. a -> b -> Process c
+foreign import check_childspecs :: forall a b. a -> Process b
+
+-- | gen_erver callbacks
+foreign import init :: forall a st. a -> Process st
+foreign import handle_call
+  :: forall req res st. req -> From -> st -> Process res
+foreign import handle_cast
+  :: forall req res st. req -> st -> Process res
+foreign import handle_info
+  :: forall info st. info -> st -> Process st
+foreign import terminate :: forall r st. r -> Process st
+foreign import code_change
+  :: forall vsn st extra. vsn -> st -> extra -> Process st
+foreign import format_status :: forall a b c. a -> b -> c

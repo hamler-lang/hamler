@@ -20,8 +20,6 @@
         , startWith/3
         , startLink/2
         , startLinkWith/3
-        , supStart/2
-        , supStartWith/3
         , stop/1
         , stopWith/3
         ]).
@@ -43,19 +41,15 @@ start(Class, Init) ->
   ?IO(doStart(fun gen_event:start/0, Class, Init)).
 
 startWith(Class, Name, Init) ->
-  ?IO(doStartWith(fun gen_event:start/1, {local, Name}, Class, Init)).
+  ?IO(doStartWith(fun gen_event:start/1, localName(Name), Class, Init)).
 
 startLink(Class, Init) ->
   ?IO(doStart(fun gen_event:start_link/0, Class, Init)).
 
 startLinkWith(Class, Name, Init) ->
-  ?IO(doStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init)).
+  ?IO(doStartWith(fun gen_event:start_link/1, localName(Name), Class, Init)).
 
-supStart(Class, Init) ->
-  ?IO(doSupStart(fun gen_event:start_link/0, Class, Init)).
-
-supStartWith(Class, Name, Init) ->
-  ?IO(doSupStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init)).
+localName(Name) -> {local, list_to_atom(Name)}.
 
 stop(EMgrRef) ->
   ?IO(gen_event:stop(toErl(EMgrRef))).
@@ -101,20 +95,6 @@ doStartWith(Start, Name, Class, Init) ->
       Pid;
     {error, Reason} ->
       error(Reason)
-  end.
-
-doSupStart(Start, Class, Init) ->
-  {ok, Pid} = Start(),
-  ok = (addHandler(Class, Pid, Init))(),
-  {ok, Pid}.
-
-doSupStartWith(Start, Name, Class, Init) ->
-  case Start(Name) of
-    {ok, Pid} ->
-      ok = (addHandler(Class, Pid, Init))(),
-      {ok, Pid};
-    {error, Reason} ->
-      {error, Reason}
   end.
 
 toErl({'EMgrPid', Pid}) -> Pid;

@@ -22,8 +22,6 @@
         , startLinkWith/3
         , startMonitor/2
         , startMonitorWith/3
-        , supStart/2
-        , supStartWith/3
         , stop/1
         , stopWith/3
         ]).
@@ -53,25 +51,21 @@ start(Class, Init) ->
   ?IO(retPid(gen_server:start(?MOD, [Class, Init], []))).
 
 startWith(Name, Class, Init) ->
-  ?IO(retPid(gen_server:start({local, Name}, ?MOD, [Class, Init], []))).
+  ?IO(retPid(gen_server:start(localName(Name), ?MOD, [Class, Init], []))).
 
 startLink(Class, Init) ->
   ?IO(retPid(gen_server:start_link(?MOD, [Class, Init], []))).
 
 startLinkWith(Class, Name, Init) ->
-  ?IO(retPid(gen_server:start_link({local, Name}, ?MOD, [Class, Init], []))).
+  ?IO(retPid(gen_server:start_link(localName(Name), ?MOD, [Class, Init], []))).
 
 startMonitor(Class, Init) ->
   ?IO(retPid(gen_server:start_monitor(?MOD, [Class, Init], []))).
 
 startMonitorWith(Class, Name, Init) ->
-  ?IO(retPid(gen_server:start_monitor({local, Name}, ?MOD, [Class, Init], []))).
+  ?IO(retPid(gen_server:start_monitor(localName(Name), ?MOD, [Class, Init], []))).
 
-supStart(Class, Init) ->
-  ?IO(gen_server:start_link(?MOD, [Class, Init], [])).
-
-supStartWith(Name, Class, Init) ->
-  ?IO(gen_server:start_link({local, Name}, ?MOD, [Class, Init], [])).
+localName(Name) -> {local, list_to_atom(Name)}.
 
 stop(ServerRef) ->
   ?IO(gen_server:stop(toErl(ServerRef))).

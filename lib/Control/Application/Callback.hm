@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.Process.Types
+-- Module      :  Control.Application.Callback
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,23 +9,16 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Process Types module.
+-- The Application Callback module.
 --
 -----------------------------------------------------------------------------
-module Control.Process.Types
-  ( Process
-  , From
-  , ExitReason
-  ) where
+module Control.Application.Callback where
 
-import Control.Monad (IO)
+import Control.Process (Process)
+import Data.Unit (Unit)
 
--- An Alias of IO.
-type Process = IO
+foreign import start :: forall a b st. a -> b -> Process st
 
-foreign import data From :: Type
+foreign import pre_stop :: forall st. st -> Process st
 
-data ExitReason
-  = ExitNormal
-  | ExitShutdown
-  | ExitReason Atom
+foreign import stop :: forall st. st -> Process ()
