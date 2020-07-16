@@ -168,7 +168,7 @@ devReplConfig =
       hamlerFiles = hmfs,
       libBeamPath = "ebin",
       srcBeamPath = "ebin",
-      coreFilePath = "ebin/$PSCI.core"
+      coreFilePath = "ebin/$REPL.core"
     }
 
 srcReplConfig :: ReplConfig
@@ -178,7 +178,7 @@ srcReplConfig =
       hamlerFiles = srchmfs,
       libBeamPath = "/usr/local/lib/hamler/ebin",
       srcBeamPath = "ebin",
-      coreFilePath = "ebin/$PSCI.core"
+      coreFilePath = "ebin/$REPL.core"
     }
 
 nullReplConfig :: ReplConfig
@@ -188,7 +188,7 @@ nullReplConfig =
       hamlerFiles = nullhmfs,
       libBeamPath = "/usr/local/lib/hamler/ebin",
       srcBeamPath = "/usr/local/lib/hamler/ebin",
-      coreFilePath = "ebin/$PSCI.core"
+      coreFilePath = "ebin/$REPL.core"
     }
 
 dictlist =["ebin","src","test",".deps"]
@@ -225,7 +225,7 @@ runRepl sourceDir ebinDir = do
       base <- getTemporaryDirectory
       if sourceDir == "" && ebinDir == "/ebin"
         then do 
-          let nullReplConfig' = nullReplConfig { coreFilePath = base </> "hamlerTmp/$PSCI.core"
+          let nullReplConfig' = nullReplConfig { coreFilePath = base </> "hamlerTmp/$REPL.core"
                                            , replsrvFilePath = hamlerFile <> "/bin/replsrv"
                                            , libBeamPath = hamlerFile <> "/ebin"
                                            , srcBeamPath = hamlerFile <> "/ebin"
@@ -240,7 +240,7 @@ runRepl sourceDir ebinDir = do
             (\_ -> startReplsrv nullReplConfig' (base <> "/hamlerTmp"))
         else do 
           let nullReplConfig' = nullReplConfig 
-                 { coreFilePath = base </> "hamlerTmp/$PSCI.core"
+                 { coreFilePath = base </> "hamlerTmp/$REPL.core"
                  , replsrvFilePath = hamlerFile <> "/bin/replsrv"
                  , libBeamPath = hamlerFile <> "/ebin"
                  , srcBeamPath = ebinDir
