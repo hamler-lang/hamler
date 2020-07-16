@@ -36,11 +36,12 @@ import Language.CoreErlang as E
 import Language.Hamler.Util
 import qualified Language.PureScript.AST.Literals as L
 import Language.PureScript.CoreFn as C
+import qualified Language.PureScript as P
 import Language.PureScript.Names
 import Text.Pretty.Simple
 import Prelude
 
-type MError = Text
+type MError = P.MultipleErrors
 
 type MLog = Text
 
@@ -104,7 +105,7 @@ moduleToErl C.Module {..} ffiModule = do
       Nothing -> case M.lookup name (gs ^. ffiFun) of
         Just args ->
           return . ann $ FunName (ann $ Atom wname) (toInteger args)
-        Nothing -> throwError $ (runModuleName $ gs ^. gsmoduleName) <> ":The function [" <> wname <> "] is not implemented!"
+        Nothing -> throwError $ P.MultipleErrors [P.ErrorMessage [] $ P.MissingFFIImplementations moduleName [ident]]
   return $
     ann $
       E.Module
@@ -155,7 +156,7 @@ bindToLetFunDef (NonRec _ ident e) = do
   e' <- exprToErl e
   let name = runIdent ident
   case e' of
-    EFun v@(Fun vrs _ _) _ -> do
+    EFun (Fun vrs _ _) _ -> do
       modify (\x -> x & letMap %~ M.insert name (length vrs, e'))
     _ -> do
       modify (\x -> x & letMap %~ M.insert name (0, ann . EFun . ann $ Fun [] (ann $ Expr e')))
@@ -234,10 +235,10 @@ exprToErl (C.Var _ qi@(Qualified _ tema)) = do
                 Nothing ->
                   if unpack mn' == "Prim" && unpack wname == "undefined"
                     then return . ann . EFun . ann $ Fun [ann $ E.Var "_0"] (ann . Expr . ann . EVar . ann . E.Var $ "_0")
-                    else throwError $ (runModuleName $ gs ^. gsmoduleName) <> " --> There is no such function " <> mn' <> ":" <> wname
+                    else throwError $ P.MultipleErrors [P.ErrorMessage [] $ P.MissingFFIImplementations mn [tema]]
                 Just i -> return $ cModCall i mn' wname
             Qualified Nothing _ ->
-              throwError $ "Did not find this variable: " <> T.pack (show qi) <> "<-->" <> T.pack (show gs)
+              throwError $ P.MultipleErrors [P.ErrorMessage [] $ P.MissingFFIImplementations (gs ^. gsmoduleName) [tema]]
 exprToErl (C.Let _ bs e) = do
   mapM_ bindToLetFunDef bs
   e' <- exprToErl e
@@ -448,7 +449,7 @@ paToC mi ts b = case ts of
             tText $ LL.delete "Binary" ts'
           )
       Nothing -> case b of
-        False -> throwError "binary error "
+        False -> throwError . error $ "unsupport binary syntax" <> show b
         True ->
           return $
             ( ann . PLiteral . ann . LAtom . ann $ Atom "all",
@@ -467,15 +468,6 @@ tupleToBinaryVal (a, b) =
       (ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "integer")
       (ann . Expr . tText' $ LL.delete "Integer" [])
 
-binderToKey :: Binder C.Ann -> Translate (Pat Text)
-binderToKey (LiteralBinder _ (NumericLiteral (Left i))) = return . ann . PLiteral . ann $ LInt i
-binderToKey (LiteralBinder _ (NumericLiteral (Right i))) = return . ann . PLiteral . ann $ LFloat i
-binderToKey (LiteralBinder _ (StringLiteral s)) = return . ann . PLiteral . ann . LString . T.pack $ decodePPS s
-binderToKey (LiteralBinder _ (AtomLiteral s)) = return . ann . PLiteral . ann . LAtom . ann . Atom . T.pack $ decodePPS s
-binderToKey (LiteralBinder _ (CharLiteral c)) = return . ann . PLiteral . ann $ LChar c
-binderToKey (LiteralBinder _ (BooleanLiteral True)) = return . ann . PLiteral . ann $ LAtom (ann $ Atom "true")
-binderToKey (LiteralBinder _ (BooleanLiteral False)) = return . ann . PLiteral . ann $ LAtom (ann $ Atom "false")
-binderToKey x = error $ show x
 
 -- | Literal Binder to Pat
 literalBinderToPat :: L.Literal (C.Binder C.Ann) -> Translate (E.Pat Text)
