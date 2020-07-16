@@ -16,6 +16,9 @@ module Data.Atom where
 
 import Foreign (ffi1)
 
+mod :: String -> Atom
+mod = atom
+
 -- String to Atom.
 atom :: String -> Atom
 atom = ffi1 :erlang :list_to_atom
