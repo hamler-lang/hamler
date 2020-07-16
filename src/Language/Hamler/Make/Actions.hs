@@ -14,7 +14,6 @@ import Control.Monad.Reader (asks)
 import Control.Monad.Supply
 import Control.Monad.Trans.Class (MonadTrans (..))
 import Data.Foldable (for_, minimum)
-import qualified Data.List as L
 import qualified Data.List.NonEmpty as NEL
 import qualified Data.Map as M
 import Data.Maybe (fromMaybe, maybeToList)
@@ -34,12 +33,12 @@ import Language.PureScript.Errors
 import Language.PureScript.Externs (ExternsFile)
 import Language.PureScript.Make hiding (buildMakeActions)
 import Language.PureScript.Make.Cache
-import Language.PureScript.Make.Monad
 import Language.PureScript.Names
 import Language.PureScript.Names (ModuleName, runModuleName)
 import Language.PureScript.Options hiding (codegenTargets)
 import System.FilePath ((</>))
 import Prelude
+import qualified Language.PureScript.Bundle as B
 
 -- | Determines when to rebuild a module
 renderProgressMessage :: ProgressMessage -> String
@@ -110,7 +109,7 @@ buildMakeActions libfp isInline outputDir filePathMap foreigns _ =
         for_ Docs.Prim.primModules $ \docsMod@Docs.Module {..} ->
           writeJSONFile (outputFilename modName "docs.json") docsMod
 
-    readModuleInfo :: HasCallStack => ModuleName -> SupplyT Make (Text, M.Map Text Int) -- (Text,[(Text,Int)])
+    readModuleInfo :: HasCallStack => ModuleName -> SupplyT Make (Text, M.Map Text Int)
     readModuleInfo mn = do
       let mn' = runModuleName mn
           path = getFilePath ".info" mn filePathMap
@@ -128,8 +127,7 @@ buildMakeActions libfp isInline outputDir filePathMap foreigns _ =
           con <- lift $ makeIO "read Main.core" $ TIO.readFile fp
           case CE.parseModuleA con of
             Left e -> do
-              lift $ makeIO "read Main.core" $ print ("error of parse core file: ---> " <> fp)
-              lift $ throwError $ MultipleErrors [ErrorMessage [] $ ErrorParsingModule undefined]
+              lift $ throwError $ MultipleErrors [ErrorMessage [] $ ErrorParsingFFIModule fp (Just $ B.UnableToParseModule (show e))]
             Right cemodule -> do
               return $ Just cemodule
       let mods = filter (/= mn) $ filter (/= ModuleName [ProperName "Prim"]) $ fmap snd $ CF.moduleImports m
@@ -137,7 +135,7 @@ buildMakeActions libfp isInline outputDir filePathMap foreigns _ =
       let modInfoMap = M.fromList modInfoList
           ((erl, _), _) = runTranslate isInline modInfoMap (ffiModule, mn) $ moduleToErl m ffiModule
       case erl of
-        Left e -> lift $ makeIO "print error" $ print e
+        Left e -> throwError e
         Right e@(CE.Module _ exports _ _ _) -> do
           let mn' = runModuleName mn
           lift $
