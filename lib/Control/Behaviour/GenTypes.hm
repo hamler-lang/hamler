@@ -14,16 +14,14 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenTypes
   ( Name
-  , name
   , Caller
   , RequestId
   , StartRet
   ) where
 
-import Data.Atom (atom)
 import Data.Ref (Reference)
 
-type Name = Atom
+type Name = String
 
 foreign import data Caller :: Type
 
@@ -38,8 +36,4 @@ data StartRet
   | StartIgnore
   | StartError ExitReason
 -}
-
--- | String to server name.
-name :: String -> Name
-name = atom
 

@@ -23,8 +23,6 @@ module Control.Behaviour.GenStatem
   , startLinkWith
   , startMonitor
   , startMonitorWith
-  , supStart
-  , supStartWith
   , stop
   , stopWith
     -- * client apis
@@ -69,12 +67,6 @@ foreign import startMonitor
 foreign import startMonitorWith
   :: forall e st. GenStatem e st
   => Name -> (Init st) -> Process (Pid, Reference)
-
-foreign import supStart
-  :: forall e st. GenStatem e st => (Init st) -> Process StartRet
-
-foreign import supStartWith
-  :: forall e st. GenStatem e st => Name -> (Init st) -> Process StartRet
 
 -- Stop the Statem Process.
 foreign import stop :: StatemRef -> Process ()

@@ -14,23 +14,21 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenServer.Proxy where
 
-import Control.Process (Process)
-import Control.Process.Types (From)
+import Control.Process (From, Process)
 
-foreign import init :: forall a state. a -> Process state
+foreign import init :: forall a st. a -> Process st
 
 foreign import handle_call
-  :: forall req state res. req -> From -> state -> Process res
+  :: forall req res st. req -> From -> st -> Process res
 
 foreign import handle_cast
-  :: forall req state res. req -> state -> Process res
+  :: forall req res st. req -> st -> Process res
 
 foreign import handle_info
-  :: forall info state. info -> state -> Process state
+  :: forall info st. info -> st -> Process st
 
-foreign import terminate
-  :: forall reason state. reason -> Process state
+foreign import terminate :: forall r st. r -> Process st
 
 foreign import code_change
-  :: forall vsn state extra. vsn -> state -> extra -> Process state
+  :: forall vsn st extra. vsn -> st -> extra -> Process st
 

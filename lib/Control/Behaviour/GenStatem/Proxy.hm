@@ -16,16 +16,14 @@ module Control.Behaviour.GenStatem.Proxy where
 
 import Control.Process (Process)
 
-foreign import init
-  :: forall a state. a -> Process state
+foreign import init :: forall a st. a -> Process st
 
 foreign import callback_mode :: Atom
 
 foreign import handle_event
   :: forall a b c d e. a -> b -> c -> d -> Process e
 
-foreign import terminate
-  :: forall r st. r -> Process st
+foreign import terminate :: forall r st. r -> Process st
 
 foreign import code_change
-  :: forall vsn state extra. vsn -> state -> extra -> Process state
+  :: forall vsn st extra. vsn -> st -> extra -> Process st

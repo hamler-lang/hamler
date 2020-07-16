@@ -25,8 +25,6 @@ module Control.Behaviour.GenServer
   , startLinkWith
   , startMonitor
   , startMonitorWith
-  , supStart
-  , supStartWith
   , stop
   , stopWith
     -- * client apis
@@ -94,16 +92,6 @@ foreign import startMonitor
 foreign import startMonitorWith
   :: forall req rep st. GenServer req rep st
   => Name -> (Init st) -> Process (Pid, Reference)
-
--- | Start a supervised server process.
-foreign import supStart
-  :: forall req rep st. GenServer req rep st
-  => (Init st) -> Process StartRet
-
--- | Start a supervised server process with registered name.
-foreign import supStartWith
-  :: forall req rep st. GenServer req rep st
-  => Name -> (Init st) -> Process StartRet
 
 -- | Stop the server process.
 foreign import stop :: ServerRef -> Process ()

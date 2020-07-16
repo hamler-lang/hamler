@@ -27,24 +27,23 @@ module Control.Behaviour.Supervisor
   , terminateChildBy
   , whichChildren
     -- * types
+  , newChildSpec
   , module Control.Behaviour.Supervisor.Types
   ) where
 
 import Control.Behaviour.Supervisor.Types
 import Control.Process (Process)
+import Data.Atom (mod)
 import Data.Pid (Pid)
 import Data.Maybe (Maybe)
 import Data.Result (Result)
 import Data.Unit (Unit)
 
 -- Start a supervisor process.
-foreign import startSup :: Init -> Process StartRet
+foreign import startSup :: Init -> Process Pid
 
 -- Start a supervisor with name.
-foreign import startSupWith :: Name -> Init -> Process StartRet
-
--- Start a supervisor with global name.
--- foreign import startSupWithGlobal :: Name -> Init -> Process StartRet
+foreign import startSupWith :: Name -> Init -> Process Pid
 
 -- Check a list of child specification.
 foreign import checkChildSpecs
@@ -80,3 +79,12 @@ foreign import terminateChildBy
 
 foreign import whichChildren :: SupRef -> Process [ChildId]
 
+newChildSpec :: ChildId -> Process Pid -> ChildSpec
+newChildSpec childId startFun =
+  { childId = childId
+  , startFun = startFun
+  , restart = Permanent
+  , shutdown = Shutdown 5000
+  , childType = Worker
+  , modules = [mod(childId)]
+  }

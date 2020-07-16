@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.Process.Types
+-- Module      :  Control.Application.Resource
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,23 +9,9 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Process Types module.
+-- The Application Resource module.
 --
 -----------------------------------------------------------------------------
-module Control.Process.Types
-  ( Process
-  , From
-  , ExitReason
-  ) where
+module Control.Application.Resource where
 
-import Control.Monad (IO)
-
--- An Alias of IO.
-type Process = IO
-
-foreign import data From :: Type
-
-data ExitReason
-  = ExitNormal
-  | ExitShutdown
-  | ExitReason Atom
+-- TODO: http://erlang.org/doc/man/app.html

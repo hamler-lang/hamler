@@ -29,13 +29,13 @@ module Control.Behaviour.Supervisor.Types
   , RestartStrategy(..)
   , SupFlags
   , SupRef(..)
-  , SupSpec
+  , Supervisor(..)
   , module Control.Behaviour.GenTypes
   ) where
 
 import Control.Behaviour.GenTypes
 import Control.Distributed.Node (Node)
-import Control.Process (Module, Process)
+import Control.Process (Process)
 import Data.Pid (Pid)
 
 -- Child Id
@@ -45,7 +45,8 @@ type ChildId = String
 type ChildPid = Pid
 
 -- Child Type
-data ChildType = Worker | Supervisor
+-- TODO: data ChildType = Worker | Supervisor
+data ChildType = Worker | Superviso
 
 -- Child Restart Policy
 data ChildRestart = Permanent | Transient | Temporary
@@ -56,11 +57,11 @@ data ChildShutdown = BrutalKill | Infinity | Shutdown Integer
 -- Child Specification
 type ChildSpec =
   { childId   :: ChildId
-  , startFun  :: Process StartRet -- ???
+  , startFun  :: Process Pid
   , restart   :: ChildRestart
   , shutdown  :: ChildShutdown
   , childType :: ChildType
-  , modules   :: [Module]
+  , modules   :: [Atom]
   }
 
 -- Child
@@ -103,12 +104,12 @@ data ChildSpecError
   | ChildSpecMissingStart
   | ChildSpecError
 
-type SupSpec =
-  { supFlags :: SupFlags
-  , childSpecs :: List ChildSpec
-  }
+data Supervisor = Supervisor RestartStrategy [ChildSpec]
+--  { supFlags :: SupFlags
+--  , childSpecs :: List ChildSpec
+--  }
 
-type Init = Process SupSpec
+type Init = Process Supervisor
 
 -- | Init Result
 data InitResult st
@@ -145,3 +146,4 @@ data SupRef
     -- ^ The supervisor is globally registered.
   | SupPid Pid
     -- ^ The supervisor pid.
+

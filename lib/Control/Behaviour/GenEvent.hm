@@ -21,8 +21,6 @@ module Control.Behaviour.GenEvent
   , startWith
   , startLink
   , startLinkWith
-  , supStart
-  , supStartWith
   , stop
   , stopWith
     -- * api
@@ -59,12 +57,6 @@ foreign import startLink
 
 foreign import startLinkWith
   :: forall e st. GenEvent e st => Name -> (Init st) -> Process Pid
-
-foreign import supStart
-  :: forall e st. GenEvent e st => (Init st) -> Process StartRet
-
-foreign import supStartWith
-  :: forall e st. GenEvent e st => Name -> (Init st) -> Process StartRet
 
 foreign import stop :: EMgrRef -> Process ()
 
