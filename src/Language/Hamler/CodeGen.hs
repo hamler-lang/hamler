@@ -362,7 +362,8 @@ binderToPat (NamedBinder _ i b) = do
   let index1 = gs ^. binderVarIndex
   modify (\x -> x & localVar %~ M.insert (runIdent i) index1)
   modify (\x -> x & binderVarIndex %~ (+ 1))
-  binderToPat b
+  b' <- binderToPat b
+  return . ann $ PAlias ( ann $ E.Var $ T.pack $ "_" <> show index1) b'
 binderToPat (MapBinder _ xs) = do
   xs' <- forM xs $ \(x, y) -> do
     x' <- binderToPat x
