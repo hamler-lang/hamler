@@ -151,8 +151,8 @@ infoRec([{read_concurrency, Bool}|Info], M) ->
   infoRec(Info, M#{readConcurrency => Bool});
 infoRec([{write_concurrency, Bool}|Info], M) ->
   infoRec(Info, M#{writeConcurrency => Bool});
-infoRec([{decentralized_counters, Bool}|Info], M) ->
-  infoRec(Info, M#{decentralizedCounters => Bool});
+%%infoRec([{decentralized_counters, Bool}|Info], M) ->
+%%  infoRec(Info, M#{decentralizedCounters => Bool});
 infoRec([_|Info], M) ->
   infoRec(Info, M);
 infoRec([], M) -> M.
