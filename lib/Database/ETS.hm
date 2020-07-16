@@ -78,7 +78,7 @@ type TableOptions =
   , compressed       :: Boolean
   , readConcurrency  :: Boolean
   , writeConcurrency :: Boolean
-  , decentralizedCounters :: Boolean
+--, decentralizedCounters :: Boolean
   }
 
 type TableInfo =
@@ -96,7 +96,7 @@ type TableInfo =
   , compressed       :: Boolean
   , readConcurrency  :: Boolean
   , writeConcurrency :: Boolean
-  , decentralizedCounters :: Boolean
+--, decentralizedCounters :: Boolean
   }
 
 options :: TableOptions
@@ -108,7 +108,6 @@ options = { tableType = Set
           , compressed = false
           , readConcurrency = false
           , writeConcurrency = false
-          , decentralizedCounters = false
           }
 
 all :: IO [TableId]
