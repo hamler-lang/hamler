@@ -19,7 +19,7 @@ import Data.Timeout (Timeout)
 
 type Module = Atom
 
-type Application = Atom
+type Application = String
 
 data StartType = Normal | Takeover Node | Failover Node
 
@@ -41,7 +41,7 @@ foreign import data AppStartArgs :: Type
 foreign import data AppStartError :: Type
 
 type AppSpec =
-  { name         :: Atom
+  { name         :: String
   , description  :: String
   , vsn          :: String
   , id           :: String

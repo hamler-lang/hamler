@@ -31,7 +31,7 @@ module Control.Application
   ) where
 
 import Control.Application.Types
-import Control.Process (Process)
+import Control.Monad (IO)
 import Data.Maybe (Maybe)
 import Data.Pid (Pid)
 import Data.Unit (Unit)
@@ -39,37 +39,36 @@ import Data.Unit (Unit)
 -- type StartResult = Result StartError [Application]
 
 -- Ensure to start an application with its dependencies.
-foreign import ensureAllStarted
-  :: Application -> Process [Application]
+foreign import ensureAllStarted :: Application -> IO [Application]
 
 -- Ensure to restart an application with its dependencies.
 foreign import ensureAllRestarted
-  :: Application -> RestartType -> Process [Application]
+  :: Application -> RestartType -> IO [Application]
 
 -- Ensure to start an application.
-foreign import ensureStarted :: Application -> Process ()
+foreign import ensureStarted :: Application -> IO ()
 
 -- Ensure to restart an application.
 foreign import ensureRestarted
-  :: Application -> RestartType -> Process ()
+  :: Application -> RestartType -> IO ()
 
-foreign import getApplication :: Maybe Application
+foreign import getApplication :: IO (Maybe Application)
 
-foreign import getApplicationOfPid :: Pid -> Maybe Application
+foreign import getApplicationOfPid :: Pid -> IO (Maybe Application)
 
-foreign import load :: Application -> Process ()
+foreign import load :: Application -> IO ()
 
-foreign import loadedApplications :: Process [AppDescr]
+foreign import loadedApplications :: IO [AppDescr]
 
-foreign import start :: Application -> Process ()
+foreign import start :: Application -> IO ()
 
-foreign import restart :: Application -> RestartType -> Process ()
+foreign import restart :: Application -> RestartType -> IO ()
 
-foreign import stop :: Application -> Process ()
+foreign import stop :: Application -> IO ()
 
-foreign import takeover :: Application -> RestartType -> Process ()
+foreign import takeover :: Application -> RestartType -> IO ()
 
-foreign import unload :: Application -> Process ()
+foreign import unload :: Application -> IO ()
 
-foreign import whichApplications :: Process [AppSpec]
+foreign import whichApplications :: IO [AppSpec]
 
