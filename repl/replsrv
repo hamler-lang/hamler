@@ -8,7 +8,7 @@
 %% -------------------------------------------------------------------
 -mode(compile).
 
--define(MOD, '$PSCI').
+-define(MOD, '$REPL').
 
 main([Pa, Pz, File]) ->
     Outdir = filename:dirname(File),
