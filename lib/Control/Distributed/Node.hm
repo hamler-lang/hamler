@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Distributed Node module.
+-- The Distributed node module.
 --
 -----------------------------------------------------------------------------
 module Control.Distributed.Node
@@ -18,7 +18,6 @@ module Control.Distributed.Node
   , NodeType(..)
   , nodes
   , nodeOfPid
-  , nodeOfPort
   , nodeOfRef
   , selfNode
   , disconnect
@@ -30,42 +29,39 @@ module Control.Distributed.Node
   ) where
 
 import Control.Monad (IO)
-import Control.Distributed.Port (Port)
 import Data.Maybe (Maybe)
 import Data.Ref (Reference)
 import Data.Pid (Pid)
 import Data.Unit (Unit)
+import Foreign (ffiIO0, ffiIO1)
 
 type Cookie = String
 
 -- A distributed Node.
-type Node = String
+type Node = Atom
 
-data NodeType
-  = VisibleNode
-  | HiddenNode
-  | ConnectedNode
-  | ThisNode
-  | KnownNode
+data NodeType = Hidden | Connected | Known | Visible
 
-foreign import nodes :: IO [Node]
+nodes :: IO [Node]
+nodes = ffiIO0 :erlang :nodes
 
 foreign import nodesOf :: NodeType -> IO [Node]
 
 -- Return the name of this node.
-foreign import selfNode :: IO Node
+selfNode :: IO Node
+selfNode = ffiIO0 :erlang :node
 
-foreign import nodeOfPid :: Pid -> IO Node
+nodeOfPid :: Pid -> IO Node
+nodeOfPid = ffiIO1 :erlang :node
 
-foreign import nodeOfPort :: Port -> IO Node
-
-foreign import nodeOfRef :: Reference -> IO Node
+nodeOfRef :: Reference -> IO Node
+nodeOfRef = ffiIO1 :erlang :node
 
 foreign import disconnect :: Node -> IO (Maybe Boolean)
 
-foreign import getCookie :: IO String
+foreign import getCookie :: IO Cookie
 
-foreign import setCookie :: Node -> String -> IO ()
+foreign import setCookie :: Node -> Cookie -> IO ()
 
 foreign import isAlive :: IO Boolean
 

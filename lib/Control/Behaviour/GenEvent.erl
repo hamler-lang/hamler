@@ -41,15 +41,13 @@ start(Class, Init) ->
   ?IO(doStart(fun gen_event:start/0, Class, Init)).
 
 startWith(Class, Name, Init) ->
-  ?IO(doStartWith(fun gen_event:start/1, localName(Name), Class, Init)).
+  ?IO(doStartWith(fun gen_event:start/1, {local, Name}, Class, Init)).
 
 startLink(Class, Init) ->
   ?IO(doStart(fun gen_event:start_link/0, Class, Init)).
 
 startLinkWith(Class, Name, Init) ->
-  ?IO(doStartWith(fun gen_event:start_link/1, localName(Name), Class, Init)).
-
-localName(Name) -> {local, list_to_atom(Name)}.
+  ?IO(doStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init)).
 
 stop(EMgrRef) ->
   ?IO(gen_event:stop(toErl(EMgrRef))).

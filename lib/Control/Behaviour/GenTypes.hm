@@ -12,28 +12,13 @@
 -- The Genernal Types for behaviours.
 --
 -----------------------------------------------------------------------------
-module Control.Behaviour.GenTypes
-  ( Name
-  , Caller
-  , RequestId
-  , StartRet
-  ) where
+module Control.Behaviour.GenTypes where
 
 import Data.Ref (Reference)
 
-type Name = String
+type Name = Atom
 
 foreign import data Caller :: Type
 
-foreign import data StartRet :: Type
-
 -- | Request Id.
 type RequestId = Reference
-
-{-
-data StartRet
-  = StartOk Pid
-  | StartIgnore
-  | StartError ExitReason
--}
-

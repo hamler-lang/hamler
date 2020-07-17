@@ -37,8 +37,7 @@ namesAt(Host) ->
       end).
 
 ping(Node) ->
-  ?IO(case net_adm:ping(list_to_atom(Node)) of
+  ?IO(case net_adm:ping(Node) of
         pong -> true;
         pang -> false
       end).
-

@@ -89,9 +89,7 @@ foreign import cast
   :: forall msg. StatemRef -> msg -> Process ()
 
 -- | Sends an asynchronous request to the Server process directly.
-foreign import castTo
-  :: forall req. Pid -> req -> Process ()
+foreign import castTo :: forall req. Pid -> req -> Process ()
 
-foreign import replyTo
-  :: forall rep. Caller -> rep -> Process ()
+foreign import replyTo :: forall rep. Caller -> rep -> Process ()
 

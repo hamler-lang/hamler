@@ -40,16 +40,16 @@
         ]).
 
 ensureAllStarted(Application) ->
-  ?IO(return(ensure_all_started(list_to_atom(Application)))).
+  ?IO(return(ensure_all_started(Application))).
 
 ensureAllRestarted(Application, Type) ->
-  ?IO(return(ensure_all_started(list_to_atom(Application), restartType(Type)))).
+  ?IO(return(ensure_all_started(Application, restartType(Type)))).
 
 ensureStarted(Application) ->
-  ?IO(return(ensure_started(list_to_atom(Application)))).
+  ?IO(return(ensure_started(Application))).
 
 ensureRestarted(Application, Type) ->
-  ?IO(return(ensure_started(list_to_atom(Application), restartType(Type)))).
+  ?IO(return(ensure_started(Application, restartType(Type)))).
 
 getApplication() ->
   ?IO(case application:get_application() of
@@ -64,7 +64,7 @@ getApplicationOfPid(Pid) ->
       end).
 
 load(Application) ->
-  ?IO(case application:load(list_to_atom(Application)) of
+  ?IO(case application:load(Application) of
         ok -> ok;
         {error, {already_loaded, _}} -> ok;
         {error, {"no such file or directory", Name}} ->
@@ -76,7 +76,7 @@ loadedApplications() ->
   ?IO(lists:map(fun appDescr/1, application:loaded_applications())).
 
 start(Application) ->
-  ?IO(case application:start(list_to_atom(Application)) of
+  ?IO(case application:start(Application) of
         ok -> ok;
         {error, {already_started, _}} -> ok;
         {error, {"no such file or directory", Name}} ->
@@ -85,7 +85,7 @@ start(Application) ->
       end).
 
 restart(Application, Type) ->
-  ?IO(case application:start(list_to_atom(Application), restartType(Type)) of
+  ?IO(case application:start(Application, restartType(Type)) of
         ok -> ok;
         {error, {already_started, _}} -> ok;
         {error, {"no such file or directory", Name}} ->
@@ -94,7 +94,7 @@ restart(Application, Type) ->
     end).
 
 stop(Application) ->
-  ?IO(case application:stop(list_to_atom(Application)) of
+  ?IO(case application:stop(Application) of
         ok -> ok;
         {error, {not_started, _}} ->
           error('AppNotStarted');
@@ -102,13 +102,13 @@ stop(Application) ->
       end).
 
 takeover(Application, Type) ->
-  ?IO(case application:takeover(list_to_atom(Application), restartType(Type)) of
+  ?IO(case application:takeover(Application, restartType(Type)) of
         ok -> ok;
         {error, Reason} -> error(Reason)
     end).
 
 unload(Application) ->
-  ?IO(case application:unload(list_to_atom(Application)) of
+  ?IO(case application:unload(Application) of
         ok -> ok;
         {error, {not_loaded, _}} ->
           error('AppNotLoaded');
@@ -121,8 +121,6 @@ whichApplications() ->
 restartType({'Permanent'}) -> permanent;
 restartType({'Transient'}) -> transient;
 restartType({'Temporary'}) -> temporary.
-
-%% appStartError(_Reason) -> {'AppStartError'}.
 
 appDescr({App, Descr, Vsn}) ->
   #{name => atom_to_list(App), desc => Descr, vsn => Vsn}.
