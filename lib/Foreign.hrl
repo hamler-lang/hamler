@@ -3,3 +3,7 @@
 
 -define(RunIO(IO), (IO)()).
 
+-define(Nothing, {'Nothing'}).
+
+-define(Just(A), {'Just', A}).
+
