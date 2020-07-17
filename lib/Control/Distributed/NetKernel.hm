@@ -14,6 +14,31 @@
 -----------------------------------------------------------------------------
 module Control.Distributed.NetKernel where
 
-{- TODO: rename to Net.hm or NetConn.hm?
-net_kernel	Erlang networking kernel.
--}
+import Control.Monad (IO)
+import Control.Process (Process)
+import Control.Distributed.Node (Node, NodeType)
+import Data.Pid (Pid)
+import Data.Unit (Unit)
+import Foreign (ffiIO0)
+
+data NameType = ShortName | LongName
+
+type Ticktime = Integer
+
+foreign import allow :: [Node] -> IO ()
+foreign import connectNode :: Node -> IO Boolean
+foreign import getTicktime :: IO Ticktime
+foreign import monitorNodes :: Boolean -> IO ()
+foreign import monitorNodesOf :: Boolean -> NodeType -> IO ()
+foreign import setTicktime :: Ticktime -> IO ()
+foreign import start :: Node -> Process Pid
+foreign import startWithType :: Node -> NameType -> Process Pid
+foreign import startWithTicktime :: Node -> NameType -> Ticktime -> Process Pid
+
+stop :: IO ()
+stop = ffiIO0 :net_kernel :stop
+
+-- TODO: net_kernel
+-- getopts/2
+-- set_net_ticktime/2
+-- setopts/2
