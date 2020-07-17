@@ -24,12 +24,9 @@
 -record(state, {mod, st}).
 
 start(_StartType, _StartArgs = [Mod]) ->
-  %% try ?RunIO(Mod:onStart(construct(StartType))) of
   try ?RunIO(Mod:onStart()) of
     Pid when is_pid(Pid) ->
       {ok, Pid, #state{mod = Mod, st = undefined}}
-    %%{Pid, St} when is_pid(Pid) ->
-    %%  {ok, Pid, #state{mod = Mod, st = St}}
   catch
     error:Reason -> {error, Reason}
   end.
@@ -46,6 +43,6 @@ stop(#state{mod = Mod, st = _St}) ->
     false -> ok
   end.
 
-%%construct(normal) -> {'Normal'};
-%%construct({takeover, Node}) -> {'Takeover', Node};
-%%construct({failover, Node}) -> {'Failover', Node}.
+%% construct(normal) -> {'Normal'};
+%% construct({takeover, Node}) -> {'Takeover', Node};
+%% construct({failover, Node}) -> {'Failover', Node}.

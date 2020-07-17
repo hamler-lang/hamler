@@ -40,7 +40,7 @@ startSup(Init) ->
   ?IO(retPid(?SUP:start_link(?MOD, [Init]))).
 
 startSupWith(Name, Init) ->
-  ?IO(retPid(?SUP:start_link_with({local, list_to_atom(Name)}, ?MOD, [Init]))).
+  ?IO(retPid(?SUP:start_link_with({local, Name}, ?MOD, [Init]))).
 
 %% TODO: destruct childspecs
 checkChildSpecs(ChildSpecs) ->
