@@ -15,6 +15,7 @@
 module Control.Distributed.Node
   ( Cookie
   , Node
+  , NodeType(..)
   , nodes
   , nodeOfPid
   , nodeOfPort
