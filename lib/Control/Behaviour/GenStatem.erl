@@ -44,21 +44,19 @@ start(Class, Init) ->
   ?IO(retPid(gen_statem:start(?MOD, [Class, Init], []))).
 
 startWith(Name, Class, Init) ->
-  ?IO(retPid(gen_statem:start(localName(Name), ?MOD, [Class, Init], []))).
+  ?IO(retPid(gen_statem:start({local, Name}, ?MOD, [Class, Init], []))).
 
 startLink(Class, Init) ->
   ?IO(retPid(gen_statem:start_link(?MOD, [Class, Init], []))).
 
 startLinkWith(Class, Name, Init) ->
-  ?IO(retPid(gen_statem:start_link(localName(Name), ?MOD, [Class, Init], []))).
+  ?IO(retPid(gen_statem:start_link({local, Name}, ?MOD, [Class, Init], []))).
 
 startMonitor(Class, Init) ->
   ?IO(retPid(gen_statem:start_monitor(?MOD, [Class, Init], []))).
 
 startMonitorWith(Class, Name, Init) ->
-  ?IO(retPid(gen_statem:start_monitor(localName(Name), ?MOD, [Class, Init], []))).
-
-localName(Name) -> {local, list_to_atom(Name)}.
+  ?IO(retPid(gen_statem:start_monitor({local, Name}, ?MOD, [Class, Init], []))).
 
 stop(ServerRef) ->
   ?IO(gen_statem:stop(toErl(ServerRef))).

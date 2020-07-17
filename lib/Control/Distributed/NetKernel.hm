@@ -19,13 +19,15 @@ import Control.Process (Process)
 import Control.Distributed.Node (Node, NodeType)
 import Data.Pid (Pid)
 import Data.Unit (Unit)
-import Foreign (ffiIO0)
+import Foreign (ffiIO0, ffiIO1)
 
 data NameType = ShortName | LongName
 
 type Ticktime = Integer
 
-foreign import allow :: [Node] -> IO ()
+allow :: [Node] -> IO ()
+allow = ffiIO1 :net_kernel :allow
+
 foreign import connectNode :: Node -> IO Boolean
 foreign import getTicktime :: IO Ticktime
 foreign import monitorNodes :: Boolean -> IO ()

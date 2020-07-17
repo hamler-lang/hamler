@@ -19,7 +19,7 @@ import Data.Timeout (Timeout)
 
 type Module = Atom
 
-type Application = String
+type Application = Atom
 
 data StartType = Normal | Takeover Node | Failover Node
 
