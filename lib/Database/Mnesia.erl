@@ -104,13 +104,13 @@ writeWithLock(Tab, Rec, Lock) ->
 %%---------------------------------------------------------------------------
 
 parseOpts([{tableType, {'Set'}}|Opts], Acc) ->
-  parseOpts(Opts, [set|Acc]);
+  parseOpts(Opts, [{type, set}|Acc]);
 parseOpts([{tableType, {'OrderedSet'}}|Opts], Acc) ->
-  parseOpts(Opts, [ordered_set|Acc]);
+  parseOpts(Opts, [{type, ordered_set}|Acc]);
 parseOpts([{tableType, {'Bag'}}|Opts], Acc) ->
-  parseOpts(Opts, [bag|Acc]);
+  parseOpts(Opts, [{type, bag}|Acc]);
 parseOpts([{tableType, {'DuplicateBag'}}|Opts], Acc) ->
-  parseOpts(Opts, [duplicate_bag|Acc]);
+  parseOpts(Opts, [{type, duplicate_bag}|Acc]);
 parseOpts([{accessMode, {'ReadWrite'}}|Opts], Acc) ->
   parseOpts(Opts, [{access_mode, read_write}|Acc]);
 parseOpts([{accessMode, {'ReadOnly'}}|Opts], Acc) ->
