@@ -32,9 +32,42 @@
         , next/2
         , prev/2
         , wread/2
-        , write/2
+        , writeWith/2
+        , write/1
         , writeWithLock/3
+        , transaction/1
+        , transactionWithRetry/2
+        , changeTableAccessMode/2
+        , changeTableLoadOrder/2
+        , changeTableMajority/2
+        , forceLoadTable/1
+        , moveTableCopy/3
+        , readWithLock/3
+        , setMasterNodes/1
+        , setMasterNodesWithTable/2
+        , syncTransaction/1
+        , syncTransactionWithRetries/2
+        , activity/2
+        , foldl/3
+        , foldr/3
+        , changeConfig/2
+        , dumpTables/1
+        , lockRecord/3
+        , lockTable/2
+        , lockGlobal/3
+        , matchObjectWith/3
+        , matchObject/1
+        , sdelete/2
+        , sdeleteObject/1
+        , swrite/1
+        , transformTable/4
+        , subscribe/1
+        , unsubscribe/1
+        , setDebugLevel/1
+        , dirtyMatchObjectWith/2
+        , dirtyMatchObject/1
         ]).
+
 
 addTableCopy(Tab, N, ST) ->
   ?IO(return(mnesia:add_table_copy(Tab, N, toErl(ST)))).
@@ -52,6 +85,7 @@ createSchema(Nodes) ->
       end).
 
 createTable(Name, Options) ->
+  % ?IO(return(mnesia:create_table(Name, []))).
   ?IO(return(mnesia:create_table(Name, parseOpts(maps:to_list(Options), [])))).
 
 delTableCopy(Tab, Node) ->
@@ -93,11 +127,112 @@ prev(Tab, Key1) ->
 wread(Tab, Key) ->
   ?IO(mnesia:read(Tab, Key, write)).
 
-write(Tab, Rec) ->
+writeWith(Tab, Rec) ->
   ?IO(mnesia:write(Tab, Rec, write)).
+
+write(Rec) ->
+  ?IO(mnesia:write(Rec)).
 
 writeWithLock(Tab, Rec, Lock) ->
   ?IO(mnesia:write(Tab, Rec, toErl(Lock))).
+
+transaction(Fun) ->
+  ?IO(transReturn(mnesia:transaction(Fun))).
+
+transactionWithRetry(Fun, Retries) ->
+  ?IO(transReturn(mnesia:transaction(Fun, decRet(Retries)))).
+
+changeTableAccessMode(Table, Acc) -> 
+  ?IO(return(mnesia:change_table_access_mode(Table, toErl(Acc)))).
+
+changeTableLoadOrder(Table, V) -> 
+  ?IO(return(mnesia:change_table_load_order(Table, V))).
+
+changeTableMajority(Table, B) -> 
+  ?IO(return(mnesia:change_table_majority(Table, B))).
+
+forceLoadTable(Table) -> 
+  ?IO(return(mnesia:forceLoadTable(Table))).
+
+moveTableCopy(Table, From, To) ->
+  ?IO(return(mnesia:move_table_copy(Table, From, To))).
+
+readWithLock(Table, K, LockKind) ->
+  ?IO((mnesia:read(Table, K, toErl(LockKind)))).
+
+setMasterNodes(Nodes) ->
+  ?IO(return(mnesia:set_master_nodes(Nodes))).
+
+setMasterNodesWithTable(Table, Nodes) ->
+  ?IO(return(mnesia:set_master_nodes(Table, Nodes))).
+
+syncTransaction(Fun) ->
+  ?IO(transReturn(mnesia:sync_transaction(Fun))).
+
+syncTransactionWithRetries(Fun, Retries) ->
+  ?IO(transReturn(mnesia:sync_transaction(Fun, decRet(Retries)))).
+
+activity(Activity, Fun) -> 
+  ?IO((mnesia:activity(decAct(Activity), Fun))).
+
+foldl(Fun, Acc0, Tab) -> 
+  F = fun(R, Acc) -> (Fun(R))(Acc) end,
+  ?IO(mnesia:foldl(F, Acc0, Tab)).
+
+foldr(Fun, Acc0, Tab) -> 
+  F = fun(R, Acc) -> (Fun(R))(Acc) end,
+  ?IO(mnesia:foldr(F, Acc0, Tab)).
+
+changeConfig(ConfigKey, ConfigVal) -> 
+  ?IO(decConfig(mnesia:change_config(decConfig(ConfigKey), decConfig(ConfigVal)))).
+
+dumpTables(Tabs) -> 
+  ?IO(return(mnesia:dump_tables(Tabs))).
+
+lockRecord(Table, Key, LockKind) -> 
+  ?IO(mnesia:lock({record, Table, Key}, toErl(LockKind))).
+
+lockTable(Table, LockKind) -> 
+  ?IO(mnesia:lock({table, Table}, toErl(LockKind))).
+
+lockGlobal(Key, Nodes, LockKind) -> 
+  ?IO(mnesia:lock({global, Key, Nodes}, toErl(LockKind))).
+
+matchObjectWith(Table, Pattern, LockKind) -> 
+  ?IO(mnesia:match_object(Table, Pattern, toErl(LockKind))).
+
+matchObject(Pattern) -> 
+  ?IO(mnesia:match_object(element(1, Pattern), Pattern, read)).
+
+sdelete(Table, Key) -> 
+  ?IO(mnesia:s_delete({Table, Key})).
+
+sdeleteObject(Tuple) -> 
+  ?IO(mnesia:s_delete_object(Tuple)).
+
+swrite(Tuple) -> 
+  ?IO(mnesia:s_write(Tuple)).
+
+transformTable(Table, Fun, NewA, RecName) -> 
+  ?IO(return(mnesia:transform_table(Table, Fun, NewA, RecName))).
+
+subscribe(What) ->
+  ?IO(decSubRes(mnesia:subscribe(decWhat(What)))).
+
+unsubscribe(What) ->
+  ?IO(decSubRes(mnesia:unsubscribe(decWhat(What)))).
+
+setDebugLevel(DebugLevel) ->
+  ?IO(encDeubg(mnesia:set_debug_level(decDeubg(DebugLevel)))).
+
+dirtyMatchObjectWith(Table, Pattern) ->
+  ?IO((mnesia:dirty_match_object(Table, Pattern))).
+
+dirtyMatchObject(Pattern) ->
+  ?IO((mnesia:dirty_match_object(Pattern))).
+
+
+
 
 %%---------------------------------------------------------------------------
 %% | Internal functions
@@ -137,8 +272,45 @@ parseOpts([], Acc) -> Acc.
 
 toErl({'RLock'}) -> read;
 toErl({'WLock'}) -> write;
-toErl({'StickyWLock'}) -> sticky_write.
+toErl({'StickyWLock'}) -> sticky_write;
+toErl({'ReadOnly'}) -> read_only;
+toErl({'ReadWrite'}) -> read_write.
 
 return({atomic, ok}) -> ok;
 return({aborted, Reason}) -> error(Reason).
 
+transReturn({atomic, V}) -> V;
+transReturn({aborted, Reason}) -> error(Reason).
+
+decRet({'MaxTime', V}) -> V;
+decRet({'Infinity'}) -> infinity.
+
+decAct({'AsyncDirty'}) -> async_dirty;
+decAct({'SyncDirty'}) ->  sync_dirty;
+decAct({'Transaction'}) -> transaction;
+decAct({'SyncTransaction'}) -> sync_transaction.
+
+decConfig({'ExtraDbNodes'}) -> extra_db_nodes;
+decConfig({'DcDumpLimit'}) -> dc_dump_limit;
+decConfig({'Nodes', Nodes}) -> Nodes;
+decConfig({'Number', N}) -> N;
+decConfig({'ok', Config}) -> Config;
+decConfig({'error', T}) -> error(T);
+decConfig(T) -> T.
+
+decWhat({'WSystem'}) -> system;
+decWhat({'WActivity'}) -> activity;
+decWhat({'WTable', Table}) -> {'table', Table, simple}.
+
+decSubRes({ok, Node}) -> Node;
+decSubRes({error, Reason}) -> error(Reason).
+
+decDeubg({'Dnone'})    -> none;
+decDeubg({'Dverbose'}) -> verbose;
+decDeubg({'Ddebug'})   -> debug;
+decDeubg({'Dtrace'})   -> trace.
+
+encDeubg(none)    -> {'Dnone'};
+encDeubg(verbose) -> {'Dverbose'};
+encDeubg(debug)   -> {'Ddebug'};
+encDeubg(trace)   -> {'Dtrace'}.
