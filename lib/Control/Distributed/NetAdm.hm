@@ -14,6 +14,11 @@
 -----------------------------------------------------------------------------
 module Control.Distributed.NetAdm where
 
-{- TODO
-net_adm: Erlang net administration routines.
--}
+import Control.Distributed.Node (Node)
+import Control.Process (Process)
+import Network.Socket (HostName, PortNumber)
+
+foreign import localhost :: Process HostName
+foreign import names :: Process [(HostName, PortNumber)]
+foreign import namesAt :: HostName -> Process [(HostName, PortNumber)]
+foreign import ping :: Node -> Process Boolean
