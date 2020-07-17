@@ -17,6 +17,7 @@ module Control.Distributed.Node
   , Node
   , NodeType(..)
   , nodes
+  , nodesOf
   , nodeOfPid
   , nodeOfRef
   , selfNode
@@ -66,4 +67,7 @@ foreign import setCookie :: Node -> Cookie -> IO ()
 foreign import isAlive :: IO Boolean
 
 foreign import monitorNode :: Node -> Boolean -> IO Boolean
+
+-- spawn[_link|_opt](Node, Fun): Creates a process at a remote node.
+-- spawn[_link|opt](Node, Module, FunctionName, Args): Creates a process at a remote node.
 
