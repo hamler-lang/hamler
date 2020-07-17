@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Generic Supervisor Behaviour.
+-- The Supervisor behaviour.
 --
 -----------------------------------------------------------------------------
 module Control.Behaviour.Supervisor
