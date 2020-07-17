@@ -14,10 +14,45 @@
 -----------------------------------------------------------------------------
 module Control.Distributed.Global where
 
+import Control.Distributed.Node (Node)
+import Control.Monad (IO)
+import Control.Process (Process)
+import Data.Maybe (Maybe)
+import Data.Pid (Pid)
+import Data.Unit (Unit)
+
+type Name = Atom
+
+type ResourceId = Atom
+
+type LockRequesterPid = Pid
+
+type Resolve = (Name -> Pid -> Pid -> Maybe Pid)
+
+type LockId = (ResourceId, LockRequesterPid)
+
+foreign import delLock :: LockId ->  Process ()
+foreign import delLockAt :: LockId -> [Node] -> Process ()
+foreign import notifyAllName :: Name -> Pid -> Pid -> Process ()
+foreign import randomExitName :: Name -> Pid -> Pid -> Process ()
+foreign import randomNotifyName :: Name -> Pid -> Pid -> Process ()
+foreign import registerName :: Name -> Pid -> Process Boolean
+foreign import registerNameWith :: Name -> Pid -> Resolve -> Process Boolean
+foreign import reRegisterName :: Name -> Pid -> Process Boolean
+foreign import reRegisterNameWith :: Name -> Pid -> Resolve -> Process Boolean
+foreign import registeredNames :: Process [Name]
+foreign import send :: forall m. Name -> m -> Process Pid
+foreign import setLock :: LockId -> Process Boolean
+foreign import setLockAt :: LockId -> [Node] -> Process Boolean
+foreign import setLockRetriesAt :: LockId -> [Node] -> Integer -> Process Boolean
+foreign import sync :: Process ()
+foreign import trans :: forall res. LockId -> IO () -> Process res
+foreign import transAt :: forall res. LockId -> IO () -> [Node] -> Process res
+foreign import transRetriesAt :: forall res. LockId -> IO () -> [Node] -> Process res
+foreign import unregisterName :: Name -> Process ()
+foreign import whereisName :: Name -> Process (Maybe Pid)
+
 {- TODO
-global	A global name registration facility.
-
 global_group	Grouping nodes to global name registration groups.
-
 -}
 
