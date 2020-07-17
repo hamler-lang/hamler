@@ -34,7 +34,3 @@ toBinary = ffi1 :erlang :atom_to_binary
 -- Atom to String.
 toString :: Atom -> String
 toString = ffi1 :erlang :atom_to_list
-
-undefined :: Atom
-undefined = :undefined
-
