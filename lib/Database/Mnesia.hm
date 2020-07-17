@@ -12,76 +12,24 @@
 -- The Erlang Mnesia Database.
 --
 -----------------------------------------------------------------------------
-module Database.Mnesia
-  ( AccessMode(..)
-  , Activity(..)
-  , LockKind(..)
-  , StorageType(..)
-  , Table
-  , TableOptions
-  , addTableCopy
-  , addTableIndex
-  , createTable
-  , createSchema
-  , delTableCopy
-  , delTableIndex
-  , delete
-  , deleteWithLock
-  , deleteObject
-  , deleteObjectWithLock
-  , deleteSchema
-  , dirtyAllKeys
-  , dirtyDelete
-  , dirtyDeleteObject
-  , dirtyFirst
-  , dirtyIndexRead
-  , dirtyLast
-  , dirtyNext
-  , dirtyPrev
-  , dirtyRead
-  , dirtyWrite
-  , first
-  , indexRead
-  , info
-  , last
-  , next
-  , prev
-  , read
-  , schema
-  , start
-  , stop
-  , wread
-  , write
-  , writeWithLock
-  , module Database.ETS
-  ) where
+module Database.Mnesia where
 
 import Control.Distributed.Node (Node)
 import Control.Monad (IO)
 import Data.Maybe (Maybe)
 import Data.Unit (Unit)
 import Foreign (ffiIO0, ffiIO1, ffiIO2, ffiIO3)
-
-import Database.ETS (TableType(..))
+import Database.ETS (TableType)
 
 type Table = Atom
 
 type TableOptions =
   { tableType        :: TableType
-  , accessMode       :: AccessMode
   , attributes       :: [Atom]
-  , discCopies       :: [Node]
-  , discOnlyCopies   :: [Node]
-  , index            :: [Atom]
-  , loadOrder        :: Integer
-  , majority         :: Boolean
   , ramCopies        :: [Node]
   , recordName       :: Atom
-  , localContent     :: Boolean
-  -- , snmp             :: Term
-  -- {'storage_properties', [{Backend::module(), [BackendProp::_]}]} |
-  -- {'user_properties', proplists:proplist()}.
   }
+
 
 data AccessMode = ReadWrite | ReadOnly
 
@@ -91,14 +39,20 @@ data LockKind = RLock | WLock | StickyWLock
 
 data StorageType = RamCopies | DiscCopies | DiscOnlyCopies
 
+data Retries = MaxTime Integer | Infinity
+
+data ConfigKey = ExtraDbNodes | DcDumpLimit
+
+data ConfigValue = Nodes [Node] | Number Integer
+
 abort :: forall r. r -> IO ()
 abort = ffiIO1 :mnesia :abort
 
--- activity/2
+foreign import activity :: forall a. Activity -> IO a -> IO a
 
 foreign import addTableCopy :: Table -> Node -> StorageType -> IO ()
 
-foreign import addTableIndex :: Table -> Integer -> IO ()
+foreign import addTableIndex :: Table -> Atom -> IO ()
 
 allKeys :: forall k. Table -> IO [k]
 allKeys = ffiIO1 :mnesia :all_keys
@@ -158,7 +112,7 @@ dirtyWrite = ffiIO2 :mnesia :dirty_write
 first :: forall k. Table -> IO k
 first = ffiIO1 :mnesia :first
 
-indexRead :: forall k v. Table -> k -> Integer -> IO [v]
+indexRead :: forall k v. Table -> k -> Atom -> IO [v]
 indexRead = ffiIO3 :mnesia :index_read
 
 info :: IO ()
@@ -171,8 +125,11 @@ foreign import next :: forall k. Table -> k -> IO (Maybe k)
 
 foreign import prev :: forall k. Table -> k -> IO (Maybe k)
 
-read :: forall k v. Table -> k -> IO [v]
-read = ffiIO2 :mnesia :read
+readWith :: forall k v. Table -> k -> IO [v]
+readWith = ffiIO2 :mnesia :read
+
+read :: forall k v. k -> IO [v]
+read = ffiIO1 :mnesia :read
 
 schema :: IO ()
 schema = ffiIO0 :mnesia :schema
@@ -185,117 +142,221 @@ stop = ffiIO0 :mnesia :stop
 
 foreign import wread :: forall k v. Table -> k -> IO [v]
 
-foreign import write :: forall v. Table -> v -> IO ()
+foreign import writeWith :: forall v. Table -> v -> IO ()
+
+foreign import write :: forall v. v -> IO ()
 
 foreign import writeWithLock :: forall v. Table -> v -> LockKind -> IO ()
 
+foreign import transaction :: forall a. IO a -> IO a
+
+foreign import transactionWithRetry :: forall a. IO a -> Retries -> IO a
+
+tableInfo :: forall a. Table -> Atom -> IO a
+tableInfo = ffiIO2 :mnesia :table_info
+
+foreign import changeTableAccessMode :: Table -> AccessMode -> IO ()
+
+foreign import changeTableLoadOrder :: Table -> Integer -> IO ()
+
+foreign import changeTableMajority :: Table -> Boolean -> IO ()
+
+foreign import foldl :: forall r a. (r -> a -> a) -> a -> Table -> IO a
+
+foreign import foldr :: forall r a. (r -> a -> a) -> a -> Table -> IO a
+
+foreign import forceLoadTable :: Table -> IO ()
+
+isTransaction :: IO Boolean
+isTransaction = ffiIO0 :mnesia :is_transaction
+
+loadTextfile :: String -> IO ()
+loadTextfile = ffiIO1 :mnesia :load_textfile
+
+foreign import moveTableCopy :: Table -> Node -> Node -> IO ()
+
+foreign import readWithLock :: forall k v.Table -> k -> LockKind -> IO [v]
+
+readLockTable :: Table -> IO ()
+readLockTable = ffiIO1 :mnesia :read_lock_table
+
+reportEvent :: forall a. a -> IO ()
+reportEvent = ffiIO1 :mnesia :report_event
+
+schemaTable :: Table -> IO ()
+schemaTable = ffiIO1 :mnesia :schema
+
+foreign import setMasterNodes :: [Node] -> IO ()
+
+foreign import setMasterNodesWithTable :: Table -> [Node] -> IO ()
+
+snmpCloseTable :: Table -> IO ()
+snmpCloseTable = ffiIO1 :mnesia :snmp_close_table
+
+syncDirty :: forall a. IO a -> IO a
+syncDirty = ffiIO1 :mnesia :sync_dirty
+
+syncLog :: IO ()
+syncLog = ffiIO0 :mnesia :sync_log
+
+foreign import syncTransaction :: forall a. IO a -> IO a
+
+foreign import syncTransactionWithRetries :: forall a. IO a -> Retries -> IO a
+
+asyncDirty :: forall a. IO a -> IO a
+asyncDirty = ffiIO1 :mnesia :async_dirty
+
+foreign import changeConfig :: ConfigKey -> ConfigValue -> IO ConfigValue
+
+dumpLog :: IO ()
+dumpLog = ffiIO0 :mnesia :dump_log
+
+foreign import dumpTables :: [Table] -> IO ()
+
+dumpToTextfile :: String -> IO ()
+dumpToTextfile = ffiIO1 :mnesia :dump_to_textfile
+
+ets :: forall a. IO a -> IO a
+ets = ffiIO1 :mnesia :ets
+
+type Key = Atom
+
+foreign import lockRecord :: Table -> Key -> LockKind -> IO [Node]
+
+foreign import lockTable :: Table -> LockKind -> IO [Node]
+
+foreign import lockGlobal :: Key -> [Node] -> LockKind -> IO [Node]
+
+foreign import matchObjectWith :: forall a v. Table -> a -> LockKind -> IO [v]
+
+foreign import matchObject :: forall a v. a -> IO [v]
+
+foreign import sdelete :: Table -> Key -> IO ()
+
+foreign import sdeleteObject :: forall a. a -> IO ()
+
+foreign import swrite :: forall a. a -> IO ()
+
+foreign import transformTable :: forall a b. Table -> (a -> b) -> [Atom] -> Atom -> IO ()
+
+data What = WSystem | WActivity | WTable Table 
+
+foreign import subscribe :: What -> IO Node
+
+foreign import unsubscribe :: What -> IO Node
+
+data DebugLevel = Dnone | Dverbose | Ddebug | Dtrace
+
+foreign import setDebugLevel :: DebugLevel -> IO DebugLevel
+
+foreign import dirtyMatchObjectWith :: forall a v. Table -> a -> IO [v]
+
+foreign import dirtyMatchObject :: forall a v. a -> IO [v]
+
+dirtyUpdateCounter :: Table -> Key -> Integer -> IO Integer
+dirtyUpdateCounter = ffiIO3 :mnesia :dirty_update_counter
+
+
+
 {-
 activate_checkpoint/1
-activity/4
-add_table_copy/3
-add_table_index/2
-async_dirty/2
+-- activity/4
+-- add_table_copy/3
+-- add_table_index/2
+-- async_dirty/2
 backup/1
 backup_checkpoint/2
-change_config/2
-change_table_access_mode/2
+-- change_config/2
+-- change_table_access_mode/2
 change_table_copy_type/3
-change_table_load_order/2
-change_table_majority/2
+-- change_table_load_order/2
+-- change_table_majority/2
 deactivate_checkpoint/1
-delete/3
-delete_object/1
-delete_object/3
-delete_schema/1
-delete_table/1
-dirty_all_keys/1
-dirty_delete/1
-dirty_delete/2
-dirty_delete_object/1
-dirty_delete_object/2
-dirty_first/1
+-- delete/3
+-- delete_object/1
+-- delete_object/3
+-- delete_schema/1
+-- delete_table/1
+-- dirty_all_keys/1
+-- dirty_delete/2
+-- dirty_delete_object/2
+-- dirty_first/1
 dirty_index_match_object/2
 dirty_index_match_object/3
-dirty_index_read/3
-dirty_last/1
-dirty_match_object/1
-dirty_match_object/2
-dirty_next/2
-dirty_prev/2
-dirty_read/1
-dirty_read/2
+-- dirty_index_read/3
+-- dirty_last/1
+-- dirty_match_object/1
+-- dirty_match_object/2
+-- dirty_next/2
+-- dirty_prev/2
+-- dirty_read/2
 dirty_select/2
-dirty_slot/2
-dirty_update_counter/2
-dirty_update_counter/3
-dirty_write/1
-dirty_write/2
-dump_log/0
-dump_tables/1
-dump_to_textfile/1
+-- dirty_update_counter/3
+-- dirty_write/2
+-- dump_log/0
+-- dump_tables/1
+-- dump_to_textfile/1
 error_description/1
-ets/2
-first/1
-foldl/3
-foldr/3
-force_load_table/1
+-- ets/2
+-- first/1
+-- foldl/3
+-- foldr/3
+-- force_load_table/1
 index_match_object/2
 index_match_object/4
-index_read/3
-info/0
+-- index_read/3
+-- info/0
 install_fallback/1
 install_fallback/1
 install_fallback/2
-is_transaction/0
-last/1
-load_textfile/1
-lock/2
-match_object/1
-match_object/3
-move_table_copy/3
-next/2
-prev/2
-read/1
-read/2
-read/3
-read_lock_table/1
-report_event/1
+-- is_transaction/0
+-- last/1
+-- load_textfile/1
+-- lock/2
+-- match_object/1
+-- match_object/3
+-- move_table_copy/3
+-- next/2
+-- prev/2
+-- read/1
+-- read/2
+-- read/3
+-- read_lock_table/1
+-- report_event/1
 restore/2
-s_delete/1
-s_delete_object/1
-s_write/1
-schema/0
-schema/1
+-- s_delete/1
+-- s_delete_object/1
+-- s_write/1
+-- schema/0
+-- schema/1
 select/2
 select/4
 select/1
-set_debug_level/1
-set_master_nodes/1
-set_master_nodes/2
-snmp_close_table/1
+-- set_debug_level/1
+-- set_master_nodes/1
+-- set_master_nodes/2
+-- snmp_close_table/1
 snmp_get_mnesia_key/2
 snmp_get_next_index/2
 snmp_get_row/2
 snmp_open_table/2
-start/0
-stop/0
-subscribe/1
-sync_dirty/2
-sync_log/0
-sync_transaction/3
-system_info/1
+-- start/0
+-- stop/0
+-- subscribe/1
+-- sync_dirty/2
+-- sync_log/0
+-- sync_transaction/3
 table/1
-table_info/2
-transaction/2
-transform_table/4
-transform_table/3
+-- table_info/2
+-- transaction/2
+-- transform_table/4
 traverse_backup/4
 uninstall_fallback/0
 uninstall_fallback/1
-unsubscribe/1
+-- unsubscribe/1
 wait_for_tables/2
-wread/1
-write/1
-write/3
-write_lock_table/1
+-- wread/1
+-- write/1
+-- write/3
+-- write_lock_table/1
 -}
