@@ -14,35 +14,53 @@
 -----------------------------------------------------------------------------
 module System.Code where
 
--- import Control.Monad (IO)
--- import Data.Unit (Unit)
+import Control.Monad (IO)
+import Data.Unit (Unit)
+import Foreign (ffiIO0, ffiIO1)
+import System.Dir (FilePath)
+
+type Module = Atom
+
+data ModuleStatus = NotLoaded | Loaded | Modified | Removed
+
+foreign import addPath :: FilePath -> IO ()
+
+foreign import allLoaded :: IO [(Module, FilePath)]
+
+foreign import delPath :: FilePath -> IO Boolean
+
+delete :: Module -> IO Boolean
+delete = ffiIO1 :code :delete
+
+foreign import ensureLoaded :: Module -> IO ()
+
+getPaths :: IO [FilePath]
+getPaths = ffiIO0 :code :get_path
+
+isSticky :: Module -> IO Boolean
+isSticky = ffiIO1 :code :is_sticky
+
+libDir :: IO FilePath
+libDir = ffiIO0 :code :lib_dir
+
+foreign import libDirOf :: Module -> IO FilePath
+
+foreign import privDir :: Module -> IO FilePath
+
+purge :: Module -> IO Boolean
+purge = ffiIO1 :code :purge
 
 {- TODO:
-add_path/1
-add_patha/1
-add_paths/1
-add_pathsa/1
-add_pathsz/1
-add_pathz/1
-all_available/0
-all_loaded/0
 atomic_load/1
 clash/0
 compiler_dir/0
-del_path/1
-delete/1
-ensure_loaded/1
 ensure_modules_loaded/1
 finish_loading/1
 get_doc/1
 get_mode/0
 get_object_code/1
-get_path/0
 is_loaded/1
 is_module_native/1
-is_sticky/1
-lib_dir/0
-lib_dir/1
 lib_dir/2
 load_abs/1
 load_binary/3
@@ -52,8 +70,6 @@ module_status/0
 module_status/1
 objfile_extension/0
 prepare_loading/1
-priv_dir/1
-purge/1
 replace_path/2
 root_dir/0
 set_path/1
