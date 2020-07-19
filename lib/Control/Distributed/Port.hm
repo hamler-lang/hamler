@@ -109,7 +109,7 @@ control = ffiIO3 :erlang :port_control
 close :: Port -> IO ()
 close = ffiIO1 :erlang :port_close
 
-foreign import info :: Port -> Maybe PortInfo
+foreign import info :: Port -> IO (Maybe PortInfo)
 
 nodeOf :: Port -> IO Node
 nodeOf = ffiIO1 :erlang :node

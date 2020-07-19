@@ -30,89 +30,89 @@
         ]).
 
 open(Command, Settings) ->
-  erlang:open_port({spawn, Command}, parse_settings(Settings)).
+  erlang:open_port({spawn, Command}, parseSettings(Settings)).
 
 openDriver(Command, Settings) ->
-  erlang:open_port({spawn_driver, Command}, parse_settings(Settings)).
+  erlang:open_port({spawn_driver, Command}, parseSettings(Settings)).
 
 openExe(Filename, Settings) ->
-  erlang:open_port({spawn_executable, Filename}, parse_settings(Settings)).
+  erlang:open_port({spawn_executable, Filename}, parseSettings(Settings)).
 
 openFd(In, Out, Settings) ->
-  erlang:open_port({fd, In, Out}, parse_settings(Settings)).
+  erlang:open_port({fd, In, Out}, parseSettings(Settings)).
 
-parse_settings(Settings) ->
-    parse_settings(maps:to_list(Settings), []).
+parseSettings(Settings) ->
+    parseSettings(maps:to_list(Settings), []).
 
-parse_settings([{packet, 0}|Settings], Result) ->
-  parse_settings(Settings, Result);
-parse_settings([{packet, I}|Settings], Result) when I == 1; I == 2; I == 4 ->
-  parse_settings(Settings, [{packet, I}|Result]);
-parse_settings([{packet, I}|_Settings], _Result) ->
+parseSettings([{packet, 0}|Settings], Result) ->
+  parseSettings(Settings, Result);
+parseSettings([{packet, I}|Settings], Result) when I == 1; I == 2; I == 4 ->
+  parseSettings(Settings, [{packet, I}|Result]);
+parseSettings([{packet, I}|_Settings], _Result) ->
   error({bad_packet_setting, I});
-parse_settings([{stream, false}|Settings], Result) ->
-  parse_settings(Settings, Result);
-parse_settings([{stream, true}|Settings], Result) ->
-  parse_settings(Settings, [stream|Result]);
-parse_settings([{line, 0}|Settings], Result) ->
-  parse_settings(Settings, Result);
-parse_settings([{line, N}|Settings], Result) ->
-  parse_settings(Settings, [{line, N}|Result]);
-parse_settings([{cd, ""}|Settings], Result) ->
-  parse_settings(Settings, Result);
-parse_settings([{cd, Cd}|Settings], Result) ->
-  parse_settings(Settings, [{cd, Cd}|Result]);
-parse_settings([{env, []}|Settings], Result) ->
-  parse_settings(Settings, Result);
-parse_settings([{env, Env}|Settings], Result) ->
-  parse_settings(Settings, [{env, Env}|Result]);
-parse_settings([{args, []}|Settings], Result) ->
-  parse_settings(Settings, Result);
-parse_settings([{args, Args}|Settings], Result) ->
-  parse_settings(Settings, [{args, Args}|Result]);
-parse_settings([{arg0, ""}|Settings], Result) ->
-  parse_settings(Settings, Result);
-parse_settings([{arg0, Arg0}|Settings], Result) ->
-  parse_settings(Settings, [{arg0, Arg0}|Result]);
-parse_settings([{exitStatus, false}|Settings], Result) ->
-  parse_settings(Settings, Result);
-parse_settings([{exitStatus, true}|Settings], Result) ->
-  parse_settings(Settings, [exit_status|Result]);
-parse_settings([{useStdio, true}|Settings], Result) ->
-  parse_settings(Settings, [use_stdio|Result]);
-parse_settings([{useStdio, false}|Settings], Result) ->
-  parse_settings(Settings, [nouse_stdio|Result]);
-parse_settings([{stderrToOut, false}|Settings], Result) ->
-  parse_settings(Settings, Result);
-parse_settings([{stderrToOut, true}|Settings], Result) ->
-  parse_settings(Settings, [stderr_to_stdout|Result]);
-parse_settings([{overlappedIO, false}|Settings], Result) ->
-  parse_settings(Settings, Result);
-parse_settings([{overlappedIO, true}|Settings], Result) ->
-  parse_settings(Settings, [overlapped_io|Result]);
-parse_settings([{direction, none}|Settings], Result) ->
-  parse_settings(Settings, Result);
-parse_settings([{direction, in}|Settings], Result) ->
-  parse_settings(Settings, [in|Result]);
-parse_settings([{direction, out}|Settings], Result) ->
-  parse_settings(Settings, [out|Result]);
-parse_settings([{direction, both}|Settings], Result) ->
-  parse_settings(Settings, [in, out|Result]);
-parse_settings([{hide, true}|Settings], Result) ->
-  parse_settings(Settings, [hide|Result]);
-parse_settings([{hide, false}|Settings], Result) ->
-  parse_settings(Settings, Result);
-parse_settings([{busyLimitsPort, {0, 0}}|Settings], Result) ->
-  parse_settings(Settings, Result);
-parse_settings([{busyLimitsPort, {Low, High}}|Settings], Result) when Low < High ->
-  parse_settings(Settings, [{busy_limits_port, {Low, High}}|Result]);
-parse_settings([{busyLimitsMsgQ, {0, 0}}|Settings], Result) ->
-  parse_settings(Settings, Result);
-parse_settings([{busyLimitsMsgQ, {Low, High}}|Settings], Result) when Low < High ->
-  parse_settings(Settings, [{busy_limits_msgq, {Low, High}}|Result]);
-parse_settings([Bad|_], _Result) ->
+parseSettings([{stream, false}|Settings], Result) ->
+  parseSettings(Settings, Result);
+parseSettings([{stream, true}|Settings], Result) ->
+  parseSettings(Settings, [stream|Result]);
+parseSettings([{line, 0}|Settings], Result) ->
+  parseSettings(Settings, Result);
+parseSettings([{line, N}|Settings], Result) ->
+  parseSettings(Settings, [{line, N}|Result]);
+parseSettings([{cd, ""}|Settings], Result) ->
+  parseSettings(Settings, Result);
+parseSettings([{cd, Cd}|Settings], Result) ->
+  parseSettings(Settings, [{cd, Cd}|Result]);
+parseSettings([{env, []}|Settings], Result) ->
+  parseSettings(Settings, Result);
+parseSettings([{env, Env}|Settings], Result) ->
+  parseSettings(Settings, [{env, Env}|Result]);
+parseSettings([{args, []}|Settings], Result) ->
+  parseSettings(Settings, Result);
+parseSettings([{args, Args}|Settings], Result) ->
+  parseSettings(Settings, [{args, Args}|Result]);
+parseSettings([{arg0, ""}|Settings], Result) ->
+  parseSettings(Settings, Result);
+parseSettings([{arg0, Arg0}|Settings], Result) ->
+  parseSettings(Settings, [{arg0, Arg0}|Result]);
+parseSettings([{exitStatus, false}|Settings], Result) ->
+  parseSettings(Settings, Result);
+parseSettings([{exitStatus, true}|Settings], Result) ->
+  parseSettings(Settings, [exit_status|Result]);
+parseSettings([{useStdio, true}|Settings], Result) ->
+  parseSettings(Settings, [use_stdio|Result]);
+parseSettings([{useStdio, false}|Settings], Result) ->
+  parseSettings(Settings, [nouse_stdio|Result]);
+parseSettings([{stderrToOut, false}|Settings], Result) ->
+  parseSettings(Settings, Result);
+parseSettings([{stderrToOut, true}|Settings], Result) ->
+  parseSettings(Settings, [stderr_to_stdout|Result]);
+parseSettings([{overlappedIO, false}|Settings], Result) ->
+  parseSettings(Settings, Result);
+parseSettings([{overlappedIO, true}|Settings], Result) ->
+  parseSettings(Settings, [overlapped_io|Result]);
+parseSettings([{direction, none}|Settings], Result) ->
+  parseSettings(Settings, Result);
+parseSettings([{direction, in}|Settings], Result) ->
+  parseSettings(Settings, [in|Result]);
+parseSettings([{direction, out}|Settings], Result) ->
+  parseSettings(Settings, [out|Result]);
+parseSettings([{direction, both}|Settings], Result) ->
+  parseSettings(Settings, [in, out|Result]);
+parseSettings([{hide, true}|Settings], Result) ->
+  parseSettings(Settings, [hide|Result]);
+parseSettings([{hide, false}|Settings], Result) ->
+  parseSettings(Settings, Result);
+parseSettings([{busyLimitsPort, {0, 0}}|Settings], Result) ->
+  parseSettings(Settings, Result);
+parseSettings([{busyLimitsPort, {Low, High}}|Settings], Result) when Low < High ->
+  parseSettings(Settings, [{busy_limits_port, {Low, High}}|Result]);
+parseSettings([{busyLimitsMsgQ, {0, 0}}|Settings], Result) ->
+  parseSettings(Settings, Result);
+parseSettings([{busyLimitsMsgQ, {Low, High}}|Settings], Result) when Low < High ->
+  parseSettings(Settings, [{busy_limits_msgq, {Low, High}}|Result]);
+parseSettings([Bad|_], _Result) ->
   error({bad_settings, Bad});
-parse_settings([], Result) -> [binary|Result].
+parseSettings([], Result) -> [binary|Result].
 
 command(Port, Data) ->
   ?IO(ok(erlang:port_command(Port, Data))).
@@ -121,10 +121,10 @@ connect(Port, Pid) ->
   ?IO(ok(erlang:port_connect(Port, Pid))).
 
 info(Port) ->
-  case erlang:port_info(Port) of
-    undefined -> ?Nothing;
-    Info -> ?Just(infoRec(Info))
-  end.
+  ?IO(case erlang:port_info(Port) of
+        undefined -> ?Nothing;
+        Info -> ?Just(infoRec(Info))
+      end).
 
 infoRec(Info) -> infoRec(Info, #{}).
 
