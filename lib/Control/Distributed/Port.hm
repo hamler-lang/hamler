@@ -76,22 +76,23 @@ type PortInfo =
   }
 
 settings :: PortSettings
-settings = { packet = 0
-           , stream = false
-           , line = 0
-           , cd = ""
-           , env = []
-           , args = []
-           , arg0 = ""
-           , exitStatus = false
-           , useStdio = true
-           , stderrToOut = false
-           , overlappedIO = false
-           , direction = :none
-           , hide = true
-           , busyLimitsPort = (0, 0)
-           , busyLimitsMsgQ = (0, 0)
-           }
+settings =
+  { packet = 0
+  , stream = false
+  , line = 0
+  , cd = ""
+  , env = []
+  , args = []
+  , arg0 = ""
+  , exitStatus = false
+  , useStdio = true
+  , stderrToOut = false
+  , overlappedIO = false
+  , direction = :none
+  , hide = true
+  , busyLimitsPort = (0, 0)
+  , busyLimitsMsgQ = (0, 0)
+  }
 
 all :: IO [Port]
 all = ffiIO0 :erlang :ports
