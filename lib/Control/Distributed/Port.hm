@@ -10,49 +10,127 @@
 -- Portability :  portable
 --
 -- The Erlang Port module.
---
 -----------------------------------------------------------------------------
 module Control.Distributed.Port
-  ( Port
-  , nodeOf
-  , ports
-  , linkPort
-  , unlinkPort
+  ( Command
+  , Port
+  , PortInfo
+  , PortSettings
+  , settings
+  , all
+  , call
+  , command
+  , connect
+  , control
   , close
+  , info
+  , nodeOf
+  , open
+  , openDriver
+  , openExe
+  , openFd
+  , link
+  , unlink
   ) where
 
 import Control.Distributed.Node (Node)
 import Control.Monad (IO)
+import Data.Maybe (Maybe)
+import Data.Pid (Pid)
+import Data.Show (class Show)
 import Data.Unit (Unit)
-import Foreign (ffiIO0, ffiIO1)
+import Foreign (ffi1, ffiIO0, ffiIO1, ffiIO3)
+import System.File (Filename)
 
--- | Erlang Port.
+-- | Erlang Port
 foreign import data Port :: Type
 
-nodeOf :: Port -> IO Node
-nodeOf = ffiIO1 :erlang :node
+type Command = String
 
-ports :: IO [Port]
-ports = ffiIO0 :erlang :ports
+type PortSettings =
+  { packet :: Integer
+  , stream :: Boolean
+  , line :: Integer
+  , cd :: String
+  , env :: [(String, String)]
+  , args :: [String]
+  , arg0 :: String
+  , exitStatus :: Boolean
+  , useStdio :: Boolean
+  , stderrToOut :: Boolean
+  , overlappedIO :: Boolean
+  , direction :: Atom -- :in :out :both
+  , hide :: Boolean
+  , busyLimitsPort :: (Integer, Integer)
+  , busyLimitsMsgQ :: (Integer, Integer)
+  }
 
-foreign import linkPort :: Port -> IO ()
+type PortInfo =
+  { id :: Integer
+  , name :: String
+  , connected :: Pid
+  , links :: [Pid]
+  , input :: Integer
+  , output :: Integer
+  , osPid :: Maybe Integer
+  }
 
-foreign import unlinkPort :: Port -> IO ()
+settings :: PortSettings
+settings = { packet = 0
+           , stream = false
+           , line = 0
+           , cd = ""
+           , env = []
+           , args = []
+           , arg0 = ""
+           , exitStatus = false
+           , useStdio = true
+           , stderrToOut = false
+           , overlappedIO = false
+           , direction = :none
+           , hide = true
+           , busyLimitsPort = (0, 0)
+           , busyLimitsMsgQ = (0, 0)
+           }
 
--- open ::
--- open_port(PortName, PortSettings) -> port()
+all :: IO [Port]
+all = ffiIO0 :erlang :ports
 
--- call ::
--- erlang:port_call(Port, Operation, Data) -> term()
+call :: Port -> Integer -> Binary -> IO Binary --TODO: check later
+call = ffiIO3 :erlang :port_call
+
+foreign import command :: Port -> Binary -> IO ()
+
+foreign import connect :: Port -> Pid -> IO ()
+
+control :: Port -> Integer -> Binary -> IO Binary
+control = ffiIO3 :erlang :port_control
 
 close :: Port -> IO ()
 close = ffiIO1 :erlang :port_close
 
--- port_command(Port, Data) -> true
+foreign import info :: Port -> Maybe PortInfo
+
+nodeOf :: Port -> IO Node
+nodeOf = ffiIO1 :erlang :node
+
+foreign import open :: Command -> PortSettings -> IO Port
+
+foreign import openDriver :: Command -> PortSettings -> IO Port
+
+foreign import openExe :: Filename -> PortSettings -> IO Port
+
+foreign import openFd :: Integer -> Integer -> PortSettings -> IO Port
+
+foreign import link :: Port -> IO ()
+
+foreign import unlink :: Port -> IO ()
+
+instance Show Port where
+  show = showPortImpl
+
+showPortImpl :: Port -> String
+showPortImpl = ffi1 :erlang :port_to_list
+
+-- https://erlang.org/doc/reference_manual/ports.html
 -- port_command(Port, Data, OptionList) -> boolean()
--- port_connect(Port, Pid) -> true
--- port_control(Port, Operation, Data) -> iodata() | binary()
--- erlang:port_info(Port) -> Result
--- erlang:port_info(Port, Item :: connected) ->
-
-
