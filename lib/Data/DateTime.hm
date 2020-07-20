@@ -14,6 +14,8 @@
 -----------------------------------------------------------------------------
 module Data.DateTime where
 
+foreign import data DateTime :: Type
+
 -- erlang:localtime() -> DateTime
 -- erlang:localtime_to_universaltime(Localtime) -> Universaltime
 -- erlang:localtime_to_universaltime(Localtime, IsDst) ->
