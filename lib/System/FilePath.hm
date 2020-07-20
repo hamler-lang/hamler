@@ -29,8 +29,9 @@ module System.FilePath
   , module System.IO
   ) where
 
+import Control.Monad (IO)
 import Data.DateTime (DateTime)
-import Foreign (ffi1, ffi2)
+import Foreign (ffi1, ffi2, ffiIO1)
 import System.IO (FilePath)
 
 infixr 5 combine as </>
@@ -50,20 +51,20 @@ dirname = ffi1 :filename :dirname
 extension :: FilePath -> String
 extension = ffi1 :filename :extension
 
-fileSize :: FilePath -> Integer
-fileSize = ffi1 :filelib :file_size
+fileSize :: FilePath -> IO Integer
+fileSize = ffiIO1 :filelib :file_size
 
-foreign import isAbs :: FilePath -> Boolean
+foreign import isAbs :: FilePath -> IO Boolean
 
-foreign import isRel :: FilePath -> Boolean
+foreign import isRel :: FilePath -> IO Boolean
 
-isDir :: FilePath -> Boolean
+isDir :: FilePath -> IO Boolean
 isDir = ffi1 :filelib :is_dir
 
-isFile :: FilePath -> Boolean
+isFile :: FilePath -> IO Boolean
 isFile = ffi1 :filelib :is_file
 
-foreign import lastModified :: FilePath -> DateTime
+foreign import lastModified :: FilePath -> IO DateTime
 
 joinPath :: [FilePath] -> FilePath
 joinPath = ffi1 :filename :join
