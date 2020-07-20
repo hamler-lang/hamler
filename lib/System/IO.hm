@@ -14,7 +14,9 @@
 -----------------------------------------------------------------------------
 module System.IO
   ( FilePath
-  , readFile, writeFile, appendFile
+  , readFile
+  , writeFile
+  , appendFile
   , module System.IO.Printf
   ) where
 
