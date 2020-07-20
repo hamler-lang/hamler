@@ -40,7 +40,7 @@ import Data.Pid (Pid)
 import Data.Show (class Show)
 import Data.Unit (Unit)
 import Foreign (ffi1, ffiIO0, ffiIO1, ffiIO3)
-import System.File (Filename)
+import System.IO (FilePath)
 
 -- | Erlang Port
 foreign import data Port :: Type
@@ -119,7 +119,7 @@ foreign import open :: Command -> PortSettings -> IO Port
 
 foreign import openDriver :: Command -> PortSettings -> IO Port
 
-foreign import openExe :: Filename -> PortSettings -> IO Port
+foreign import openExe :: FilePath -> PortSettings -> IO Port
 
 foreign import openFd :: Integer -> Integer -> PortSettings -> IO Port
 
