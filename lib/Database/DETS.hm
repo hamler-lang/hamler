@@ -35,7 +35,7 @@ import Control.Monad (IO)
 import Data.Maybe (Maybe)
 import Data.Unit (Unit)
 import Foreign (ffiIO0, ffiIO1)
-import System.File (Filename)
+import System.IO (FilePath)
 
 import Database.ETS as ETS
 
@@ -43,7 +43,7 @@ type TableName = Atom
 
 type TableInfo =
   { fileSize  :: Integer
-  , fileName  :: Filename
+  , fileName  :: FilePath
   , keyPos    :: Integer
   , size      :: Integer
   , tableType :: ETS.TableType
