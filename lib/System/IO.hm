@@ -13,10 +13,12 @@
 --
 -----------------------------------------------------------------------------
 module System.IO
-  ( consultFile
+  ( openFile
   , readFile
   , writeFile
   , appendFile
+  , withFile
+  , consultFile
   , module System.IO.Printf
   , module System.IO.Types
   ) where
@@ -26,9 +28,20 @@ import Data.Term (Term)
 import Data.Unit (Unit)
 import System.IO.Printf (print, println, printf)
 import System.IO.Types (FilePath, IODevice, IOMode(..))
+import System.File as File
 
--- Simple File operations
-foreign import consultFile :: FilePath -> IO [Term]
+openFile :: FilePath -> IOMode -> IO IODevice
+openFile = File.open
+
 foreign import readFile :: FilePath -> IO Binary
+
 foreign import writeFile :: FilePath -> Binary -> IO ()
+
 foreign import appendFile :: FilePath -> Binary -> IO ()
+
+foreign import withFile
+  :: forall r. FilePath -> IOMode -> (IODevice -> IO r) -> IO r
+
+-- Read Erlang terms
+foreign import consultFile :: FilePath -> IO [Term]
+

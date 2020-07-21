@@ -16,28 +16,33 @@
 
 -include("../Foreign.hrl").
 
--export([ consultFile/1
-        , readFile/1
+-export([ readFile/1
         , writeFile/2
         , appendFile/2
+        , withFile/3
+        , consultFile/1
         ]).
 
--type(filepath() :: string()).
+-import('System.File', [open/2]).
 
-consultFile(FilePath) ->
-  ?IO(return(file:consult(FilePath))).
-
--spec(readFile(filepath()) -> ok).
 readFile(FilePath) ->
   ?IO(return(file:read_file(FilePath))).
 
--spec(writeFile(filepath(), binary()) -> ok).
 writeFile(FilePath, Data) ->
   ?IO(return(file:write_file(FilePath, Data, [write]))).
 
--spec(appendFile(filepath(), binary()) -> ok).
 appendFile(FilePath, Data) ->
   ?IO(return(file:write_file(FilePath, Data, [append]))).
+
+withFile(FilePath, Mode, Fun) ->
+  ?IO(case ?RunIO(open(FilePath, Mode)) of
+        {ok, IoDevice} ->
+          try Fun(IoDevice) after file:close(IoDevice) end;
+        {error, Reason} -> error(Reason)
+      end).
+
+consultFile(FilePath) ->
+  ?IO(return(file:consult(FilePath))).
 
 -compile({inline, [return/1]}).
 return(ok) -> ok;

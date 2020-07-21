@@ -18,8 +18,16 @@ type FilePath = String
 
 foreign import data IODevice :: Type
 
-data IOMode = ReadMode
-            | WriteMode
-            | AppendMode
-            | ReadWriteMode
+data IOMode
+  = ReadMode
+  | WriteMode
+  | AppendMode
+  | ReadWriteMode
 
+data SeekMode
+  = AbsoluteSeek
+    -- ^ Absolute seek
+  | RelativeSeek
+    -- ^ Seek from the current position
+  | SeekFromEnd
+    -- ^ Seek from the end of file
