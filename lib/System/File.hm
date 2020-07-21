@@ -14,24 +14,41 @@
 -----------------------------------------------------------------------------
 module System.File
   ( open
+  , openRaw
   , read
+  , readLine
+  , seek
+  , tell
   , write
   , close
+  , sync
   , module System.IO.Types
   ) where
 
 import Control.Monad (IO)
-import Data.Maybe (Maybe)
 import Data.Unit (Unit)
--- import Foreign (ffiIO0)
-import System.IO.Types (FilePath, IODevice, IOMode(..))
-
------------------------------------------------------------------------------
--- | File Operatios
------------------------------------------------------------------------------
+import System.IO.Types
+  ( FilePath
+  , IODevice
+  , IOMode(..)
+  , SeekMode(..)
+  )
 
 foreign import open :: FilePath -> IOMode -> IO IODevice
-foreign import read :: IODevice -> Integer -> IO (Maybe Binary)
+
+foreign import openRaw :: FilePath -> IOMode -> IO IODevice
+
+foreign import read :: IODevice -> Integer -> IO Binary
+
+foreign import readLine :: IODevice -> IO Binary
+
+foreign import seek :: IODevice -> SeekMode -> Integer -> IO ()
+
+foreign import tell :: IODevice -> IO Integer
+
 foreign import write :: IODevice -> Binary -> IO ()
+
 foreign import close :: IODevice -> IO ()
+
+foreign import sync :: IODevice -> IO ()
 

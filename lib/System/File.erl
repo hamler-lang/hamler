@@ -17,20 +17,33 @@
 -include("../Foreign.hrl").
 
 -export([ open/2
+        , openRaw/2
         , read/2
+        , readLine/1
+        , seek/3
+        , tell/1
         , write/2
         , close/1
+        , sync/1
         ]).
 
-open(Filename, Mode) ->
-  ?IO(return(file:open(Filename, modes(Mode)))).
+open(File, Mode) ->
+  ?IO(return(file:open(File, [binary|parseMode(Mode)]))).
+
+openRaw(File, Mode) ->
+  ?IO(return(file:open(File, [binary,raw|parseMode(Mode)]))).
 
 read(IoDevice, Lengh) ->
-  ?IO(case file:read(IoDevice, Lengh) of
-        eof -> ?Nothing;
-        {ok, Data} -> ?Just(Data);
-        {error, Reason} -> error(Reason)
-      end).
+  ?IO(return(file:read(IoDevice, Lengh))).
+
+readLine(IoDevice) ->
+  ?IO(return(file:read_line(IoDevice))).
+
+seek(IoDevice, Mode, Offset) ->
+  ?IO(return(file:position(IoDevice, location(Mode, Offset)))).
+
+tell(IoDevice) ->
+  ?IO(return(file:position(IoDevice, {cur, 0}))).
 
 write(IoDevice, Data) ->
   ?IO(return(file:write(IoDevice, Data))).
@@ -38,13 +51,29 @@ write(IoDevice, Data) ->
 close(IoDevice) ->
   ?IO(return(file:close(IoDevice))).
 
-modes({'ReadMode'}) -> [read];
-modes({'WriteMode'}) -> [write];
-modes({'AppendMode'}) -> [append];
-modes({'ReadWriteMode'}) -> [read, write].
+sync(IoDevice) ->
+  ?IO(return(file:sync(IoDevice))).
+
+-compile({inline, [parseMode/1]}).
+parseMode({'ReadMode'}) ->
+  [read];
+parseMode({'WriteMode'}) ->
+  [write];
+parseMode({'AppendMode'}) ->
+  [append];
+parseMode({'ReadWriteMode'}) ->
+  [read, write].
+
+-compile({inline, [location/2]}).
+location({'AbsoluteSeek'}, Offset) ->
+  {bof, Offset};
+location({'RelativeSeek'}, Offset) ->
+  {cur, Offset};
+location({'SeekFromEnd'}, Offset) ->
+  {eof, Offset}.
 
 -compile({inline, [return/1]}).
 return(ok) -> ok;
 return({ok, Result}) -> Result;
+return(eof) -> error(eof);
 return({error, Reason}) -> error(Reason).
-
