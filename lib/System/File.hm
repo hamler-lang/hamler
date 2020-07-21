@@ -13,29 +13,18 @@
 --
 -----------------------------------------------------------------------------
 module System.File
-  ( IODevice
-  , IOMode(..)
-   -- * File read/write
-  , open
+  ( open
   , read
   , write
   , close
-    -- * File path operations
-  , module System.IO
+  , module System.IO.Types
   ) where
 
 import Control.Monad (IO)
 import Data.Maybe (Maybe)
 import Data.Unit (Unit)
-import Foreign (ffiIO0)
-import System.IO (FilePath)
-
-data IOMode = ReadMode
-            | WriteMode
-            | AppendMode
-            | ReadWriteMode
-
-foreign import data IODevice :: Type
+-- import Foreign (ffiIO0)
+import System.IO.Types (FilePath, IODevice, IOMode(..))
 
 -----------------------------------------------------------------------------
 -- | File Operatios
@@ -46,35 +35,3 @@ foreign import read :: IODevice -> Integer -> IO (Maybe Binary)
 foreign import write :: IODevice -> Binary -> IO ()
 foreign import close :: IODevice -> IO ()
 
------------------------------------------------------------------------------
--- | FilePath
------------------------------------------------------------------------------
-
-foreign import mkdir :: FilePath -> IO ()
-
-getcwd :: IO FilePath
-getcwd = ffiIO0 :file :get_cwd
-
-{-
-
-os.getcwd()
-
-This method returns the current working directory as a string.
-
-os.listdir()
-
-os.listdir() returns the contents of the current working directory as a list of strings.
-
-os.path.join()
-
-os.chdir()
-
--- | os.makedirs() makes directories. The mkdir() method also makes directories, but it does not make intermediate directories. So I suggest you use os.makedirs().
-os.makedirs()
-
--- | To remove a directory and all files and directories in it:
-os.remove()
-
-f.write(string)
-
--}

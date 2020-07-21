@@ -16,12 +16,16 @@
 
 -include("../Foreign.hrl").
 
--export([ readFile/1
+-export([ consultFile/1
+        , readFile/1
         , writeFile/2
         , appendFile/2
         ]).
 
 -type(filepath() :: string()).
+
+consultFile(FilePath) ->
+  ?IO(return(file:consult(FilePath))).
 
 -spec(readFile(filepath()) -> ok).
 readFile(FilePath) ->
@@ -39,4 +43,3 @@ appendFile(FilePath, Data) ->
 return(ok) -> ok;
 return({ok, Data}) -> Data;
 return({error, Reason}) -> error(Reason).
-

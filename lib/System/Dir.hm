@@ -12,52 +12,107 @@
 -- The System Directory module.
 --
 -----------------------------------------------------------------------------
-module System.Dir where
+module System.Dir
+  ( makeDir
+  , makeDirs
+  , listDir
+  , deleteDir
+  , deleteDirRecursively
+  , renameDir
+  , getCwd
+  , setCwd
+  , copyFile
+  , deleteFile
+  , renameFile
+  , getFileSize
+  , makeLink
+  , makeSymLink
+  , deleteLink
+  , getLastModified
+  , module System.IO.Types
+  ) where
 
 import Control.Monad (IO)
+import Data.DateTime (DateTime) -- FIXME later
 import Data.Unit (Unit)
+import Foreign (ffiIO0, ffiIO1)
+import System.IO.Types (FilePath)
 
-type FilePath = String
+-----------------------------------------------------------------------------
+-- | Directory operations
+-----------------------------------------------------------------------------
 
-foreign import mkdir :: FilePath -> IO ()
+-- | Create directory.
+foreign import makeDir :: FilePath -> IO ()
+
+-- | Create directory recursively.
+foreign import makeDirs :: FilePath -> IO ()
+
+-- | List directories.
+foreign import listDir :: FilePath -> IO [FilePath]
+
+-- | Delete directory.
+foreign import deleteDir :: FilePath -> IO ()
+
+-- | Delete directory recursively.
+foreign import deleteDirRecursively :: FilePath -> IO ()
+
+-- | Rename a directory.
+renameDir :: FilePath -> FilePath -> IO ()
+renameDir = renameFile
+
+-----------------------------------------------------------------------------
+-- | Current, home, and temporary directories
+-----------------------------------------------------------------------------
+
+-- TODO: os.chdir()
+
+-- | Returns the current working directory.
+getCwd :: IO FilePath
+getCwd = ffiIO0 :file :get_cwd
+
+-- | Set the current working directory.
+foreign import setCwd :: FilePath -> IO ()
 
 {-
--- Actions on directories
-foreign import createDirectory :: FilePath -> IO ()
-foreign import createDirectoryIfMissing :: Boolean -> FilePath -> IO ()
-foreign import removeDirectory :: FilePath -> IO ()
-foreign import removeDirectoryRecursive :: FilePath -> IO ()
-foreign import removePathForcably :: FilePath -> IO ()
-foreign import nameDirectory :: FilePath -> FilePath -> IO ()
-foreign import listDirectory :: FilePath -> [FilePath]
-foreign import getCurrentDirectory :: IO FilePath
-foreign import setCurrentDirectory :: FilePath -> IO ()
+foreign import getHomeDir :: IO FilePath
+foreign import getTempDir :: IO FilePath
+-}
 
--- Pre-defined directories
-foreign import getHomeDirectory :: IO FilePath
-foreign import getUserDocumentsDirectory :: IO FilePath
-foreign import getTemporaryDirectory :: IO FilePath
+-----------------------------------------------------------------------------
+-- | File operations
+-----------------------------------------------------------------------------
 
--- Actions on files
-foreign import removeFile :: FilePath -> IO ()
-foreign import nameFile :: FilePath -> FilePath -> IO ()
-foreign import namePath :: FilePath -> FilePath -> IO ()
+-- | Copy a file.
 foreign import copyFile :: FilePath -> FilePath -> IO ()
-foreign import getFileSize :: FilePath -> IO Integer
 
-foreign import makeAbsolute :: FilePath -> IO FilePath
+-- | Delete a File.
+foreign import deleteFile :: FilePath -> IO ()
 
+-- | Rename a directory.
+foreign import renameFile :: FilePath -> FilePath -> IO ()
+
+getFileSize :: FilePath -> IO Integer
+getFileSize = ffiIO1 :filelib :file_size
+
+-- foreign import makeAbsolute :: FilePath -> IO FilePath
+
+-----------------------------------------------------------------------------
+-- | Symbolic links
+-----------------------------------------------------------------------------
+
+foreign import makeLink :: FilePath -> FilePath -> IO ()
+
+foreign import makeSymLink :: FilePath -> FilePath -> IO ()
+
+deleteLink :: FilePath -> IO ()
+deleteLink = deleteFile
+
+{-
 -- Existence tests
 foreign import doesPathExist :: FilePath -> IO Boolean
 foreign import doesFileExist :: FilePath -> IO Boolean
 foreign import doesDirectoryExist :: FilePath -> IO Boolean
-
--- Symbolic links
-foreign import createFileLink :: FilePath -> FilePath -> IO ()
-foreign import createDirectoryLink :: FilePath -> FilePath -> IO ()
-foreign import removeDirectoryLink :: FilePath -> IO ()
-foreign import pathIsSymbolicLink :: FilePath -> IO Boolean
-foreign import getSymbolicLinkTarget :: FilePath -> IO FilePath
 
 -- Permissions
 type Permissions = { readable :: Boolean
@@ -76,7 +131,15 @@ emptyPermissions = { readable : false
 foreign import getPermissions :: FilePath -> IO Permissions
 foreign import setPermissions :: FilePath -> Permissions -> IO ()
 foreign import copyPermissions :: FilePath -> FilePath -> IO ()
+-}
 
+-----------------------------------------------------------------------------
+-- | File timestamps
+-----------------------------------------------------------------------------
+
+foreign import getLastModified :: FilePath -> IO DateTime
+
+{-
 -- timestamps
 foreign import getAccessTime :: FilePath -> IO UTCTime
 foreign import getModificationTime :: FilePath -> IO UTCTime
@@ -85,15 +148,5 @@ foreign import setModificationTime :: FilePath -> UTCTime -> IO ()
 
 -- $PATH methods
 foreign import getSearchPath :: IO [FilePath]
-
--- extension functions
-foreign import splitExtension :: FilePath -> (String,String)
-foreign import takeExtension :: FilePath -> String
-foreign import replaceExtension :: FilePath -> String -> FilePath
-foreign import addExtension :: FilePath -> String -> FilePath
-
-
--- filename/directory functions
-foreign import getFileName :: FilePath -> String
-foreign import combine :: FilePath -> FilePath -> FilePath
 -}
+

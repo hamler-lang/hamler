@@ -13,21 +13,22 @@
 --
 -----------------------------------------------------------------------------
 module System.IO
-  ( FilePath
+  ( consultFile
   , readFile
   , writeFile
   , appendFile
   , module System.IO.Printf
+  , module System.IO.Types
   ) where
 
 import Control.Monad (IO)
+import Data.Term (Term)
 import Data.Unit (Unit)
 import System.IO.Printf (print, println, printf)
-
--- | File Path
-type FilePath = String
+import System.IO.Types (FilePath, IODevice, IOMode(..))
 
 -- Simple File operations
+foreign import consultFile :: FilePath -> IO [Term]
 foreign import readFile :: FilePath -> IO Binary
 foreign import writeFile :: FilePath -> Binary -> IO ()
 foreign import appendFile :: FilePath -> Binary -> IO ()
