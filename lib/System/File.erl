@@ -31,7 +31,7 @@ open(File, Mode) ->
   ?IO(return(file:open(File, [binary|parseMode(Mode)]))).
 
 openRaw(File, Mode) ->
-  ?IO(return(file:open(File, [binary,raw|parseMode(Mode)]))).
+  ?IO(return(file:open(File, [raw,binary|parseMode(Mode)]))).
 
 read(IoDevice, Lengh) ->
   ?IO(return(file:read(IoDevice, Lengh))).
