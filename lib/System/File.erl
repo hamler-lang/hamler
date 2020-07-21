@@ -27,8 +27,8 @@ open(Filename, Mode) ->
 
 read(IoDevice, Lengh) ->
   ?IO(case file:read(IoDevice, Lengh) of
-        eof -> {'Nothing'};
-        {ok, Data} -> {'Just', Data};
+        eof -> ?Nothing;
+        {ok, Data} -> ?Just(Data);
         {error, Reason} -> error(Reason)
       end).
 
@@ -43,7 +43,8 @@ modes({'WriteMode'}) -> [write];
 modes({'AppendMode'}) -> [append];
 modes({'ReadWriteMode'}) -> [read, write].
 
+-compile({inline, [return/1]}).
 return(ok) -> ok;
-return({ok, IoDevice}) -> IoDevice;
+return({ok, Result}) -> Result;
 return({error, Reason}) -> error(Reason).
 

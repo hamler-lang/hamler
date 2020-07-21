@@ -16,16 +16,11 @@
 
 -include("../Foreign.hrl").
 
--export([ isAbs/1
-        , isRel/1
-        , lastModified/1
-        ]).
+-export([isAbs/1, isRel/1]).
 
 isAbs(Path) ->
-  ?IO(filename:pathtype(Path) == absolute).
+  filename:pathtype(Path) == absolute.
 
 isRel(Path) ->
-  ?IO(filename:pathtype(Path) == relative).
+  filename:pathtype(Path) == relative.
 
-lastModified(Path) ->
-  ?IO(filelib:last_modified(Path)).
