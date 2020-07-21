@@ -19,6 +19,7 @@
         , bindListImpl/2
         , pureImpl/1
         , seqio/1
+        , seqio_/1
         , unsafePerformIO/1
         , replApply/1
         ]).
@@ -40,6 +41,10 @@ bindListImpl(L, F) ->
 pureImpl(X) -> fun() -> X end.
 
 seqio(L) when is_list(L) -> fun() -> [V() || V <- L] end.
+
+seqio_(L) when is_list(L) -> 
+  fun() -> [V() || V <- L],
+   ok end.
 
 unsafePerformIO(L) -> L().
 
