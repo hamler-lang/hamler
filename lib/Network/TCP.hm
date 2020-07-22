@@ -15,7 +15,7 @@
 module Network.TCP where
 
 import Control.Monad (IO)
-import Network.Socket (IpAddress, PortNumber, Socket)
+import Network.Inet (IpAddress, PortNumber, Socket)
 import Data.Unit (Unit)
 import Foreign (ffiIO1)
 

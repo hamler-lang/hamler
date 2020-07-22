@@ -1,0 +1,62 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Network.Inet
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Inet module.
+--
+-----------------------------------------------------------------------------
+module Network.Inet where
+
+import Control.Monad (IO)
+import Data.Int (UInt8, UInt16)
+import Data.Unit (Unit)
+import Foreign (ffiIO1)
+
+-- | Host name
+type Hostname = String
+
+-- | Port number
+type PortNumber = UInt16
+
+-- | IPv4 or IPv6 address
+data IpAddress
+  = Ip4Address (UInt8, UInt8, UInt8, UInt8)
+  | Ip6Address (UInt16, UInt16, UInt16, UInt16, UInt16, UInt16, UInt16, UInt16)
+
+data StatOption
+  = RecvCnt
+  | RecvMax
+  | RecvAvg
+  | RecvOct
+  | RecvDvi
+  | SendCnt
+  | SendMax
+  | SendAvg
+  | SendOct
+  | SendPend
+
+-- | The inet Socket.
+foreign import data Socket :: Type
+
+close :: Socket -> IO ()
+close = ffiIO1 :inet :close
+
+foreign import hostname :: IO Hostname
+
+foreign import getStat
+  :: Socket -> IO [(StatOption, Integer)]
+
+foreign import getStatWith
+  :: Socket -> [StatOption] -> IO [(StatOption, Integer)]
+
+foreign import peername :: Socket -> IO (IpAddress, PortNumber)
+
+foreign import sockname :: Socket -> IO (IpAddress, PortNumber)
+

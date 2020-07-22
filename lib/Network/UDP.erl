@@ -16,54 +16,107 @@
 
 -include("../Foreign.hrl").
 
--export([ controllingProcess/2
-        , open/1
+-export([ open/1
         , openWith/2
         , recv/2
         , recvTimeout/3
         , send/4
+        , sendTo/4
+        , close/1
+        , controllingProcess/2
         ]).
 
-controllingProcess(Socket, Pid) ->
-  ?IO(case gen_udp:controllingProcess(Socket, Pid) of
-        ok -> ok;
-        {error, Reason} -> error(Reason)
-      end).
-
 open(Port) ->
-  ?IO(case gen_udp:open(Port) of
-        {ok, Socket} -> Socket;
-        {error, Reason} -> error(Reason)
-      end).
+  ?IO(return(gen_udp:open(Port))).
 
-openWith(Port, Opts) ->
-  ?IO(case gen_udp:open(Port, Opts) of
-        {ok, Socket} -> Socket;
-        {error, Reason} -> error(Reason)
-      end).
+openWith(Port, Options) ->
+  ?IO(return(gen_udp:open(Port, parseOpts(Options)))).
 
 recv(Socket, Length) ->
-  ?IO(case gen_udp:recv(Socket, Length) of
-        {ok, {Address, Port, Packet}} ->
-          {ipToHM(Address), Port, Packet};
-        {error, Reason} -> error(Reason)
-      end).
+  ?IO(wrap(return(gen_udp:recv(Socket, Length)))).
 
 recvTimeout(Socket, Length, Timeout) ->
-  ?IO(case gen_udp:recv(Socket, Length, Timeout) of
-        {ok, {Address, Port, Packet}} ->
-          {ipToHM(Address), Port, Packet};
-        {error, Reason} -> error(Reason)
-      end).
+  ?IO(wrap(return(gen_udp:recv(Socket, Length, unwrap(Timeout))))).
 
-send(Socket, IpAddress, PortNumber, Packet) ->
-  ?IO(case gen_udp:send(Socket, ipToErl(IpAddress), PortNumber, Packet) of
-        ok -> ok;
-        {error, Reason} -> error(Reason)
-      end).
+send(Socket, Hostname, PortNumber, Packet) ->
+  ?IO(return(gen_udp:send(Socket, Hostname, PortNumber, Packet))).
 
-ipToErl({'Ip4Address', A, B, C, D}) -> {A, B, C, D};
-ipToErl({'Ip6Address', A, B, C, D, E, F, G, H}) -> {A, B, C, D, E, F, G, H}.
+sendTo(Socket, IpAddress, PortNumber, Packet) ->
+  ?IO(return(gen_udp:send(Socket, unwrap(IpAddress), PortNumber, Packet))).
 
-ipToHM({A, B, C, D}) -> {'Ip4Address', A, B, C, D};
-ipToHM({A, B, C, D, E, F, G, H}) -> {'Ip6Address', A, B, C, D, E, F, G, H}.
+close(Socket) ->
+  ?IO(return(gen_udp:close(Socket))).
+
+controllingProcess(Socket, Pid) ->
+  ?IO(return(gen_udp:controlling_process(Socket, Pid))).
+
+return(ok) -> ok;
+return({error, Reason}) -> error(Reason).
+
+parseOpts(Opts) -> parseOpts(Opts, []).
+
+parseOpts([{'Active', B}|Opts], Acc) ->
+  parseOpts(Opts, [{active, B}|Acc]);
+parseOpts([{'ActiveN', N}|Opts], Acc) ->
+  parseOpts(Opts, [{active, N}|Acc]);
+parseOpts([{'AddMembership', Addr1, Addr2}|Opts], Acc) ->
+  parseOpts(Opts, [{add_membership, unwrap(Addr1), unwrap(Addr2)}|Acc]);
+parseOpts([{'Broadcast', B}|Opts], Acc) ->
+  parseOpts(Opts, [{broadcast, B}|Acc]);
+parseOpts([{'Buffer', N}|Opts], Acc) ->
+  parseOpts(Opts, [{buffer, N}|Acc]);
+parseOpts([{'Deliver', A}|Opts], Acc) ->
+  parseOpts(Opts, [{deliver, A}|Acc]);
+parseOpts([{'Dontroute', B}|Opts], Acc) ->
+  parseOpts(Opts, [{dontroute, B}|Acc]);
+parseOpts([{'DropMembership', Addr1, Addr2}|Opts], Acc) ->
+  parseOpts(Opts, [{drop_membership, unwrap(Addr1), unwrap(Addr2)}|Acc]);
+parseOpts([{'Header', N}|Opts], Acc) ->
+  parseOpts(Opts, [{header, N}|Acc]);
+parseOpts([{'HighMsgqWatermark', N}|Opts], Acc) ->
+  parseOpts(Opts, [{high_msgq_watermark, N}|Acc]);
+parseOpts([{'LowMsgqWatermark', N}|Opts], Acc) ->
+  parseOpts(Opts, [{low_msgq_watermark, N}|Acc]);
+parseOpts([{'MulticastIf', Addr}|Opts], Acc) ->
+  parseOpts(Opts, [{multicast_if, unwrap(Addr)}|Acc]);
+parseOpts([{'MulticastTTL', N}|Opts], Acc) ->
+  parseOpts(Opts, [{multicast_ttl, N}|Acc]);
+parseOpts([{'Priority', N}|Opts], Acc) ->
+  parseOpts(Opts, [{priority, N}|Acc]);
+parseOpts([{'Raw', N1, N2, Bin}|Opts], Acc) ->
+  parseOpts(Opts, [{raw, N1, N2, Bin}|Acc]);
+parseOpts([{'ReadPackets', N}|Opts], Acc) ->
+  parseOpts(Opts, [{read_packets, N}|Acc]);
+parseOpts([{'Recbuf', N}|Opts], Acc) ->
+  parseOpts(Opts, [{recbuf, N}|Acc]);
+parseOpts([{'ReuseAddr', B}|Opts], Acc) ->
+  parseOpts(Opts, [{reuseaddr, B}|Acc]);
+parseOpts([{'Sndbuf', N}|Opts], Acc) ->
+  parseOpts(Opts, [{sndbuf, N}|Acc]);
+parseOpts([{'ToS', N}|Opts], Acc) ->
+  parseOpts(Opts, [{tos, N}|Acc]);
+parseOpts([{'Tclass', N}|Opts], Acc) ->
+  parseOpts(Opts, [{tclass, N}|Acc]);
+parseOpts([{'TTL', N}|Opts], Acc) ->
+  parseOpts(Opts, [{ttl, N}|Acc]);
+parseOpts([{'RecvToS', B}|Opts], Acc) ->
+  parseOpts(Opts, [{recvtos, B}|Acc]);
+parseOpts([{'RecvTclass', B}|Opts], Acc) ->
+  parseOpts(Opts, [{recvtclass, B}|Acc]);
+parseOpts([{'RecvTTL', B}|Opts], Acc) ->
+  parseOpts(Opts, [{recvttl, B}|Acc]);
+parseOpts([{'Ipv6only', B}|Opts], Acc) ->
+  parseOpts(Opts, [{ipv6_v6only, B}|Acc]);
+parseOpts([], Acc) -> Acc.
+
+unwrap({'Ip4Address', Addr}) -> Addr;
+unwrap({'Ip6Address', Addr}) -> Addr;
+unwrap({'Infinity'}) -> infinity;
+unwrap({'Timeout', I}) -> I.
+
+wrap({Address, Port, Packet}) ->
+  {wrapAddr(Address), Port, Packet}.
+wrapAddr(Addr) when size(Addr) == 4 ->
+  {'Ip4Address', Addr};
+wrapAddr(Addr) when size(Addr) == 6 ->
+  {'Ip6Address', Addr}.
