@@ -33,7 +33,7 @@ nowToSystemTime' (ms, s, us) unit =
 systemTimeToDateTime :: SystemTime -> DateTime
 systemTimeToDateTime (x, unit) = secondsToDateTime (seconds + 719528 * 86400)
   where
-    seconds = ffi1 :erlang :round (x / convertFromSeconds unit)
+    seconds = x / convertFromSeconds unit
 
 convertFromSeconds :: TimeUnit -> Integer
 convertFromSeconds unit =
