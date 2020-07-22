@@ -53,22 +53,38 @@ toList = ffi1 :erlang :binary_to_list
 toTerm :: Binary -> Term
 toTerm = ffi1 :erlang :binary_to_term
 
+-----------------------------------------------------------------------------
+-- | Operators
+
+-- | Get Byte from Binary
+at :: Integer -> Binary -> Integer -- TODO: exception?
+at pos bin = ffi2 :binary :at bin pos
+
+-- | Get Bytes from Binary
+binToList :: Integer -> Integer -> Binary -> [Integer]
+binToList start end bin = ffi3 :binary :bin_to_list bin start end
+
+duplicate :: Integer-> Binary -> Binary
+duplicate n bin = ffi2  :binary :copy bin n
+
+copy = duplicate 1
+
+first :: Binary -> Integer
+first = ffi1 :binary :first
+
+last :: Binary -> Integer
+last = ffi1 :binary :last
+
+listToBin :: Integer -> Binary
+listToBin = ffi1 :binary :list_to_bin
+
 {- TODO:
 binary_to_atom(Binary, Encoding) -> atom()
-at/2
-bin_to_list/1
-bin_to_list/2
-bin_to_list/3
-compile_pattern/1
-copy/1
-copy/2
-decode_unsigned/1
+compile_pattern/1                                            Need Pattern
+decode_unsigned/1                                            Need Unsigned
 decode_unsigned/2
 encode_unsigned/1
 encode_unsigned/2
-first/1
-last/1
-list_to_bin/1
 longest_common_prefix/1
 longest_common_suffix/1
 match/2
