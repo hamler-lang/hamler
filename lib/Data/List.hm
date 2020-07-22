@@ -16,13 +16,14 @@ module Data.List where
 
 import Data.Maybe (Maybe)
 import Foreign (ffi1, ffi2, ffi3, ffi4)
-
+import Data.Ord ((<))
+import Data.Ring ((-))
+import Data.Function (error)
 -----------------------------------------------------------------------------
 -- Basic functions
 -----------------------------------------------------------------------------
 
 infixl 6 append as ++
-
 append :: forall a. [a] -> [a] -> [a]
 append = ffi2 :lists :append
 
@@ -100,6 +101,12 @@ splitAt = ffi2 :lists :split
 dropWhile :: forall a. (a -> Boolean) -> [a] -> [a]
 dropWhile = ffi2 :lists :dropWhile
 
+infixl 9 index as !!
+index :: forall a. [a] -> Integer -> a
+index xs  n | n < 0 =  error "Prelude.!!: negative index"
+index []      _     =  error "Prelude.!!: index too large"
+index [x|_]   0     =  x
+index [_|xs]  n     =  index xs (n-1)
 -----------------------------------------------------------------------------
 -- Sort lists
 -----------------------------------------------------------------------------

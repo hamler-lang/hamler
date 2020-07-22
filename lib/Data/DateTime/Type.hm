@@ -1,0 +1,32 @@
+module Data.DateTime.Type where
+
+import Prelude
+
+type Year = Integer
+type Month = Integer
+type Week = Integer
+type Day = Integer
+type Hour = Integer
+type Minute = Integer
+type Second = Integer
+type MegaSecond = Integer
+type MilliSecond = Integer
+type SecondFrom1970 = Integer
+
+type Date =  (Year, Month, Day)
+type OrdinalDate = (Year, Day)
+type WeekDate = (Year, Week, Day)
+
+type Time = (Hour, Minute, Second)
+type DateTime = (Date, Time)
+type NowTime = (MegaSecond, Second, MilliSecond)
+type SystemTime = (Integer, TimeUnit)
+
+type Rfc3339Time = String
+
+
+data TimeUnit =
+            MicrosecondUnit
+          | MillisecondUnit
+          | NanosecondUnit
+          | SecondUnit

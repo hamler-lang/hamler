@@ -1,0 +1,17 @@
+module Data.DateTime.Rfc3339 where
+
+import Data.DateTime.Type
+import Prelude
+import Foreign
+
+
+rfc3339ToSystemTime :: Rfc3339Time -> SystemTime
+rfc3339ToSystemTime rfc = (ffi1 :calendar :rfc3339_to_system_time rfc, SecondUnit)
+
+systemTimeToRfc3339 :: SystemTime -> Rfc3339Time
+systemTimeToRfc3339 (time, unit) = ffi2 :calendar :system_time_to_rfc3339 time [:unit, unitAtom unit]
+    where
+      unitAtom SecondUnit      = :second
+      unitAtom MillisecondUnit = :millisecond
+      unitAtom MicrosecondUnit = :microsecond
+      unitAtom NanosecondUnit  = :nanosecond
