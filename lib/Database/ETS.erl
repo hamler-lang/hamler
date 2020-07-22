@@ -24,6 +24,16 @@
         , next/2
         , prev/2
         , tab2file/2
+        , matchContinuation /1
+        , matchWithLimit/3
+        , matchObjectContinuation /1
+        , matchObjectWithLimit/3
+        , slot/2
+        , tabfileInfo/1
+        , updateElement/4
+        , file2tabWithVerify/1
+        , foldl/3
+        , foldr/3
         ]).
 
 new(Name, Options) when is_atom(Name) ->
@@ -40,6 +50,12 @@ file2tab(Filename) ->
         {ok, Tab} -> Tab;
         {eror, Reason} -> error(Reason)
       end).
+
+file2tabWithVerify(Filename) ->
+    ?IO(case ets:file2tab(Filename, {verify, true}) of
+            {ok, Tab} -> Tab;
+            {eror, Reason} -> error(Reason)
+        end).
 
 first(Tab) ->
   ?IO(case ets:first(Tab) of
@@ -70,6 +86,54 @@ tab2file(Tab, Filename) ->
         ok -> ok;
         {error, Reason} -> error(Reason)
       end).
+
+matchContinuation(Continuation) ->
+    ?IO(case ets:match(Continuation) of
+            '$end_of_table' -> {'Nothing'};
+            Key2 -> {'Just', Key2}
+        end).
+
+matchWithLimit(Tid, Pattern, Limit) ->
+    ?IO(case ets:match(Tid, Pattern, Limit) of
+            '$end_of_table' -> {'Nothing'};
+            Key2 -> {'Just', Key2}
+        end).
+
+matchObjectContinuation(Continuation) ->
+    ?IO(case ets:match(Continuation) of
+            '$end_of_table' -> {'Nothing'};
+            Key2 -> {'Just', Key2}
+        end).
+
+matchObjectWithLimit(Tid, Pattern, Limit) ->
+    ?IO(case ets:match(Tid, Pattern, Limit) of
+            '$end_of_table' -> {'Nothing'};
+            Key2 -> {'Just', Key2}
+        end).
+
+slot(Tid, I) ->
+    ?IO(case ets:slot(Tid, I) of
+            '$end_of_table' -> {'Nothing'};
+            Key2 -> {'Just', Key2}
+        end).
+
+tabfileInfo(FilePath) ->
+    ?IO(case ets:tabfile_info(FilePath) of
+            {ok, TabInfo} -> TabInfo;
+            {error, Reason} -> error(Reason)
+        end).
+
+updateElement(Tabid, Key, Pos, Value) ->
+    ?IO(ets:update_element(Tabid, Key, {Pos, Value})).
+
+
+foldl(Fun, Acc0, Tab) ->
+    F = fun(R, Acc) -> (Fun(R))(Acc) end,
+    ?IO(ets:foldl(F, Acc0, Tab)).
+
+foldr(Fun, Acc0, Tab) ->
+    F = fun(R, Acc) -> (Fun(R))(Acc) end,
+    ?IO(ets:foldr(F, Acc0, Tab)).
 
 %%---------------------------------------------------------------------------
 %% | Internal functions
