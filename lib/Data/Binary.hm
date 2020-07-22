@@ -15,7 +15,7 @@
 module Data.Binary where
 
 import Data.Term (Term)
-import Foreign (ffi1, ffi2)
+import Foreign (ffi1, ffi2, ffi3)
 
 type BitString = Binary
 
@@ -64,9 +64,10 @@ at pos bin = ffi2 :binary :at bin pos
 binToList :: Integer -> Integer -> Binary -> [Integer]
 binToList start end bin = ffi3 :binary :bin_to_list bin start end
 
-duplicate :: Integer-> Binary -> Binary
+duplicate :: Integer -> Binary -> Binary
 duplicate n bin = ffi2  :binary :copy bin n
 
+copy :: Binary -> Binary
 copy = duplicate 1
 
 first :: Binary -> Integer
