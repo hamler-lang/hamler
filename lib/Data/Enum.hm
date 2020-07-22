@@ -14,22 +14,43 @@
 -----------------------------------------------------------------------------
 module Data.Enum
   ( class Enum
+  , succ
+  , pred
+  , toEnum
+  , fromEnum
   , range
   , rangeStep
   ) where
+import Data.Semiring ((+))
+import Data.Function (identity)
+import Data.Ring ((-))
 
 class Enum a where
+  succ :: a -> a
+  pred :: a -> a
+  toEnum :: Integer -> a
+  fromEnum :: a -> Integer
   range     :: a -> a -> [a]
   rangeStep :: a -> a -> a -> [a]
 
 instance Enum Char where
+  succ x = toEnum (fromEnum x + 1)
+  pred x = toEnum (fromEnum x - 1)
+  toEnum = to_enum_char
+  fromEnum = from_enum_char
   range = enumCharRange
   rangeStep = enumCharRangeStep
 
-foreign import enumCharRange :: Char -> Char -> [Char]
+foreign import to_enum_char :: Integer -> Char
+foreign import from_enum_char :: Char -> Integer
+foreign import enumCharRange     :: Char -> Char -> [Char]
 foreign import enumCharRangeStep :: Char -> Char -> Char -> [Char]
 
 instance Enum Integer where
+  toEnum = identity
+  fromEnum = identity
+  succ x = x + 1
+  pred x = x - 1
   range = enumIntegerRange
   rangeStep = enumIntegerRangeStep
 

@@ -1,0 +1,135 @@
+module Data.DateTime.Date where
+
+import Data.DateTime.Type
+import Prelude
+import Data.Ord (clamp)
+import Data.List ((!!))
+
+toGregorianDate :: Day -> Date
+toGregorianDate day = (year, month, day')
+  where
+    (year, yd) = toOrdinalDate day
+    (month, day') = dayOfYearToMonthAndDay (isLeapYear year) yd
+
+fromGregorianDate :: Date -> Day
+fromGregorianDate (year, month, day) = fromOrdinalDate (year, (monthAndDayToDayOfYear (isLeapYear year) month day))
+
+toWeekDate :: Day -> (Integer, Integer, Integer)
+toWeekDate day = (y1, w1 + 1, d_mod_7 + 1)
+  where
+    d = day + 2
+    d_div_7 = d / 7
+    d_mod_7 = d % 7
+    (y0, yd) = toOrdinalDate day
+    foo :: Integer -> Integer
+    foo y = bar (fromOrdinalDate (y, 6))
+    bar k = d_div_7 - k / 7
+    (y1, w1) =
+        case bar (d - yd + 4) of
+            -1 -> (y0 - 1, foo (y0 - 1))
+            52 ->
+                if foo (y0 + 1) == 0
+                    then (y0 + 1, 0)
+                    else (y0, 52)
+            w0 -> (y0, w0)
+
+fromWeekDate :: WeekDate -> Day
+fromWeekDate (y, w, d) =
+   k - (k % 7) +
+         (((clamp
+                1
+                (if longYear
+                     then 53
+                     else 52)
+                w) *
+           7) +
+         (clamp 1 7 d)) -
+    10
+  where
+    k = fromOrdinalDate (y, 6)
+    longYear =
+        case toWeekDate (fromOrdinalDate (y, 365)) of
+            (_, 53, _) -> true
+            _ -> false
+
+toOrdinalDate :: Day -> OrdinalDate
+toOrdinalDate day = (year, yd)
+  where
+    a = day + 678575
+    quadcent = a / 146097
+    b = a % 146097
+    cent = min (b / 36524) 3
+    c = b - (cent * 36524)
+    quad = c / 1461
+    d = c % 1461
+    y = min (d / 365) 3
+    yd = d - (y * 365) + 1
+    year = quadcent * 400 + cent * 100 + quad * 4 + y + 1
+
+fromOrdinalDate :: OrdinalDate -> Day
+fromOrdinalDate (year, yd) = day
+  where
+    y = year - 1
+    day =
+        (clamp 1
+             (if isLeapYear year
+                 then 366
+                 else 365)
+              yd) +
+        (365 * y) +
+        (y / 4) -
+        (y / 100) +
+        (y / 400) -
+        678576
+
+isLeapYear :: Integer -> Bool
+isLeapYear year = (year % 4 == 0) && ((year % 400 == 0) || not (year % 100 == 0))
+
+dayOfYearToMonthAndDay :: Bool -> Integer -> (Integer, Integer)
+dayOfYearToMonthAndDay isLeap yd =
+    findMonthDay
+        (monthLengths isLeap)
+        (clamp
+             1
+             (if isLeap
+                  then 366
+                  else 365)
+             yd)
+
+monthAndDayToDayOfYear :: Bool -> Integer -> Integer -> Integer
+monthAndDayToDayOfYear isLeap month day = ((367 * month' - 362) / 12) - k + day'
+  where
+    month' = clamp 1 12 month
+    day' = clamp 1 (monthLength' isLeap month') day
+    k =
+        if month' <= 2
+            then 0
+            else if isLeap
+                     then 1
+                     else 2
+
+findMonthDay :: [Integer] -> Integer -> (Integer, Integer)
+findMonthDay [n|ns] yd
+    | yd > n = (\(m, d) -> (m + 1, d)) (findMonthDay ns (yd - n))
+findMonthDay _ yd = (1, yd)
+
+monthLength' :: Bool -> Integer -> Integer
+monthLength' isLeap month' = (monthLengths isLeap) !! (month' - 1)
+
+monthLengths :: Bool -> [Integer]
+monthLengths isleap =
+    [ 31
+    , if isleap
+          then 29
+          else 28
+    , 31
+    , 30
+    , 31
+    , 30
+    , 31
+    , 31
+    , 30
+    , 31
+    , 30
+    , 31
+    ]

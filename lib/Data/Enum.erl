@@ -14,11 +14,16 @@
 %%---------------------------------------------------------------------------
 -module('Enum').
 
--export([ enumCharRange/2
+-export([ to_enum_char/1
+        , from_enum_char/1
+        , enumCharRange/2
         , enumCharRangeStep/3
         , enumIntegerRange/2
         , enumIntegerRangeStep/3
         ]).
+
+to_enum_char(X) -> X.
+from_enum_char(X) -> X.
 
 enumCharRange(Start, Stop) when Stop >= Start ->
   range(Start, Stop, 1);

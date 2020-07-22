@@ -1,0 +1,71 @@
+module Data.DateTime.System where
+
+import Data.DateTime.Type
+import Data.DateTime.Date (fromGregorianDate, toGregorianDate)
+import Prelude (IO, (%), (*), (+), (/))
+import Foreign (ffi1, ffiIO0)
+
+localTime :: IO DateTime
+localTime = ffiIO0 :erlang :localtime
+
+nowTime :: IO NowTime
+nowTime = ffiIO0 :erlang :timestamp
+
+nowToDateTime :: NowTime -> DateTime
+nowToDateTime x = systemTimeToDateTime (nowToSystemTime x)
+
+nowToSystemTime :: NowTime -> SystemTime
+nowToSystemTime x = nowToSystemTime' x SecondUnit
+
+nowToSystemTime' :: NowTime -> TimeUnit -> SystemTime
+nowToSystemTime' (ms, s, us) unit =
+    case unit of
+      SecondUnit      -> (seconds, SecondUnit)
+      MillisecondUnit -> (milliseconds, MillisecondUnit)
+      MicrosecondUnit -> (microseconds, MicrosecondUnit)
+      NanosecondUnit  -> (nanoseconds, NanosecondUnit)
+    where
+      seconds      = ms * 1000 + s
+      milliseconds = seconds * 1000
+      microseconds = milliseconds * 1000 + us
+      nanoseconds  = microseconds * 1000
+
+systemTimeToDateTime :: SystemTime -> DateTime
+systemTimeToDateTime (x, unit) = secondsToDateTime (seconds + 719528 * 86400)
+  where
+    seconds = ffi1 :erlang :round (x / convertFromSeconds unit)
+
+convertFromSeconds :: TimeUnit -> Integer
+convertFromSeconds unit =
+    case unit of
+        SecondUnit      -> 1
+        MillisecondUnit -> 1000
+        MicrosecondUnit -> 1000000
+        NanosecondUnit  -> 1000000000
+
+secondsToDateTime :: Integer -> DateTime
+secondsToDateTime sec = (date, (hour, minute, secs))
+  where
+    day  = sec / 86400
+    rest = sec / 86400
+    date = toGregorianDate day
+    hour = rest / 3600
+    minute = rest % 3600 / 60
+    secs   = rest % 3600 % 60
+
+dateTimeToSeconds :: DateTime -> Integer
+dateTimeToSeconds (date, time) = days * 86400 + seconds
+  where
+    days = fromGregorianDate date
+    seconds = timeToSeconds time
+
+secondsToTime :: Second -> Time
+secondsToTime sec = (hour, minute, second)
+   where
+     hour = sec / 3600
+     rest = sec % 3600
+     minute = rest / 60
+     second = rest % 60
+
+timeToSeconds :: Time -> Second
+timeToSeconds (h, m, s) = h*3600 + m*60 + s
