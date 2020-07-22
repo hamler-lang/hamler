@@ -12,40 +12,112 @@
 -- The TCP Socket module.
 --
 -----------------------------------------------------------------------------
-module Network.TCP where
+module Network.TCP
+  ( listen
+  , accept
+  , acceptTimeout
+  , connect
+  , connectTimeout
+  , recv
+  , recvTimeout
+  , send
+  , shutdown
+  , close
+  , controllingProcess
+  , Option(..)
+  , ConnectOption(..)
+  , ListenOption(..)
+  , module Network.Inet
+  ) where
 
 import Control.Monad (IO)
-import Network.Socket (IpAddress, PortNumber, Socket)
+import Data.Pid (Pid)
+import Data.Timeout (Timeout)
 import Data.Unit (Unit)
 import Foreign (ffiIO1)
+import System.IO.Types (FilePath)
+import Network.Inet
+  ( Hostname
+  , IpAddress
+  , PortNumber
+  , Socket
+  )
 
-type Length = Integer
-type Timeout = Integer
+data Option
+  = Active Boolean
+  | ActiveN Integer
+  | Buffer Integer
+  | DelaySend Boolean
+  | Deliver Atom
+  | Dontroute Boolean
+  | ExitOnClose Boolean
+  | Header Integer
+  | HighMsgqWatermark Integer
+  | HighWatermark Integer
+  | Keepalive Boolean
+  -- linger {Boolean, Integer}
+  | LowMsgqWatermark Integer
+  | LowWatermark Integer
+  -- {mode, list | binary} | list | binary
+  | NoDelay Boolean
+  -- {packet, 0 | 1 | 2 | 4 | raw | sunrm | asn1 | cdr | fcgi | line |
+  --          tpkt | http | httph | http_bin | httph_bin}
+  | PacketSizde Integer
+  | Priority Integer
+  | Raw Integer Integer Binary
+    -- ^ Protocol OptionNum ValueBin
+  | Recbuf Integer
+  | ReuseAddr Boolean
+  | SendTimeout Timeout
+  | SendTimeoutClose Boolean
+  | ShowEconnreset Boolean
+  | Sndbuf Integer
+  | ToS Integer
+  | Tclass Integer
+  | TTL Integer
+  | RecvToS Boolean
+  | RecvTclass Boolean
+  | RecvTTL Boolean
+  | Ipv6only Boolean
 
--- TODO: Fixme later
-foreign import data Options :: Type
-foreign import data Packet :: Type
+data ConnectOption
+  = Option
+  | Ip IpAddress
+  | Fd Integer
+  | IfAddr IpAddress
+  -- inet:address_family() => inet | inet6
+  | Port PortNumber
+  -- {tcp_module, module()} ???
+  | NetNs FilePath
+  | BindToDevice Binary
+
+data ListenOption
+  = ConnectOption
+  | BackLog Integer
+
+foreign import listen :: PortNumber -> [ListenOption] -> IO Socket
 
 foreign import accept :: Socket -> IO (Socket)
 
 foreign import acceptTimeout :: Socket -> Timeout -> IO (Socket)
 
+foreign import connect
+  :: IpAddress -> PortNumber -> [ConnectOption] -> IO Socket
+
+foreign import connectTimeout
+  :: IpAddress -> PortNumber -> [ConnectOption]-> Timeout -> IO Socket
+
+foreign import recv :: Socket -> Integer -> IO Binary
+
+foreign import recvTimeout
+  :: Socket -> Integer -> Timeout -> IO Binary
+
+foreign import send :: Socket -> Binary -> IO ()
+
+foreign import shutdown :: Socket -> Atom -> IO ()
+
 close :: Socket -> IO ()
 close = ffiIO1 :gen_tcp :close
 
-foreign import connect
-  :: IpAddress -> PortNumber -> Options -> IO Socket
+foreign import controllingProcess :: Socket -> Pid -> IO ()
 
-foreign import connectTimeout
-  :: IpAddress -> PortNumber -> Options -> Timeout -> IO Socket
-
-foreign import listen :: PortNumber -> Options -> IO Socket
-
-foreign import recv :: Socket -> Length -> IO Packet
-
-foreign import recvTimeout
-  :: Socket -> Length -> Timeout -> IO Packet
-
-foreign import send :: Socket -> Packet -> IO ()
-
-foreign import shutdown :: Socket -> Atom -> IO ()

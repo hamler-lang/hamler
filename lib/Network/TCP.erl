@@ -16,16 +16,21 @@
 
 -include("../Foreign.hrl").
 
--export([ accept/1
+-export([ listen/2
+        , accept/1
         , acceptTimeout/2
         , connect/3
         , connectTimeout/4
-        , listen/2
         , recv/2
         , recvTimeout/3
         , send/2
         , shutdown/2
+        , close/1
+        , controllingProcess/2
         ]).
+
+listen(Port, Options) ->
+  ?IO(return(gen_tcp:listen(Port, Options))).
 
 accept(LSocket) ->
   ?IO(return(gen_tcp:accept(LSocket))).
@@ -39,9 +44,6 @@ connect(Address, Port, Options) ->
 connectTimeout(Address, Port, Options, Timeout) ->
   ?IO(return(gen_tcp:connect(toErl(Address), Port, Options, Timeout))).
 
-listen(Port, Options) ->
-  ?IO(return(gen_tcp:listen(Port, Options))).
-
 recv(Socket, Length) ->
   ?IO(return(gen_tcp:recv(Socket, Length))).
 
@@ -53,6 +55,12 @@ send(Socket, Packet) ->
 
 shutdown(Socket, How) ->
   ?IO(return(gen_tcp:shutdown(Socket, How))).
+
+close(Socket) ->
+  ?IO(return(gen_tcp:close(Socket))).
+
+controllingProcess(Socket, Pid) ->
+  ?IO(return(gen_udp:controlling_process(Socket, Pid))).
 
 toErl({'Ip4Address', A, B, C, D}) -> {A, B, C, D};
 toErl({'Ip6Address', A, B, C, D, E, F, G, H}) ->
