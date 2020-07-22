@@ -14,6 +14,8 @@
 %%---------------------------------------------------------------------------
 -module('Proxy').
 
+-include("../../../Foreign.hrl").
+
 -behaviour(gen_event).
 
 -export([ init/1
@@ -23,8 +25,6 @@
         , terminate/2
         , code_change/3
         ]).
-
--import('Curry', [uncurry/2, uncurryIO/2]).
 
 -record(proxy, {handleEvent, state}).
 
@@ -42,7 +42,7 @@ handle_call(_Request, Proxy) ->
   {ok, ignored, Proxy}.
 
 handle_event(Event, Proxy = #proxy{handleEvent = HandleEvent, state = State}) ->
-  NState = uncurryIO(HandleEvent, [Event, State]),
+  NState = ?RunIO('Curry':apply(HandleEvent, [Event, State])),
   {ok, Proxy#proxy{state = NState}}.
 
 handle_info(Info, Proxy) ->
@@ -54,4 +54,3 @@ terminate(_Arg, _Proxy) ->
 
 code_change(_OldVsn, Proxy, _Extra) ->
   {ok, Proxy}.
-
