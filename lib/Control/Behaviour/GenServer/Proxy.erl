@@ -14,6 +14,8 @@
 %%---------------------------------------------------------------------------
 -module('Proxy').
 
+-include("../../../Foreign.hrl").
+
 -behaviour(gen_server).
 
 %% gen_server callbacks
@@ -24,8 +26,6 @@
         , terminate/2
         , code_change/3
         ]).
-
--import('Curry', [uncurryIO/2]).
 
 -record(proxy, {handleCall, handleCast, state}).
 
@@ -46,7 +46,7 @@ init_ok(#{handleCall := HandleCall, handleCast := HandleCast}, State) ->
   #proxy{handleCall = HandleCall, handleCast = HandleCast, state = State}.
 
 handle_call(Request, _From, Proxy = #proxy{handleCall = HandleCall, state = State}) ->
-  case uncurryIO(HandleCall, [Request, State]) of
+  case ?RunIO('Curry':apply(HandleCall, [Request, State])) of
     {'ServerIgnore', St} ->
       {reply, ignored, Proxy#proxy{state = St}};
     {'ServerReply', Rep, St} ->
@@ -60,7 +60,7 @@ handle_call(Request, _From, Proxy = #proxy{handleCall = HandleCall, state = Stat
   end.
 
 handle_cast(Msg, Proxy = #proxy{handleCast = HandleCast, state = State}) ->
-  case uncurryIO(HandleCast, [Msg, State]) of
+  case ?RunIO('Curry':apply(HandleCast, [Msg, State])) of
     {'ServerIgnore', St} ->
       {noreply, Proxy#proxy{state = St}};
     {'ServerNoReply', St} ->

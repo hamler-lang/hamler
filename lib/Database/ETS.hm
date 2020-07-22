@@ -12,43 +12,7 @@
 -- The Erlang ETS Database.
 --
 -----------------------------------------------------------------------------
-module Database.ETS
-  ( TableId
-  , TableInfo
-  , TableName
-  , TableAccess(..)
-  , TableType(..)
-  , TableOptions
-  , options
-    -- * APIs
-  , all
-  , delete
-  , deleteAllObjects
-  , deleteObject
-  , deleteTable
-  , file2tab
-  , first
-  , fromDETS
-  , giveAway
-  , info
-  , insert
-  , insertObjects
-  , insertNew
-  , insertNewObjects
-  , last
-  , lookup
-  , lookupElement
-  , member
-  , new
-  , next
-  , prev
-  , rename
-  , tab2file
-  , tab2list
-  , take
-  , toDETS
-  , whereis
-  ) where
+module Database.ETS where
 
 import Control.Monad (IO)
 import Data.Pid (Pid)
@@ -56,7 +20,7 @@ import Data.Maybe (Maybe(..))
 import Data.Ref (Reference)
 import Data.Term (Term)
 import Data.Unit (Unit)
-import Foreign (ffiIO0, ffiIO1, ffiIO2, ffiIO3)
+import Foreign (ffiIO0, ffiIO1, ffiIO2, ffiIO3, ffiIO4)
 import System.IO (FilePath)
 
 -- | Table name is an Atom.
@@ -118,6 +82,7 @@ browse :: IO String
 browse = ffiIO0 :ets :i
 
 -- | Browses table Tab on a terminal.
+-- browseTable :: TableId -> IO String
 browseTable :: TableId -> IO String
 browseTable = ffiIO1 :ets :i
 
@@ -138,24 +103,31 @@ deleteObject = ffiIO2 :ets :delete_object
 
 foreign import file2tab :: FilePath -> IO TableId
 
--- TODO: file2tab(FilePath, Options) -> {ok, Tab} | {error, Reason}
+foreign import file2tabWithVerify :: FilePath -> IO TableId
+
 
 foreign import first :: TableId -> forall k. IO (Maybe k)
 
--- TODO: foldl/3
--- TODO: foldr/3
+foreign import foldl :: forall v acc. (v -> acc -> acc) -> acc -> TableId -> IO acc
+
+foreign import foldr :: forall v acc. (v -> acc -> acc) -> acc -> TableId -> IO acc
 
 fromDETS :: TableId -> TableName -> IO ()
 fromDETS = ffiIO2 :ets :from_dets
 
--- TODO: fun2ms/1
+-- foreign import data MatchSpec :: Type
+
+-- fun2ms :: forall a. a -> MatchSpec
+-- fun2ms = ffi1 :ets :fun2ms
 
 giveAway :: forall a. TableId -> Pid -> a -> IO ()
 giveAway = ffiIO3 :ets :give_away
 
 foreign import info :: TableId -> IO (Maybe TableInfo)
 
--- TODO: info/2
+getInfo :: forall v. TableId -> Atom -> IO v
+getInfo = ffiIO2 :ets :info
+
 -- TODO: init_table/2
 
 insert :: forall v. TableId -> v -> IO ()
@@ -205,19 +177,67 @@ toDETS = ffiIO2 :ets :to_dets
 whereis :: Atom -> IO TableId
 whereis = ffiIO1 :ets :whereis
 
+match :: forall a v. TableId -> a -> IO [v]
+match = ffiIO2 :ets :match
+
+foreign import data Continuation :: Type
+
+foreign import matchContinuation :: forall v. Continuation -> IO (Maybe ([v], Continuation))
+
+foreign import matchWithLimit :: forall a v. TableId -> a -> Integer -> IO (Maybe ([v], Continuation))
+
+matchDelete :: forall a. TableId -> a -> IO Boolean
+matchDelete = ffiIO2 :ets :match_delete
+
+matchObject :: forall a v. TableId -> a -> IO [v]
+matchObject = ffiIO2 :ets :match_object
+
+foreign import matchObjectContinuation :: forall v. Continuation -> IO (Maybe ([v], Continuation))
+
+foreign import matchObjectWithLimit :: forall a v. TableId -> a -> Integer -> IO (Maybe ([v], Continuation))
+
+safeFixtable :: TableId -> Boolean -> IO Boolean
+safeFixtable = ffiIO2 :ets :safe_fixtable
+
+foreign import slot :: forall v. TableId -> Integer -> IO (Maybe [v])
+
+foreign import tabfileInfo :: FilePath -> IO TableInfo
+
+foreign import updateElement :: forall k v. TableId -> k -> Integer -> v -> IO Boolean
+
+updateElementList :: forall k v. TableId -> k -> [(Integer, v)] -> IO Boolean
+updateElementList = ffiIO3 :ets :update_element
+
+updateCounter :: forall k. TableId -> k -> (Integer, Integer) -> IO Integer
+updateCounter = ffiIO3 :ets :update_counter
+
+updateCounterWithThreshold :: forall k. TableId -> k -> (Integer, Integer, Integer, Integer) -> IO Integer
+updateCounterWithThreshold = ffiIO3 :ets :update_counter
+
+updateCounterWithDefault :: forall k a. TableId -> k -> (Integer, Integer) -> a -> IO Integer
+updateCounterWithDefault = ffiIO4 :ets :update_counter
+
+updateCounterIncr :: forall k. TableId -> k -> Integer -> IO Integer
+updateCounterIncr = ffiIO3 :ets :update_counter
+
+updateCounterIncrWithDefault :: forall k a. TableId -> k -> Integer -> a -> IO Integer
+updateCounterIncrWithDefault = ffiIO4 :ets :update_counter
+
+
+
 {- TODO:
 is_compiled_ms/1
-match/1
-match/2
-match/3
-match_delete/2
-match_object/1
-match_object/2
-match_object/3
+-- match/1
+-- match/2
+-- match/3
+-- match_delete/2
+-- match_object/1
+-- match_object/2
+-- match_object/3
 match_spec_compile/1
 match_spec_run/2
 repair_continuation/2
-safe_fixtable/2
+-- safe_fixtable/2
 select/1
 select/2
 select/3
@@ -228,17 +248,17 @@ select_reverse/1
 select_reverse/2
 select_reverse/3
 setopts/2
-slot/2
-tab2file/2
+-- slot/2
+-- tab2file/2
 tab2file/3
-tab2list/1
-tabfile_info/1
+-- tab2list/1
+-- tabfile_info/1
 table/1
 table/2
-take/2
+-- take/2
 test_ms/2
-to_dets/2
-update_counter/3
-update_counter/4
-update_element/3
+-- to_dets/2
+-- update_counter/3
+-- update_counter/4
+-- update_element/3
 -}
