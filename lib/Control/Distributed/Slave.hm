@@ -16,17 +16,17 @@ module Control.Distributed.Slave where
 
 import Control.Monad (IO)
 import Control.Distributed.Node (Node)
-import Network.Socket (HostName)
+import Network.Inet (Hostname)
 import Data.Unit (Unit)
 import Foreign (ffiIO0)
 
-foreign import start :: HostName -> IO Node
-foreign import startWith :: HostName -> String -> IO Node
-foreign import startWithArgs :: HostName -> String -> String -> IO Node
+foreign import start :: Hostname -> IO Node
+foreign import startWith :: Hostname -> String -> IO Node
+foreign import startWithArgs :: Hostname -> String -> String -> IO Node
 
-foreign import startLink :: HostName -> IO Node
-foreign import startLinkWith :: HostName -> String -> IO Node
-foreign import startLinkWithArgs :: HostName -> String -> String -> IO Node
+foreign import startLink :: Hostname -> IO Node
+foreign import startLinkWith :: Hostname -> String -> IO Node
+foreign import startLinkWithArgs :: Hostname -> String -> String -> IO Node
 
 stop :: IO ()
 stop = ffiIO0 :slave :stop
