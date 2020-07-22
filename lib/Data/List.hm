@@ -101,12 +101,12 @@ splitAt = ffi2 :lists :split
 dropWhile :: forall a. (a -> Boolean) -> [a] -> [a]
 dropWhile = ffi2 :lists :dropWhile
 
-infixl 9 index as !!
-index :: forall a. [a] -> Integer -> a
-index xs  n | n < 0 =  error "Prelude.!!: negative index"
-index []      _     =  error "Prelude.!!: index too large"
-index [x|_]   0     =  x
-index [_|xs]  n     =  index xs (n-1)
+infixl 9 indexElem as !!
+indexElem :: forall a. [a] -> Integer -> a
+indexElem xs  n | n < 0 =  error "Prelude.!!: negative index"
+indexElem []      _     =  error "Prelude.!!: index too large"
+indexElem [x|_]   0     =  x
+indexElem [_|xs]  n     =  indexElem xs (n-1)
 -----------------------------------------------------------------------------
 -- Sort lists
 -----------------------------------------------------------------------------
