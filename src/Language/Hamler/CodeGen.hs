@@ -245,9 +245,7 @@ exprToErl (C.Let _ bs e) = do
   return e'
 exprToErl (C.Case _ es alts) = do
   es' <- mapM exprToErl es
-  alts'' <- mapM altToErl alts
-  tanV <- matchFail (head alts)
-  let alts' = alts'' ++ tanV
+  alts' <- dealAlts es' alts
   gs <- get
   let allVar = M.size (gs ^. localVar)
       is = [allVar .. allVar + length es' -1]
@@ -279,28 +277,75 @@ isBinaryBinder (BinaryBinder _ _) = True
 isBinaryBinder (MapBinder _ _) = True
 isBinaryBinder _ = False
 
+isWildBinder :: Binder C.Ann -> Bool
+isWildBinder (NullBinder  _) = True
+isWildBinder (VarBinder _ _) = True
+isWildBinder _ = False
+
+
 guardv :: Exprs Text
 guardv = ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "true"
 
--- | CoreFn Alt to CoreErlang Alt
-altToErl :: CaseAlternative C.Ann -> Translate (E.Clause Text)
-altToErl (CaseAlternative bs res) = do
+dealAlts :: [E.Expr Text] -> [CaseAlternative C.Ann] -> Translate [Clause Text]
+dealAlts _ [] = error "strange happened"
+dealAlts _ alts@[(CaseAlternative bs res)] = do
+  let guard1 = ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "true" :: Exprs Text
   pats <- mapM binderToPat bs
-  let guard1 = ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "true"
   case res of
     Right expr -> do
       expr' <- exprToErl expr
+      tanV <- matchFail (head alts)
+      return $ (ann $ Clause pats guard1 (ann . Expr $ expr')) : tanV
+    Left x -> do
+      x' <- guardToErl x
       return
-        . ann
-        $ Clause pats guard1 (ann . Expr $ expr')
-    Left xs -> do
-      xs' <- guardToErl xs
+        [ann $ Clause pats guard1 (ann $ Expr $ x')]
+dealAlts es ((CaseAlternative bs res):xs) = do
+  let guard1 = ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "true" :: Exprs Text
+  pats <- mapM binderToPat bs
+  case res of
+    Right expr -> do
+      expr' <- exprToErl expr
+      exprs' <- dealAlts es xs
       return
-        . ann
-        $ Clause pats guard1 (ann $ Exprs [xs'])
+        $  (ann $ Clause pats guard1 (ann . Expr $ expr')) : exprs'
+    Left x -> do
+      x' <- gdToErl x  es xs
+      exprs' <- do
+        let t1 = length $ Prelude.filter isWildBinder bs
+        if t1 == length bs
+          then return []
+          else dealAlts es xs
+      return $ (ann $ Clause pats guard1 (ann $ Expr $ x')) : exprs'
+
+gdToErl :: [(C.Guard C.Ann, C.Expr C.Ann)] -> [E.Expr Text] -> [CaseAlternative C.Ann] -> Translate (E.Expr Text)
+gdToErl [] _ _ = error "strange happened"
+gdToErl [(g, e)] res rxs= do
+  g' <- exprToErl g
+  e' <- exprToErl e
+  res' <- dealAlts res rxs
+  let true = ann . PLiteral . ann . LAtom . ann $ Atom "true"
+      false = ann . PLiteral . ann . LAtom . ann $ Atom "false"
+      guard1 = ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "true"
+      altTrue = ann $ Clause [true] guard1 (ann $ Expr e')
+      altFalse = ann $ Clause [false] guard1 . ann $ Expr (ann $ ECase (ann $ Exprs $ res) res')
+  return . ann $ ECase (ann $ E.Expr g') [altTrue, altFalse]
+gdToErl ((g, e) : xs) res rxs= do
+  g' <- exprToErl g
+  e' <- exprToErl e
+  xs' <- gdToErl xs res rxs
+  let true = ann . PLiteral . ann . LAtom . ann $ Atom "true"
+      false = ann . PLiteral . ann . LAtom . ann $ Atom "false"
+      guard1 = ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "true"
+      altTrue = ann $ Clause [true] guard1 (ann $ Expr e')
+      altFalse = ann $ Clause [false] guard1 . ann $ Expr xs'
+  return $ ann $ ECase (ann $ E.Expr g') [altTrue, altFalse]
 
 guardToErl :: [(C.Guard C.Ann, C.Expr C.Ann)] -> Translate (E.Expr Text)
-guardToErl [] = return . ann . ELit $ ann LNil
+guardToErl [] = return . ann
+  $ EModCall (stringToAtomExprs "erlang")
+             (stringToAtomExprs "error")
+             [ann $ Expr $ ann $ ELit $ ann $ LString "error"]
 guardToErl ((g, e) : xs) = do
   g' <- exprToErl g
   e' <- exprToErl e
