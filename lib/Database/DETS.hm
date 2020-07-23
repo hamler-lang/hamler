@@ -12,30 +12,14 @@
 -- The Erlang DETS database.
 --
 -----------------------------------------------------------------------------
-module Database.DETS
-  ( TableName
-  , TableInfo
-    -- * APIs
-  , all
-  , close
-  , delete
-  , deleteAllObjects
-  , deleteObject
-  , first
-  , next
-  , fromETS
-  , info
-  , insert
-  , insertNew
-  , lookup
-  , toETS
-  ) where
+module Database.DETS where
 
 import Control.Monad (IO)
 import Data.Maybe (Maybe)
 import Data.Unit (Unit)
-import Foreign (ffiIO0, ffiIO1)
+import Foreign (ffiIO0, ffiIO1, ffiIO2, ffiIO3)
 import System.IO (FilePath)
+import Data.Pid (Pid)
 
 import Database.ETS as ETS
 
@@ -48,6 +32,24 @@ type TableInfo =
   , size      :: Integer
   , tableType :: ETS.TableType
   }
+
+
+data Arg
+  = AccessRead
+  | AccessReadWrite
+  | AutoSaveInfinity
+  | AutoSave Integer
+  | EstimatedNoObjects Integer
+  | File FilePath
+  | MaxNoSlots Integer
+  | MinNoSlots Integer
+  | Keypos Integer
+  | RamFile Boolean
+  | RepairForce
+  | Repair Boolean
+  | Bag
+  | DuplicateBag
+  | Set
 
 all :: IO [TableName]
 all = ffiIO0 :dets :all
@@ -77,37 +79,79 @@ foreign import lookup :: forall k v. TableName -> k -> IO [v]
 
 foreign import toETS :: TableName -> ETS.TableId -> IO ()
 
+foreign import foldl :: forall v acc. (v -> acc -> acc) -> acc -> TableName -> IO acc
+
+foreign import foldr :: forall v acc. (v -> acc -> acc) -> acc -> TableName -> IO acc
+
+foreign import infoWith :: TableName -> Atom -> IO (Maybe TableInfo)
+
+isCompatibleBchunkFormat :: TableName -> Binary -> IO Boolean
+isCompatibleBchunkFormat = ffiIO2 :dets :is_compatible_bchunk_format
+
+foreign import isDetsFile :: FilePath -> IO Boolean
+
+foreign import match :: forall a v. TableName -> a -> IO [v]
+
+foreign import data Continuation :: Type
+
+foreign import matchContinuation :: forall v. Continuation -> IO (Maybe ([v], Continuation))
+
+foreign import matchWithLimit :: forall a v. TableName -> a -> Integer -> IO (Maybe ([v], Continuation))
+
+foreign import matchDelete :: forall a. TableName -> a -> IO ()
+
+foreign import matchObject :: forall a v. TableName -> a -> IO [v]
+
+
+foreign import matchObjectContinuation :: forall v. Continuation -> IO (Maybe ([v], Continuation))
+
+foreign import matchObjectWithLimit :: forall a v. TableName -> a -> Integer -> IO (Maybe ([v], Continuation))
+
+foreign import openFile :: TableName -> [Arg] -> IO TableName
+
+foreign import pid2Nmae :: Pid -> IO (Maybe TableName)
+
+safeFixtable :: TableName -> Boolean -> IO ()
+safeFixtable = ffiIO2 :dets :safe_fixtable
+
+foreign import slot :: forall v. TableName -> Integer -> IO (Maybe [v])
+
+foreign import sync :: TableName -> IO ()
+
+updateCounter :: forall k. TableName -> k -> Integer -> IO Integer
+updateCounter = ffiIO3 :dets :update_counter
+
 {- TODO
 bchunk/2
-delete_object/2
-first/1
-foldl/3
-foldr/3
-info/2
+-- delete_object/2
+-- first/1
+-- foldl/3
+-- foldr/3
+-- info/2
 init_table/2
 init_table/3
-is_compatible_bchunk_format/2
-is_dets_file/1
-match/1
-match/2
-match/3
-match_delete/2
-match_object/1
-match_object/2
-match_object/3
+-- is_compatible_bchunk_format/2
+-- is_dets_file/1
+-- match/1
+-- match/2
+-- match/3
+-- match_delete/2
+-- match_object/1
+-- match_object/2
+-- match_object/3
 open_file/1
-open_file/2
-pid2name/1
+-- open_file/2
+-- pid2name/1
 repair_continuation/2
-safe_fixtable/2
+-- safe_fixtable/2
 select/1
 select/2
 select/3
 select_delete/2
-slot/2
-sync/1
+-- slot/2
+-- sync/1
 table/1
 table/2
 traverse/2
-update_counter/3
+-- update_counter/3
 -}
