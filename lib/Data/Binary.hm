@@ -68,7 +68,7 @@ duplicate :: Binary -> Integer -> Binary
 duplicate = ffi2 :binary :copy
 
 copy :: Binary -> Binary
-copy = duplicate 1
+copy = ffi1 :binary :copy
 
 first :: Binary -> Integer
 first = ffi1 :binary :first
