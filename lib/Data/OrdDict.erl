@@ -10,7 +10,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Map FFI Module.
+%% The OrdDict FFI Module.
 %%
 %%---------------------------------------------------------------------------
 -module('OrdDict').
@@ -33,7 +33,7 @@
       Orddict1 :: orddict(Key, Value),
       Orddict2 :: orddict(Key, Value).
 filter(Pred, Orddict1) ->
-    F = fun(Key, Value) -> (Pred(Key))(Value) end,
+    F = fun(Key, Value) -> 'Curry':apply(Pred, [Key, Value]) end,
     orddict:filter(F, Orddict1).
 
 %% find :: forall a b. a -> OrdDict a b -> Maybe b -- {Ok, b} | Error
@@ -42,7 +42,7 @@ filter(Pred, Orddict1) ->
 find(Key, Orddict) ->
     case orddict:find(Key, Orddict) of
         {ok, Value} -> {'Just', Value};
-        error -> 'Nothing'
+        error -> {'Nothing'}
     end.
 
 %% fold :: forall a b acc. (a -> b -> acc -> acc)  -> acc -> OrdDict a b -> acc
@@ -54,7 +54,7 @@ find(Key, Orddict) ->
       AccIn :: Acc,
       AccOut :: Acc.
 fold(Fun, Acc0, Orddict) ->
-    F = fun(Key, Value, AccIn) -> ((Fun(Key))(Value))(AccIn) end,
+    F = fun(Key, Value, AccIn) -> 'Curry':apply(Fun, [Key, Value, AccIn]) end,
     orddict:fold(F, Acc0, Orddict).
 
 %% take :: forall a b. a -> OrdDict a b -> Maybe b (OriDict a b)
@@ -66,7 +66,7 @@ fold(Fun, Acc0, Orddict) ->
 take(Key, Orddict) ->
     case orddict:take(Key, Orddict) of
         {Value, Ordrdict1} -> {'Just', {Value, Ordrdict1}};
-        error -> 'Noting'
+        error -> {'Noting'}
     end.
 
 %% map :: forall a b. (a -> b -> b) -> OrdDict a b -> OrdDict a b
@@ -75,7 +75,7 @@ take(Key, Orddict) ->
       Orddict1 :: orddict(Key, Value1),
       Orddict2 :: orddict(Key, Value2).
 map(Fun, Orddict1) -> 
-    F = fun(Key, Value1) -> (Fun(Key))(Value1) end,
+    F = fun(Key, Value1) -> 'Curry':apply(Fun, [Key, Value1]) end,
     orddict:map(F, Orddict1).
 
 %% merge :: forall a b. (a -> b -> b -> b) -> OrdDict a b -> OrdDict a b -> OrdDict a b
@@ -85,5 +85,5 @@ map(Fun, Orddict1) ->
       Orddict2 :: orddict(Key, Value2),
       Orddict3 :: orddict(Key, Value).
 merge(Fun, Orddict1, Orddict2) ->
-    F = fun(Key, Value1, Value2) -> ((Fun(Key))(Value1))(Value2) end,
+    F = fun(Key, Value1, Value2) -> 'Curry':apply(Fun, [Key, Value1, Value2]) end,
     orddict:merge(F, Orddict1, Orddict2).

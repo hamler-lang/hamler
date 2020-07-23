@@ -10,7 +10,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Map FFI Module.
+%% The OrdSet FFI Module.
 %%
 %%---------------------------------------------------------------------------
 -module('OrdSet').
@@ -27,6 +27,6 @@
       Acc0 :: term(),
       Acc1 :: term().
 fold(Fun, Acc0, Ordset) ->
-    F = fun(Element, AccIn) -> (Fun(Element))(AccIn) end,
+    F = fun(Element, AccIn) -> 'Curry':apply(Fun, [Element, AccIn]) end,
     ordsets:fold(F, Acc0, Ordset).
 
