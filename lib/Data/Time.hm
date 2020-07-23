@@ -18,9 +18,16 @@ import Control.Monad
 
 type Time = Integer
 
+data TimeUnit
+  = Second
+  | Millisecond
+  | Microsecond
+  | Nanosecond
+  | Native
+  | PerfCounter
+
 -- TODO:...
 foreign import data UTCTime :: Type
 
 foreign import getCurrentTime :: IO UTCTime
-
 
