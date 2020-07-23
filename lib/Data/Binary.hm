@@ -57,15 +57,15 @@ toTerm = ffi1 :erlang :binary_to_term
 -- | Operators
 
 -- | Get Byte from Binary
-at :: Integer -> Binary -> Integer -- TODO: exception?
-at pos bin = ffi2 :binary :at bin pos
+at :: Binary -> Integer -> Integer -- TODO: exception?
+at = ffi2 :binary :at
 
 -- | Get Bytes from Binary
-binToList :: Integer -> Integer -> Binary -> [Integer]
-binToList start end bin = ffi3 :binary :bin_to_list bin start end
+binToList :: Binary -> Integer -> Integer -> [Integer]
+binToList = ffi3 :binary :bin_to_list
 
-duplicate :: Integer -> Binary -> Binary
-duplicate n bin = ffi2  :binary :copy bin n
+duplicate :: Binary -> Integer -> Binary
+duplicate = ffi2 :binary :copy
 
 copy :: Binary -> Binary
 copy = duplicate 1
