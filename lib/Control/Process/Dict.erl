@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Foldable
+%% Module      :  Dict
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,19 +9,23 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Foldable FFI module.
+%% The Dict FFI module.
 %%
 %%---------------------------------------------------------------------------
--module('Foldable').
+-module('Dict').
 
--export([ foldlListImpl/3
-        , foldrListImpl/3
+-include("../../Foreign.hrl").
+
+-compile(no_auto_import).
+
+-export([ erase/1
+        , eraseAll/0
         ]).
 
-foldlListImpl(Fun, Acc, List) ->
-    F = fun(A, B) -> (Fun(A))(B) end,
-    lists:foldl(F, Acc, List).
+erase(Key) ->
+  ?IO(maybe(erlang:erase(Key))).
 
-foldrListImpl(Fun, Acc, List) ->
-    F = fun(A, B) -> (Fun(A))(B) end,
-    lists:foldr(F, Acc, List).
+eraseAll() -> ?IO(erlang:erase()).
+
+maybe(undefined) -> {'Nothing'};
+maybe(Val) -> {'Just', Val}.

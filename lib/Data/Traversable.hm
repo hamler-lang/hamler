@@ -12,14 +12,33 @@
 -- The Traversable typeclass.
 --
 -----------------------------------------------------------------------------
-module Data.Traversable where
+module Data.Traversable
+  ( class Traversable
+  , traverse, sequence
+  ) where
 
 import Data.Foldable (class Foldable)
-import Control.Monad (class Applicative, class Functor)
+import Control.Monad (class Applicative, class Functor, pure, liftA2)
+import Data.Functor ((<$>))
 
 class (Functor t, Foldable t) => Traversable t where
   traverse :: forall a b m. Applicative m => (a -> m b) -> t a -> m (t b)
   sequence :: forall a m. Applicative m => t (m a) -> m (t a)
 
+instance Traversable List where
+  traverse = traverseDefault
+  sequence = sequencListImpl
 
+sequencListImpl :: forall a m. Applicative m => List (m a) -> m (List a)
+sequencListImpl [] = pure []
+sequencListImpl [x|xs] = liftA2 (\a b -> [a | b] ) x (sequencListImpl xs)
+
+traverseDefault
+  :: forall t a b m
+   . Traversable t
+  => Applicative m
+  => (a -> m b)
+  -> t a
+  -> m (t b)
+traverseDefault f ta = sequence (f <$> ta)
 

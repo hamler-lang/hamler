@@ -19,14 +19,11 @@
 -compile(no_auto_import).
 
 -export([ selfPid/0
-        , spawn/1
         , send/2
         , 'receive'/0
         , receiveAfter/1
         , register/2
         , 'monitor'/1
-        , erase/1
-        , eraseAll/0
         , garbageCollectProcWith/2
         , whereis/1
         , kill/1
@@ -37,9 +34,6 @@
 
 -spec(selfPid() -> pid()).
 selfPid() -> ?IO(erlang:self()).
-
-spawn(Fun) ->
-  ?IO(erlang:spawn(fun() -> Fun() end)).
 
 -spec(send(pid(), term()) -> term()).
 send(Pid, Msg) -> ?IO(erlang:send(Pid, Msg)).
@@ -58,14 +52,6 @@ register(Name, Pid) ->
 -spec('monitor'(pid()) -> reference()).
 'monitor'(Pid) ->
   ?IO(erlang:monitor(process, Pid)).
-
-eraseAll() -> ?IO(erlang:erase()).
-
-erase(Key) ->
-  ?IO(case erlang:erase(Key) of
-        undefined -> {'Nothing'};
-        Val -> {'Just', Val}
-      end).
 
 garbageCollectProcWith(Pid, Options) ->
   ?IO(erlang:garbage_collect(Pid, parseGcOpts(Options, []))).

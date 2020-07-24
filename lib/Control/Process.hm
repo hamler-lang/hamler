@@ -15,8 +15,8 @@
 module Control.Process
   ( self
   , selfPid
-    -- * Spawn
-  , spawn
+  , isAlive
+    -- * send/recv
   , send
   , receive
   , receiveAfter
@@ -30,27 +30,43 @@ module Control.Process
   , unlink
   , monitor
   , demonitor
-  , isProcessAlive
     -- * Process Flags
   , processFlag
   , trapExit
     -- * Process Info
-  , processes
   , processInfo
-    -- * Process Dictionary
-  , erase
-  , eraseAll
     -- * Process Termination
   , exit
   , kill
+    -- * Process Dictionary
+  , module Control.Process.Dict
+    -- * Process Flags
   , module Control.Process.Flags
   , module Control.Process.Infos
+    -- * Spawn Process
+  , module Control.Process.Spawn
   , module Control.Process.Types
   ) where
 
 import Control.Monad (IO, (>>=))
+import Control.Process.Dict (erase, eraseAll)
 import Control.Process.Flags (Flag)
 import Control.Process.Infos (ProcessInfo)
+import Control.Process.Spawn
+  ( Option(..)
+  , spawn
+  , spawnAt
+  , spawnWith
+  , spawnAtWith
+  , spawnLink
+  , spawnLinkAt
+  , spawnLinkWith
+  , spawnLinkAtWith
+  , spawnMonitor
+  , spawnMonitorAt
+  , spawnMonitorWith
+  , spawnMonitorAtWith
+  )
 import Control.Process.Types
 import Data.Maybe (Maybe)
 import Data.Pid (Pid)
@@ -65,8 +81,12 @@ self = selfPid
 -- Return the Pid of calling process.
 foreign import selfPid :: Process Pid
 
--- Spawn a Process.
-foreign import spawn ::forall a. IO a -> Process Pid
+isAlive :: Pid -> Process Boolean
+isAlive = ffiIO1 :erlang :is_process_alive
+
+-----------------------------------------------------------------------------
+-- | Message passing
+-----------------------------------------------------------------------------
 
 -- Send a message to a Process.
 foreign import send :: forall a. Pid -> a -> Process a
@@ -83,7 +103,7 @@ foreign import receiveAfter :: forall a. Integer -> Process a
 -- foreign import receiveScanlMatch :: forall a b.(a -> Process b) -> Process b
 
 -----------------------------------------------------------------------------
--- | Register/Unregister Processes
+-- | Registered Processes
 -----------------------------------------------------------------------------
 
 foreign import register :: Atom -> Pid -> Process ()
@@ -114,9 +134,6 @@ demonitor = ffiIO1 :erlang :demonitor
 demonitorWith :: Reference -> [Atom] -> IO Boolean
 demonitorWith = ffiIO2 :erlang :demonitor
 
-isProcessAlive :: Pid -> Process Boolean
-isProcessAlive = ffiIO1 :erlang :is_process_alive
-
 -----------------------------------------------------------------------------
 -- | Process Flags
 -----------------------------------------------------------------------------
@@ -131,28 +148,7 @@ foreign import trapExit :: Boolean -> Process Boolean
 -- | Process Info
 -----------------------------------------------------------------------------
 
-processes :: IO [Pid]
-processes = ffiIO0 :erlang :processes
-
 foreign import processInfo :: Pid -> Process (Maybe ProcessInfo)
-
------------------------------------------------------------------------------
--- | Process Dictionary
------------------------------------------------------------------------------
-
-foreign import erase :: forall k v. k -> Process (Maybe v)
-
--- TODO: Fixme later
--- | Returns the process dictionary and deletes it.
-foreign import eraseAll :: forall k v. Process [(k, v)]
-
-{-
-  get() -> [{Key, Val}]
-  get(Key) -> Val | undefined
-  get_keys() -> [Key]
-  get_keys(Val) -> [Key]
-  put(Key, Val) -> term()
--}
 
 -----------------------------------------------------------------------------
 -- | Process GC and Hibernate
@@ -166,8 +162,7 @@ garbageCollectProc = ffiIO1 :erlang :garbage_collect
 
 data GcOption = GcMajor | GcMinor | GcAsync Reference
 
-foreign import garbageCollectProcWith
-  :: Pid -> [GcOption] -> Process ()
+foreign import garbageCollectProcWith :: Pid -> [GcOption] -> Process ()
 
 -- erlang:hibernate(Module, Function, Args) -> no_return()
 
@@ -180,7 +175,6 @@ groupLeader = ffiIO0 :erlang :group_leader
 
 isGroupLeader :: Pid -> Pid -> Process Boolean
 isGroupLeader = ffiIO2 :erlang :group_leader
-
 
 -----------------------------------------------------------------------------
 -- | Process Termination
@@ -202,32 +196,4 @@ suspend = ffiIO1 :erlang :suspend_process
 
 yield :: Process ()
 yield = ffiIO0 :erlang :yield
-
-{-
-spawn(Fun) -> pid()
-spawn(Node, Fun) -> pid()
-spawn(Module, Function, Args) -> pid()
-spawn(Node, Module, Function, Args) -> pid()
-spawn_link(Fun) -> pid()
-spawn_link(Node, Fun) -> pid()
-spawn_link(Module, Function, Args) -> pid()
-spawn_link(Node, Module, Function, Args) -> pid()
-spawn_monitor(Fun) -> {pid(), reference()}
-spawn_monitor(Node, Fun) -> {pid(), reference()}
-spawn_monitor(Module, Function, Args) -> {pid(), reference()}
-spawn_monitor(Node, Module, Function, Args) ->
-spawn_opt(Fun, Options) -> pid() | {pid(), reference()}
-spawn_opt(Node, Fun, Options) -> pid() | {pid(), reference()}
-spawn_opt(Module, Function, Args, Options) ->
-spawn_opt(Node, Module, Function, Args, Options) ->
-spawn_request(Fun) -> ReqId
-spawn_request(Fun, Options) -> ReqId
-spawn_request(Node, Fun) -> ReqId
-spawn_request(Node, Fun, Options) -> ReqId
-spawn_request(Module, Function, Args) -> ReqId
-spawn_request(Node, Module, Function, Args) -> ReqId
-spawn_request(Module, Function, Args, Options) -> ReqId
-spawn_request(Node, Module, Function, Args, Options) -> ReqId
-spawn_request_abandon(ReqId :: reference()) -> boolean()
--}
 

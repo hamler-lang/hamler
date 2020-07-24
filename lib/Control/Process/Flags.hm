@@ -29,13 +29,6 @@ data Flag
   | SaveCalls Integer
   | Sensitive Boolean
 
-data MsgQueueData
-  = OffHeap
-  | OnHeap
+data MsgQueueData = OffHeap | OnHeap
 
-data PriorityLevel
-  = Low
-  | Normal
-  | High
-  | Max
-
+data PriorityLevel = Low | Normal | High | Max

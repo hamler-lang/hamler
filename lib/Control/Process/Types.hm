@@ -12,11 +12,7 @@
 -- The Process Types module.
 --
 -----------------------------------------------------------------------------
-module Control.Process.Types
-  ( Process
-  , From
-  , ExitReason
-  ) where
+module Control.Process.Types where
 
 import Control.Monad (IO)
 
