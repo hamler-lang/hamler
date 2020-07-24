@@ -15,8 +15,7 @@
 module Control.Process
   ( self
   , selfPid
-    -- * Spawn
-  , spawn
+    -- * send/recv
   , send
   , receive
   , receiveAfter
@@ -45,12 +44,28 @@ module Control.Process
   , kill
   , module Control.Process.Flags
   , module Control.Process.Infos
+  , module Control.Process.Spawn
   , module Control.Process.Types
   ) where
 
 import Control.Monad (IO, (>>=))
 import Control.Process.Flags (Flag)
 import Control.Process.Infos (ProcessInfo)
+import Control.Process.Spawn
+  ( Option(..)
+  , spawn
+  , spawnAt
+  , spawnWith
+  , spawnAtWith
+  , spawnLink
+  , spawnLinkAt
+  , spawnLinkWith
+  , spawnLinkAtWith
+  , spawnMonitor
+  , spawnMonitorAt
+  , spawnMonitorWith
+  , spawnMonitorAtWith
+  )
 import Control.Process.Types
 import Data.Maybe (Maybe)
 import Data.Pid (Pid)
@@ -64,9 +79,6 @@ self = selfPid
 
 -- Return the Pid of calling process.
 foreign import selfPid :: Process Pid
-
--- Spawn a Process.
-foreign import spawn ::forall a. IO a -> Process Pid
 
 -- Send a message to a Process.
 foreign import send :: forall a. Pid -> a -> Process a
@@ -202,32 +214,4 @@ suspend = ffiIO1 :erlang :suspend_process
 
 yield :: Process ()
 yield = ffiIO0 :erlang :yield
-
-{-
-spawn(Fun) -> pid()
-spawn(Node, Fun) -> pid()
-spawn(Module, Function, Args) -> pid()
-spawn(Node, Module, Function, Args) -> pid()
-spawn_link(Fun) -> pid()
-spawn_link(Node, Fun) -> pid()
-spawn_link(Module, Function, Args) -> pid()
-spawn_link(Node, Module, Function, Args) -> pid()
-spawn_monitor(Fun) -> {pid(), reference()}
-spawn_monitor(Node, Fun) -> {pid(), reference()}
-spawn_monitor(Module, Function, Args) -> {pid(), reference()}
-spawn_monitor(Node, Module, Function, Args) ->
-spawn_opt(Fun, Options) -> pid() | {pid(), reference()}
-spawn_opt(Node, Fun, Options) -> pid() | {pid(), reference()}
-spawn_opt(Module, Function, Args, Options) ->
-spawn_opt(Node, Module, Function, Args, Options) ->
-spawn_request(Fun) -> ReqId
-spawn_request(Fun, Options) -> ReqId
-spawn_request(Node, Fun) -> ReqId
-spawn_request(Node, Fun, Options) -> ReqId
-spawn_request(Module, Function, Args) -> ReqId
-spawn_request(Node, Module, Function, Args) -> ReqId
-spawn_request(Module, Function, Args, Options) -> ReqId
-spawn_request(Node, Module, Function, Args, Options) -> ReqId
-spawn_request_abandon(ReqId :: reference()) -> boolean()
--}
 
