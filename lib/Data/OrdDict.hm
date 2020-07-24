@@ -6,6 +6,7 @@
 --
 -- Maintainer  :  Feng Lee, feng@emqx.io
 --                Yang M, yangm@emqx.io
+--                Rory Z, rory@emqx.io
 -- Stability   :  experimental
 -- Portability :  portable
 --
@@ -14,26 +15,64 @@
 -----------------------------------------------------------------------------
 module Data.OrdDict where
 
-{- TODO:
-append/3
-append_list/3
-erase/2
-fetch/2
-fetch_keys/1
-filter/2
-find/2
-fold/3
-from_list/1
-is_empty/1
-is_key/2
-map/2
-merge/3
-new/0
-size/1
-store/3
-take/2
-to_list/1
-update/3
-update/4
-update_counter/3
--}
+import Foreign (ffi0, ffi1, ffi2, ffi3, ffi4)
+import Data.Maybe (Maybe)
+
+foreign import data OrdDict :: Type -> Type -> Type
+
+new :: forall a b. OrdDict a b
+new = ffi0 :orddict :new
+
+append :: forall a b. a -> a -> OrdDict a b -> OrdDict a b
+append = ffi3 :orddict :append
+
+appendList :: forall a b. a -> [b] -> OrdDict a b -> OrdDict a b
+appendList = ffi3 :orddict :append_list
+
+erase :: forall a b. a -> OrdDict a b -> OrdDict a b
+erase = ffi2 :orddict :erase
+
+fetch :: forall a b. a -> OrdDict a b -> a
+fetch = ffi2 :orddict :fetch
+
+fetchKeys :: forall a b. OrdDict a b -> [a]
+fetchKeys  = ffi1 :orddict :fetch_keys
+
+foreign import filter :: forall a b. (a -> b -> Boolean) -> OrdDict a b -> OrdDict a b
+
+foreign import find :: forall a b. a -> OrdDict a b -> Maybe b
+
+foreign import fold :: forall a b acc. (a -> b -> acc -> acc)  -> acc -> OrdDict a b -> acc
+
+fromList :: forall a b. [(a,b)] -> OrdDict a b
+fromList = ffi1 :orddict :from_list
+
+isEmpty :: forall a b. a -> OrdDict a b -> Boolean
+isEmpty = ffi1 :orddict :is_empty
+
+isKey :: forall a b. a -> OrdDict a b -> Boolean
+isKey = ffi2 :orddict :is_key
+
+foreign import map :: forall a b. (a -> b -> b) -> OrdDict a b -> OrdDict a b
+
+foreign import merge :: forall a b. (a -> b -> b -> b) -> OrdDict a b -> OrdDict a b -> OrdDict a b
+
+size :: forall a b. OrdDict a b -> Integer
+size = ffi1 :orddict :size
+
+store :: forall a b. a -> b -> OrdDict a b -> OrdDict a b
+store = ffi3 :orddict :store
+
+foreign import take :: forall a b. a -> OrdDict a b -> Maybe (b, (OrdDict a b))
+
+toList :: forall a b. OrdDict a b -> [(a, b)]
+toList = ffi1 :orddict :to_list
+
+updateCounter :: forall a b increment. a -> increment -> OrdDict a b -> OrdDict a b
+updateCounter = ffi3 :orddict :update_counter
+
+update :: forall a b. a -> (b -> b) -> OrdDict a b -> OrdDict a b
+update = ffi3 :orddict :update
+
+updateByInitial :: forall a b initial. a -> (b -> b) -> initial -> OrdDict a b -> OrdDict a b
+updateByInitial = ffi4 :orddict :update
