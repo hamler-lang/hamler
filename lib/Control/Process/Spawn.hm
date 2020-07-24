@@ -12,10 +12,81 @@
 -- The Process Spawn module.
 --
 -----------------------------------------------------------------------------
-module Control.Process.Spawn where
+module Control.Process.Spawn
+  ( Option(..)
+    -- * spawn
+  , spawn
+  , spawnAt
+  , spawnWith
+  , spawnAtWith
+    -- * spawn link
+  , spawnLink
+  , spawnLinkAt
+  , spawnLinkWith
+  , spawnLinkAtWith
+    -- * spawn monitor
+  , spawnMonitor
+  , spawnMonitorAt
+  , spawnMonitorWith
+  , spawnMonitorAtWith
+  , module Control.Process.Types
+  ) where
 
--- spawn
--- spawnLink
--- spawnMonitor
--- spawnOpt
--- spawnRequest
+import Control.Monad (IO)
+import Data.Pid (Pid)
+import Data.Ref (Ref)
+import Foreign (ffiIO1, ffiIO2)
+
+import Control.Distributed.Node (Node)
+import Control.Process.Types (Process, Level, MQD)
+
+data Option
+  = Priority Level
+  | FullsweepAfter Integer
+  | MinHeapSize Integer
+  | MinBinVheapSize Integer
+  | MaxHeapSize Integer
+  | MessageQueueData MQD
+
+spawn :: forall a. IO a -> Process Pid
+spawn = ffiIO1 :erlang :spawn
+
+spawnAt :: forall a. Node -> IO a -> Process Pid
+spawnAt = ffiIO2 :erlang :spawn
+
+foreign import spawnWith
+  :: forall a. IO a -> [Option] -> Process Pid
+
+foreign import spawnAtWith
+  :: forall a. Node -> IO a -> [Option] -> Process Pid
+
+spawnLink :: forall a. IO a -> Process Pid
+spawnLink = ffiIO1 :erlang :spawn_link
+
+spawnLinkAt :: forall a. Node -> IO a -> Process Pid
+spawnLinkAt = ffiIO2 :erlang :spawn_link
+
+foreign import spawnLinkWith
+  :: forall a. IO a -> [Option] -> Process Pid
+
+foreign import spawnLinkAtWith
+  :: forall a. Node -> IO a -> [Option] -> Process Pid
+
+spawnMonitor :: forall a. IO a -> Process (Pid, Ref)
+spawnMonitor = ffiIO1 :erlang :spawn_monitor
+
+spawnMonitorAt :: forall a. Node -> IO a -> Process (Pid, Ref)
+spawnMonitorAt = ffiIO2 :erlang :spawn_monitor
+
+foreign import spawnMonitorWith
+  :: forall a. IO a -> [Option] -> Process Pid
+
+foreign import spawnMonitorAtWith
+  :: forall a. Node -> IO a -> [Option] -> Process Pid
+
+spawnRequest :: forall a. IO a -> Process Ref
+spawnRequest = ffiIO1 :erlang :spawn_request
+
+spawnRequestAt :: forall a. Node -> IO a -> Process Ref
+spawnRequestAt = ffiIO2 :erlang :spawn_request
+

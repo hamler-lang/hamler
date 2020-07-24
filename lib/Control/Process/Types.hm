@@ -12,11 +12,7 @@
 -- The Process Types module.
 --
 -----------------------------------------------------------------------------
-module Control.Process.Types
-  ( Process
-  , From
-  , ExitReason
-  ) where
+module Control.Process.Types where
 
 import Control.Monad (IO)
 
@@ -24,6 +20,10 @@ import Control.Monad (IO)
 type Process = IO
 
 foreign import data From :: Type
+
+data Level = Low | Normal | High | Max
+
+data MQD = OnHeap | OffHeap
 
 data ExitReason
   = ExitNormal
