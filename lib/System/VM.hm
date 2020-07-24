@@ -12,183 +12,348 @@
 -- The Erlang VM module.
 --
 -----------------------------------------------------------------------------
-module System.VM
-  ( memory
-  , memoryOf
-  ) where
+module System.VM where
 
 import Control.Monad (IO)
--- import Data.Function (compose)
 import Data.Map (Map)
-
+import Data.Maybe (Maybe)
+import Data.Pid (Pid)
+import Data.Timeout (Timeout)
 import Foreign (ffiIO1)
 
-foreign import memory :: IO (Map Atom Integer)
+type MemInfo = Map Atom Integer
+
+foreign import memory :: IO MemInfo
 
 memoryOf :: Atom -> IO Integer
 memoryOf = ffiIO1 :erlang :memory
 
--- foreign import info :: IO VmInfo
+-----------------------------------------------------------------------------
+-- | VM info
+-----------------------------------------------------------------------------
 
-foreign import otpRelease :: IO String
+-----------------------------------------------------------------------------
+-- | Memory Allocation
 
-{-
-statistics(Item :: context_switches) -> {ContextSwitches, 0}
-statistics(Item :: exact_reductions) ->
-statistics(Item :: garbage_collection) ->
-statistics(Item :: io) -> {{input, Input}, {output, Output}}
-statistics(Item :: reductions) ->
-statistics(Item :: run_queue_lengths) -> [RunQueueLength]
-erlang:system_flag(Flag :: backtrace_depth, Depth) -> OldDepth
-erlang:system_flag(Flag :: cpu_topology, CpuTopology) ->
-erlang:system_flag(Flag :: dirty_cpu_schedulers_online,
-erlang:system_flag(Flag :: fullsweep_after, Number) -> OldNumber
-erlang:system_flag(Flag :: erts_alloc, Value :: {Alloc, F, V}) ->
-erlang:system_flag(Flag :: microstate_accounting, Action) ->
-erlang:system_flag(Flag :: min_heap_size, MinHeapSize) ->
-erlang:system_flag(Flag :: min_bin_vheap_size, MinBinVHeapSize) ->
-erlang:system_flag(Flag :: max_heap_size, MaxHeapSize) ->
-erlang:system_flag(Flag :: multi_scheduling, BlockState) ->
-erlang:system_flag(Flag :: scheduler_bind_type, How) ->
-erlang:system_flag(Flag :: scheduler_wall_time, Boolean) ->
-erlang:system_flag(Flag :: schedulers_online, SchedulersOnline) ->
-erlang:system_flag(Flag :: system_logger, Logger) -> PrevLogger
-erlang:system_flag(Flag :: trace_control_word, TCW) -> OldTCW
-erlang:system_flag(Flag :: time_offset, Value :: finalize) ->
-erlang:system_info(Item :: overview) -> boolean()
+type AllocatedAreas = Map Atom Integer
 
-erlang:system_info(Item :: allocated_areas) -> [tuple()]
-erlang:system_info(Item :: allocator) ->
-                      {Allocator, Version, Features, Settings}
-erlang:system_info(Item :: {allocator, Alloc}) -> [term()]
-erlang:system_info(Item :: alloc_util_allocators) -> [Alloc]
-erlang:system_info(Item :: {allocator_sizes, Alloc}) -> [term()]
-erlang:system_info(Item :: elib_malloc) -> false
+allocatedAreas :: IO AllocatedAreas
+allocatedAreas = info :allocated_areas
 
+foreign import data Allocator :: Type
 
-erlang:system_info(Item :: cpu_topology) -> CpuTopology
-erlang:system_info(Item ::
-                       {cpu_topology, defined | detected | used}) ->
-                      CpuTopology
-erlang:system_info(Item ::
-                       logical_processors |
-                       logical_processors_available |
-                       logical_processors_online) ->
-                      unknown | integer() >= 1
-erlang:system_info(Item :: update_cpu_info) -> changed | unchanged
-erlang:system_info(Item :: fullsweep_after) ->
-                      {fullsweep_after, integer() >= 0}
-erlang:system_info(Item :: garbage_collection) ->
-                      [{atom(), integer()}]
-erlang:system_info(Item :: heap_sizes) -> [integer() >= 0]
-erlang:system_info(Item :: heap_type) -> private
-erlang:system_info(Item :: max_heap_size) ->
-                      {max_heap_size,
-                       MaxHeapSize :: max_heap_size()}
-erlang:system_info(Item :: message_queue_data) ->
-                      message_queue_data()
-erlang:system_info(Item :: min_heap_size) ->
-                      {min_heap_size,
-                       MinHeapSize :: integer() >= 1}
-erlang:system_info(Item :: min_bin_vheap_size) ->
-                      {min_bin_vheap_size,
-                       MinBinVHeapSize :: integer() >= 1}
-erlang:system_info(Item :: procs) -> binary()
+allocator :: IO Allocator
+allocator = info :allocator
 
-erlang:system_info(Item :: atom_count) -> integer() >= 1
-erlang:system_info(Item :: atom_limit) -> integer() >= 1
-erlang:system_info(Item :: ets_count) -> integer() >= 1
-erlang:system_info(Item :: ets_limit) -> integer() >= 1
-erlang:system_info(Item :: port_count) -> integer() >= 0
-erlang:system_info(Item :: port_limit) -> integer() >= 1
-erlang:system_info(Item :: process_count) -> integer() >= 1
-erlang:system_info(Item :: process_limit) -> integer() >= 1
+-- erlang:system_info({allocator, Alloc}) -> [term()]
+-- erlang:system_info(alloc_util_allocators) -> [Alloc]
+-- erlang:system_info({allocator_sizes, Alloc}) -> [term()]
+-- erlang:system_info(elib_malloc) -> false
 
-erlang:system_info(Item :: end_time) -> integer() >= 0
-erlang:system_info(Item :: os_monotonic_time_source) ->
-                      [{atom(), term()}]
-erlang:system_info(Item :: os_system_time_source) ->
-                      [{atom(), term()}]
-erlang:system_info(Item :: start_time) -> integer()
-erlang:system_info(Item :: time_correction) -> true | false
-erlang:system_info(Item :: time_offset) ->
-                      preliminary | final | volatile
-erlang:system_info(Item :: time_warp_mode) ->
-                      no_time_warp | single_time_warp |
-                      multi_time_warp
-erlang:system_info(Item :: tolerant_timeofday
-erlang:system_info(Item :: dirty_cpu_schedulers) ->
-                      integer() >= 0
-erlang:system_info(Item :: dirty_cpu_schedulers_online) ->
-                      integer() >= 0
-erlang:system_info(Item :: dirty_io_schedulers) ->
-                      integer() >= 0
-erlang:system_info(Item :: multi_scheduling) ->
-                      disabled | blocked | blocked_normal |
-                      enabled
-erlang:system_info(Item :: multi_scheduling_blockers) ->
-                      [Pid :: pid()]
-erlang:system_info(Item :: otp_release) -> string()
-OTP 19.0
-erlang:system_info(Item :: scheduler_bind_type) ->
-                      spread | processor_spread | thread_spread |
-                      thread_no_node_processor_spread |
-                      no_node_processor_spread |
-                      no_node_thread_spread | no_spread | unbound
-erlang:system_info(Item :: scheduler_bindings) -> tuple()
-erlang:system_info(Item :: scheduler_id) ->
-                      SchedulerId :: integer() >= 1
-erlang:system_info(Item :: schedulers | schedulers_online) ->
-                      integer() >= 1
-erlang:system_info(Item :: smp_support) -> boolean()
-erlang:system_info(Item :: threads) -> boolean()
-erlang:system_info(Item :: thread_pool_size) -> integer() >= 0
-erlang:system_info(Item :: creation) -> integer()
-erlang:system_info(Item :: delayed_node_table_gc) ->
-                      infinity | integer() >= 0
-erlang:system_info(Item :: dist) -> binary()
-erlang:system_info(Item :: dist_buf_busy_limit) ->
-                      integer() >= 0
-erlang:system_info(Item :: dist_ctrl) ->
-                      {Node :: node(),
-                       ControllingEntity :: port() | pid()}
+-----------------------------------------------------------------------------
+-- | CPU Topology
 
+foreign import data CpuTopology :: Type
 
-erlang:system_info(Item :: build_type) ->
-                      opt | debug | purify | quantify | purecov |
-                      gcov | valgrind | gprof | lcnt | frmptr
-OTP R14B
-erlang:system_info(Item :: c_compiler_used) -> {atom(), term()}
-erlang:system_info(Item :: check_io) -> [term()]
-erlang:system_info(Item :: compat_rel) -> integer()
-erlang:system_info(Item :: debug_compiled) -> boolean()
-erlang:system_info(Item :: driver_version) -> string()
-erlang:system_info(Item :: dynamic_trace) ->
-                      none | dtrace | systemtap
-erlang:system_info(Item :: dynamic_trace_probes) -> boolean()
-erlang:system_info(Item :: info) -> binary()
-erlang:system_info(Item :: kernel_poll) -> boolean()
-erlang:system_info(Item :: loaded) -> binary()
-erlang:system_info(Item :: machine) -> string()
-erlang:system_info(Item :: modified_timing_level) ->
-                      integer() | undefined
-erlang:system_info(Item :: nif_version) -> string()
-erlang:system_info(Item :: otp_release) -> string()
-erlang:system_info(Item :: port_parallelism) -> boolean()
-erlang:system_info(Item :: system_architecture) -> string()
-erlang:system_info(Item :: system_logger) ->
-                      logger | undefined | pid()
-erlang:system_info(Item :: system_version) -> string()
-erlang:system_info(Item :: trace_control_word) ->
-                      integer() >= 0
-erlang:system_info(Item :: version) -> string()
-erlang:system_info(Item ::
-                       wordsize |
-                       {wordsize, internal} |
-                       {wordsize, external}) ->
-                      4 | 8
+cpuTopology :: IO (Maybe CpuTopology)
+cpuTopology = info :cpu_topology
 
--}
+logicalProcessors :: IO Integer
+logicalProcessors = info :logical_processors
+
+logicalProcessorsAvailable :: IO Integer
+logicalProcessorsAvailable = info :logical_processors_available
+
+logicalProcessorsOnline :: IO Integer
+logicalProcessorsOnline = info :logical_processors_online
+
+-- erlang:system_info({cpu_topology, defined | detected | used}) -> CpuTopology
+-- erlang:system_info(update_cpu_info) -> changed | unchanged
+
+-----------------------------------------------------------------------------
+-- | Process Information
+
+fullsweepAfter :: IO Integer
+fullsweepAfter = info :fullsweep_after
+
+garbageCollection :: IO (Map Atom Integer)
+garbageCollection = info :garbage_collection
+
+heapSizes :: IO [Integer]
+heapSizes = info :heap_sizes
+
+-- erlang:system_info(heap_type) -> private
+
+type MaxHeapSize =
+  { size :: Integer
+  , kill :: Boolean
+  , error_logger :: Boolean
+  }
+
+maxHeapSize :: IO MaxHeapSize
+maxHeapSize = info :max_heap_size
+
+messageQueueData :: IO Atom
+messageQueueData = info :message_queue_data
+
+minHeapSize :: IO Integer
+minHeapSize = info :min_heap_size
+
+minBinVHeapSize :: IO Integer
+minBinVHeapSize = info :min_bin_vheap_size
+
+-- erlang:system_info(procs) -> binary()
+
+-----------------------------------------------------------------------------
+-- | System Limits
+
+atomCount :: IO Integer
+atomCount = info :atom_count
+
+atomLimit :: IO Integer
+atomLimit = info :atom_limit
+
+etsCount :: IO Integer
+etsCount = info :ets_count
+
+etsLimit :: IO Integer
+etsLimit = info :ets_limit
+
+portCount :: IO Integer
+portCount = info :port_count
+
+portLimit :: IO Integer
+portLimit = info :port_limit
+
+processCount :: IO Integer
+processCount = info :process_count
+
+processLimit :: IO Integer
+processLimit = info :process_limit
+
+-----------------------------------------------------------------------------
+-- | System Time
+
+endTime :: IO Integer
+endTime = info :end_time
+
+-- erlang:system_info(os_monotonic_time_source) -> [{atom(), term()}]
+-- erlang:system_info(os_system_time_source) -> [{atom(), term()}]
+
+startTime :: IO Integer
+startTime = info :start_time
+
+timeCorrection :: IO Boolean
+timeCorrection = info :time_correction
+
+-- preliminary | final | volatile
+timeOffset :: IO Atom
+timeOffset = info :time_offset
+
+-- no_time_warp | single_time_warp | multi_time_warp
+timeWarpMode :: IO Atom
+timeWarpMode = info :time_warp_mode
+
+-- enabled | disabled
+tolerantTimeofday :: IO Atom
+tolerantTimeofday = info :tolerant_timeofday
+
+-----------------------------------------------------------------------------
+-- | Scheduler Information
+
+dirtyCpuSchedulers :: IO Integer
+dirtyCpuSchedulers = info :dirty_cpu_schedulers
+
+dirtyCpuSchedulersOnline :: IO Integer
+dirtyCpuSchedulersOnline = info :dirty_cpu_schedulers_online
+
+dirtyIOSchedulers :: IO Integer
+dirtyIOSchedulers = info :dirty_io_schedulers
+
+-- disabled | blocked | blocked_normal | enabled
+multiScheduling :: IO Atom
+multiScheduling = info :multi_scheduling
+
+multiSchedulingBlockers :: IO [Pid]
+multiSchedulingBlockers = info :multi_scheduling_blockers
+
+schedulerBindType :: IO Atom
+schedulerBindType = info :scheduler_bind_type
+
+schedulerBindings :: IO [Atom]
+schedulerBindings = info :scheduler_bindings
+
+schedulerId :: IO Integer
+schedulerId = info :scheduler_id
+
+schedulers :: IO Integer
+schedulers = info :schedulers
+
+schedulersOnline :: IO Integer
+schedulersOnline = info :schedulers_online
+
+smpSupport :: IO Boolean
+smpSupport = info :smp_support
+
+-- erlang:system_info(Item :: threads) -> boolean()
+
+threadPoolSize :: IO Integer
+threadPoolSize = info :thread_pool_size
+
+-----------------------------------------------------------------------------
+-- | Distribution Information
+
+creation :: IO Integer
+creation = info :creation
+
+delayedNodeTableGc :: IO Timeout
+delayedNodeTableGc = info :delayed_node_table_gc
+
+-- erlang:system_info(dist) -> binary()
+
+distBufBusyLimit :: IO Integer
+distBufBusyLimit = info :dist_buf_busy_limit
+
+-- erlang:system_info(dist_ctrl) ->
+
+-----------------------------------------------------------------------------
+-- | System Information
+
+buildType :: IO Atom
+buildType = info :build_type
+
+-- erlang:system_info(c_compiler_used) -> {atom(), term()}
+-- erlang:system_info(check_io) -> [term()]
+-- erlang:system_info(compat_rel) -> integer()
+-- erlang:system_info(debug_compiled) -> boolean()
+-- erlang:system_info(driver_version) -> string()
+-- erlang:system_info(dynamic_trace) ->
+-- erlang:system_info(dynamic_trace_probes) -> boolean()
+-- erlang:system_info(info) -> binary()
+
+kernelPoll :: IO Boolean
+kernelPoll = info :kernel_poll
+
+-- erlang:system_info(Item :: loaded) -> binary()
+
+machine :: IO String
+machine = info :machine
+
+-- erlang:system_info(Item :: modified_timing_level) ->
+
+nifVersion :: IO String
+nifVersion = info :nif_version
+
+otpRelease :: IO String
+otpRelease = info :otp_release
+
+portParallelism :: IO Boolean
+portParallelism = info :port_parallelism
+
+systemArchitecture :: IO String
+systemArchitecture = info :system_architecture
+
+-- erlang:system_info(Item :: system_logger) -> logger | undefined | pid()
+
+systemVersion :: IO String
+systemVersion = info :system_version
+
+traceControlWord :: IO Integer
+traceControlWord = info :trace_control_word
+
+ertsVersion :: IO String
+ertsVersion = info :version
+
+wordSize :: IO Integer
+wordSize = info :wordsize
+
+wordSizeInternal :: IO Integer
+wordSizeInternal = info :wordsize_intenal
+
+wordSizeExternal :: IO Integer
+wordSizeExternal = info :wordsize_external
+
+foreign import info :: forall a. Atom -> IO a
+
+-----------------------------------------------------------------------------
+-- | VM statistics
+-----------------------------------------------------------------------------
+
+activeTasks :: IO [Integer]
+activeTasks = stats :active_tasks
+
+activeTasksAll :: IO [Integer]
+activeTasksAll = stats :active_tasks_all
+
+contextSwitches :: IO Integer
+contextSwitches = stats :context_switches
+
+exactReductions :: IO (Integer, Integer)
+exactReductions = stats :exact_reductions
+
+numberOfGCs :: IO Integer
+numberOfGCs = stats :number_of_gcs
+
+wordsReclaimed :: IO Integer
+wordsReclaimed = stats :words_reclaimed
+
+ioInput :: IO Integer
+ioInput = stats :io_input
+
+ioOutput :: IO Integer
+ioOutput = stats :io_output
+
+ioStats :: IO (Integer, Integer)
+ioStats = stats :io_stats
+
+type MSAccThread =
+  { thread :: (Atom, Integer)
+  , counters :: Map Atom Integer
+  }
+
+microstateAccounting :: IO (Maybe [MSAccThread])
+microstateAccounting = stats :microstate_accounting
+
+-- (Total_Reductions, Reductions_Since_Last_Call)
+reductions :: IO (Integer, Integer)
+reductions = stats :reductions
+
+runQueue :: IO Integer
+runQueue = stats :run_queue
+
+runQueueLengths :: IO [Integer]
+runQueueLengths = stats :run_queue_lengths
+
+runQueueLengthsAll :: IO [Integer]
+runQueueLengthsAll = stats :run_queue_lengths_all
+
+-- (Total_Run_Time, Time_Since_Last_Call)
+runtime :: IO (Integer, Integer)
+runtime = stats :runtime
+
+-- (SchedulerId, ActiveTime, TotalTime)
+schedulerWallTime :: IO (Maybe (Integer, Integer, Integer))
+schedulerWallTime = stats :scheduler_wall_time
+
+schedulerWallTimeAll :: IO (Maybe (Integer, Integer, Integer))
+schedulerWallTimeAll = stats :scheduler_wall_time_all
+
+totalActiveTasks :: IO Integer
+totalActiveTasks = stats :total_active_tasks
+
+totalActiveTasksAll :: IO Integer
+totalActiveTasksAll = stats :total_active_tasks_all
+
+totalRunQueueLengths :: IO Integer
+totalRunQueueLengths = stats :total_run_queue_lengths
+
+totalRunQueueLengthsAll :: IO Integer
+totalRunQueueLengthsAll = stats :total_run_queue_lengths_all
+
+wallClock :: IO Integer
+wallClock = stats :wall_clock
+
+foreign import stats :: forall a. Atom -> IO a
 
 {-
 erlang:system_monitor() -> MonSettings
@@ -198,6 +363,4 @@ erlang:system_profile() -> ProfilerSettings
 erlang:system_profile(ProfilerPid, Options) -> ProfilerSettings
 erlang:system_time() -> integer()
 erlang:system_time(Unit) -> integer()
-
-
 -}
