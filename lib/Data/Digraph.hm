@@ -14,37 +14,93 @@
 -----------------------------------------------------------------------------
 module Data.Digraph where
 
+import Control.Monad (IO)
+import Data.Unit (Unit)
+import Data.Maybe (Maybe)
+import Foreign (ffi1, ffi2, ffiIO1, ffiIO2, ffiIO3, ffiIO4)
+
+foreign import data Graph :: Type -> Type -> Type
+--                           ^-----  ^---
+--               Label Type: Vertex  Edge
+
+foreign import data Edge :: Type -> Type
+foreign import data Vertex :: Type -> Type
+
+data GraphType = Cyclic | Acyclic | Protected | Private
+
+foreign import new :: forall a b. [GraphType] -> IO (Graph a b)
+
+addEdge :: forall a b. Graph a b -> Vertex a -> Vertex a -> b -> IO (Edge b)
+addEdge = ffiIO4 :digraph :add_edge
+
+foreign import addVertex :: forall a b. Graph a b -> a -> IO (Vertex a)
+
+delEdge :: forall a b. Graph a b -> Edge b -> IO ()
+delEdge = ffiIO2 :digraph :del_edge
+
+delEdges :: forall a b. Graph a b -> [Edge b] -> IO ()
+delEdges = ffiIO2 :digraph :del_edges
+
+delPath :: forall a b. Graph a b -> Vertex a -> Vertex a -> IO ()
+delPath = ffiIO3 :digraph :del_path
+
+delVertex :: forall a b. Graph a b -> Vertex a -> IO ()
+delVertex = ffiIO2 :digraph :del_vertex
+
+delVertices :: forall a b. Graph a b -> [Vertex a] -> IO ()
+delVertices = ffiIO2 :digraph :del_vertices
+
+delete :: forall a b. Graph a b -> IO ()
+delete = ffiIO1 :digraph :delete
+
+foreign import edge :: forall a b. Graph a b -> Edge b -> Maybe (Vertex a, Vertex a, b)
+
+allEdges :: forall a b. Graph a b -> [Edge b]
+allEdges = ffi1 :digraph :edges
+
+foreign import vertex :: forall a b. Graph a b -> Vertex a -> Maybe a
+
+allVertices :: forall a b. Graph a b -> [Vertex a]
+allVertices = ffi1 :digraph :vertices
+
+edges :: forall a b. Graph a b -> Vertex a -> [Edge b]
+edges = ffi2 :digraph :edges
+
+foreign import getCycle :: forall a b. Graph a b -> Vertex a -> [Vertex a]
+
+foreign import getPath :: forall a b. Graph a b -> Vertex a -> Vertex a -> [Vertex a]
+
+foreign import getShortCycle :: forall a b. Graph a b -> Vertex a -> [Vertex a]
+
+foreign import getShortPath :: forall a b. Graph a b -> Vertex a -> Vertex a -> [Vertex a]
+
+inDegree :: forall a b. Graph a b -> Vertex a -> Integer
+inDegree = ffi2 :digraph :in_degree
+
+inEdges :: forall a b. Graph a b -> Vertex a -> [Edge b]
+inEdges = ffi2 :digraph :in_degree
+
+inNeighbours :: forall a b. Graph a b -> Vertex a -> [Vertex a]
+inNeighbours = ffi2 :digraph :in_neighbours
+
+outDegree :: forall a b. Graph a b -> Vertex a -> Integer
+outDegree = ffi2 :digraph :out_degree
+
+outEdges :: forall a b. Graph a b -> Vertex a -> [Edge b]
+outEdges = ffi2 :digraph :out_edges
+
+outNeighbours :: forall a b. Graph a b -> Vertex a -> [Vertex a]
+outNeighbours = ffi2 :digraph :out_neighbours
+
+noEdges :: forall a b. Graph a b -> Integer
+noEdges = ffi1 :digraph :no_edges
+
+noVertices :: forall a b. Graph a b -> Integer
+noVertices = ffi1 :digraph :no_vertices
+
+
 {- TODO: digraph.erl
-add_edge/3
-add_edge/4
-add_edge/5
-add_vertex/1
-add_vertex/2
-add_vertex/3
-del_edge/2
-del_edges/2
-del_path/3
-del_vertex/2
-del_vertices/2
-delete/1
-edge/2
-edges/1
-edges/2
-get_cycle/2
-get_path/3
-get_short_cycle/2
-get_short_path/3
-in_degree/2
-in_edges/2
-in_neighbours/2
+add_edge/5                                     modifyEdge
+add_vertex/3                                   modifyVertex
 info/1
-new/0
-new/1
-no_edges/1
-no_vertices/1
-out_degree/2
-out_edges/2
-out_neighbours/2
-vertex/2
-vertices/1
 -}
