@@ -28,6 +28,7 @@
         , makeSymLink/2
         , getLastModified/1
         , setCwd/1
+        , getCwd/0
         ]).
 
 makeDir(FilePath) ->
@@ -40,10 +41,10 @@ listDir(Dir) ->
   ?IO(return(file:list_dir(Dir))).
 
 deleteDir(Dir) ->
-  ?IO(return(file:delete_dir(Dir))).
+  ?IO(return(file:del_dir(Dir))).
 
 deleteDirRecursively(Dir) ->
-  ?IO(return(file:delete_dir_r(Dir))).
+  ?IO(return(file:del_dir_r(Dir))).
 
 copyFile(Src, Dest) ->
   ?IO(case file:copy(Src, Dest) of
@@ -56,6 +57,9 @@ deleteFile(Filename) ->
 
 renameFile(Src, Dest) ->
   ?IO(return(file:rename(Src, Dest))).
+
+getCwd() ->
+    ?IO(return(file:get_cwd())).
 
 %%---------------------------------------------------------------------------
 %% | Symbolic links
