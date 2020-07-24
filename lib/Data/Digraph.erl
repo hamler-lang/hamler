@@ -28,44 +28,44 @@
         ]).
 
 trans([]) -> [];
-trans([x | xs]) -> [case x of
+trans([X | Xs]) -> [case X of
     { 'Cyclic' } -> digraph:cyclic();
     { 'Acyclic' } -> digraph:acyclic();
     { 'Protected' } -> digraph:protected();
     { 'Private' } -> digraph:private()
-end | trans(xs) ].
+end | trans(Xs) ].
 
-new(type) -> digraph:new(trans(type)).
+new(Type) -> digraph:new(trans(Type)).
 
-addVertex(g, labal) ->
-    digraph:add_vertex(g, digraph:add_vertex(g), labal).
+addVertex(G, Labal) ->
+    digraph:add_vertex(g, digraph:add_vertex(G), Labal).
 
-edge(g, e) -> case digraph:edge(g, e) of
-    {e, v1, v2, labal} -> { 'Just', { v1, v2, labal } };
+edge(G, E) -> case digraph:edge(G, E) of
+    {E, V1, V2, Labal} -> { 'Just', { V1, V2, Labal } };
     false -> { 'Nothing' }
 end.
 
-vertex(g, v) -> case digraph:vertex(g, v) of
-    {v, labal} -> { 'Just', labal };
+vertex(G, V) -> case digraph:vertex(G, V) of
+    {V, Labal} -> { 'Just', Labal };
     false -> { 'Nothing' }
 end.
 
-getCycle(g, v) -> case digraph:get_cycle(g, v) of
+getCycle(G, V) -> case digraph:get_cycle(G, V) of
     false -> [];
-    else -> else
+    Else -> Else
 end.
 
-getPath(g, v1, v2) -> case digraph:get_path(g, v1, v2) of
+getPath(G, V1, V2) -> case digraph:get_path(G, V1, V2) of
     false -> [];
-    else -> else
+    Else -> Else
 end.
 
-getShortCycle(g, v) -> case digraph:get_short_cycle(g, v) of
+getShortCycle(G, V) -> case digraph:get_short_cycle(G, V) of
     false -> [];
-    else -> else
+    Else -> Else
 end.
 
-getShortPath(g, v1, v2) -> case digraph:get_short_path(g, v1, v2) of
+getShortPath(G, V1, V2) -> case digraph:get_short_path(G, V1, V2) of
     false -> [];
-    else -> else
+    Else -> Else
 end.
