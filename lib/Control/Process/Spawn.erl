@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Spwan
+%% Module      :  Spawn
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,7 +9,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Spwan FFI module.
+%% The Spawn FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Spawn').
