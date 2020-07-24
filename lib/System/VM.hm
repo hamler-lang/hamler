@@ -19,7 +19,10 @@ import Data.Map (Map)
 import Data.Maybe (Maybe)
 import Data.Pid (Pid)
 import Data.Timeout (Timeout)
-import Foreign (ffiIO1)
+import Foreign (ffiIO0, ffiIO1)
+
+processes :: IO [Pid]
+processes = ffiIO0 :erlang :processes
 
 type MemInfo = Map Atom Integer
 

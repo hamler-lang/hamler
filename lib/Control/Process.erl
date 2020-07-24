@@ -24,8 +24,6 @@
         , receiveAfter/1
         , register/2
         , 'monitor'/1
-        , erase/1
-        , eraseAll/0
         , garbageCollectProcWith/2
         , whereis/1
         , kill/1
@@ -54,14 +52,6 @@ register(Name, Pid) ->
 -spec('monitor'(pid()) -> reference()).
 'monitor'(Pid) ->
   ?IO(erlang:monitor(process, Pid)).
-
-eraseAll() -> ?IO(erlang:erase()).
-
-erase(Key) ->
-  ?IO(case erlang:erase(Key) of
-        undefined -> {'Nothing'};
-        Val -> {'Just', Val}
-      end).
 
 garbageCollectProcWith(Pid, Options) ->
   ?IO(erlang:garbage_collect(Pid, parseGcOpts(Options, []))).
