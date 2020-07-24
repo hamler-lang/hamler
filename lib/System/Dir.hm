@@ -35,7 +35,7 @@ module System.Dir
 import Control.Monad (IO)
 import Data.DateTime (DateTime) -- FIXME later
 import Data.Unit (Unit)
-import Foreign (ffiIO0, ffiIO1)
+import Foreign (ffiIO1)
 import System.IO.Types (FilePath)
 
 -----------------------------------------------------------------------------
@@ -68,8 +68,7 @@ renameDir = renameFile
 -- TODO: os.chdir()
 
 -- | Returns the current working directory.
-getCwd :: IO FilePath
-getCwd = ffiIO0 :file :get_cwd
+foreign import getCwd :: IO FilePath
 
 -- | Set the current working directory.
 foreign import setCwd :: FilePath -> IO ()
