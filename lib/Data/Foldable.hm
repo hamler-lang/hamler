@@ -14,27 +14,27 @@
 -----------------------------------------------------------------------------
 module Data.Foldable
   ( class Foldable
-  , foldl, foldr
+  , foldl, foldr, foldMap
   , module Data.Monoid
   ) where
 
 import Data.Monoid (class Monoid, mempty)
--- import Data.Semigroup ((<>))
+import Data.Semigroup ((<>))
 
 class Foldable f where
   foldl :: forall a b. (b -> a -> b) -> b -> f a -> b
   foldr :: forall a b. (a -> b -> b) -> b -> f a -> b
-  -- foldMap :: forall a m. Monoid m => (a -> m) -> f a -> m
+  foldMap :: forall a m. Monoid m => (a -> m) -> f a -> m
 
 instance Foldable List where
   foldl = foldlListImpl
   foldr = foldrListImpl
-  -- foldMap = foldMapListImpl
+  foldMap = foldMapDefaultR
 
 foreign import foldlListImpl :: forall a b. (b -> a -> b) -> b -> [a] -> b
 foreign import foldrListImpl :: forall a b. (a -> b -> b) -> b -> [a] -> b
 
-{-
+
 foldMapDefaultR
   :: forall f a m
    . Foldable f
@@ -43,4 +43,3 @@ foldMapDefaultR
   -> f a
   -> m
 foldMapDefaultR f = foldr (\x acc -> f x <> acc) mempty
--}
