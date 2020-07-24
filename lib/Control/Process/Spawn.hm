@@ -29,7 +29,7 @@ module Control.Process.Spawn
   , spawnMonitorAt
   , spawnMonitorWith
   , spawnMonitorAtWith
-  , module Control.Process.Types
+  , module Control.Process.Flags
   ) where
 
 import Control.Monad (IO)
@@ -38,15 +38,16 @@ import Data.Ref (Ref)
 import Foreign (ffiIO1, ffiIO2)
 
 import Control.Distributed.Node (Node)
-import Control.Process.Types (Process, Level, MQD)
+import Control.Process.Types (Process)
+import Control.Process.Flags (PriorityLevel , MsgQueueData)
 
 data Option
-  = Priority Level
+  = Priority PriorityLevel
   | FullsweepAfter Integer
   | MinHeapSize Integer
   | MinBinVheapSize Integer
   | MaxHeapSize Integer
-  | MessageQueueData MQD
+  | MessageQueueData MsgQueueData
 
 spawn :: forall a. IO a -> Process Pid
 spawn = ffiIO1 :erlang :spawn

@@ -21,10 +21,6 @@ type Process = IO
 
 foreign import data From :: Type
 
-data Level = Low | Normal | High | Max
-
-data MQD = OnHeap | OffHeap
-
 data ExitReason
   = ExitNormal
   | ExitShutdown
