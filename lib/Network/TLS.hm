@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Data.Time
+-- Module      :  Network.TLS
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,25 +9,9 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Time datatype.
+-- The TLS module.
 --
 -----------------------------------------------------------------------------
-module Data.Time where
+module Network.TLS where
 
-import Control.Monad
-
-type Time = Integer
-
-data TimeUnit
-  = Second
-  | Millisecond
-  | Microsecond
-  | Nanosecond
-  | Native
-  | PerfCounter
-
--- TODO:...
-foreign import data UTCTime :: Type
-
-foreign import getCurrentTime :: IO UTCTime
-
+-- TODO: 

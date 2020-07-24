@@ -16,9 +16,9 @@ module Control.Distributed.NetAdm where
 
 import Control.Distributed.Node (Node)
 import Control.Process (Process)
-import Network.Socket (HostName, PortNumber)
+import Network.Inet (Hostname, PortNumber)
 
-foreign import localhost :: Process HostName
-foreign import names :: Process [(HostName, PortNumber)]
-foreign import namesAt :: HostName -> Process [(HostName, PortNumber)]
+foreign import localhost :: Process Hostname
+foreign import names :: Process [(Hostname, PortNumber)]
+foreign import namesAt :: Hostname -> Process [(Hostname, PortNumber)]
 foreign import ping :: Node -> Process Boolean

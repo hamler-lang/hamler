@@ -13,23 +13,38 @@
 --
 -----------------------------------------------------------------------------
 module System.OS
-  ( getPid
+  ( findExe
+  , findExeIn
+  , getPid
   , osName
   , osFamily
   , runCmd
+    -- signal
   , setSignal
+    -- * system time
+  , systemTime
+  , systemTimeIn
+  , perfCounter
+  , perfCounterIn
   , version
-  , Signal
-  , SigHandler
+  , Signal(..)
+  , SigHandler(..)
   ) where
 
 import Control.Monad (IO)
+import Data.Maybe (Maybe)
+import Data.Time (TimeUnit)
 import Data.Unit (Unit)
+import System.FilePath (FilePath)
 
 data Signal = Sighup  | Sigquit | Sigabrt | Sigalrm | Sigterm
             | Sigusr1 | Sigusr2 | Sigchld | Sigstop | Sigtstp
 
-data SigHandler = SigIgnore | SigDefault | SigHandle
+data SigHandler = SigDefault | SigHandle | SigIgnore
+
+foreign import findExe :: String -> IO (Maybe FilePath)
+
+foreign import findExeIn :: String -> FilePath -> IO (Maybe FilePath)
 
 -- | Get the Pid of the current OS process.
 foreign import getPid :: IO Integer
@@ -40,11 +55,19 @@ foreign import osName :: IO String
 -- | Get OS Family.
 foreign import osFamily :: IO String
 
--- | Run an OS command.
+-- | Executes a Command.
 foreign import runCmd :: String -> IO String
 
 -- | Enables or disables OS signals.
 foreign import setSignal :: Signal -> SigHandler -> IO ()
+
+foreign import systemTime :: IO Integer
+
+foreign import systemTimeIn :: TimeUnit -> IO Integer
+
+foreign import perfCounter :: IO Integer
+
+foreign import perfCounterIn :: TimeUnit -> IO Integer
 
 -- | Get OS Version.
 foreign import version :: IO String

@@ -6,6 +6,7 @@
 --
 -- Maintainer  :  Feng Lee, feng@emqx.io
 --                Yang M, yangm@emqx.io
+--                Rory Z, rory@emqx.io
 -- Stability   :  experimental
 -- Portability :  portable
 --
@@ -14,23 +15,56 @@
 -----------------------------------------------------------------------------
 module Data.OrdSets where
 
-{- TODO:
-add_element/2
-del_element/2
-filter/2
-fold/3
-from_list/1
-intersection/1
-intersection/2
-is_disjoint/2
-is_element/2
-is_empty/1
-is_set/1
-is_subset/2
-new/0
-size/1
-subtract/2
-to_list/1
-union/1
-union/2
--}
+import Foreign (ffi0, ffi1, ffi2)
+
+foreign import data OrdSet :: Type -> Type
+
+new :: forall a. OrdSet a
+new = ffi0 :ordsets :new
+
+add :: forall a.a -> OrdSet a -> OrdSet a
+add = ffi2 :ordsets :add_element
+
+del :: forall a.a -> OrdSet a -> OrdSet a
+del = ffi2 :ordsets :del_element
+
+filter :: forall a. (a -> Boolean) -> OrdSet a -> OrdSet a
+filter = ffi2 :ordsets :filter
+
+foreign import fold :: forall a acc. (a -> acc -> acc) -> acc -> OrdSet a -> acc
+
+intersectionFromList :: forall a. [a] -> OrdSet a
+intersectionFromList = ffi1 :ordsets :intersection
+
+intersection :: forall a. OrdSet a -> OrdSet a -> OrdSet a
+intersection = ffi2 :ordsets :intersection
+
+fromList :: forall a. [a] -> OrdSet a
+fromList = ffi1 :ordsets :from_list
+
+isDisjoint :: forall a. OrdSet a -> OrdSet a -> Boolean
+isDisjoint = ffi2 :ordsets :is_disjoint
+
+isElement :: forall a. a -> OrdSet a -> Boolean
+isElement = ffi2 :ordsets :is_element
+
+isSet :: forall a. a -> Boolean
+isSet = ffi1 :ordsets :is_set
+
+isSubset :: forall a. OrdSet a -> OrdSet a -> Boolean
+isSubset = ffi2 :ordsets :is_subset
+
+size :: forall a. OrdSet a -> Integer
+size = ffi1 :ordsets :size
+
+subtract :: forall a. OrdSet a -> OrdSet a -> OrdSet a
+subtract = ffi2 :ordsets :subtract
+
+toList :: forall a. OrdSet a -> [a]
+toList = ffi1 :ordsets :to_list
+
+unionFromList :: forall a. [a] -> OrdSet a
+unionFromList = ffi1 :ordsets :union
+
+union :: forall a. OrdSet a -> OrdSet a -> OrdSet a
+union = ffi2 :ordsets :union
