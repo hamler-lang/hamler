@@ -1,0 +1,32 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Control.Process.Dict
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Process Dictionary module.
+--
+-----------------------------------------------------------------------------
+module Control.Process.Dict where
+
+import Data.Maybe (Maybe)
+import Control.Process.Types (Process)
+
+foreign import erase :: forall k v. k -> Process (Maybe v)
+
+-- TODO: Fixme later
+-- | Returns the process dictionary and deletes it.
+foreign import eraseAll :: forall k v. Process [(k, v)]
+
+{-
+get() -> [{Key, Val}]
+get(Key) -> Val | undefined
+get_keys() -> [Key]
+get_keys(Val) -> [Key]
+put(Key, Val) -> term()
+-}
