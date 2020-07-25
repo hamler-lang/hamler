@@ -20,7 +20,7 @@
 
 -export([ selfPid/0
         , send/2
-        , 'receive'/0
+        , 'recv'/0
         , receiveAfter/1
         , register/2
         , 'monitor'/1
@@ -38,8 +38,8 @@ selfPid() -> ?IO(erlang:self()).
 -spec(send(pid(), term()) -> term()).
 send(Pid, Msg) -> ?IO(erlang:send(Pid, Msg)).
 
--spec('receive'() -> term()).
-'receive'() -> ?IO(receive X -> X end).
+-spec('recv'() -> term()).
+'recv'() -> ?IO(receive X -> X end).
 
 %% TODO: Fixme later:(
 -spec(receiveAfter(integer()) -> term()).

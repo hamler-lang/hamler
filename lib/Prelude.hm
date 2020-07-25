@@ -71,5 +71,5 @@ import Control.Monad (class Applicative, pure, (<*>), class Monad, return, bind,
 import System.Error (throw, try)
 import System.IO (print, printf, println, readFile, writeFile, appendFile)
 import Control.Distributed.Node (Node)
-import Control.Process (Process, self, selfPid, spawn, send, receive, link, monitor)
+import Control.Process (Process, self, selfPid, spawn, send, recv, link, monitor)
 import Data.Pid (Pid)

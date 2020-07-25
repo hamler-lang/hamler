@@ -254,10 +254,18 @@ exprToErl (C.Case _ es alts) = do
   forM_ (zip varName is) $ \(n, i) -> do
     modify (\x -> x & localVar %~ M.insert n i)
   return . ann $ ELet vars (ann $ Exprs es') (ann . Expr . ann $ ECase (ann . E.Exprs $ fmap (ann . EVar) vars) alts')
+exprToErl (C.Receive _ e1 e2 alts) = do
+  alts' <- mapM dealRecAlt alts
+  e2' <- exprToErl e2
+  return $ ann $ EFun $ ann $ Fun [] $ ann $ Expr $
+    ann $ EFun $ ann $ Fun [] $ ann $ Expr $ ann $ EReceive alts' (ann $ Expr $ ann $ ELit $ ann $ LInt e1 ) (ann $ Expr $ appExpr e2')
 exprToErl (C.List _ es e) = do
   es' <- mapM exprToErl es
   e' <- exprToErl e
   return $ elist es' e'
+
+appExpr :: E.Expr Text -> E.Expr Text
+appExpr expr = ann $ EApp (ann $ Expr expr) []
 
 matchFail :: CaseAlternative C.Ann -> Translate [Clause Text]
 matchFail ca =
@@ -285,6 +293,22 @@ isWildBinder _ = False
 
 guardv :: Exprs Text
 guardv = ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "true"
+
+dealRecAlt :: CaseAlternative C.Ann -> Translate (E.Clause Text)
+dealRecAlt (CaseAlternative bs res) = do
+  pats <- mapM binderToPat bs
+  let guard1 = ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "true"
+  case res of
+    Right expr -> do
+      expr' <- exprToErl expr
+      return
+        . ann
+        $ Clause pats guard1 (ann . Expr $ appExpr expr')
+    Left xs -> error $ show xs
+      -- xs' <- guardToErl xs
+      -- return
+      --   . ann
+      --   $ Clause pats guard1 (ann $ Exprs [xs'])
 
 dealAlts :: [E.Expr Text] -> [CaseAlternative C.Ann] -> Translate [Clause Text]
 dealAlts _ [] = error "strange happened"
