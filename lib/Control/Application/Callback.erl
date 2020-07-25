@@ -24,7 +24,7 @@
 -record(state, {mod, st}).
 
 start(_StartType, _StartArgs = [Mod]) ->
-  try ?RunIO(Mod:onStart()) of
+  try ?RunIO(Mod:start()) of
     Pid when is_pid(Pid) ->
       {ok, Pid, #state{mod = Mod, st = undefined}}
   catch
@@ -32,14 +32,14 @@ start(_StartType, _StartArgs = [Mod]) ->
   end.
 
 pre_stop(State = #state{mod = Mod, st = St}) ->
-  case erlang:function_exported(Mod, onPreStop, 1) of
-    true  -> State#state{st = ?RunIO(Mod:onPreStop(St))};
+  case erlang:function_exported(Mod, preStop, 1) of
+    true  -> State#state{st = ?RunIO(Mod:preStop(St))};
     false -> State
   end.
 
 stop(#state{mod = Mod, st = _St}) ->
-  case erlang:function_exported(Mod, onStop, 1) of
-    true  -> ?RunIO(Mod:onStop());
+  case erlang:function_exported(Mod, stop, 1) of
+    true  -> ?RunIO(Mod:stop());
     false -> ok
   end.
 
