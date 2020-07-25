@@ -14,16 +14,39 @@
 -----------------------------------------------------------------------------
 module Data.Array where
 
+import Data.Eq (class Eq, (==))
+import Data.Ord (class Ord, compare)
+import Data.Show (class Show, show)
+import Data.Functor (class Functor)
+import Data.Foldable (class Foldable, foldr)
+
+import Data.Monoid (class Monoid, mempty)
+import Data.Semigroup ((<>))
+
+import Foreign (ffi1, ffi2, ffi3)
+
 foreign import data Array :: Type -> Type
 
 {- TODO: typeclass
-Eq
-Ord
-Show
-Functor
-Foldable
 Traversable
 -}
+
+instance Eq (Array t) where
+    eq a b = toList a == toList b
+
+instance Ord (Array t) where
+    compare a b = compare (toList a) (toList b)
+
+instance Show (Array t) where
+    show a = show (toList a)
+
+instance Functor (Array t) where
+    map = ffi2 :array :map
+
+instance Foldable (Array t) where
+    foldl = ffi3 :array :foldl
+    foldr = ffi3 :array :foldr
+    foldMap f = foldr (\x acc -> f x <> acc) mempty
 
 {- TODO:
 Construct
@@ -36,16 +59,11 @@ Updates
 {- TODO: functions
 default/1
 fix/1
-foldl/3
-foldr/3
-from_list/1
-from_list/2
 from_orddict/1
 from_orddict/2
 get/2
 is_array/1
 is_fix/1
-map/2
 new/0
 new/1
 new/2
@@ -61,6 +79,14 @@ sparse_map/2
 sparse_size/1
 sparse_to_list/1
 sparse_to_orddict/1
-to_list/1
 to_orddict/1
 -}
+
+fromList :: forall a. [a] -> Array a
+fromList = ffi1 :array :from_list
+
+fromListWith :: forall a. [a] -> a -> Array a
+fromListWith = ffi2 :array :from_list
+
+toList :: forall a. Array a -> [a]
+toList = ffi1 :array :to_list
