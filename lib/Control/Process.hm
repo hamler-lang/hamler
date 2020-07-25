@@ -18,7 +18,7 @@ module Control.Process
   , isAlive
     -- * send/recv
   , send
-  , receive
+  , recv
   , receiveAfter
     -- * Registered Processes
   , register
@@ -96,7 +96,7 @@ infixr 1 sendc as !
 sendc :: forall a. (a -> Process a) -> Process a -> Process a
 sendc f a = a >>= f
 
-foreign import receive :: forall a. Process a
+foreign import recv :: forall a. Process a
 
 foreign import receiveAfter :: forall a. Integer -> Process a
 
