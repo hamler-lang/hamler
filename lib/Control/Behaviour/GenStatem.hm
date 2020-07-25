@@ -14,6 +14,7 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenStatem
   ( class GenStatem
+  , Init
   , HandleEvent
   , handleEvent
     -- * start and stop
@@ -24,15 +25,23 @@ module Control.Behaviour.GenStatem
   , startMonitor
   , startMonitorWith
   , stop
+  , stopRef
   , stopWith
     -- * client apis
   , call
   , callTo
+  , callRef
   , callTimeout
   , cast
   , castTo
+  , castRef
     -- * helper funcs
+  , initOk
+  , keep
+  , next
+  , repeat
   , replyTo
+  , unhandled
   , module Control.Behaviour.GenStatem.Types
   ) where
 
@@ -43,53 +52,80 @@ import Data.Ref (Reference)
 import Data.Timeout (Timeout)
 import Data.Unit (Unit)
 
-type HandleEvent e st
-  = e -> st -> Process (StatemAction st)
+type Init s d = Process (InitResult s d)
 
-class GenStatem e st | e -> st, st -> e where
-  handleEvent :: HandleEvent e st
+type HandleEvent e s d
+  = EventType -> e -> s -> d -> Process (Transition s d)
+
+class GenStatem e s d | e -> s, s -> d, d -> e where
+  handleEvent :: HandleEvent e s d
 
 foreign import start
-  :: forall e st. GenStatem e st => (Init st) -> Process Pid
+  :: forall e s d. GenStatem e s d => (Init s d) -> Process Pid
 
 foreign import startWith
-  :: forall e st. GenStatem e st => Name -> (Init st) -> Process Pid
+  :: forall e s d. GenStatem e s d => Name -> (Init s d) -> Process Pid
 
 foreign import startLink
-  :: forall e st. GenStatem e st => (Init st) -> Process Pid
+  :: forall e s d. GenStatem e s d => (Init s d) -> Process Pid
 
 foreign import startLinkWith
-  :: forall e st. GenStatem e st => Name -> (Init st) -> Process Pid
+  :: forall e s d. GenStatem e s d => Name -> (Init s d) -> Process Pid
 
 foreign import startMonitor
-  :: forall e st. GenStatem e st => (Init st) -> Process (Pid, Reference)
+  :: forall e s d. GenStatem e s d => (Init s d) -> Process (Pid, Reference)
 
 foreign import startMonitorWith
-  :: forall e st. GenStatem e st
-  => Name -> (Init st) -> Process (Pid, Reference)
+  :: forall e s d. GenStatem e s d => Name -> (Init s d) -> Process (Pid, Reference)
 
 -- Stop the Statem Process.
-foreign import stop :: StatemRef -> Process ()
+foreign import stop :: Name -> Process ()
+
+-- Stop the Statem Process.
+foreign import stopRef :: StatemRef -> Process ()
 
 -- Stop the Statem Process with ExitReason.
 foreign import stopWith
   :: StatemRef -> ExitReason -> Timeout -> Process ()
 
 foreign import call
-  :: forall req rep. StatemRef -> req -> Process rep
+  :: forall req rep. Name -> req -> Process rep
 
 -- | Synchronous call to the Server process directly.
+
 foreign import callTo
   :: forall req rep. Pid -> req -> Process rep
+
+foreign import callRef
+  :: forall req rep. StatemRef -> req -> Process rep
 
 foreign import callTimeout
   :: forall req rep. StatemRef -> req -> Timeout -> Process rep
 
+-- | Sends an asynchronous request to the Server process directly.
+
 foreign import cast
+  :: forall msg. Name -> msg -> Process ()
+
+foreign import castTo
+  :: forall req. Pid -> req -> Process ()
+
+foreign import castRef
   :: forall msg. StatemRef -> msg -> Process ()
 
--- | Sends an asynchronous request to the Server process directly.
-foreign import castTo :: forall req. Pid -> req -> Process ()
-
 foreign import replyTo :: forall rep. Caller -> rep -> Process ()
+
+initOk :: forall s d. s -> d -> InitResult s d
+initOk s d = InitOk s d
+
+keep :: forall s d. d -> Transition s d
+keep d = Keep d
+
+next :: forall s d. s -> d -> Transition s d
+next s d = Next s d
+
+repeat :: forall s d. d -> Transition s d
+repeat d = Repeat d
+
+foreign import unhandled :: forall e s d. HandleEvent e s d
 

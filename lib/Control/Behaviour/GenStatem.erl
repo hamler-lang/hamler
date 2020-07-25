@@ -23,15 +23,19 @@
         , startMonitor/2
         , startMonitorWith/3
         , stop/1
+        , stopRef/1
         , stopWith/3
         ]).
 
 -export([ call/2
+        , callRef/2
         , callTo/2
         , callTimeout/3
         , cast/2
+        , castRef/2
         , castTo/2
         , replyTo/2
+        , unhandled/4
         ]).
 
 -define(MOD, 'Control.Behaviour.GenStatem.Proxy').
@@ -43,7 +47,7 @@
 start(Class, Init) ->
   ?IO(retPid(gen_statem:start(?MOD, [Class, Init], []))).
 
-startWith(Name, Class, Init) ->
+startWith(Class, Name, Init) ->
   ?IO(retPid(gen_statem:start({local, Name}, ?MOD, [Class, Init], []))).
 
 startLink(Class, Init) ->
@@ -58,7 +62,10 @@ startMonitor(Class, Init) ->
 startMonitorWith(Class, Name, Init) ->
   ?IO(retPid(gen_statem:start_monitor({local, Name}, ?MOD, [Class, Init], []))).
 
-stop(ServerRef) ->
+stop(Name) ->
+  ?IO(gen_statem:stop(Name)).
+
+stopRef(ServerRef) ->
   ?IO(gen_statem:stop(toErl(ServerRef))).
 
 stopWith(ServerRef, ExitReason, Timeout) ->
@@ -68,25 +75,36 @@ stopWith(ServerRef, ExitReason, Timeout) ->
 %% | Statem APIs
 %%---------------------------------------------------------------------------
 
-call(StatemRef, Req) ->
-  ?IO(gen_statem:call(toErl(StatemRef), Req)).
+call(Name, Req) ->
+  ?IO(gen_statem:call(Name, Req)).
 
 %% callTo :: Pid -> req -> Process rep
 callTo(Pid, Req) ->
   ?IO(gen_statem:call(Pid, Req)).
 
+callRef(StatemRef, Req) ->
+  ?IO(gen_statem:call(toErl(StatemRef), Req)).
+
 callTimeout(StatemRef, Req, Timeout) ->
   ?IO(gen_statem:call(toErl(StatemRef), Req, toErl(Timeout))).
 
-cast(StatemRef, Msg) ->
-  ?IO(gen_statem:cast(toErl(StatemRef), Msg)).
+cast(Name, Msg) ->
+  ?IO(gen_statem:cast(Name, Msg)).
 
-%% castTo :: Pid -> req -> Process ()
 castTo(Pid, Req) ->
   ?IO(gen_statem:cast(Pid, Req)).
 
+castRef(StatemRef, Msg) ->
+  ?IO(gen_statem:cast(toErl(StatemRef), Msg)).
+
 replyTo(From, Reply) ->
   ?IO(gen_statem:reply(From, Reply)).
+
+unhandled(_, E, S, D) ->
+  ?IO(begin
+        io:format("Unhandled event: ~p, state: ~p, data: ~p", [E, S, D]),
+        {'Keep', S, D}
+      end).
 
 %%---------------------------------------------------------------------------
 %% | Internal functions
