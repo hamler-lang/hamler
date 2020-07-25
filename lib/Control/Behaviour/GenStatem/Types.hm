@@ -13,33 +13,38 @@
 --
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenStatem.Types
-  ( Init
+  ( EventType(..)
   , InitResult(..)
+  , Transition(..)
   , StatemRef(..)
-  , StatemAction(..)
   , module Control.Behaviour.GenTypes
   ) where
 
 import Control.Behaviour.GenTypes
 import Control.Distributed.Node (Node)
-import Control.Process (ExitReason, Process)
+import Control.Process (ExitReason, From)
 import Data.Pid (Pid)
 
-type Init st = Process (InitResult st)
+data EventType = Call From | Cast
 
 -- | Init Result
-data InitResult st
-  = InitOk st
+data InitResult s d
+  = InitOk s d
     -- ^ {ok, State}
-  | InitOkHib st
+  | InitOkHib s d
     -- ^ {ok, State, hibernate}
   | InitIgnore
     -- ^ ignore
-  | InitStop Atom
+  | InitStop ExitReason
     -- ^ {stop, Reason}
 
+data Transition s d
+  = Keep d
+  | Next s d
+  | Repeat d
+
 -- | StateM Action
-data StatemAction st
+data Action st
   = StatemIgnore st
   | StatemReply st
   | StatemNoReply st
