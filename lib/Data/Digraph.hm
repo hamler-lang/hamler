@@ -18,7 +18,7 @@ import Control.Monad (IO)
 import Data.Unit (Unit)
 import Data.Maybe (Maybe)
 import Data.Either (Either)
-import Foreign (ffi1, ffi2, ffiIO1, ffiIO2, ffiIO3)
+import Foreign (ffiIO1, ffiIO2, ffiIO3)
 
 foreign import data Graph :: Type -> Type -> Type
 --                           ^-----  ^---
@@ -60,51 +60,51 @@ delVertices = ffiIO2 :digraph :del_vertices
 delete :: forall a b. Graph a b -> IO ()
 delete = ffiIO1 :digraph :delete
 
-foreign import edge :: forall a b. Graph a b -> Edge b -> Maybe (Vertex a, Vertex a, b)
+foreign import edge :: forall a b. Graph a b -> Edge b -> IO (Maybe (Vertex a, Vertex a, b))
 
-allEdges :: forall a b. Graph a b -> [Edge b]
-allEdges = ffi1 :digraph :edges
+allEdges :: forall a b. Graph a b -> IO [Edge b]
+allEdges = ffiIO1 :digraph :edges
 
-foreign import vertex :: forall a b. Graph a b -> Vertex a -> Maybe a
+foreign import vertex :: forall a b. Graph a b -> Vertex a -> IO (Maybe a)
 
-allVertices :: forall a b. Graph a b -> [Vertex a]
-allVertices = ffi1 :digraph :vertices
+allVertices :: forall a b. Graph a b -> IO [Vertex a]
+allVertices = ffiIO1 :digraph :vertices
 
-edges :: forall a b. Graph a b -> Vertex a -> [Edge b]
-edges = ffi2 :digraph :edges
+edges :: forall a b. Graph a b -> Vertex a -> IO [Edge b]
+edges = ffiIO2 :digraph :edges
 
-foreign import getCycle :: forall a b. Graph a b -> Vertex a -> [Vertex a]
+foreign import getCycle :: forall a b. Graph a b -> Vertex a -> IO [Vertex a]
 
-foreign import getPath :: forall a b. Graph a b -> Vertex a -> Vertex a -> [Vertex a]
+foreign import getPath :: forall a b. Graph a b -> Vertex a -> Vertex a -> IO [Vertex a]
 
-foreign import getShortCycle :: forall a b. Graph a b -> Vertex a -> [Vertex a]
+foreign import getShortCycle :: forall a b. Graph a b -> Vertex a -> IO [Vertex a]
 
-foreign import getShortPath :: forall a b. Graph a b -> Vertex a -> Vertex a -> [Vertex a]
+foreign import getShortPath :: forall a b. Graph a b -> Vertex a -> Vertex a -> IO [Vertex a]
 
-inDegree :: forall a b. Graph a b -> Vertex a -> Integer
-inDegree = ffi2 :digraph :in_degree
+inDegree :: forall a b. Graph a b -> Vertex a -> IO Integer
+inDegree = ffiIO2 :digraph :in_degree
 
-inEdges :: forall a b. Graph a b -> Vertex a -> [Edge b]
-inEdges = ffi2 :digraph :in_degree
+inEdges :: forall a b. Graph a b -> Vertex a -> IO [Edge b]
+inEdges = ffiIO2 :digraph :in_degree
 
-inNeighbours :: forall a b. Graph a b -> Vertex a -> [Vertex a]
-inNeighbours = ffi2 :digraph :in_neighbours
+inNeighbours :: forall a b. Graph a b -> Vertex a -> IO [Vertex a]
+inNeighbours = ffiIO2 :digraph :in_neighbours
 
-outDegree :: forall a b. Graph a b -> Vertex a -> Integer
-outDegree = ffi2 :digraph :out_degree
+outDegree :: forall a b. Graph a b -> Vertex a -> IO Integer
+outDegree = ffiIO2 :digraph :out_degree
 
-outEdges :: forall a b. Graph a b -> Vertex a -> [Edge b]
-outEdges = ffi2 :digraph :out_edges
+outEdges :: forall a b. Graph a b -> Vertex a -> IO [Edge b]
+outEdges = ffiIO2 :digraph :out_edges
 
-outNeighbours :: forall a b. Graph a b -> Vertex a -> [Vertex a]
-outNeighbours = ffi2 :digraph :out_neighbours
+outNeighbours :: forall a b. Graph a b -> Vertex a -> IO [Vertex a]
+outNeighbours = ffiIO2 :digraph :out_neighbours
 
-noEdges :: forall a b. Graph a b -> Integer
-noEdges = ffi1 :digraph :no_edges
+noEdges :: forall a b. Graph a b -> IO Integer
+noEdges = ffiIO1 :digraph :no_edges
 
-noVertices :: forall a b. Graph a b -> Integer
-noVertices = ffi1 :digraph :no_vertices
+noVertices :: forall a b. Graph a b -> IO Integer
+noVertices = ffiIO1 :digraph :no_vertices
 
 data GraphInfo = GraphMemoryInfo Integer | GraphTypeInfo GraphType
 
-foreign import info :: forall a b. Graph a b -> [GraphInfo]
+foreign import info :: forall a b. Graph a b -> IO [GraphInfo]
