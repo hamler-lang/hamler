@@ -14,11 +14,12 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenTypes where
 
+import Control.Process (From)
 import Data.Ref (Reference)
 
 type Name = Atom
 
-foreign import data Caller :: Type
+type Caller = From
 
 -- | Request Id.
 type RequestId = Reference
