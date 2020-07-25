@@ -18,6 +18,8 @@
 
 %% FFI
 -export([ new/1
+        , addEdge/4
+        , modifyEdge/5
         , addVertex/2
         , edge/2
         , vertex/2
@@ -25,6 +27,7 @@
         , getPath/3
         , getShortCycle/2
         , getShortPath/3
+        , info/1
         ]).
 
 trans([]) -> [];
@@ -36,6 +39,18 @@ trans([X | Xs]) -> [case X of
 end | trans(Xs) ].
 
 new(Type) -> digraph:new(trans(Type)).
+
+addEdge(G, V1, V2, Labal) -> case digraph:add_edge(G, V1, V2, Labal) of
+    { error, { bad_edge, Path } } -> { 'Left', { 'BadEdge', Path } };
+    { error, { bad_vertex, V } } -> { 'Left', { 'BadVertex', V } };
+    V -> { 'Right', V }
+end.
+
+modifyEdge(G, E, V1, V2, Labal) -> case digraph:add_edge(G, E, V1, V2, Labal) of
+    { error, { bad_edge, Path } } -> { 'Left', { 'BadEdge', Path } };
+    { error, { bad_vertex, V } } -> { 'Left', { 'BadVertex', V } };
+    V -> { 'Right', V }
+end.
 
 addVertex(G, Labal) ->
     digraph:add_vertex(g, digraph:add_vertex(G), Labal).
@@ -69,3 +84,9 @@ getShortPath(G, V1, V2) -> case digraph:get_short_path(G, V1, V2) of
     false -> [];
     Else -> Else
 end.
+
+info(G) -> lists:map(fun (X) -> case X of
+    { memory, M } -> { 'GraphMemoryInfo', M };
+    { cyclicity, Y } -> { 'GraphTypeInfo', { case Y of cyclic -> 'Cyclic'; acyclic -> 'Acyclic' end } };
+    { portection, Y } -> { 'GraphTypeInfo', { case Y of protected -> 'Protected'; private -> 'Private' end }}
+end end, digraph:info(G)).

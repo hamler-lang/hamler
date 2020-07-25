@@ -17,7 +17,8 @@ module Data.Digraph where
 import Control.Monad (IO)
 import Data.Unit (Unit)
 import Data.Maybe (Maybe)
-import Foreign (ffi1, ffi2, ffiIO1, ffiIO2, ffiIO3, ffiIO4)
+import Data.Either (Either)
+import Foreign (ffi1, ffi2, ffiIO1, ffiIO2, ffiIO3)
 
 foreign import data Graph :: Type -> Type -> Type
 --                           ^-----  ^---
@@ -30,10 +31,16 @@ data GraphType = Cyclic | Acyclic | Protected | Private
 
 foreign import new :: forall a b. [GraphType] -> IO (Graph a b)
 
-addEdge :: forall a b. Graph a b -> Vertex a -> Vertex a -> b -> IO (Edge b)
-addEdge = ffiIO4 :digraph :add_edge
+data EdgeError a = BadEdge [Vertex a] | BadVertex (Vertex a)
+
+foreign import addEdge :: forall a b. Graph a b -> Vertex a -> Vertex a -> b -> IO (Either (EdgeError a) (Edge b))
 
 foreign import addVertex :: forall a b. Graph a b -> a -> IO (Vertex a)
+
+foreign import modifyEdge :: forall a b. Graph a b -> Edge b -> Vertex a -> Vertex a -> b -> IO (Either (EdgeError a) (Edge b))
+
+modifyVertex :: forall a b. Graph a b -> Vertex a -> a -> IO (Vertex a)
+modifyVertex = ffiIO3 :digraph :add_vertex
 
 delEdge :: forall a b. Graph a b -> Edge b -> IO ()
 delEdge = ffiIO2 :digraph :del_edge
@@ -98,9 +105,6 @@ noEdges = ffi1 :digraph :no_edges
 noVertices :: forall a b. Graph a b -> Integer
 noVertices = ffi1 :digraph :no_vertices
 
+data GraphInfo = GraphMemoryInfo Integer | GraphTypeInfo GraphType
 
-{- TODO: digraph.erl
-add_edge/5                                     modifyEdge
-add_vertex/3                                   modifyVertex
-info/1
--}
+foreign import info :: forall a b. Graph a b -> [GraphInfo]
