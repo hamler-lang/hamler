@@ -50,7 +50,7 @@
 start(Class, Init) ->
   ?IO(retPid(gen_server:start(?MOD, [Class, Init], []))).
 
-startWith(Name, Class, Init) ->
+startWith(Class, Name, Init) ->
   ?IO(retPid(gen_server:start({local, Name}, ?MOD, [Class, Init], []))).
 
 startLink(Class, Init) ->

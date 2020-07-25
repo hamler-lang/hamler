@@ -47,7 +47,7 @@
 start(Class, Init) ->
   ?IO(retPid(gen_statem:start(?MOD, [Class, Init], []))).
 
-startWith(Name, Class, Init) ->
+startWith(Class, Name, Init) ->
   ?IO(retPid(gen_statem:start({local, Name}, ?MOD, [Class, Init], []))).
 
 startLink(Class, Init) ->
