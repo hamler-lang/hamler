@@ -20,8 +20,9 @@ import Data.Show (class Show, show)
 import Data.Functor (class Functor)
 import Data.Foldable (class Foldable, foldr)
 
-import Data.Monoid (class Monoid, mempty)
+import Data.Monoid (mempty)
 import Data.Semigroup ((<>))
+import Data.String ((++))
 
 import Foreign (ffi1, ffi2, ffi3)
 
@@ -31,22 +32,26 @@ foreign import data Array :: Type -> Type
 Traversable
 -}
 
-instance Eq (Array t) where
-    eq a b = toList a == toList b
+instance Eq t => Eq (Array t) where
+  eq a b = toList a == toList b
 
-instance Ord (Array t) where
-    compare a b = compare (toList a) (toList b)
+instance Ord t => Ord (Array t) where
+  compare a b = compare (toList a) (toList b)
 
-instance Show (Array t) where
-    show a = show (toList a)
+-- TODO: Show List
+instance Show t => Show (Array t) where
+  show a = "[" ++ showList (toList a) ++ "]"
+    where showList [] = ""
+          showList [x | []] = show x
+          showList [x | xs] = show x ++ ", "
 
-instance Functor (Array t) where
-    map = ffi2 :array :map
+instance Functor Array where
+  map = ffi2 :array :map
 
-instance Foldable (Array t) where
-    foldl = ffi3 :array :foldl
-    foldr = ffi3 :array :foldr
-    foldMap f = foldr (\x acc -> f x <> acc) mempty
+instance Foldable Array where
+  foldl = ffi3 :array :foldl
+  foldr = ffi3 :array :foldr
+  foldMap f = foldr (\x acc -> f x <> acc) mempty
 
 {- TODO:
 Construct
