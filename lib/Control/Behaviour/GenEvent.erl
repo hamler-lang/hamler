@@ -21,14 +21,17 @@
         , startLink/2
         , startLinkWith/3
         , stop/1
+        , stopRef/1
         , stopWith/3
         ]).
 
 -export([ addHandler/3
         , notify/2
         , notifyTo/2
+        , notifyRef/2
         , syncNotify/2
         , syncNotifyTo/2
+        , syncNotifyRef/2
         ]).
 
 -define(MOD, 'Control.Behaviour.GenEvent.Proxy').
@@ -49,7 +52,10 @@ startLink(Class, Init) ->
 startLinkWith(Class, Name, Init) ->
   ?IO(doStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init)).
 
-stop(EMgrRef) ->
+stop(Name) ->
+  ?IO(gen_event:stop(Name)).
+
+stopRef(EMgrRef) ->
   ?IO(gen_event:stop(toErl(EMgrRef))).
 
 stopWith(EMgrRef, Reason, Timeout) ->
@@ -65,17 +71,23 @@ addHandler(Class, EMgrRef, Init) ->
         {'EXIT', Reason} -> error(Reason)
       end).
 
-notify(EMgrRef, Event) ->
-  ?IO(gen_event:notify(toErl(EMgrRef), Event)).
+notify(Name, Event) ->
+  ?IO(gen_event:notify(Name, Event)).
 
 notifyTo(Pid, Event) ->
   ?IO(gen_event:notify(Pid, Event)).
 
-syncNotify(EMgrRef, Event) ->
-  ?IO(gen_event:sync_notify(toErl(EMgrRef), Event)).
+notifyRef(EMgrRef, Event) ->
+  ?IO(gen_event:notify(toErl(EMgrRef), Event)).
+
+syncNotify(Name, Event) ->
+  ?IO(gen_event:sync_notify(Name, Event)).
 
 syncNotifyTo(Pid, Event) ->
   ?IO(gen_event:sync_notify(Pid, Event)).
+
+syncNotifyRef(EMgrRef, Event) ->
+  ?IO(gen_event:sync_notify(toErl(EMgrRef), Event)).
 
 %%---------------------------------------------------------------------------
 %% | Internal functions

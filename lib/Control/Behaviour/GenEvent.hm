@@ -14,6 +14,7 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenEvent
   ( class GenEvent
+  , Init
   , HandleEvent
   , handleEvent
     -- * start event mgr
@@ -22,6 +23,7 @@ module Control.Behaviour.GenEvent
   , startLink
   , startLinkWith
   , stop
+  , stopRef
   , stopWith
     -- * api
   , addHandler
@@ -29,17 +31,23 @@ module Control.Behaviour.GenEvent
   , notifyTo
   , syncNotify
   , syncNotifyTo
-    -- * helper funcs
+    -- * init funcs
   , initOk
+  , initOkHib
+  , initError
     -- * types
   , module Control.Behaviour.GenEvent.Types
   ) where
 
 import Control.Behaviour.GenEvent.Types
+import Control.Monad (return)
 import Control.Process (ExitReason, Process)
+import Data.Function ((<<<))
 import Data.Pid (Pid)
 import Data.Timeout (Timeout)
 import Data.Unit (Unit)
+
+type Init st = Process (InitResult st)
 
 type HandleEvent e st = e -> st -> Process st
 
@@ -60,6 +68,8 @@ foreign import startLinkWith
 
 foreign import stop :: EMgrRef -> Process ()
 
+foreign import stopRef :: EMgrRef -> Process ()
+
 foreign import stopWith
   :: EMgrRef -> ExitReason -> Timeout -> Process ()
 
@@ -67,24 +77,29 @@ foreign import addHandler
   :: forall e st. GenEvent e st => EMgrRef -> (Init st) -> Process ()
 
 foreign import notify
-  :: forall e. EMgrRef -> e -> Process ()
+  :: forall e. Name -> e -> Process ()
 
 foreign import notifyTo
   :: forall e. Pid -> e -> Process ()
 
-foreign import syncNotify
+foreign import notifyRef
   :: forall e. EMgrRef -> e -> Process ()
+
+foreign import syncNotify
+  :: forall e. Name -> e -> Process ()
 
 foreign import syncNotifyTo
   :: forall e. Pid -> e -> Process ()
 
-initOk :: forall st. st -> InitResult st
-initOk st = InitOk st
+foreign import syncNotifyRef
+  :: forall e. EMgrRef -> e -> Process ()
 
-{- TODO
-add_sup_handler/3,
-delete_handler/3,
-swap_handler/3,
-swap_sup_handler/3,
-which_handlers/1
--}
+initOk :: forall st. st -> Process (InitResult st)
+initOk = return <<< InitOk
+
+initOkHib :: forall st. st -> Process (InitResult st)
+initOkHib = return <<< InitOkHib
+
+initError :: forall st. ExitReason -> Process (InitResult st)
+initError = return <<< InitError
+

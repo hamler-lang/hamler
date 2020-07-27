@@ -47,8 +47,7 @@ module Control.Behaviour.GenStatem
   , nextWith
   , repeat
   , repeatWith
-  , end
-  , endWith
+  , shutdown
     -- * helper funcs
   , replyTo
   , unhandled
@@ -157,26 +156,23 @@ initStop = return <<< InitStop
 -----------------------------------------------------------------------------
 
 keep :: forall e s d. d -> Process (Transition e s d)
-keep d = return $ KeepState d []
+keep d = return $ Keep d []
 
 keepWith :: forall e s d. d -> [Action e] -> Process (Transition e s d)
-keepWith d = return <<< KeepState d
+keepWith d = return <<< Keep d
 
 next :: forall e s d. s -> d -> Process (Transition e s d)
-next s d = return $ NextState s d []
+next s d = return $ Next s d []
 
 nextWith :: forall e s d. s -> d -> [Action e] -> Process (Transition e s d)
-nextWith s d = return <<< NextState s d
+nextWith s d = return <<< Next s d
 
 repeat :: forall e s d. d -> Process (Transition e s d)
-repeat d = return $ RepeatState d []
+repeat d = return $ Repeat d []
 
 repeatWith :: forall e s d. d -> [Action e] -> Process (Transition e s d)
-repeatWith d = return <<< RepeatState d
+repeatWith d = return <<< Repeat d
 
-end :: forall e s d. d -> Process (Transition e s d)
-end = return <<< Terminate ExitNormal
-
-endWith :: forall e s d. ExitReason -> d -> Process (Transition e s d)
-endWith r = return <<< Terminate r
+shutdown :: forall e s d. Atom -> d -> Process (Transition e s d)
+shutdown r = return <<< Shutdown (ExitReason r)
 

@@ -14,14 +14,13 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenEvent.Types
   ( EMgrRef(..)
-  , Init
   , InitResult(..)
   , module Control.Behaviour.GenTypes
   )  where
 
 import Control.Behaviour.GenTypes
 import Control.Distributed.Node (Node)
-import Control.Process (Process, ExitReason)
+import Control.Process (ExitReason)
 import Data.Pid (Pid)
 
 data EMgrRef
@@ -29,8 +28,6 @@ data EMgrRef
   | EMgrRef Name
   | EMgrRefAt Name Node
   | EMgrRefGlobal Name
-
-type Init st = Process (InitResult st)
 
 data InitResult st
   = InitOk st
