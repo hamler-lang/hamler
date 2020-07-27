@@ -82,6 +82,41 @@ The Hamler 0.1 compiler was forked from [PureScript][PureScriptHamler] 0.13.6. T
   make install
   ```
 
+**Build from source code(linux/macOS)**
+
+1. Install [asdf-vm](https://asdf-vm.com/#/core-manage-asdf-vm?id=install)
+
+2. Install asdf-vm [Erlang plugin](https://github.com/asdf-vm/asdf-erlang)
+
+  ```shell
+  asdf plugin-add erlang
+  ```
+
+3. Clone hamler from the git repo and change directory
+
+  ```shell
+  git clone https://github.com/hamler-lang/hamler.git
+  cd hamler
+  ```
+
+4. Install Erlang
+
+  ```shell
+  asdf install
+  ```
+
+  Note: it's important to run it from `hamler` directory, because it requires
+  `.tool-versions` file present there.
+
+5. Install [Haskell Stack](https://docs.haskellstack.org/en/stable/install_and_upgrade/)
+
+6. Install hamler
+
+  ```shell
+  make
+  make install
+  ```
+
 ## **Create a project**
 
   ```shell
