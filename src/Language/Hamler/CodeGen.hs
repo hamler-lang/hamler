@@ -106,18 +106,26 @@ moduleToErl C.Module {..} ffiModule = do
         Just args ->
           return . ann $ FunName (ann $ Atom wname) (toInteger args)
         Nothing -> throwError $ P.MultipleErrors [P.ErrorMessage [] $ P.MissingFFIImplementations moduleName [ident]]
+  ffiDefs <- filterFunDef moduleName funDecls' $ moduleToFunDefs ffiModule
   return $
     ann $
       E.Module
         (ann $ Atom $ runModuleName moduleName)
         (mm1 : mm0 : exports)
         (ann $ Attrs [])
-        (funDecls' ++ (filterFunDef funDecls' $ moduleToFunDefs ffiModule))
+        (funDecls' ++ ffiDefs)
 
-filterFunDef :: [FunDef Text] -> [FunDef Text] -> [FunDef Text]
-filterFunDef s source =
+filterFunDef :: ModuleName -> [FunDef Text] -> [FunDef Text] -> Translate [FunDef Text]
+filterFunDef moduleName  s source = do
   let nameSet = fmap (\(FunDef fn _) -> fn) s
-   in Prelude.filter (\(FunDef fn _) -> not $ fn `elem` nameSet) source
+      source' = Prelude.filter (\(FunDef fn _) -> not $ fn `elem` [mm0, mm1]) source
+      v = Prelude.filter (\(FunDef fn _) -> not $ fn `elem` nameSet) source'
+  if length v == length source'
+    then return v
+    else do
+    let allDupFun =fmap (\(FunDef (FunName (Atom fn _) _ _) _) -> Ident fn)
+                    $ Prelude.filter (\(FunDef fn _) -> fn `elem` nameSet) source'
+    throwError $ P.MultipleErrors [P.ErrorMessage [] $ P.FFIFunSameNameWithModule moduleName allDupFun]
 
 -- | CoreFn Bind to CoreErlang FunDef
 bindToErl :: C.Bind C.Ann -> Translate [FunDef Text]
