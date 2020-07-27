@@ -44,8 +44,8 @@ type ProvidedStatus = String
 
 data BootMode = Embedded | Interactive
 
-getArguments :: IO Flags
-getArguments = ffiIO0 :init :get_arguments
+foreign import getArguments :: IO [Flags]
+-- getArguments = ffiIO0 :init :get_arguments
 
 foreign import getArgument
   :: String -> IO (Maybe Arguments)
