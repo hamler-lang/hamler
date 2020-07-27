@@ -103,10 +103,10 @@ dropWhile = ffi2 :lists :dropWhile
 
 infixl 9 indexElem as !!
 indexElem :: forall a. [a] -> Integer -> a
-indexElem xs  n | n < 0 =  error "Prelude.!!: negative index"
-indexElem []      _     =  error "Prelude.!!: index too large"
 indexElem [x|_]   0     =  x
 indexElem [_|xs]  n     =  indexElem xs (n-1)
+indexElem _  _ =  error "Prelude.!!: negative index"
+-- indexElem []      _     =  error "Prelude.!!: index too large"
 -----------------------------------------------------------------------------
 -- Sort lists
 -----------------------------------------------------------------------------
