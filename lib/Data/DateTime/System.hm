@@ -25,13 +25,13 @@ nowToSystemTime' (ms, s, us) unit =
       MicrosecondUnit -> (microseconds, MicrosecondUnit)
       NanosecondUnit  -> (nanoseconds, NanosecondUnit)
     where
-      seconds      = ms * 1000 + s
+      seconds      = ms * 1000000 + s
       milliseconds = seconds * 1000
       microseconds = milliseconds * 1000 + us
       nanoseconds  = microseconds * 1000
 
 systemTimeToDateTime :: SystemTime -> DateTime
-systemTimeToDateTime (x, unit) = secondsToDateTime (seconds + 719528 * 86400)
+systemTimeToDateTime (x, unit) = secondsToDateTime (seconds + 86400*40587)
   where
     seconds = x / convertFromSeconds unit
 
@@ -47,7 +47,7 @@ secondsToDateTime :: Integer -> DateTime
 secondsToDateTime sec = (date, (hour, minute, secs))
   where
     day  = sec / 86400
-    rest = sec / 86400
+    rest = sec % 86400
     date = toGregorianDate day
     hour = rest / 3600
     minute = rest % 3600 / 60

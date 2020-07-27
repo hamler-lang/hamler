@@ -109,9 +109,9 @@ monthAndDayToDayOfYear isLeap month day = ((367 * month' - 362) / 12) - k + day'
                      else 2
 
 findMonthDay :: [Integer] -> Integer -> (Integer, Integer)
-findMonthDay [n|ns] yd
-    | yd > n = (\(m, d) -> (m + 1, d)) (findMonthDay ns (yd - n))
-findMonthDay _ yd = (1, yd)
+findMonthDay [n|ns] yd = if yd > n then (\(m, d) -> (m + 1, d)) (findMonthDay ns (yd - n))
+                                   else (1, yd)
+findMonthDay _      yd = (1, yd)
 
 monthLength :: Bool -> Integer -> Integer
 monthLength isLeap month = (monthLengths isLeap) !! (month - 1)
