@@ -14,20 +14,18 @@
 -----------------------------------------------------------------------------
 module Data.Array where
 
-{-
 import Data.Eq (class Eq, (==))
 import Data.Ord (class Ord, compare)
 import Data.Show (class Show, show)
 import Data.Functor (class Functor)
 import Data.Foldable (class Foldable, foldr)
--}
 
-import Control.Monad (IO)
--- import Data.Monoid (mempty)
--- import Data.Semigroup ((<>))
--- import Data.String ((++))
+import Data.Bool (Bool)
+import Data.Monoid (mempty)
+import Data.Semigroup ((<>))
+import Data.String ((++))
 
-import Foreign (ffiIO1, ffiIO2)
+import Foreign (ffi1, ffi2, ffi3)
 
 foreign import data Array :: Type -> Type
 
@@ -35,7 +33,6 @@ foreign import data Array :: Type -> Type
 Traversable
 -}
 
-{- TODO: How to fit these typeclass with IO monad?
 instance Eq t => Eq (Array t) where
   eq a b = toList a == toList b
 
@@ -50,13 +47,12 @@ instance Show t => Show (Array t) where
           showList [x | xs] = show x ++ ", "
 
 instance Functor Array where
-  map = ffiIO2 :array :map
+  map = ffi2 :array :map
 
 instance Foldable Array where
-  foldl = ffiIO3 :array :foldl
-  foldr = ffiIO3 :array :foldr
+  foldl = ffi3 :array :foldl
+  foldr = ffi3 :array :foldr
   foldMap f = foldr (\x acc -> f x <> acc) mempty
--}
 
 {- TODO:
 Construct
@@ -67,17 +63,10 @@ Updates
 -}
 
 {- TODO: functions
-default/1
-fix/1
 from_orddict/1
 from_orddict/2
 get/2
-is_array/1
-is_fix/1
-new/0
-new/1
-new/2
-relax/1
+is_array/1             Why a strong type system language need this?
 reset/2
 resize/1
 resize/2
@@ -92,11 +81,34 @@ sparse_to_orddict/1
 to_orddict/1
 -}
 
-fromList :: forall a. [a] -> IO (Array a)
-fromList = ffiIO1 :array :from_list
+fromList :: forall a. [a] -> Array a
+fromList = ffi1 :array :from_list
 
-fromListWith :: forall a. [a] -> a -> IO (Array a)
-fromListWith = ffiIO2 :array :from_list
+fromListWith :: forall a. [a] -> a -> Array a
+fromListWith = ffi2 :array :from_list
 
-toList :: forall a. Array a -> IO [a]
-toList = ffiIO1 :array :to_list
+toList :: forall a. Array a -> [a]
+toList = ffi1 :array :to_list
+
+data ArrayOption a = Size Integer | Fix Bool | Default a
+
+foreign import new :: forall a. [ArrayOption a] -> Array a
+
+default :: forall a. Array a -> a
+default = ffi1 :array :default
+
+fix :: forall a. Array a -> Array a
+fix = ffi1 :array :fix
+
+relax :: forall a. Array a -> Array a
+relax = ffi1 :array :relax
+
+isFix :: forall a. Array a -> Bool
+isFix = ffi1 :array :is_fix
+
+-- TODO: Ix typeclass
+get :: forall a. Integer -> Array a -> a
+get = ffi2 :array :get
+
+set :: forall a. Integer -> a -> Array a -> Array a
+set = ffi3 :array :set
