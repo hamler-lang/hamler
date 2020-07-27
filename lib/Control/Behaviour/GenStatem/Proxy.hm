@@ -15,15 +15,24 @@
 module Control.Behaviour.GenStatem.Proxy where
 
 import Control.Process (Process)
+import Data.Unit (Unit)
 
-foreign import init :: forall a b. a -> Process b
+type CallbackMode = Atom
 
-foreign import callback_mode :: Atom
+-- | Module:init(Args) -> Result(StateType)
+foreign import init :: forall a res. a -> Process res
 
+-- | Module:callback_mode() -> CallbackMode
+foreign import callback_mode :: CallbackMode
+
+-- | Module:handle_event(EventType, EventContent, State, Data) -> Result
 foreign import handle_event
-  :: forall a b c d e. a -> b -> c -> d -> Process e
+  :: forall t e s d r. t -> e -> s -> d -> Process r
 
-foreign import terminate :: forall r st. r -> Process st
+-- | Module:terminate(Reason, State, Data) -> Ignored
+foreign import terminate
+  :: forall r s d. r -> s -> d -> Process ()
 
+-- | Module:code_change(OldVsn, OldState, OldData, Extra) -> Result
 foreign import code_change
-  :: forall vsn st extra. vsn -> st -> extra -> Process st
+  :: forall v s d e r. v -> s -> d -> e -> Process r

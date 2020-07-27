@@ -35,48 +35,66 @@ module Control.Behaviour.GenStatem
   , cast
   , castTo
   , castRef
-    -- * helper funcs
+    -- * init result
   , initOk
+  , initOkWith
+  , initIgnore
+  , initStop
+    -- * transition
   , keep
+  , keepWith
   , next
+  , nextWith
   , repeat
+  , repeatWith
+    -- * helper funcs
   , replyTo
   , unhandled
   , module Control.Behaviour.GenStatem.Types
   ) where
 
-import Control.Behaviour.GenStatem.Types
-import Control.Process (Process, ExitReason)
+import Control.Monad (return)
+import Control.Process (From, Process, ExitReason)
+import Data.Function (($))
 import Data.Pid (Pid)
 import Data.Ref (Reference)
 import Data.Timeout (Timeout)
 import Data.Unit (Unit)
+import Control.Behaviour.GenStatem.Types
 
-type Init s d = Process (InitResult s d)
+-- | Init Action
+type Init e s d = Process (InitResult e s d)
 
+-- | Handle Event
 type HandleEvent e s d
-  = EventType -> e -> s -> d -> Process (Transition s d)
+  = EventType -> e -> s -> d -> Process (Transition e s d)
 
 class GenStatem e s d | e -> s, s -> d, d -> e where
   handleEvent :: HandleEvent e s d
 
 foreign import start
-  :: forall e s d. GenStatem e s d => (Init s d) -> Process Pid
+  :: forall e s d. GenStatem e s d
+   => (Init e s d) -> Process Pid
 
 foreign import startWith
-  :: forall e s d. GenStatem e s d => Name -> (Init s d) -> Process Pid
+  :: forall e s d. GenStatem e s d
+   => Name -> (Init e s d) -> Process Pid
 
 foreign import startLink
-  :: forall e s d. GenStatem e s d => (Init s d) -> Process Pid
+  :: forall e s d. GenStatem e s d
+   => (Init e s d) -> Process Pid
 
 foreign import startLinkWith
-  :: forall e s d. GenStatem e s d => Name -> (Init s d) -> Process Pid
+  :: forall e s d. GenStatem e s d
+   => Name -> (Init e s d) -> Process Pid
 
 foreign import startMonitor
-  :: forall e s d. GenStatem e s d => (Init s d) -> Process (Pid, Reference)
+  :: forall e s d. GenStatem e s d
+   => (Init e s d) -> Process (Pid, Reference)
 
 foreign import startMonitorWith
-  :: forall e s d. GenStatem e s d => Name -> (Init s d) -> Process (Pid, Reference)
+  :: forall e s d. GenStatem e s d
+   => Name -> (Init e s d) -> Process (Pid, Reference)
 
 -- Stop the Statem Process.
 foreign import stop :: Name -> Process ()
@@ -92,7 +110,6 @@ foreign import call
   :: forall req rep. Name -> req -> Process rep
 
 -- | Synchronous call to the Server process directly.
-
 foreign import callTo
   :: forall req rep. Pid -> req -> Process rep
 
@@ -102,30 +119,52 @@ foreign import callRef
 foreign import callTimeout
   :: forall req rep. StatemRef -> req -> Timeout -> Process rep
 
--- | Sends an asynchronous request to the Server process directly.
-
 foreign import cast
   :: forall msg. Name -> msg -> Process ()
 
+-- | Sends an asynchronous request to the Server process directly.
 foreign import castTo
   :: forall req. Pid -> req -> Process ()
 
 foreign import castRef
   :: forall msg. StatemRef -> msg -> Process ()
 
-foreign import replyTo :: forall rep. Caller -> rep -> Process ()
-
-initOk :: forall s d. s -> d -> InitResult s d
-initOk s d = InitOk s d
-
-keep :: forall s d. d -> Transition s d
-keep d = Keep d
-
-next :: forall s d. s -> d -> Transition s d
-next s d = Next s d
-
-repeat :: forall s d. d -> Transition s d
-repeat d = Repeat d
+foreign import replyTo
+  :: forall rep. From -> rep -> Process ()
 
 foreign import unhandled :: forall e s d. HandleEvent e s d
+
+-- | Init result
+
+initOk :: forall e s d. s -> d -> Process (InitResult e s d)
+initOk s d = return $ InitOk s d []
+
+initOkWith :: forall e s d. s -> d -> [Action e] -> Process (InitResult e s d)
+initOkWith s d actions = return $ InitOk s d actions
+
+initIgnore :: forall e s d. Process (InitResult e s d)
+initIgnore = return InitIgnore
+
+initStop :: forall e s d. ExitReason -> Process (InitResult e s d)
+initStop r = return $ InitStop r
+
+-- | Statem Transition
+
+keep :: forall e s d. d -> Process (Transition e s d)
+keep d = return $ Keep d []
+
+keepWith :: forall e s d. d -> [Action e] -> Process (Transition e s d)
+keepWith d actions = return $ Keep d actions
+
+next :: forall e s d. s -> d -> Process (Transition e s d)
+next s d = return $ Next s d []
+
+nextWith :: forall e s d. s -> d -> [Action e] -> Process (Transition e s d)
+nextWith s d actions = return $ Next s d actions
+
+repeat :: forall e s d. d -> Process (Transition e s d)
+repeat d = return $ Repeat d []
+
+repeatWith :: forall e s d. d -> [Action e] -> Process (Transition e s d)
+repeatWith d actions = return $ Repeat d actions
 

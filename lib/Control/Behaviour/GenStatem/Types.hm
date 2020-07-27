@@ -13,7 +13,8 @@
 --
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenStatem.Types
-  ( EventType(..)
+  ( Action(..)
+  , EventType(..)
   , InitResult(..)
   , Transition(..)
   , StatemRef(..)
@@ -25,31 +26,42 @@ import Control.Distributed.Node (Node)
 import Control.Process (ExitReason, From)
 import Data.Pid (Pid)
 
-data EventType = Call From | Cast
+-- | Event Type
+data EventType
+  = Call From | Cast | Info
+    -- ^ external event type
+  | Timeout
+    -- ^ timeout event type
+  | Internal
+    -- ^ internal
+
+-- | Statem Action
+data Action e
+  = Postpone
+  | NextEvent EventType e
+  | Hibernate
+  | TimeoutEvent Integer e
+  | TimeoutCancel
+  | TimeoutUpdate e
+  | StateTimeout Integer e
+  | StateTimeoutCancel
+  | StateTimeoutUpdate e
 
 -- | Init Result
-data InitResult s d
-  = InitOk s d
-    -- ^ {ok, State}
-  | InitOkHib s d
-    -- ^ {ok, State, hibernate}
+data InitResult e s d
+  = InitOk s d [Action e]
+    -- ^ {ok, State, Actions}
   | InitIgnore
     -- ^ ignore
   | InitStop ExitReason
     -- ^ {stop, Reason}
 
-data Transition s d
-  = Keep d
-  | Next s d
-  | Repeat d
-
--- | StateM Action
-data Action st
-  = StatemIgnore st
-  | StatemReply st
-  | StatemNoReply st
-  | StatemStop ExitReason st
-  | StatemStopReply ExitReason st
+-- | Statem Transition
+data Transition e s d
+  = Keep d [Action e]
+  | Next s d [Action e]
+  | Repeat d [Action e]
+  | Stop ExitReason d
 
 data StatemRef
   = StatemPid Pid
