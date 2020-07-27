@@ -58,10 +58,10 @@ data InitResult e s d
 
 -- | Statem Transition
 data Transition e s d
-  = KeepState d [Action e]
-  | NextState s d [Action e]
-  | RepeatState d [Action e]
-  | Terminate ExitReason d
+  = Keep d [Action e]
+  | Next s d [Action e]
+  | Repeat d [Action e]
+  | Shutdown ExitReason d
 
 data StatemRef
   = StatemPid Pid

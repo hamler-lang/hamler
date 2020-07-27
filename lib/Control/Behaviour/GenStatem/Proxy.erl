@@ -44,14 +44,14 @@ handle_event(Type, Content, State,
     #{handleEvent := HandleEvent} = Class,
     Args = [wrap(Type), Content, State, Data],
     case ?RunIO('Curry':apply(HandleEvent, Args)) of
-        {'KeepState', NData, Actions} ->
+        {'Keep', NData, Actions} ->
             {keep_state, Proxy#proxy{data = NData}, transAction(Actions)};
-        {'NextState', NState, NData, Actions} ->
+        {'Next', NState, NData, Actions} ->
             {next_state, NState, Proxy#proxy{data = NData}, transAction(Actions)};
-        {'RepeatState', NData, Actions} ->
+        {'Repeat', NData, Actions} ->
             {repeat_state, Proxy#proxy{data = NData}, transAction(Actions)};
-        {'Terminate', Reason, NData} ->
-            {stop, unwrap(Reason), Proxy#proxy{data = NData}}
+        {'Shutdown', Reason, NData} ->
+            {stop, shutdown(Reason), Proxy#proxy{data = NData}}
     end.
 
 terminate(_Reason, _State, _Data) ->
@@ -94,9 +94,9 @@ unwrap({'Call', From}) -> {call, From};
 unwrap({'Cast'}) -> cast;
 unwrap({'Info'}) -> info;
 unwrap({'Timeout'}) -> timeout;
-unwrap({'Internal'}) -> internal;
+unwrap({'Internal'}) -> internal.
 
-unwrap({'ExitNormal'}) -> normal;
-unwrap({'ExitShutdown'}) -> shutdown;
-unwrap({'ExitReason', Reason}) -> {shutdown, Reason}.
+shutdown({'ExitNormal'}) -> normal;
+shutdown({'ExitShutdown'}) -> shutdown;
+shutdown({'ExitReason', Reason}) -> {shutdown, Reason}.
 
