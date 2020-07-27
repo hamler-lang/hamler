@@ -44,14 +44,14 @@ handle_event(Type, Content, State,
     #{handleEvent := HandleEvent} = Class,
     Args = [wrap(Type), Content, State, Data],
     case ?RunIO('Curry':apply(HandleEvent, Args)) of
-        {'Keep', NData, Actions} ->
+        {'KeepState', NData, Actions} ->
             {keep_state, Proxy#proxy{data = NData}, transAction(Actions)};
-        {'Next', NState, NData, Actions} ->
+        {'NextState', NState, NData, Actions} ->
             {next_state, NState, Proxy#proxy{data = NData}, transAction(Actions)};
-        {'Repeat', NData, Actions} ->
+        {'RepeatState', NData, Actions} ->
             {repeat_state, Proxy#proxy{data = NData}, transAction(Actions)};
-        {'Stop', Reason, NData} ->
-            {stop, Reason, Proxy#proxy{data = NData}}
+        {'Terminate', Reason, NData} ->
+            {stop, unwrap(Reason), Proxy#proxy{data = NData}}
     end.
 
 terminate(_Reason, _State, _Data) ->
@@ -94,5 +94,9 @@ unwrap({'Call', From}) -> {call, From};
 unwrap({'Cast'}) -> cast;
 unwrap({'Info'}) -> info;
 unwrap({'Timeout'}) -> timeout;
-unwrap({'Internal'}) -> internal.
+unwrap({'Internal'}) -> internal;
+
+unwrap({'ExitNormal'}) -> normal;
+unwrap({'ExitShutdown'}) -> shutdown;
+unwrap({'ExitReason', Reason}) -> {shutdown, Reason}.
 

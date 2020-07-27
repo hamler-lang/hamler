@@ -47,6 +47,8 @@ module Control.Behaviour.GenStatem
   , nextWith
   , repeat
   , repeatWith
+  , end
+  , endWith
     -- * helper funcs
   , replyTo
   , unhandled
@@ -54,8 +56,8 @@ module Control.Behaviour.GenStatem
   ) where
 
 import Control.Monad (return)
-import Control.Process (From, Process, ExitReason)
-import Data.Function (($))
+import Control.Process (From, Process, ExitReason(..))
+import Data.Function (($), (<<<))
 import Data.Pid (Pid)
 import Data.Ref (Reference)
 import Data.Timeout (Timeout)
@@ -134,37 +136,47 @@ foreign import replyTo
 
 foreign import unhandled :: forall e s d. HandleEvent e s d
 
+-----------------------------------------------------------------------------
 -- | Init result
+-----------------------------------------------------------------------------
 
 initOk :: forall e s d. s -> d -> Process (InitResult e s d)
 initOk s d = return $ InitOk s d []
 
 initOkWith :: forall e s d. s -> d -> [Action e] -> Process (InitResult e s d)
-initOkWith s d actions = return $ InitOk s d actions
+initOkWith s d = return <<< InitOk s d
 
 initIgnore :: forall e s d. Process (InitResult e s d)
 initIgnore = return InitIgnore
 
 initStop :: forall e s d. ExitReason -> Process (InitResult e s d)
-initStop r = return $ InitStop r
+initStop = return <<< InitStop
 
--- | Statem Transition
+-----------------------------------------------------------------------------
+-- | State Transition
+-----------------------------------------------------------------------------
 
 keep :: forall e s d. d -> Process (Transition e s d)
-keep d = return $ Keep d []
+keep d = return $ KeepState d []
 
 keepWith :: forall e s d. d -> [Action e] -> Process (Transition e s d)
-keepWith d actions = return $ Keep d actions
+keepWith d = return <<< KeepState d
 
 next :: forall e s d. s -> d -> Process (Transition e s d)
-next s d = return $ Next s d []
+next s d = return $ NextState s d []
 
 nextWith :: forall e s d. s -> d -> [Action e] -> Process (Transition e s d)
-nextWith s d actions = return $ Next s d actions
+nextWith s d = return <<< NextState s d
 
 repeat :: forall e s d. d -> Process (Transition e s d)
-repeat d = return $ Repeat d []
+repeat d = return $ RepeatState d []
 
 repeatWith :: forall e s d. d -> [Action e] -> Process (Transition e s d)
-repeatWith d actions = return $ Repeat d actions
+repeatWith d = return <<< RepeatState d
+
+end :: forall e s d. d -> Process (Transition e s d)
+end = return <<< Terminate ExitNormal
+
+endWith :: forall e s d. ExitReason -> d -> Process (Transition e s d)
+endWith r = return <<< Terminate r
 
