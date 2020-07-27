@@ -28,6 +28,10 @@ foreign import handle_call
 foreign import handle_cast
   :: forall req st res. req -> st -> Process res
 
+-- | Module:handle_continue(Continue, State) -> Result
+foreign import handle_continue
+  :: forall req st res. req -> st -> Process res
+
 -- | Module:handle_info(Info, State) -> Result
 foreign import handle_info
   :: forall info st res. info -> st -> Process res

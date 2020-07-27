@@ -23,6 +23,7 @@
         , startMonitor/2
         , startMonitorWith/3
         , stop/1
+        , stopRef/1
         , stopWith/3
         ]).
 
@@ -30,9 +31,11 @@
         , abcastAt/3
         , call/2
         , callTo/2
+        , callRef/2
         , callTimeout/3
         , cast/2
         , castTo/2
+        , castRef/2
         , multiCall/2
         , multiCallAt/3
         , multiCallTimeoutAt/4
@@ -65,7 +68,10 @@ startMonitor(Class, Init) ->
 startMonitorWith(Class, Name, Init) ->
   ?IO(retPid(gen_server:start_monitor({local, Name}, ?MOD, [Class, Init], []))).
 
-stop(ServerRef) ->
+stop(Name) ->
+  ?IO(gen_server:stop(Name)).
+
+stopRef(ServerRef) ->
   ?IO(gen_server:stop(toErl(ServerRef))).
 
 stopWith(ServerRef, ExitReason, Timeout) ->
@@ -83,25 +89,33 @@ abcast(Name, Req) ->
 abcastAt(Nodes, Name, Req) ->
   ?IO(gen_server:abcast(Nodes, Name, Req)).
 
-%% call :: ServerRef -> req -> Process rep
-call(ServerRef, Req) ->
-  ?IO(gen_server:call(toErl(ServerRef), Req)).
+%% call :: Name -> req -> Process rep
+call(Name, Req) ->
+  ?IO(gen_server:call(Name, Req)).
 
 %% callTo :: Pid -> req -> Process rep
 callTo(Pid, Req) ->
   ?IO(gen_server:call(Pid, Req)).
 
+%% call :: ServerRef -> req -> Process rep
+callRef(ServerRef, Req) ->
+  ?IO(gen_server:call(toErl(ServerRef), Req)).
+
 %% callTimeout :: ServerRef -> req -> Timeout -> Process rep
 callTimeout(ServerRef, Req, Timeout) ->
   ?IO(gen_server:call(toErl(ServerRef), Req, toErl(Timeout))).
 
-%% cast :: ServerRef -> req -> Process ()
-cast(ServerRef, Req) ->
-  ?IO(gen_server:cast(toErl(ServerRef), Req)).
+%% cast :: Name -> req -> Process ()
+cast(Name, Req) ->
+  ?IO(gen_server:cast(Name, Req)).
 
 %% castTo :: Pid -> req -> Process ()
 castTo(Pid, Req) ->
   ?IO(gen_server:cast(Pid, Req)).
+
+%% castRef :: ServerRef -> req -> Process ()
+castRef(ServerRef, Req) ->
+  ?IO(gen_server:cast(toErl(ServerRef), Req)).
 
 %% multiCall :: ServerName -> req -> Process [NodeReply rep]
 multiCall(Name, Req) ->
