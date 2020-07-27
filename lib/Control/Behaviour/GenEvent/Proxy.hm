@@ -15,22 +15,27 @@
 module Control.Behaviour.GenEvent.Proxy where
 
 import Control.Process (Process)
+import Data.Unit (Unit)
 
-foreign import init
-  :: forall a st. a -> Process st
+-- | Module:init(InitArgs) -> Result
+foreign import init :: forall a res. a -> Process res
 
+-- | Module:handle_call(Request, State) -> Result
 foreign import handle_call
-  :: forall r st. r -> st -> Process st
+  :: forall req st res. req -> st -> Process res
 
+-- | Module:handle_event(Event, State) -> Result
 foreign import handle_event
-  :: forall e st. e -> st -> Process st
+  :: forall e st res. e -> st -> Process res
 
+-- | Module:handle_info(Info, State) -> Result
 foreign import handle_info
-  :: forall m st. m -> st -> Process st
+  :: forall info st res. info -> st -> Process res
 
-foreign import terminate
-  :: forall r st. r -> Process st
+-- | Module:terminate(Arg, State) -> term()
+foreign import terminate :: forall r st. r -> st -> Process ()
 
+-- | Module:code_change(OldVsn, State, Extra) -> Result
 foreign import code_change
-  :: forall vsn st extra. vsn -> st -> extra -> Process st
+  :: forall vsn st ex res. vsn -> st -> ex -> Process res
 
