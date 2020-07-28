@@ -13,7 +13,7 @@ extra-deps:
 - github: hamler-lang/CoreErlang
   commit: 2ea1038140118f5bc29f4cb14b50aa0918d62581
 - github: hamler-lang/purescript
-  commit: 3eeb66b8534a661efe0abbbabcfaf49c9dbafab0
+  commit: bc43f3b094feee61e7b9091a69cc7154d5f7d6a7
 - megaparsec-8.0.0@sha256:362f85e243ecbcb550e1de6e5c74ba5a50c09edaa1208c99bc5b9fd242227fc6,3808
 flags:
   these:
