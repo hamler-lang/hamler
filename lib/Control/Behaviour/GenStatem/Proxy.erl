@@ -88,6 +88,7 @@ wrap({call, From}) -> {'Call', From};
 wrap(cast) -> {'Cast'};
 wrap(info) -> {'Info'};
 wrap(timeout) -> {'Timeout'};
+wrap(state_timeout) -> {'Timeout'};
 wrap(internal) -> {'Internal'}.
 
 unwrap({'Call', From}) -> {call, From};

@@ -61,7 +61,7 @@ module Control.Behaviour.GenServer
 import Control.Behaviour.GenServer.Types
 import Control.Distributed.Node (Node)
 import Control.Monad (return)
-import Control.Process (Process, ExitReason(..))
+import Control.Process (From, Process, ExitReason(..))
 import Data.Function (($), (<<<))
 import Data.Maybe (Maybe(..))
 import Data.Pid (Pid)
@@ -72,7 +72,7 @@ import Data.Unit (Unit)
 type Init req st = Process (InitResult req st)
 
 type HandleCall req rep st
-  = req -> Caller -> st -> Process (Reply req rep st)
+  = req -> From -> st -> Process (Reply req rep st)
 
 type HandleCast req rep st
   = req -> st -> Process (Reply req rep st)
@@ -180,7 +180,8 @@ initStop :: forall req st. ExitReason -> Process (InitResult req st)
 initStop = return <<< InitStop
 
 -- | Send a reply to the caller explicitly.
-foreign import replyTo :: forall rep. Caller -> rep -> Process ()
+foreign import replyTo
+  :: forall rep. From -> rep -> Process ()
 
 reply :: forall req rep st. rep -> st -> Process (Reply req rep st)
 reply rep st = return $ Reply rep st Nothing
