@@ -6,6 +6,7 @@
 --
 -- Maintainer  :  Feng Lee, feng@emqx.io
 --                Yang M, yangm@emqx.io
+--                Zhang sw zhangsw@emqx.io
 -- Stability   :  experimental
 -- Portability :  portable
 --
@@ -14,53 +15,121 @@
 -----------------------------------------------------------------------------
 module Data.Array where
 
+import Data.Eq (class Eq, (==))
+import Data.Ord (class Ord, compare)
+import Data.Show (class Show, show)
+import Data.Functor (class Functor, (<$>))
+import Data.Foldable (class Foldable, foldr)
+import Data.Traversable (class Traversable, sequence)
+
+import Data.Bool (Bool)
+import Data.Monoid (mempty)
+import Data.Semigroup ((<>))
+import Data.String ((++))
+import Data.OrdDict (OrdDict)
+import Control.Monad (liftA1)
+
+import Foreign (ffi1, ffi2, ffi3)
+
 foreign import data Array :: Type -> Type
 
-{- TODO: typeclass
-Eq
-Ord
-Show
-Functor
-Foldable
-Traversable
--}
+instance Eq t => Eq (Array t) where
+  eq a b = toList a == toList b
 
-{- TODO:
-Construct
-Fold
-Index and Access
-Accumulate
-Updates
--}
+instance Ord t => Ord (Array t) where
+  compare a b = compare (toList a) (toList b)
+
+-- TODO: Show List
+instance Show t => Show (Array t) where
+  show a = "[" ++ showList (toList a) ++ "]"
+    where showList [] = ""
+          showList [x | []] = show x
+          showList [x | xs] = show x ++ ", "
+
+instance Functor Array where
+  map = ffi2 :array :map
+
+instance Foldable Array where
+  foldl = ffi3 :array :foldl
+  foldr = ffi3 :array :foldr
+  foldMap f = foldr (\x acc -> f x <> acc) mempty
+
+instance Traversable Array where
+  traverse f ta = sequence (f <$> ta)
+  sequence x = liftA1 fromList (sequence (toList x))
 
 {- TODO: functions
-default/1
-fix/1
-foldl/3
-foldr/3
-from_list/1
-from_list/2
-from_orddict/1
-from_orddict/2
-get/2
-is_array/1
-is_fix/1
-map/2
-new/0
-new/1
-new/2
-relax/1
-reset/2
-resize/1
-resize/2
-set/3
-size/1
-sparse_foldl/3
-sparse_foldr/3
-sparse_map/2
-sparse_size/1
-sparse_to_list/1
-sparse_to_orddict/1
-to_list/1
-to_orddict/1
+is_array/1             Why a strong type system language need this?
 -}
+
+-- TODO: remove default 'undefined'
+fromList :: forall a. [a] -> Array a
+fromList = ffi1 :array :from_list
+
+fromListWith :: forall a. [a] -> a -> Array a
+fromListWith = ffi2 :array :from_list
+
+fromOrdDict :: forall a. OrdDict Integer a -> Array a
+fromOrdDict = ffi1 :array :from_orddict
+
+fromOrdDictWith :: forall a. OrdDict Integer a -> a -> Array a
+fromOrdDictWith = ffi2 :array :from_orddict
+
+toList :: forall a. Array a -> [a]
+toList = ffi1 :array :to_list
+
+sparseToList :: forall a. Array a -> [a]
+sparseToList = ffi1 :array :sparse_to_list
+
+toOrdDict :: forall a. Array a -> OrdDict Integer a
+toOrdDict = ffi1 :array :to_orddict
+
+sparseToOrdDict :: forall a. Array a -> OrdDict Integer a
+sparseToOrdDict = ffi1 :array :sparse_to_orddict
+
+data ArrayOption a = Size Integer | Fix Bool | Default a
+
+foreign import new :: forall a. [ArrayOption a] -> Array a
+
+default :: forall a. Array a -> a
+default = ffi1 :array :default
+
+fix :: forall a. Array a -> Array a
+fix = ffi1 :array :fix
+
+relax :: forall a. Array a -> Array a
+relax = ffi1 :array :relax
+
+isFix :: forall a. Array a -> Bool
+isFix = ffi1 :array :is_fix
+
+-- TODO: Ix typeclass
+get :: forall a. Integer -> Array a -> a
+get = ffi2 :array :get
+
+-- TODO: flip args
+infix 9 get as !
+
+set :: forall a. Integer -> a -> Array a -> Array a
+set = ffi3 :array :set
+
+size :: forall a. Array a -> Integer
+size = ffi1 :array :size
+
+sparseSize :: forall a. Array a -> Integer
+sparseSize = ffi1 :array :sparse_size
+
+resize :: forall a. Integer -> Array a -> Array a
+resize = ffi2 :array :resize
+
+reset :: forall a. Integer -> Array a -> Array a
+reset = ffi2 :array :reset
+
+sparseFoldl :: forall a b. (b -> a -> b) -> b -> Array a -> b
+sparseFoldl = ffi3 :array :sparse_foldl
+
+sparseFoldr :: forall a b. (a -> b -> b) -> b -> Array a -> b
+sparseFoldr = ffi3 :array :sparse_foldr
+
+sparseMap :: forall a b. (a -> b) -> Array a -> Array b
+sparseMap = ffi2 :array :array :sparse_map

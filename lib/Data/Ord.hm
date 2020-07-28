@@ -53,6 +53,15 @@ instance Ord Float where
 instance Ord Unit where
   compare _ _ = EQ
 
+instance Ord a => Ord [a] where
+  compare [] [] = EQ
+  compare [] _ = LT
+  compare _ [] = GT
+  compare [x | xs] [y | ys] =
+    let result = compare x y in case result of
+      EQ -> compare xs ys
+      _ -> result
+
 {-
 instance Ord Void where
   compare _ _ = EQ

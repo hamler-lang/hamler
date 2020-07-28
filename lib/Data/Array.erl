@@ -13,3 +13,15 @@
 %%
 %%---------------------------------------------------------------------------
 -module('Array').
+
+-export([ new/1 
+        ]).
+
+trans([]) -> [];
+trans([X | Xs]) -> [ case X of
+    { 'Size', S } -> { size, S };
+    { 'Fix', B } -> { fixed, B };
+    { 'Default', V } -> { default, V }
+end | trans(Xs) ].
+
+new(Opt) -> array:new(trans(Opt)).
