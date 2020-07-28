@@ -15,6 +15,7 @@
 module Control.Behaviour.GenStatem
   ( class GenStatem
   , Init
+  , OnEvent
   , HandleEvent
   , handleEvent
     -- * start and stop
@@ -50,6 +51,7 @@ module Control.Behaviour.GenStatem
   , shutdown
     -- * helper funcs
   , replyTo
+  , handleWith
   , unhandled
   , module Control.Behaviour.GenStatem.Types
   ) where
@@ -57,6 +59,7 @@ module Control.Behaviour.GenStatem
 import Control.Monad (return)
 import Control.Process (From, Process, ExitReason(..))
 import Data.Function (($), (<<<))
+import Data.Map as M
 import Data.Pid (Pid)
 import Data.Ref (Reference)
 import Data.Timeout (Timeout)
@@ -69,6 +72,9 @@ type Init e s d = Process (InitResult e s d)
 -- | Handle Event
 type HandleEvent e s d
   = EventType -> e -> s -> d -> Process (Transition e s d)
+
+type OnEvent e s d
+  = EventType -> e -> d -> Process (Transition e s d)
 
 class GenStatem e s d | e -> s, s -> d, d -> e where
   handleEvent :: HandleEvent e s d
@@ -132,6 +138,12 @@ foreign import castRef
 
 foreign import replyTo
   :: forall rep. From -> rep -> Process ()
+
+-- | Handle with state functions.
+handleWith :: forall e s d. [(s, OnEvent e s d)] -> HandleEvent e s d
+handleWith stateFuns =
+  let funsMap = M.fromList stateFuns
+   in \t e s d -> let f = M.get s funsMap in f t e d
 
 foreign import unhandled :: forall e s d. HandleEvent e s d
 
