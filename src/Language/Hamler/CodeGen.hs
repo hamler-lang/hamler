@@ -106,18 +106,26 @@ moduleToErl C.Module {..} ffiModule = do
         Just args ->
           return . ann $ FunName (ann $ Atom wname) (toInteger args)
         Nothing -> throwError $ P.MultipleErrors [P.ErrorMessage [] $ P.MissingFFIImplementations moduleName [ident]]
+  ffiDefs <- filterFunDef moduleName funDecls' $ moduleToFunDefs ffiModule
   return $
     ann $
       E.Module
         (ann $ Atom $ runModuleName moduleName)
         (mm1 : mm0 : exports)
         (ann $ Attrs [])
-        (funDecls' ++ (filterFunDef funDecls' $ moduleToFunDefs ffiModule))
+        (funDecls' ++ ffiDefs)
 
-filterFunDef :: [FunDef Text] -> [FunDef Text] -> [FunDef Text]
-filterFunDef s source =
+filterFunDef :: ModuleName -> [FunDef Text] -> [FunDef Text] -> Translate [FunDef Text]
+filterFunDef moduleName  s source = do
   let nameSet = fmap (\(FunDef fn _) -> fn) s
-   in Prelude.filter (\(FunDef fn _) -> not $ fn `elem` nameSet) source
+      source' = Prelude.filter (\(FunDef fn _) -> not $ fn `elem` [mm0, mm1]) source
+      v = Prelude.filter (\(FunDef fn _) -> not $ fn `elem` nameSet) source'
+  if length v == length source'
+    then return v
+    else do
+    let allDupFun =fmap (\(FunDef (FunName (Atom fn _) _ _) _) -> Ident fn)
+                    $ Prelude.filter (\(FunDef fn _) -> fn `elem` nameSet) source'
+    throwError $ P.MultipleErrors [P.ErrorMessage [] $ P.FFIFunSameNameWithModule moduleName allDupFun]
 
 -- | CoreFn Bind to CoreErlang FunDef
 bindToErl :: C.Bind C.Ann -> Translate [FunDef Text]
@@ -254,10 +262,18 @@ exprToErl (C.Case _ es alts) = do
   forM_ (zip varName is) $ \(n, i) -> do
     modify (\x -> x & localVar %~ M.insert n i)
   return . ann $ ELet vars (ann $ Exprs es') (ann . Expr . ann $ ECase (ann . E.Exprs $ fmap (ann . EVar) vars) alts')
+exprToErl (C.Receive _ e1 e2 alts) = do
+  alts' <- mapM dealRecAlt alts
+  e2' <- exprToErl e2
+  return $ ann $ EFun $ ann $ Fun [] $ ann $ Expr $
+    ann $ EFun $ ann $ Fun [] $ ann $ Expr $ ann $ EReceive alts' (ann $ Expr $ ann $ ELit $ ann $ LInt e1 ) (ann $ Expr $ appExpr e2')
 exprToErl (C.List _ es e) = do
   es' <- mapM exprToErl es
   e' <- exprToErl e
   return $ elist es' e'
+
+appExpr :: E.Expr Text -> E.Expr Text
+appExpr expr = ann $ EApp (ann $ Expr expr) []
 
 matchFail :: CaseAlternative C.Ann -> Translate [Clause Text]
 matchFail ca =
@@ -285,6 +301,22 @@ isWildBinder _ = False
 
 guardv :: Exprs Text
 guardv = ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "true"
+
+dealRecAlt :: CaseAlternative C.Ann -> Translate (E.Clause Text)
+dealRecAlt (CaseAlternative bs res) = do
+  pats <- mapM binderToPat bs
+  let guard1 = ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "true"
+  case res of
+    Right expr -> do
+      expr' <- exprToErl expr
+      return
+        . ann
+        $ Clause pats guard1 (ann . Expr $ appExpr expr')
+    Left xs -> error $ show xs
+      -- xs' <- guardToErl xs
+      -- return
+      --   . ann
+      --   $ Clause pats guard1 (ann $ Exprs [xs'])
 
 dealAlts :: [E.Expr Text] -> [CaseAlternative C.Ann] -> Translate [Clause Text]
 dealAlts _ [] = error "strange happened"

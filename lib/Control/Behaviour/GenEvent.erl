@@ -20,15 +20,15 @@
         , startWith/3
         , startLink/2
         , startLinkWith/3
-        , stop/1
+        , stopRef/1
         , stopWith/3
         ]).
 
 -export([ addHandler/3
-        , notify/2
-        , notifyTo/2
+        , notifyRef/2
         , syncNotify/2
         , syncNotifyTo/2
+        , syncNotifyRef/2
         ]).
 
 -define(MOD, 'Control.Behaviour.GenEvent.Proxy').
@@ -49,11 +49,11 @@ startLink(Class, Init) ->
 startLinkWith(Class, Name, Init) ->
   ?IO(doStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init)).
 
-stop(EMgrRef) ->
-  ?IO(gen_event:stop(toErl(EMgrRef))).
+stopRef(EMgrRef) ->
+  ?IO(gen_event:stop(unwrap(EMgrRef))).
 
 stopWith(EMgrRef, Reason, Timeout) ->
-  ?IO(apply(gen_event, stop, [toErl(A) || A <- [EMgrRef, Reason, Timeout]])).
+  ?IO(apply(gen_event, stop, [unwrap(A) || A <- [EMgrRef, Reason, Timeout]])).
 
 %%---------------------------------------------------------------------------
 %% | GenEvent APIs
@@ -65,17 +65,17 @@ addHandler(Class, EMgrRef, Init) ->
         {'EXIT', Reason} -> error(Reason)
       end).
 
-notify(EMgrRef, Event) ->
-  ?IO(gen_event:notify(toErl(EMgrRef), Event)).
+notifyRef(EMgrRef, Event) ->
+  ?IO(gen_event:notify(unwrap(EMgrRef), Event)).
 
-notifyTo(Pid, Event) ->
-  ?IO(gen_event:notify(Pid, Event)).
-
-syncNotify(EMgrRef, Event) ->
-  ?IO(gen_event:sync_notify(toErl(EMgrRef), Event)).
+syncNotify(Name, Event) ->
+  ?IO(gen_event:sync_notify(Name, Event)).
 
 syncNotifyTo(Pid, Event) ->
   ?IO(gen_event:sync_notify(Pid, Event)).
+
+syncNotifyRef(EMgrRef, Event) ->
+  ?IO(gen_event:sync_notify(unwrap(EMgrRef), Event)).
 
 %%---------------------------------------------------------------------------
 %% | Internal functions
@@ -95,11 +95,11 @@ doStartWith(Start, Name, Class, Init) ->
       error(Reason)
   end.
 
-toErl({'EMgrPid', Pid}) -> Pid;
-toErl({'EMgrRef', Name}) -> Name;
-toErl({'EMgrRefAt', Name, Node}) -> {Name, Node};
-toErl({'EMgrRefGlobal', Name}) -> {global, Name};
+unwrap({'EMgrPid', Pid}) -> Pid;
+unwrap({'EMgrRef', Name}) -> Name;
+unwrap({'EMgrRefAt', Name, Node}) -> {Name, Node};
+unwrap({'EMgrRefGlobal', Name}) -> {global, Name};
 
-toErl({'Infinity'}) -> infinity;
-toErl({'Timeout', I}) -> I.
+unwrap({'Infinity'}) -> infinity;
+unwrap({'Timeout', I}) -> I.
 

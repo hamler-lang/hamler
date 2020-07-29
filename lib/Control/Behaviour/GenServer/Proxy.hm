@@ -15,20 +15,31 @@
 module Control.Behaviour.GenServer.Proxy where
 
 import Control.Process (From, Process)
+import Data.Unit (Unit)
 
-foreign import init :: forall a st. a -> Process st
+-- | Module:init(Args) -> Result
+foreign import init :: forall a res. a -> Process res
 
+-- | Module:handle_call(Request, From, State) -> Result
 foreign import handle_call
-  :: forall req res st. req -> From -> st -> Process res
+  :: forall req st res. req -> From -> st -> Process res
 
+-- | Module:handle_cast(Request, State) -> Result
 foreign import handle_cast
-  :: forall req res st. req -> st -> Process res
+  :: forall req st res. req -> st -> Process res
 
+-- | Module:handle_continue(Continue, State) -> Result
+foreign import handle_continue
+  :: forall req st res. req -> st -> Process res
+
+-- | Module:handle_info(Info, State) -> Result
 foreign import handle_info
-  :: forall info st. info -> st -> Process st
+  :: forall info st res. info -> st -> Process res
 
-foreign import terminate :: forall r st. r -> Process st
+-- | Module:terminate(Reason, State) -> Result
+foreign import terminate :: forall r st. r -> st -> Process ()
 
+-- Module:code_change(OldVsn, State, Extra) -> Result
 foreign import code_change
-  :: forall vsn st extra. vsn -> st -> extra -> Process st
+  :: forall vsn st ex res. vsn -> st -> ex -> Process res
 

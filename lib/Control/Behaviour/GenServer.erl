@@ -23,6 +23,8 @@
         , startMonitor/2
         , startMonitorWith/3
         , stop/1
+        , stopPid/1
+        , stopRef/1
         , stopWith/3
         ]).
 
@@ -30,13 +32,14 @@
         , abcastAt/3
         , call/2
         , callTo/2
+        , callRef/2
         , callTimeout/3
         , cast/2
         , castTo/2
+        , castRef/2
         , multiCall/2
         , multiCallAt/3
         , multiCallTimeoutAt/4
-        , replyTo/2
         , sendRequest/2
         , waitResponse/2
         ]).
@@ -65,11 +68,17 @@ startMonitor(Class, Init) ->
 startMonitorWith(Class, Name, Init) ->
   ?IO(retPid(gen_server:start_monitor({local, Name}, ?MOD, [Class, Init], []))).
 
-stop(ServerRef) ->
-  ?IO(gen_server:stop(toErl(ServerRef))).
+stop(Name) ->
+  ?IO(gen_server:stop(Name)).
+
+stopPid(Pid) ->
+  ?IO(gen_server:stop(Pid)).
+
+stopRef(ServerRef) ->
+  ?IO(gen_server:stop(unwrap(ServerRef))).
 
 stopWith(ServerRef, ExitReason, Timeout) ->
-  ?IO(gen_server:stop(toErl(ServerRef), toErl(ExitReason), toErl(Timeout))).
+  ?IO(gen_server:stop(unwrap(ServerRef), unwrap(ExitReason), unwrap(Timeout))).
 
 %%---------------------------------------------------------------------------
 %% | GenServer APIs
@@ -83,45 +92,50 @@ abcast(Name, Req) ->
 abcastAt(Nodes, Name, Req) ->
   ?IO(gen_server:abcast(Nodes, Name, Req)).
 
-%% call :: ServerRef -> req -> Process rep
-call(ServerRef, Req) ->
-  ?IO(gen_server:call(toErl(ServerRef), Req)).
+%% call :: Name -> req -> Process rep
+call(Name, Req) ->
+  ?IO(gen_server:call(Name, Req)).
 
 %% callTo :: Pid -> req -> Process rep
 callTo(Pid, Req) ->
   ?IO(gen_server:call(Pid, Req)).
 
+%% call :: ServerRef -> req -> Process rep
+callRef(ServerRef, Req) ->
+  ?IO(gen_server:call(unwrap(ServerRef), Req)).
+
 %% callTimeout :: ServerRef -> req -> Timeout -> Process rep
 callTimeout(ServerRef, Req, Timeout) ->
-  ?IO(gen_server:call(toErl(ServerRef), Req, toErl(Timeout))).
+  ?IO(gen_server:call(unwrap(ServerRef), Req, unwrap(Timeout))).
 
-%% cast :: ServerRef -> req -> Process ()
-cast(ServerRef, Req) ->
-  ?IO(gen_server:cast(toErl(ServerRef), Req)).
+%% cast :: Name -> req -> Process ()
+cast(Name, Req) ->
+  ?IO(gen_server:cast(Name, Req)).
 
 %% castTo :: Pid -> req -> Process ()
 castTo(Pid, Req) ->
   ?IO(gen_server:cast(Pid, Req)).
 
-%% multiCall :: ServerName -> req -> Process [NodeReply rep]
+%% castRef :: ServerRef -> req -> Process ()
+castRef(ServerRef, Req) ->
+  ?IO(gen_server:cast(unwrap(ServerRef), Req)).
+
+%% multiCall :: ServerName -> req -> Process (Replies rep)
 multiCall(Name, Req) ->
-  ?IO(gen_server:multi_call(Name, Req)).
+  ?IO(replies(gen_server:multi_call(Name, Req))).
 
 %% multiCallAt :: [Node] -> ServerName -> req -> Process [NodeReply rep]
 multiCallAt(Nodes, Name, Req) ->
-  ?IO(gen_server:multi_call(Nodes, Name, Req)).
+  ?IO(replies(gen_server:multi_call(Nodes, Name, Req))).
 
 multiCallTimeoutAt(Nodes, Name, Timeout, Req) ->
-  ?IO(gen_server:multi_call(Nodes, Name, toErl(Timeout), Req)).
-
-replyTo(From, Reply) ->
-  ?IO(gen_statem:reply(From, Reply)).
+  ?IO(replies(gen_server:multi_call(Nodes, Name, unwrap(Timeout), Req))).
 
 sendRequest(ServerRef, Request) ->
-  ?IO(gen_server:send_request(toErl(ServerRef), Request)).
+  ?IO(gen_server:send_request(unwrap(ServerRef), Request)).
 
 waitResponse(RequestId, Timeout) ->
-  ?IO(case gen_server:wait_response(RequestId, toErl(Timeout)) of
+  ?IO(case gen_server:wait_response(RequestId, unwrap(Timeout)) of
         {reply, Reply} -> Reply;
         timeout -> error(timeout);
         {error, Reason} -> error(Reason)
@@ -135,16 +149,20 @@ retPid({ok, Pid}) -> Pid;
 retPid(ignore) -> error(ignore);
 retPid({error, Reason}) -> error(Reason).
 
--compile({inline, [toErl/1]}).
-toErl({'ServerPid', Pid}) -> Pid;
-toErl({'ServerRef', Name}) -> Name;
-toErl({'ServerRefAt', Name, Node}) -> {Name, Node};
-toErl({'ServerRefGlobal', Name}) -> {global, Name};
+-compile({inline, [unwrap/1]}).
+unwrap({'ServerPid', Pid}) -> Pid;
+unwrap({'ServerRef', Name}) -> Name;
+unwrap({'ServerRefAt', Name, Node}) -> {Name, Node};
+unwrap({'ServerRefGlobal', Name}) -> {global, Name};
 
-toErl({'ExitReason', Reason}) -> Reason;
-toErl({'ExitNormal'}) -> normal;
-toErl({'ExitShutdown'}) -> shutdown;
+unwrap({'ExitReason', Reason}) -> Reason;
+unwrap({'ExitNormal'}) -> normal;
+unwrap({'ExitShutdown'}) -> shutdown;
 
-toErl({'Infinity'}) -> infinity;
-toErl({'Timeout', I}) -> I.
+unwrap({'Infinity'}) -> infinity;
+unwrap({'Timeout', I}) -> I.
+
+replies({Replies, BadNodes}) ->
+  lists:append([{Node, ?Just(Rep)} || {Node, Rep} <- Replies],
+               [{Node, ?Nothing} || Node <- BadNodes]).
 

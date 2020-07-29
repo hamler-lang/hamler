@@ -6,7 +6,7 @@
 
 **Hamler** empowers industries to build the next generation of scalable, reliable, realtime applications, especially for 5G, IoT and edge computing.
 
-## **Why Hamler?**
+## Why Hamler ?
 
 For almost a decade, we have been developing software systems based on Erlang/OTP, especially our main product [EMQ X](https://github.com/emqx/emqx) - the scalable open-source MQTT broker. So, we have always believed that Erlang is a masterpiece of engineering. With amazing concurrency, distribution and fault tolerance, it is one of the few general-purpose language platforms able to properly handle concurrency and soft realtime.
 
@@ -19,7 +19,7 @@ However, from all the experience writing Erlang, we believe that the following f
 
 Now all the features are avaliable in the Hamler programming language.
 
-## **Features**
+## Features
 
 - Functional programming
 - Haskell and ML style
@@ -33,69 +33,102 @@ Now all the features are avaliable in the Hamler programming language.
 - Advanced module system
 - Built-in concurrency
 
-## **Design**
+## Design
 
 The Hamler compiler architecture is shown as below:
 
-![hamler-compiler](https://github.com/hamler-lang/hamler.github.io/blob/master/images/compiler.png)
+![hamler-compiler](https://raw.githubusercontent.com/hamler-lang/hamler.github.io/master/images/compiler.png)
 
 The Hamler 0.1 compiler was forked from [PureScript][PureScriptHamler] 0.13.6. The Hamler source code is parsed to generate **CST**, then CoreErlang's IR is generated after **CST -> AST -> CoreFn**'s syntax tree transformation, syntax analysis and type checking. The code is then used by the Erlang compiler to generate the final Beam bytecode.
 
 [PureScriptHamler]: https://github.com/hamler-lang/purescript
 
-## **Installation**
+## Installation
 
-*Note: packages for linux and windows will be coming soon...*
+Get the installation package through [Github Release](https://github.com/hamler-lang/hamler/releases)
+
+> packages for windows will be coming soon...
+
+**Linux**
+
+```shell
+$ tar zxvf hamer-$version.tar.gz -C /usr/lib/hamler
+$ ln -s /usr/lib/hamler/bin/hamer /usr/bin/hamler
+```
+
+**Centos 7**
+
+```shell
+$ rpm -ivh hamler-$version-1.el7.x86_64.rpm
+```
+
+**Debian 8 / Debian 9 / Debian 10 / Ubuntu 16.04 / Ubuntu 18.04 / Ubuntu 20.04**
+
+```shell
+$ dpkg -i hamler_$version_amd64.deb
+```
 
 **Homebrew(macOS)**
 
+```shell
+$ brew tap hamler-lang/hamler
+$ brew install hamler
+```
+
+## Build from source code
+
+**Required**
+
++ [Erlang/OTP](erlang.org) >= 22
++ [Haskell Stack](haskellstack.org)
+
+**Building**
+
+1. Clone hamler from the git repo
+
+   ```shell
+   $ git clone https://github.com/hamler-lang/hamler.git
+   $ cd hamler
+   ```
+
+2. Configuring
+
+   ```shell
+   $ export LC_ALL=en_US.UTF-8
+   ```
+
+3. Building
+
+   ```shell
+   $ make
+   ```
+
+4. Testing
+
+   ```shell
+   $ make test
+   ```
+
+5. Install hamler
+
+   ```shell
+   $ sudo make install
+   ```
+
+## Create a project
+
   ```shell
-  brew tap hamler-lang/hamler
-  brew install hamler
+  $ mkdir demo-project
+  $ cd demo-project
+  $ hamler init
+  $ make
+  $ make run
   ```
 
-**Build from source code(macOS)**
-
-0. Install Erlang
+## Try the interpreter
 
   ```shell
-  brew install erlang@22
-  ```
-
-1. Install Stack
-
-  ```shell
-  brew install haskell-stack
-  ```
-
-2. Clone hamler from the git repo
-
-  ```shell
-  git clone https://github.com/hamler-lang/hamler.git
-  ```
-
-3. Install hamler
-
-  ```shell
-  cd hamler
-  make
-  make install
-  ```
-
-## **Create a project**
-
-  ```shell
-  mkdir demo-project
-  cd demo-project
-  hamler init
-  make
-  make run
-  ```
-
-## **Try the interpreter**
-
-  ```shell
-  hamler repl
+  $ hamler repl
 
   > -- List, range and enums
   > [1,2,3]
@@ -117,13 +150,13 @@ The Hamler 0.1 compiler was forked from [PureScript][PureScriptHamler] 0.13.6. T
   > values = Map.values m
   ```
 
-### **Documentation**
+### Documentation
 
 - [Cheatsheet](https://github.com/hamler-lang/documentation/blob/master/Cheatsheet.md)
 - [Guides](https://github.com/hamler-lang/documentation/tree/master/guides/)
 - [FAQ](https://github.com/hamler-lang/documentation/blob/master/FAQ.md)
 
-## **Community, discussion and supports**
+## Community, discussion and supports
 
 You can reach the **Hamler** community and core team via the following channels:
 
@@ -132,7 +165,7 @@ You can reach the **Hamler** community and core team via the following channels:
 - [Reddit - /r/HamlerLang](https://www.reddit.com/r/HamlerLang/)
 - [Medium - @hamlerlang](https://medium.com/@hamlerlang)
 
-## **Contributing**
+## Contributing
 
 To contribute to **Hamler** project:
 
@@ -144,7 +177,7 @@ To contribute to **Hamler** project:
 [hamler-project]: https://github.com/hamler-lang/hamler
 [hamler-wiki]: https://github.com/hamler-lang/hamler-wiki
 
-## **Core Team**
+## Core Team
 
 The Hamler core team comes from [EMQ Technologies Co., Ltd.](https://emqx.io/) now:
 
@@ -161,7 +194,7 @@ The Hamler core team comes from [EMQ Technologies Co., Ltd.](https://emqx.io/) n
 [homebrew]: https://github.com/hamler-lang/homebrew-hamler
 [rebar3_hamler]: https://github.com/hamler-lang/rebar3_hamler
 
-## **License & Credits**
+## License & Credits
 
 We would like to express our great appreciation to the [PureScript][PureScriptSite] team and community for all years of efforts making its amazing compiler, especially **CoreFn** and its incredible adaptability.
 
@@ -169,6 +202,6 @@ The hamler language project is licensed under BSD3, see [LICENSE](./LICENSE).
 
 [PureScriptSite]: https://www.purescript.org/
 
-## **About EMQ**
+## About EMQ
 
 [**EMQ**](https://emqx.io/) is an open source software company providing highly-scalable, real-time messaging and streaming platform for IoT applications in 5G Era.

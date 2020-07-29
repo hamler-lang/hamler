@@ -22,51 +22,53 @@
 -export([ init/1
         , handle_call/3
         , handle_cast/2
+        , handle_continue/2
         , handle_info/2
         , terminate/2
         , code_change/3
         ]).
 
--record(proxy, {handleCall, handleCast, state}).
+-record(proxy, {class, state}).
 
 init([Class, Init]) ->
   case Init() of
-    {'InitOk', State} ->
-      {ok, init_ok(Class, State)};
-    {'InitOkHib', State} ->
-      {ok, init_ok(Class, State), hibernate};
+    {'InitOk', State, ?Nothing} ->
+      {ok, initOk(Class, State)};
+    {'InitOk', State, ?Just(Action)} ->
+      {ok, initOk(Class, State), translate(Action)};
     {'InitIgnore'} ->
       ignore;
     {'InitStop', Reason} ->
-      {stop, Reason}
+      {stop, shutdown(Reason)}
   end.
 
-%% init_ok(#{handleCall := HandleCall, handleCast := HandleCast}, State) ->
-init_ok(#{handleCall := HandleCall, handleCast := HandleCast}, State) ->
-  #proxy{handleCall = HandleCall, handleCast = HandleCast, state = State}.
+initOk(Class, State) ->
+  #proxy{class = Class, state = State}.
 
-handle_call(Request, _From, Proxy = #proxy{handleCall = HandleCall, state = State}) ->
-  case ?RunIO('Curry':apply(HandleCall, [Request, State])) of
-    {'ServerIgnore', St} ->
-      {reply, ignored, Proxy#proxy{state = St}};
-    {'ServerReply', Rep, St} ->
-      {reply, Rep, Proxy#proxy{state = St}};
-    {'ServerNoReply', St} ->
-      {noreply, Proxy#proxy{state = St}};
-    {'ServerStop', Reason, St} ->
-      {stop, Reason, Proxy#proxy{state = St}};
-    {'ServerStopReply', Reason, Rep, St} ->
-      {stop, Reason, Rep, Proxy#proxy{state = St}}
+handle_call(Request, From, Proxy = #proxy{class = #{handleCall := HandleCall}, state = State}) ->
+  case ?RunIO('Curry':apply(HandleCall, [Request, From, State])) of
+    {'Reply', Rep, NState, ?Nothing} ->
+      {reply, Rep, Proxy#proxy{state = NState}};
+    {'Reply', Rep, NState, ?Just(Action)} ->
+      {reply, Rep, Proxy#proxy{state = NState}, translate(Action)};
+    {'NoReply', NState, ?Nothing} ->
+      {noreply, Proxy#proxy{state = NState}};
+    {'NoReply', NState, ?Just(Action)} ->
+      {noreply, Proxy#proxy{state = NState}, translate(Action)};
+    {'Shutdown', Reason, NState} ->
+      {stop, shutdown(Reason), Proxy#proxy{state = NState}}
   end.
 
-handle_cast(Msg, Proxy = #proxy{handleCast = HandleCast, state = State}) ->
+handle_continue(Continue, Proxy) -> handle_cast(Continue, Proxy).
+
+handle_cast(Msg, Proxy = #proxy{class = #{handleCast := HandleCast}, state = State}) ->
   case ?RunIO('Curry':apply(HandleCast, [Msg, State])) of
-    {'ServerIgnore', St} ->
-      {noreply, Proxy#proxy{state = St}};
-    {'ServerNoReply', St} ->
-      {noreply, Proxy#proxy{state = St}};
-    {'ServerStop', Reason, St} ->
-      {stop, Reason, Proxy#proxy{state = St}}
+    {'NoReply', NState, ?Nothing} ->
+      {noreply, Proxy#proxy{state = NState}};
+    {'NoReply', NState, ?Just(Action)} ->
+      {noreply, Proxy#proxy{state = NState}, translate(Action)};
+    {'Shutdown', Reason, NState} ->
+      {stop, shutdown(Reason), Proxy#proxy{state = NState}}
   end.
 
 handle_info(Info, Proxy) ->
@@ -81,4 +83,12 @@ code_change(_OldVsn, Proxy, _Extra) ->
 %%---------------------------------------------------------------------------
 %% | Internal functions
 %%---------------------------------------------------------------------------
+
+translate({'Continue', Req}) -> {continue, Req};
+translate({'Hibernate'}) -> hibernate;
+translate({'Timeout', Time}) -> Time.
+
+shutdown({'ExitNormal'}) -> normal;
+shutdown({'ExitShutdown'}) -> shutdown;
+shutdown({'ExitReason', Reason}) -> {shutdown, Reason}.
 

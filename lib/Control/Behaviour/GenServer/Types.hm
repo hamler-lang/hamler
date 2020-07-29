@@ -13,44 +13,42 @@
 --
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenServer.Types
-  ( Init
+  ( Action(..)
   , InitResult(..)
-  , MultiReply(..)
-  , ServerAction(..)
+  , Reply(..)
+  , Replies
   , ServerRef(..)
   , module Control.Behaviour.GenTypes
   ) where
 
 import Control.Behaviour.GenTypes
 import Control.Distributed.Node (Node)
-import Control.Process (Process, ExitReason)
+import Control.Process (ExitReason)
 import Data.Maybe (Maybe)
 import Data.Pid (Pid)
 
-type Init st = Process (InitResult st)
+data Action req
+  = Continue req
+  | Hibernate
+  | Timeout Integer
 
 -- | Init Result
-data InitResult st
-  = InitOk st
+data InitResult req st
+  = InitOk st (Maybe (Action req))
     -- ^ {ok, State}
-  | InitOkHib st
-    -- ^ {ok, State, hibernate}
   | InitIgnore
     -- ^ ignore
-  | InitStop Atom
+  | InitStop ExitReason
     -- ^ {stop, Reason}
 
--- | MultiReply
-data MultiReply rep
-  = MultiReply Node (Maybe rep)
+-- | Server Reply
+data Reply req rep st
+  = Reply rep st (Maybe (Action req))
+  | NoReply st (Maybe (Action req))
+  | Shutdown ExitReason st
 
--- | Server Action
-data ServerAction rep st
-  = ServerIgnore st
-  | ServerReply rep st
-  | ServerNoReply st
-  | ServerStop ExitReason st
-  | ServerStopReply ExitReason rep st
+-- | Replies
+type Replies rep = [(Node, Maybe rep)]
 
 -- | Server Ref.
 data ServerRef
@@ -62,3 +60,4 @@ data ServerRef
     -- ^ The GenServer is locally registered at another node.
   | ServerRefGlobal Name
     -- ^ The GenServer is globally registered in global.
+

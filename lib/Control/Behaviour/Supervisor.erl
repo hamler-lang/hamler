@@ -36,98 +36,91 @@
 
 -define(MOD, 'Control.Behaviour.Supervisor.Proxy').
 
+-import(?MOD, [translate/1]).
+
 startSup(Init) ->
   ?IO(retPid(?SUP:start_link(?MOD, [Init]))).
 
 startSupWith(Name, Init) ->
   ?IO(retPid(?SUP:start_link_with({local, Name}, ?MOD, [Init]))).
 
-%% TODO: destruct childspecs
 checkChildSpecs(ChildSpecs) ->
-  ?IO(case ?SUP:check_childspecs(ChildSpecs) of
-        ok -> ok();
-        {error, Reason} ->
-          err(childSpecError(Reason))
-      end).
+  ?IO(resultWith(fun childSpecError/1,
+                 ?SUP:check_childspecs([translate(Spec) || Spec <- ChildSpecs]))).
 
 countChildren(SupRef) ->
-  ?IO(maps:from_list(?SUP:count_children(toErl(SupRef)))).
+  ?IO(maps:from_list(?SUP:count_children(ref(SupRef)))).
 
 deleteChild(SupRef, Id) ->
-  ?IO(case ?SUP:delete_child(toErl(SupRef), Id) of
-        ok -> ok();
-        {error, Reason} ->
-          err(childError(Reason))
-      end).
+  ?IO(resultWith(fun childError/1, ?SUP:delete_child(ref(SupRef), Id))).
 
 getChildSpec(SupRef, Id) ->
-  ?IO(case ?SUP:get_childspec(toErl(SupRef), Id) of
+  ?IO(case ?SUP:get_childspec(ref(SupRef), Id) of
         {ok, ChildSpec} ->
-          just(childSpecRecord(ChildSpec));
-        {error, not_found} -> nothing()
+          ?Just(specRecord(ChildSpec));
+        {error, not_found} -> ?Nothing
       end).
 
 restartChild(SupRef, Id) ->
-  ?IO(case ?SUP:restartChild(toErl(SupRef), Id) of
-        {ok, Child} ->
-          ok(childRecord(Child));
-        {error, Reason} ->
-          err(childError(Reason))
-      end).
+  ?IO(resultWith(fun childError/1,?SUP:restartChild(ref(SupRef), Id))).
 
 startChild(SupRef, ChildSpec) ->
-  ?IO(case ?SUP:start_child(toErl(SupRef), ChildSpec) of
-        {ok, ChildPid} ->
-          ok(ChildPid);
-        {error, Reason} ->
-          err(childError(Reason))
-      end).
+  ?IO(resultWith(fun childError/1, ?SUP:start_child(ref(SupRef), translate(ChildSpec)))).
 
 terminateChild(SupRef, Id) ->
-  ?IO(case ?SUP:terminate_child(toErl(SupRef), Id) of
-        ok -> ok();
-        {error, Reason} ->
-          err(childError(Reason))
-      end).
+  ?IO(resultWith(fun childError/1, ?SUP:terminate_child(ref(SupRef), Id))).
 
 terminateChildBy(SupRef, Pid) ->
   ?IO(terminateChild(SupRef, Pid)).
 
 %% TODO: fixme later...
 whichChildren(SupRef) ->
-  ?IO([Id || {Id, _, _, _} <- ?SUP:which_children(toErl(SupRef))]).
+  ?IO([Id || {Id, _, _, _} <- ?SUP:which_children(ref(SupRef))]).
 
 %%---------------------------------------------------------------------------
 %% | Internal functions
 %%---------------------------------------------------------------------------
 
--compile({inline, [ok/0, ok/1]}).
-ok() -> {'Ok', ok}.
-ok(Result) -> {'Ok', Result}.
-
--compile({inline, [err/1]}).
-err(Reason) -> {'Error', Reason}.
-
--compile({inline, [nothing/0]}).
-nothing() -> {'Nothing'}.
-
--compile({inline, [just/1]}).
-just(Result) -> {'Just', Result}.
-
-toErl({'SupName', Name}) -> Name;
-toErl({'SupNameAt', Name, Node}) -> {Name, Node};
-toErl({'SupGlobal', Name}) -> {global, Name};
-toErl({'SupPid', Pid}) -> Pid.
-
 retPid({ok, Pid}) -> Pid;
 retPid(ignore) -> erlang:error(ignore);
 retPid({error, Reason}) -> erlang:error(Reason).
 
-%% TODO:...
-childRecord(Child) -> Child.
+ref({'SupName', Name}) -> Name;
+ref({'SupNameAt', Name, Node}) -> {Name, Node};
+ref({'SupGlobal', Name}) -> {global, Name};
+ref({'SupPid', Pid}) -> Pid.
 
-%% TODO:...
-childSpecRecord(ChildSpec) -> ChildSpec.
+resultWith(Fun, Result) ->
+  case Result of
+    ok -> {'Ok', ok};
+    {ok, Result} -> {'Ok', Result};
+    {error, Reason} ->
+      {'Error', Fun(Reason)}
+  end.
+
+specRecord(#{ id := ChildId
+            , start := {_M, _F, [StartFun]}
+            , restart := Restart
+            , shutdown := Shutdown
+            , type := Type
+            , modules := Modules
+            }) ->
+  #{ childId => ChildId
+   , startFun => StartFun
+   , restart => construct(Restart)
+   , shutdown => construct(Shutdown)
+   , childType => construct(Type)
+   , modules => Modules
+   }.
+
+construct(permanent) -> {'Permanent'};
+construct(transient) -> {'Transient'};
+construct(temporary) -> {'Temporary'};
+construct(brutal_kill) -> {'BrutalKill'};
+construct(infinity) -> {'Infinity'};
+construct(Time) when is_integer(Time) -> {'Shutdown', Time};
+construct(worker) -> {'Worker'};
+construct(supervisor) -> {'Supervisor'}.
 
 childError(already_present) -> 'ChildAlreadyPresent';
 childError(already_started) -> 'ChildAlreadyStarted';

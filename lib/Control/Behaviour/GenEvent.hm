@@ -14,6 +14,7 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenEvent
   ( class GenEvent
+  , Init
   , HandleEvent
   , handleEvent
     -- * start event mgr
@@ -22,6 +23,7 @@ module Control.Behaviour.GenEvent
   , startLink
   , startLinkWith
   , stop
+  , stopRef
   , stopWith
     -- * api
   , addHandler
@@ -29,18 +31,27 @@ module Control.Behaviour.GenEvent
   , notifyTo
   , syncNotify
   , syncNotifyTo
-    -- * helper funcs
+    -- * init funcs
   , initOk
+  , initOkHib
+  , initError
     -- * types
   , module Control.Behaviour.GenEvent.Types
   ) where
 
 import Control.Behaviour.GenEvent.Types
+import Control.Monad (return)
 import Control.Process (ExitReason, Process)
+import Data.Function ((<<<))
 import Data.Pid (Pid)
 import Data.Timeout (Timeout)
 import Data.Unit (Unit)
+import Foreign (ffiIO1, ffiIO2)
 
+-- | Init callback
+type Init st = Process (InitResult st)
+
+-- | HandleEvent callback
 type HandleEvent e st = e -> st -> Process st
 
 class GenEvent e st | e -> st, st -> e where
@@ -58,33 +69,49 @@ foreign import startLink
 foreign import startLinkWith
   :: forall e st. GenEvent e st => Name -> (Init st) -> Process Pid
 
-foreign import stop :: EMgrRef -> Process ()
+stop :: Name -> Process ()
+stop = ffiIO1 :gen_event :stop
+
+stopPid :: Pid -> Process ()
+stopPid = ffiIO1 :gen_event :stop
+
+foreign import stopRef :: EMgrRef -> Process ()
 
 foreign import stopWith
   :: EMgrRef -> ExitReason -> Timeout -> Process ()
 
 foreign import addHandler
-  :: forall e st. GenEvent e st => EMgrRef -> (Init st) -> Process ()
+  :: forall e st. GenEvent e st
+  => EMgrRef -> (Init st) -> Process ()
 
-foreign import notify
+notify :: forall e. Name -> e -> Process ()
+notify = ffiIO2 :gen_event :notify
+
+notifyTo :: forall e. Pid -> e -> Process ()
+notifyTo = ffiIO2 :gen_event :notifyTo
+
+foreign import notifyRef
   :: forall e. EMgrRef -> e -> Process ()
-
-foreign import notifyTo
-  :: forall e. Pid -> e -> Process ()
 
 foreign import syncNotify
-  :: forall e. EMgrRef -> e -> Process ()
+  :: forall e. Name -> e -> Process ()
 
 foreign import syncNotifyTo
   :: forall e. Pid -> e -> Process ()
 
-initOk :: forall st. st -> InitResult st
-initOk st = InitOk st
+foreign import syncNotifyRef
+  :: forall e. EMgrRef -> e -> Process ()
 
-{- TODO
-add_sup_handler/3,
-delete_handler/3,
-swap_handler/3,
-swap_sup_handler/3,
-which_handlers/1
--}
+-----------------------------------------------------------------------------
+-- | Init result
+-----------------------------------------------------------------------------
+
+initOk :: forall st. st -> Process (InitResult st)
+initOk = return <<< InitOk
+
+initOkHib :: forall st. st -> Process (InitResult st)
+initOkHib = return <<< InitOkHib
+
+initError :: forall st. ExitReason -> Process (InitResult st)
+initError = return <<< InitError
+

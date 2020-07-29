@@ -15,8 +15,10 @@
 module Control.Behaviour.GenStatem
   ( class GenStatem
   , Init
+  , OnEvent
   , HandleEvent
   , handleEvent
+  , handleWith
     -- * start and stop
   , start
   , startWith
@@ -25,6 +27,7 @@ module Control.Behaviour.GenStatem
   , startMonitor
   , startMonitorWith
   , stop
+  , stopPid
   , stopRef
   , stopWith
     -- * client apis
@@ -35,51 +38,81 @@ module Control.Behaviour.GenStatem
   , cast
   , castTo
   , castRef
-    -- * helper funcs
+  , sendRequest
+    -- * init result
   , initOk
+  , initOkWith
+  , initIgnore
+  , initStop
+    -- * transition
   , keep
+  , keepWith
   , next
+  , nextWith
   , repeat
+  , repeatWith
+  , shutdown
+    -- * helper funcs
   , replyTo
   , unhandled
   , module Control.Behaviour.GenStatem.Types
   ) where
 
-import Control.Behaviour.GenStatem.Types
-import Control.Process (Process, ExitReason)
+import Control.Monad (return)
+import Control.Process (From, Process, ExitReason(..))
+import Data.Function (($), (<<<))
+import Data.Map as M
 import Data.Pid (Pid)
 import Data.Ref (Reference)
 import Data.Timeout (Timeout)
 import Data.Unit (Unit)
+import Foreign (ffiIO1, ffiIO2)
+import Control.Behaviour.GenStatem.Types
 
-type Init s d = Process (InitResult s d)
+-- | Init Action
+type Init e s d = Process (InitResult e s d)
 
+-- | Handle Event
 type HandleEvent e s d
-  = EventType -> e -> s -> d -> Process (Transition s d)
+  = EventType -> e -> s -> d -> Process (Transition e s d)
+
+-- | On Event
+type OnEvent e s d
+  = EventType -> e -> d -> Process (Transition e s d)
 
 class GenStatem e s d | e -> s, s -> d, d -> e where
   handleEvent :: HandleEvent e s d
 
 foreign import start
-  :: forall e s d. GenStatem e s d => (Init s d) -> Process Pid
+  :: forall e s d. GenStatem e s d
+  => (Init e s d) -> Process Pid
 
 foreign import startWith
-  :: forall e s d. GenStatem e s d => Name -> (Init s d) -> Process Pid
+  :: forall e s d. GenStatem e s d
+  => Name -> (Init e s d) -> Process Pid
 
 foreign import startLink
-  :: forall e s d. GenStatem e s d => (Init s d) -> Process Pid
+  :: forall e s d. GenStatem e s d
+  => (Init e s d) -> Process Pid
 
 foreign import startLinkWith
-  :: forall e s d. GenStatem e s d => Name -> (Init s d) -> Process Pid
+  :: forall e s d. GenStatem e s d
+  => Name -> (Init e s d) -> Process Pid
 
 foreign import startMonitor
-  :: forall e s d. GenStatem e s d => (Init s d) -> Process (Pid, Reference)
+  :: forall e s d. GenStatem e s d
+  => (Init e s d) -> Process (Pid, Reference)
 
 foreign import startMonitorWith
-  :: forall e s d. GenStatem e s d => Name -> (Init s d) -> Process (Pid, Reference)
+  :: forall e s d. GenStatem e s d
+  => Name -> (Init e s d) -> Process (Pid, Reference)
 
 -- Stop the Statem Process.
-foreign import stop :: Name -> Process ()
+stop :: Name -> Process ()
+stop = ffiIO1 :gen_statem :stop
+
+stopPid :: Pid -> Process ()
+stopPid = ffiIO1 :gen_statem :stop
 
 -- Stop the Statem Process.
 foreign import stopRef :: StatemRef -> Process ()
@@ -88,13 +121,12 @@ foreign import stopRef :: StatemRef -> Process ()
 foreign import stopWith
   :: StatemRef -> ExitReason -> Timeout -> Process ()
 
-foreign import call
-  :: forall req rep. Name -> req -> Process rep
+call :: forall req rep. Name -> req -> Process rep
+call = ffiIO2 :gen_statem :call
 
 -- | Synchronous call to the Server process directly.
-
-foreign import callTo
-  :: forall req rep. Pid -> req -> Process rep
+callTo :: forall req rep. Pid -> req -> Process rep
+callTo = ffiIO2 :gen_statem :call
 
 foreign import callRef
   :: forall req rep. StatemRef -> req -> Process rep
@@ -102,30 +134,72 @@ foreign import callRef
 foreign import callTimeout
   :: forall req rep. StatemRef -> req -> Timeout -> Process rep
 
+cast :: forall msg. Name -> msg -> Process ()
+cast = ffiIO2 :gen_statem :cast
+
 -- | Sends an asynchronous request to the Server process directly.
-
-foreign import cast
-  :: forall msg. Name -> msg -> Process ()
-
-foreign import castTo
-  :: forall req. Pid -> req -> Process ()
+castTo :: forall req. Pid -> req -> Process ()
+castTo = ffiIO2 :gen_statem :cast
 
 foreign import castRef
   :: forall msg. StatemRef -> msg -> Process ()
 
-foreign import replyTo :: forall rep. Caller -> rep -> Process ()
+replyTo :: forall rep. From -> rep -> Process ()
+replyTo = ffiIO2 :gen_statem :reply
 
-initOk :: forall s d. s -> d -> InitResult s d
-initOk s d = InitOk s d
+foreign import sendRequest
+  :: forall req. StatemRef -> req -> Process RequestId
 
-keep :: forall s d. d -> Transition s d
-keep d = Keep d
+-- TODO:
+-- wait_response(RequestId :: request_id()) ->
+-- {reply, Reply :: term()} | {error, {term(), server_ref()}}
 
-next :: forall s d. s -> d -> Transition s d
-next s d = Next s d
-
-repeat :: forall s d. d -> Transition s d
-repeat d = Repeat d
+-- | Handle with state functions.
+handleWith :: forall e s d. [(s, OnEvent e s d)] -> HandleEvent e s d
+handleWith stateFuns =
+  let funsMap = M.fromList stateFuns
+   in \t e s d -> let f = M.get s funsMap in f t e d
 
 foreign import unhandled :: forall e s d. HandleEvent e s d
+
+-----------------------------------------------------------------------------
+-- | Init result
+-----------------------------------------------------------------------------
+
+initOk :: forall e s d. s -> d -> Process (InitResult e s d)
+initOk s d = return $ InitOk s d []
+
+initOkWith :: forall e s d. s -> d -> [Action e] -> Process (InitResult e s d)
+initOkWith s d = return <<< InitOk s d
+
+initIgnore :: forall e s d. Process (InitResult e s d)
+initIgnore = return InitIgnore
+
+initStop :: forall e s d. ExitReason -> Process (InitResult e s d)
+initStop = return <<< InitStop
+
+-----------------------------------------------------------------------------
+-- | State Transition
+-----------------------------------------------------------------------------
+
+keep :: forall e s d. d -> Process (Transition e s d)
+keep d = return $ Keep d []
+
+keepWith :: forall e s d. d -> [Action e] -> Process (Transition e s d)
+keepWith d = return <<< Keep d
+
+next :: forall e s d. s -> d -> Process (Transition e s d)
+next s d = return $ Next s d []
+
+nextWith :: forall e s d. s -> d -> [Action e] -> Process (Transition e s d)
+nextWith s d = return <<< Next s d
+
+repeat :: forall e s d. d -> Process (Transition e s d)
+repeat d = return $ Repeat d []
+
+repeatWith :: forall e s d. d -> [Action e] -> Process (Transition e s d)
+repeatWith d = return <<< Repeat d
+
+shutdown :: forall e s d. Atom -> d -> Process (Transition e s d)
+shutdown r = return <<< Shutdown (ExitReason r)
 

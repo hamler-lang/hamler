@@ -8,5 +8,5 @@ Homepage: https://www.hamler-lang.org
 
 Package: hamler
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, esl-erlang(>= 22.3) | erlang(>= 22.3)
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Hamler - Haskell-style functional programming language running on Erlang VM. Hamler is a strongly-typed language with compile-time typechecking and built-in support for concurrency and distribution.

@@ -19,5 +19,9 @@ import Control.Process (Process)
 import Data.Pid (Pid)
 import Data.Unit (Unit)
 
-foreign import init :: forall a st. a -> Process st
-foreign import mfargs :: IO () -> Process Pid
+-- | Module:init(Args) -> Result
+foreign import init :: forall a res. a -> Process res
+
+foreign import apply :: IO () -> Process Pid
+
+foreign import translate :: forall a b. a -> b
