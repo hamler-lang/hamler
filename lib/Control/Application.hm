@@ -27,10 +27,25 @@ module Control.Application
   , takeover
   , unload
   , whichApplications
+  , module Control.Application.Config
+  , module Control.Application.Resource
   , module Control.Application.Types
   ) where
 
 import Control.Application.Types
+import Control.Application.Config
+  ( Get
+  , getConfig
+  , getAtom
+  , getBool
+  , getInt
+  , getFloat
+  , getString
+  , getList
+  , getMap
+  , getRecord
+  )
+import Control.Application.Resource (getAppSpec)
 import Control.Monad (IO)
 import Data.Maybe (Maybe)
 import Data.Pid (Pid)
