@@ -1,4 +1,7 @@
-module Data.DateTime.Rfc3339 where
+module Data.DateTime.Rfc3339(
+         rfc3339ToSystemTime
+       , systemTimeToRfc3339
+) where
 
 import Data.DateTime.Type
 import Prelude
