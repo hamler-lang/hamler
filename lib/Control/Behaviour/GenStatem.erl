@@ -40,50 +40,50 @@
 %%---------------------------------------------------------------------------
 
 start(Class, Init) ->
-    ?IO(retPid(gen_statem:start(?MOD, [Class, Init], []))).
+  ?IO(retPid(gen_statem:start(?MOD, [Class, Init], []))).
 
 startWith(Class, Name, Init) ->
-    ?IO(retPid(gen_statem:start({local, Name}, ?MOD, [Class, Init], []))).
+  ?IO(retPid(gen_statem:start({local, Name}, ?MOD, [Class, Init], []))).
 
 startLink(Class, Init) ->
-    ?IO(retPid(gen_statem:start_link(?MOD, [Class, Init], []))).
+  ?IO(retPid(gen_statem:start_link(?MOD, [Class, Init], []))).
 
 startLinkWith(Class, Name, Init) ->
-    ?IO(retPid(gen_statem:start_link({local, Name}, ?MOD, [Class, Init], []))).
+  ?IO(retPid(gen_statem:start_link({local, Name}, ?MOD, [Class, Init], []))).
 
 startMonitor(Class, Init) ->
-    ?IO(retPid(gen_statem:start_monitor(?MOD, [Class, Init], []))).
+  ?IO(retPid(gen_statem:start_monitor(?MOD, [Class, Init], []))).
 
 startMonitorWith(Class, Name, Init) ->
-    ?IO(retPid(gen_statem:start_monitor({local, Name}, ?MOD, [Class, Init], []))).
+  ?IO(retPid(gen_statem:start_monitor({local, Name}, ?MOD, [Class, Init], []))).
 
 stopRef(ServerRef) ->
-    ?IO(gen_statem:stop(unwrap(ServerRef))).
+  ?IO(gen_statem:stop(unwrap(ServerRef))).
 
 stopWith(ServerRef, ExitReason, Timeout) ->
-    ?IO(gen_statem:stop(unwrap(ServerRef), unwrap(ExitReason), unwrap(Timeout))).
+  ?IO(gen_statem:stop(unwrap(ServerRef), unwrap(ExitReason), unwrap(Timeout))).
 
 %%---------------------------------------------------------------------------
 %% | Statem APIs
 %%---------------------------------------------------------------------------
 
 callRef(StatemRef, Req) ->
-    ?IO(gen_statem:call(unwrap(StatemRef), Req)).
+  ?IO(gen_statem:call(unwrap(StatemRef), Req)).
 
 callTimeout(StatemRef, Req, Timeout) ->
-    ?IO(gen_statem:call(unwrap(StatemRef), Req, unwrap(Timeout))).
+  ?IO(gen_statem:call(unwrap(StatemRef), Req, unwrap(Timeout))).
 
 castRef(StatemRef, Msg) ->
-    ?IO(gen_statem:cast(unwrap(StatemRef), Msg)).
+  ?IO(gen_statem:cast(unwrap(StatemRef), Msg)).
 
 sendRequest(StatemRef, Request) ->
-    ?IO(gen_statem:send_request(unwrap(StatemRef), Request)).
+  ?IO(gen_statem:send_request(unwrap(StatemRef), Request)).
 
 unhandled(_, E, S, D) ->
-    ?IO(begin
-            io:format("Unhandled event: ~p, state: ~p, data: ~p", [E, S, D]),
-            {'Keep', S, D}
-        end).
+  ?IO(begin
+        io:format("Unhandled event: ~p, state: ~p, data: ~p", [E, S, D]),
+        {'Keep', S, D}
+      end).
 
 %%---------------------------------------------------------------------------
 %% | Internal functions

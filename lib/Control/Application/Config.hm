@@ -14,8 +14,9 @@
 module Control.Application.Config where
 
 import Control.Application.Types
+import Control.Monad (IO)
 
-import Foreign (ffiIO0)
+import Foreign (ffiIO0, ffiIO1)
 
 getAllEnv :: IO AppEnv
 getAllEnv = ffiIO0 :application :get_all_env

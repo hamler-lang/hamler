@@ -51,34 +51,34 @@
 %%---------------------------------------------------------------------------
 
 start(Class, Init) ->
-    ?IO(retPid(gen_server:start(?MOD, [Class, Init], []))).
+  ?IO(retPid(gen_server:start(?MOD, [Class, Init], []))).
 
 startWith(Class, Name, Init) ->
-    ?IO(retPid(gen_server:start({local, Name}, ?MOD, [Class, Init], []))).
+  ?IO(retPid(gen_server:start({local, Name}, ?MOD, [Class, Init], []))).
 
 startLink(Class, Init) ->
-    ?IO(retPid(gen_server:start_link(?MOD, [Class, Init], []))).
+  ?IO(retPid(gen_server:start_link(?MOD, [Class, Init], []))).
 
 startLinkWith(Class, Name, Init) ->
-    ?IO(retPid(gen_server:start_link({local, Name}, ?MOD, [Class, Init], []))).
+  ?IO(retPid(gen_server:start_link({local, Name}, ?MOD, [Class, Init], []))).
 
 startMonitor(Class, Init) ->
-    ?IO(retPid(gen_server:start_monitor(?MOD, [Class, Init], []))).
+  ?IO(retPid(gen_server:start_monitor(?MOD, [Class, Init], []))).
 
 startMonitorWith(Class, Name, Init) ->
-    ?IO(retPid(gen_server:start_monitor({local, Name}, ?MOD, [Class, Init], []))).
+  ?IO(retPid(gen_server:start_monitor({local, Name}, ?MOD, [Class, Init], []))).
 
 stop(Name) ->
-    ?IO(gen_server:stop(Name)).
+  ?IO(gen_server:stop(Name)).
 
 stopPid(Pid) ->
-    ?IO(gen_server:stop(Pid)).
+  ?IO(gen_server:stop(Pid)).
 
 stopRef(ServerRef) ->
-    ?IO(gen_server:stop(unwrap(ServerRef))).
+  ?IO(gen_server:stop(unwrap(ServerRef))).
 
 stopWith(ServerRef, ExitReason, Timeout) ->
-    ?IO(gen_server:stop(unwrap(ServerRef), unwrap(ExitReason), unwrap(Timeout))).
+  ?IO(gen_server:stop(unwrap(ServerRef), unwrap(ExitReason), unwrap(Timeout))).
 
 %%---------------------------------------------------------------------------
 %% | GenServer APIs
@@ -86,53 +86,53 @@ stopWith(ServerRef, ExitReason, Timeout) ->
 
 %% abcast :: ServerName -> req -> Process ()
 abcast(Name, Req) ->
-    ?IO(gen_server:abcast(Name, Req)).
+  ?IO(gen_server:abcast(Name, Req)).
 
 %% abcastAt :: [Node] -> ServerName -> req -> Process ()
 abcastAt(Nodes, Name, Req) ->
-    ?IO(gen_server:abcast(Nodes, Name, Req)).
+  ?IO(gen_server:abcast(Nodes, Name, Req)).
 
 %% call :: Name -> req -> Process rep
 call(Name, Req) ->
-    ?IO(gen_server:call(Name, Req)).
+  ?IO(gen_server:call(Name, Req)).
 
 %% callTo :: Pid -> req -> Process rep
 callTo(Pid, Req) ->
-    ?IO(gen_server:call(Pid, Req)).
+  ?IO(gen_server:call(Pid, Req)).
 
 %% call :: ServerRef -> req -> Process rep
 callRef(ServerRef, Req) ->
-    ?IO(gen_server:call(unwrap(ServerRef), Req)).
+  ?IO(gen_server:call(unwrap(ServerRef), Req)).
 
 %% callTimeout :: ServerRef -> req -> Timeout -> Process rep
 callTimeout(ServerRef, Req, Timeout) ->
-    ?IO(gen_server:call(unwrap(ServerRef), Req, unwrap(Timeout))).
+  ?IO(gen_server:call(unwrap(ServerRef), Req, unwrap(Timeout))).
 
 %% cast :: Name -> req -> Process ()
 cast(Name, Req) ->
-    ?IO(gen_server:cast(Name, Req)).
+  ?IO(gen_server:cast(Name, Req)).
 
 %% castTo :: Pid -> req -> Process ()
 castTo(Pid, Req) ->
-    ?IO(gen_server:cast(Pid, Req)).
+  ?IO(gen_server:cast(Pid, Req)).
 
 %% castRef :: ServerRef -> req -> Process ()
 castRef(ServerRef, Req) ->
-    ?IO(gen_server:cast(unwrap(ServerRef), Req)).
+  ?IO(gen_server:cast(unwrap(ServerRef), Req)).
 
 %% multiCall :: ServerName -> req -> Process (Replies rep)
 multiCall(Name, Req) ->
-    ?IO(replies(gen_server:multi_call(Name, Req))).
+  ?IO(replies(gen_server:multi_call(Name, Req))).
 
 %% multiCallAt :: [Node] -> ServerName -> req -> Process [NodeReply rep]
 multiCallAt(Nodes, Name, Req) ->
-    ?IO(replies(gen_server:multi_call(Nodes, Name, Req))).
+  ?IO(replies(gen_server:multi_call(Nodes, Name, Req))).
 
 multiCallTimeoutAt(Nodes, Name, Timeout, Req) ->
-    ?IO(replies(gen_server:multi_call(Nodes, Name, unwrap(Timeout), Req))).
+  ?IO(replies(gen_server:multi_call(Nodes, Name, unwrap(Timeout), Req))).
 
 sendRequest(ServerRef, Request) ->
-    ?IO(gen_server:send_request(unwrap(ServerRef), Request)).
+  ?IO(gen_server:send_request(unwrap(ServerRef), Request)).
 
 waitResponse(RequestId, Timeout) ->
   ?IO(case gen_server:wait_response(RequestId, unwrap(Timeout)) of
@@ -163,6 +163,6 @@ unwrap({'Infinity'}) -> infinity;
 unwrap({'Timeout', I}) -> I.
 
 replies({Replies, BadNodes}) ->
-    lists:append([{Node, ?Just(Rep)} || {Node, Rep} <- Replies],
-                 [{Node, ?Nothing} || Node <- BadNodes]).
+  lists:append([{Node, ?Just(Rep)} || {Node, Rep} <- Replies],
+               [{Node, ?Nothing} || Node <- BadNodes]).
 
