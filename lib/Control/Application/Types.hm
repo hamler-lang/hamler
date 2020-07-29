@@ -25,23 +25,23 @@ data StartType = Normal | Takeover Node | Failover Node
 
 data RestartType = Permanent | Transient | Temporary
 
--- TODO: {Par :: atom(), Val :: term()}
-foreign import data AppEnv :: Type
+-- [{Par :: atom(), Val :: term()}]
+foreign import data Config :: Type
 
--- TODO: [{Phase :: atom(), PhaseArgs :: term()}] | 'undefined'}
+-- [{Phase :: atom(), PhaseArgs :: term()}] | 'undefined'}
 foreign import data AppStartPhase :: Type
 
--- TODO: PhaseArgs :: term()
+-- PhaseArgs :: term()
 foreign import data AppPhaseArgs :: Type
 
--- TODO: StartArgs :: term()
+-- StartArgs :: term()
 foreign import data AppStartArgs :: Type
 
--- TODO: StartError :: term()
+-- StartError :: term()
 foreign import data AppStartError :: Type
 
 type AppSpec =
-  { name         :: Application
+  { name         :: Atom
   , description  :: String
   , vsn          :: String
   , id           :: String
@@ -49,7 +49,7 @@ type AppSpec =
   , registered   :: [String]
   , applications :: [Application]
   , includedApps :: [Application]
-  , env          :: [AppEnv]
+  , env          :: Config
   , startPhases  :: [AppStartPhase]
   , maxT         :: Timeout
   , maxP         :: Timeout

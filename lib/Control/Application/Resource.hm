@@ -12,16 +12,11 @@
 -- The Application Resource module.
 --
 -----------------------------------------------------------------------------
-module Control.Application.Resource where
+module Control.Application.Resource (getAppSpec) where
 
--- TODO: http://erlang.org/doc/man/app.html
+import Control.Application.Types
+import Control.Monad (IO)
 
-{-
-get_all_key() -> [] | {ok, Keys}
+-- | See: http://erlang.org/doc/man/app.html
+foreign import getAppSpec :: Application -> IO AppSpec
 
-get_all_key(Application) -> undefined | Keys
-
-get_key(Key) -> undefined | {ok, Val}
-
-get_key(Application, Key) -> undefined | {ok, Val}
--}
