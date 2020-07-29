@@ -22,5 +22,6 @@ import Data.Unit (Unit)
 -- | Module:init(Args) -> Result
 foreign import init :: forall a res. a -> Process res
 
-foreign import mfargs :: IO () -> Process Pid
+foreign import apply :: IO () -> Process Pid
 
+foreign import translate :: forall a b. a -> b

@@ -17,39 +17,39 @@
 -behaviour(supervisor).
 
 %% supervisor callbacks
--export([init/1, mfargs/1]).
+-export([init/1, apply/1, translate/1]).
 
 -define(MOD, 'Control.Behaviour.Supervisor.Proxy').
 
 init([Init]) ->
-  {'Supervisor', Restart, ChildSpecs} = Init(),
-  SupFlags = {trans(Restart), 10, 100},
-  {ok, {SupFlags, trans(ChildSpecs)}}.
+  case Init() of
+    {'InitOk', SupFlags, ChildSpecs} ->
+      {ok, {translate(SupFlags), lists:map(fun translate/1, ChildSpecs)}};
+    {'InitIgnore'} -> ignore
+  end.
 
-trans({'OneForAll'}) ->
-  one_for_all;
-trans({'OneForOne'}) ->
-  one_for_one;
-trans({'RestForOne'}) ->
-  rest_for_one;
-trans({'SimpleOneForOne'}) ->
-  simple_one_for_one;
+apply(StartFun) -> StartFun().
 
-trans({'Permanent'}) -> permanent;
-trans({'Transient'}) -> transient;
-trans({'Temporary'}) -> temporary;
+translate({'OneForAll'}) -> one_for_all;
+translate({'OneForOne'}) -> one_for_one;
+translate({'RestForOne'}) -> rest_for_one;
+translate({'SimpleOneForOne'}) -> simple_one_for_one;
 
-trans({'BrutalKill'}) -> brutal_kill;
-trans({'Infinity'}) -> infinity;
-trans({'Shutdown', I}) -> I;
+translate({'Permanent'}) -> permanent;
+translate({'Transient'}) -> transient;
+translate({'Temporary'}) -> temporary;
 
-trans({'Worker'}) -> worker;
-trans({'Superviso'}) -> supervisor;
+translate({'BrutalKill'}) -> brutal_kill;
+translate({'Infinity'}) -> infinity;
+translate({'Shutdown', Time}) -> Time;
 
-trans(ChildSpecs) when is_list(ChildSpecs) ->
-  [childSpec(Spec) || Spec <- ChildSpecs].
+translate({'Worker'}) -> worker;
+translate({'Supervisor'}) -> supervisor;
 
-childSpec(#{ childId := ChildId
+translate({Strategy, Intensity, Period}) ->
+  {translate(Strategy), Intensity, Period};
+
+translate(#{ childId := ChildId
            , startFun := StartFun
            , restart := Restart
            , shutdown := Shutdown
@@ -57,12 +57,10 @@ childSpec(#{ childId := ChildId
            , modules := Modules
            }) ->
   #{ id => ChildId
-   , start => {?MOD, mfargs, [StartFun]}
-   , restart => trans(Restart)
-   , shutdown => trans(Shutdown)
-   , type => trans(ChildType)
+   , start => {?MOD, apply, [StartFun]}
+   , restart => translate(Restart)
+   , shutdown => translate(Shutdown)
+   , type => translate(ChildType)
    , modules => Modules
    }.
-
-mfargs(StartFun) -> StartFun().
 

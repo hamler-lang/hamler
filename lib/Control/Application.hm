@@ -36,8 +36,6 @@ import Data.Maybe (Maybe)
 import Data.Pid (Pid)
 import Data.Unit (Unit)
 
--- type StartResult = Result StartError [Application]
-
 -- Ensure to start an application with its dependencies.
 foreign import ensureAllStarted :: Application -> IO [Application]
 

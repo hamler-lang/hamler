@@ -29,28 +29,28 @@
 -record(proxy, {handleEvent, state}).
 
 init([#{handleEvent := HandleEvent}, Init]) ->
-  case Init() of
-    {'InitOk', State} ->
-      {ok, #proxy{handleEvent = HandleEvent, state = State}};
-    {'InitOkHib', State} ->
-      {ok, #proxy{handleEvent = HandleEvent, state = State}, hibernate};
-    {'InitError', Reason} ->
-      {error, Reason}
-  end.
+    case Init() of
+        {'InitOk', State} ->
+            {ok, #proxy{handleEvent = HandleEvent, state = State}};
+        {'InitOkHib', State} ->
+            {ok, #proxy{handleEvent = HandleEvent, state = State}, hibernate};
+        {'InitError', Reason} ->
+            {error, Reason}
+    end.
 
 handle_call(_Request, Proxy) ->
-  {ok, ignored, Proxy}.
+    {ok, ignored, Proxy}.
 
 handle_event(Event, Proxy = #proxy{handleEvent = HandleEvent, state = State}) ->
-  NState = ?RunIO('Curry':apply(HandleEvent, [Event, State])),
-  {ok, Proxy#proxy{state = NState}}.
+    NState = ?RunIO('Curry':apply(HandleEvent, [Event, State])),
+    {ok, Proxy#proxy{state = NState}}.
 
 handle_info(Info, Proxy) ->
-  error_logger:error_msg("Unexpected Info: ~p", [Info]),
-  {ok, Proxy}.
+    error_logger:error_msg("Unexpected Info: ~p", [Info]),
+    {ok, Proxy}.
 
 terminate(_Arg, _Proxy) ->
-  ok.
+    ok.
 
 code_change(_OldVsn, Proxy, _Extra) ->
-  {ok, Proxy}.
+    {ok, Proxy}.

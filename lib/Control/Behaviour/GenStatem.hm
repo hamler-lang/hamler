@@ -18,6 +18,7 @@ module Control.Behaviour.GenStatem
   , OnEvent
   , HandleEvent
   , handleEvent
+  , handleWith
     -- * start and stop
   , start
   , startWith
@@ -26,6 +27,7 @@ module Control.Behaviour.GenStatem
   , startMonitor
   , startMonitorWith
   , stop
+  , stopPid
   , stopRef
   , stopWith
     -- * client apis
@@ -36,6 +38,7 @@ module Control.Behaviour.GenStatem
   , cast
   , castTo
   , castRef
+  , sendRequest
     -- * init result
   , initOk
   , initOkWith
@@ -51,7 +54,6 @@ module Control.Behaviour.GenStatem
   , shutdown
     -- * helper funcs
   , replyTo
-  , handleWith
   , unhandled
   , module Control.Behaviour.GenStatem.Types
   ) where
@@ -64,6 +66,7 @@ import Data.Pid (Pid)
 import Data.Ref (Reference)
 import Data.Timeout (Timeout)
 import Data.Unit (Unit)
+import Foreign (ffiIO1, ffiIO2)
 import Control.Behaviour.GenStatem.Types
 
 -- | Init Action
@@ -73,6 +76,7 @@ type Init e s d = Process (InitResult e s d)
 type HandleEvent e s d
   = EventType -> e -> s -> d -> Process (Transition e s d)
 
+-- | On Event
 type OnEvent e s d
   = EventType -> e -> d -> Process (Transition e s d)
 
@@ -81,30 +85,34 @@ class GenStatem e s d | e -> s, s -> d, d -> e where
 
 foreign import start
   :: forall e s d. GenStatem e s d
-   => (Init e s d) -> Process Pid
+  => (Init e s d) -> Process Pid
 
 foreign import startWith
   :: forall e s d. GenStatem e s d
-   => Name -> (Init e s d) -> Process Pid
+  => Name -> (Init e s d) -> Process Pid
 
 foreign import startLink
   :: forall e s d. GenStatem e s d
-   => (Init e s d) -> Process Pid
+  => (Init e s d) -> Process Pid
 
 foreign import startLinkWith
   :: forall e s d. GenStatem e s d
-   => Name -> (Init e s d) -> Process Pid
+  => Name -> (Init e s d) -> Process Pid
 
 foreign import startMonitor
   :: forall e s d. GenStatem e s d
-   => (Init e s d) -> Process (Pid, Reference)
+  => (Init e s d) -> Process (Pid, Reference)
 
 foreign import startMonitorWith
   :: forall e s d. GenStatem e s d
-   => Name -> (Init e s d) -> Process (Pid, Reference)
+  => Name -> (Init e s d) -> Process (Pid, Reference)
 
 -- Stop the Statem Process.
-foreign import stop :: Name -> Process ()
+stop :: Name -> Process ()
+stop = ffiIO1 :gen_statem :stop
+
+stopPid :: Pid -> Process ()
+stopPid = ffiIO1 :gen_statem :stop
 
 -- Stop the Statem Process.
 foreign import stopRef :: StatemRef -> Process ()
@@ -113,12 +121,12 @@ foreign import stopRef :: StatemRef -> Process ()
 foreign import stopWith
   :: StatemRef -> ExitReason -> Timeout -> Process ()
 
-foreign import call
-  :: forall req rep. Name -> req -> Process rep
+call :: forall req rep. Name -> req -> Process rep
+call = ffiIO2 :gen_statem :call
 
 -- | Synchronous call to the Server process directly.
-foreign import callTo
-  :: forall req rep. Pid -> req -> Process rep
+callTo :: forall req rep. Pid -> req -> Process rep
+callTo = ffiIO2 :gen_statem :call
 
 foreign import callRef
   :: forall req rep. StatemRef -> req -> Process rep
@@ -126,18 +134,25 @@ foreign import callRef
 foreign import callTimeout
   :: forall req rep. StatemRef -> req -> Timeout -> Process rep
 
-foreign import cast
-  :: forall msg. Name -> msg -> Process ()
+cast :: forall msg. Name -> msg -> Process ()
+cast = ffiIO2 :gen_statem :cast
 
 -- | Sends an asynchronous request to the Server process directly.
-foreign import castTo
-  :: forall req. Pid -> req -> Process ()
+castTo :: forall req. Pid -> req -> Process ()
+castTo = ffiIO2 :gen_statem :cast
 
 foreign import castRef
   :: forall msg. StatemRef -> msg -> Process ()
 
-foreign import replyTo
-  :: forall rep. From -> rep -> Process ()
+replyTo :: forall rep. From -> rep -> Process ()
+replyTo = ffiIO2 :gen_statem :reply
+
+foreign import sendRequest
+  :: forall req. StatemRef -> req -> Process RequestId
+
+-- TODO:
+-- wait_response(RequestId :: request_id()) ->
+-- {reply, Reply :: term()} | {error, {term(), server_ref()}}
 
 -- | Handle with state functions.
 handleWith :: forall e s d. [(s, OnEvent e s d)] -> HandleEvent e s d
