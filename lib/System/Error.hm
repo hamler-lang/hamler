@@ -22,6 +22,19 @@ import Data.Show (class Show)
 -- IO Exception
 foreign import data Error :: Type
 
+data SomeException = SomeException e
+
+class Show e => Exception e where
+    toException :: e -> SomeException
+    fromException :: SomeException -> Maybe e
+    displayException :: e -> String
+    displayException = show
+
+instance Exception SomeException
+   toException = id
+   fromException = Just
+   displayException (SomeException e) = displayException e
+
 instance Show Error where
   show = showErrorImpl
 
@@ -29,11 +42,14 @@ foreign import showErrorImpl :: Error -> String
 
 -- erlang:raise(Class, Reason, Stacktrace) -> no_return()
 
-throw :: forall a. String -> IO a
-throw s = throwException (s)
+throw :: Exception e => forall a e. e -> IO a
+throw s = throwException (displayException s)
 
-try :: forall a. IO a -> IO (Either Error a)
-try action = catchException (\e -> pure (Left e)) (map Right action)
+try :: Exception e => forall a e. IO a -> IO (Either e a)
+try action = catch (a >>= \x -> return (Right x)) (\e -> pure (Left e))
+
+catch :: Exception e => forall a e. IO a -> (e -> IO a) -> IO a
+catch  (IO io) handler = IO (catchException io handler)
 
 {-
 foreign import error :: String -> Error
