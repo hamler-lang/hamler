@@ -1,4 +1,20 @@
-module Data.DateTime.Date where
+-----------------------------------------------------------------------------
+
+-- Copyright   :  TimeLib is Copyright (c) Ashley Yakeley, 2004-2014. All rights reserved.
+--                Certain sections are Copyright 2004, The University Court of the University of Glasgow. All rights reserved.
+
+-- Data.DateTime.Date is adpated from Haskell library Data.Time.Calendar 
+-----------------------------------------------------------------------------
+
+module Data.DateTime.Date (
+         toGregorianDate
+       , fromGregorianDate
+       , toWeekDate
+       , fromWeekDate
+       , toOrdinalDate
+       , fromOrdinalDate
+       , isLeapYear
+) where
 
 import Data.DateTime.Type
 import Prelude

@@ -12,8 +12,17 @@
 -- The DataTime datatype.
 --
 -----------------------------------------------------------------------------
-module Data.DateTime where
+module Data.DateTime (
+       module Data.DateTime.Date
+     , module Data.DateTime.System
+     , module Data.DateTime.Type
+     , module Data.DateTime.Rfc3339
+) where
 
+import Data.DateTime.Date
+import Data.DateTime.System
+import Data.DateTime.Type
+import Data.DateTime.Rfc3339
 foreign import data DateTime :: Type
 
 -- erlang:localtime() -> DateTime

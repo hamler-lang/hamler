@@ -1,4 +1,20 @@
-module Data.DateTime.System where
+-----------------------------------------------------------------------------
+
+-- Copyright   :  TimeLib is Copyright (c) Ashley Yakeley, 2004-2014. All rights reserved.
+--                Certain sections are Copyright 2004, The University Court of the University of Glasgow. All rights reserved.
+
+-- Data.DateTime.System is adpated from Haskell library Data.Time.Clock
+-----------------------------------------------------------------------------
+
+module Data.DateTime.System (
+         localTime
+       , nowTime
+       , nowToSystemTime
+       , nowToSystemTime'
+       , systemTimeToDateTime
+       , secondsToDateTime
+       , dateTimeToSeconds
+)where
 
 import Data.DateTime.Type
 import Data.DateTime.Date (fromGregorianDate, toGregorianDate)

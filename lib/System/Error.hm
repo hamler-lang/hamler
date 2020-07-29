@@ -51,4 +51,3 @@ foreign import catchException :: forall a. (Error -> IO a) -> IO a -> IO a
 throw(Any) -> no_return()
 
 -}
-
