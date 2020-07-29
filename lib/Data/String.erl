@@ -74,8 +74,10 @@ hasPrefix(String, Prefix) ->
 
 -spec(hasSuffix(string(), suffix()) -> boolean()).
 hasSuffix(String, Suffix) ->
-    Pos = (strlen(String) - strlen(Suffix)) + 1,
-    string:equal(string:slice(String, Pos), Suffix).
+    Pos = (strlen(String) - strlen(Suffix)),
+    if Pos >= 0 -> string:equal(string:slice(String, Pos), Suffix);
+       true     -> false
+    end.
 
 -spec(indexOf(char(), string()) -> integer()).
 indexOf(Char, String) -> string:chr(String, Char).
