@@ -22,19 +22,14 @@
         , startLinkWith/3
         , startMonitor/2
         , startMonitorWith/3
-        , stop/1
         , stopRef/1
         , stopWith/3
         ]).
 
--export([ call/2
-        , callRef/2
-        , callTo/2
+-export([ callRef/2
         , callTimeout/3
-        , cast/2
         , castRef/2
-        , castTo/2
-        , replyTo/2
+        , sendRequest/2
         , unhandled/4
         ]).
 
@@ -62,43 +57,27 @@ startMonitor(Class, Init) ->
 startMonitorWith(Class, Name, Init) ->
   ?IO(retPid(gen_statem:start_monitor({local, Name}, ?MOD, [Class, Init], []))).
 
-stop(Name) ->
-  ?IO(gen_statem:stop(Name)).
-
 stopRef(ServerRef) ->
-  ?IO(gen_statem:stop(toErl(ServerRef))).
+  ?IO(gen_statem:stop(unwrap(ServerRef))).
 
 stopWith(ServerRef, ExitReason, Timeout) ->
-  ?IO(gen_statem:stop(toErl(ServerRef), toErl(ExitReason), toErl(Timeout))).
+  ?IO(gen_statem:stop(unwrap(ServerRef), unwrap(ExitReason), unwrap(Timeout))).
 
 %%---------------------------------------------------------------------------
 %% | Statem APIs
 %%---------------------------------------------------------------------------
 
-call(Name, Req) ->
-  ?IO(gen_statem:call(Name, Req)).
-
-%% callTo :: Pid -> req -> Process rep
-callTo(Pid, Req) ->
-  ?IO(gen_statem:call(Pid, Req)).
-
 callRef(StatemRef, Req) ->
-  ?IO(gen_statem:call(toErl(StatemRef), Req)).
+  ?IO(gen_statem:call(unwrap(StatemRef), Req)).
 
 callTimeout(StatemRef, Req, Timeout) ->
-  ?IO(gen_statem:call(toErl(StatemRef), Req, toErl(Timeout))).
-
-cast(Name, Msg) ->
-  ?IO(gen_statem:cast(Name, Msg)).
-
-castTo(Pid, Req) ->
-  ?IO(gen_statem:cast(Pid, Req)).
+  ?IO(gen_statem:call(unwrap(StatemRef), Req, unwrap(Timeout))).
 
 castRef(StatemRef, Msg) ->
-  ?IO(gen_statem:cast(toErl(StatemRef), Msg)).
+  ?IO(gen_statem:cast(unwrap(StatemRef), Msg)).
 
-replyTo(From, Reply) ->
-  ?IO(gen_statem:reply(From, Reply)).
+sendRequest(StatemRef, Request) ->
+  ?IO(gen_statem:send_request(unwrap(StatemRef), Request)).
 
 unhandled(_, E, S, D) ->
   ?IO(begin
@@ -114,15 +93,16 @@ retPid({ok, Pid}) -> Pid;
 retPid(ignore) -> error(ignore);
 retPid({error, Reason}) -> error(Reason).
 
--compile({inline, [toErl/1]}).
-toErl({'StatemPid', Pid}) -> Pid;
-toErl({'StatemRef', Name}) -> Name;
-toErl({'StatemRefAt', Name, Node}) -> {Name, Node};
-toErl({'StatemRefGlobal', Name}) -> {global, Name};
+-compile({inline, [unwrap/1]}).
+unwrap({'StatemPid', Pid}) -> Pid;
+unwrap({'StatemRef', Name}) -> Name;
+unwrap({'StatemRefAt', Name, Node}) -> {Name, Node};
+unwrap({'StatemRefGlobal', Name}) -> {global, Name};
 
-toErl({'ExitReason', Reason}) -> Reason;
-toErl({'ExitNormal'}) -> normal;
-toErl({'ExitShutdown'}) -> shutdown;
+unwrap({'ExitReason', Reason}) -> Reason;
+unwrap({'ExitNormal'}) -> normal;
+unwrap({'ExitShutdown'}) -> shutdown;
 
-toErl({'Infinity'}) -> infinity;
-toErl({'Timeout', I}) -> I.
+unwrap({'Infinity'}) -> infinity;
+unwrap({'Timeout', I}) -> I.
+

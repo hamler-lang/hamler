@@ -9,7 +9,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Application Callback FFI module.
+%% The Application Callback FFI.
 %%
 %%---------------------------------------------------------------------------
 -module('Callback').
@@ -42,7 +42,3 @@ stop(#state{mod = Mod, st = _St}) ->
     true  -> ?RunIO(Mod:stop());
     false -> ok
   end.
-
-%% construct(normal) -> {'Normal'};
-%% construct({takeover, Node}) -> {'Takeover', Node};
-%% construct({failover, Node}) -> {'Failover', Node}.

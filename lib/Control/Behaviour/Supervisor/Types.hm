@@ -23,13 +23,11 @@ module Control.Behaviour.Supervisor.Types
   , ChildCounts
   , ChildError(..)
   , ChildSpecError(..)
-  , Init
   , InitResult(..)
   , Intensity
-  , RestartStrategy(..)
+  , Strategy(..)
   , SupFlags
   , SupRef(..)
-  , Supervisor(..)
   , module Control.Behaviour.GenTypes
   ) where
 
@@ -45,8 +43,7 @@ type ChildId = String
 type ChildPid = Pid
 
 -- Child Type
--- TODO: data ChildType = Worker | Supervisor
-data ChildType = Worker | Superviso
+data ChildType = Worker | Supervisor
 
 -- Child Restart Policy
 data ChildRestart = Permanent | Transient | Temporary
@@ -104,23 +101,16 @@ data ChildSpecError
   | ChildSpecMissingStart
   | ChildSpecError
 
-data Supervisor = Supervisor RestartStrategy [ChildSpec]
---  { supFlags :: SupFlags
---  , childSpecs :: List ChildSpec
---  }
-
-type Init = Process Supervisor
-
 -- | Init Result
-data InitResult st
-  = InitOk st
+data InitResult
+  = InitOk SupFlags [ChildSpec]
     -- ^ {ok, State}
   | InitIgnore
     -- ^ ignore
 
 type Intensity = Integer
 
-data RestartStrategy
+data Strategy
   = OneForAll
   -- ^ Restart all child processes if one terminated.
   | OneForOne
@@ -130,11 +120,7 @@ data RestartStrategy
   | SimpleOneForOne
   -- ^ TODO: comment...
 
-type SupFlags =
-  { strategy  :: RestartStrategy
-  , intensity :: Intensity
-  , period    :: Integer
-  }
+type SupFlags = (Strategy, Intensity, Integer)
 
 -- Supervisor ref.
 data SupRef

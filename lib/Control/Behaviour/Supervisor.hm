@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Supervisor behaviour.
+-- The Supervisor Behaviour.
 --
 -----------------------------------------------------------------------------
 module Control.Behaviour.Supervisor
@@ -26,18 +26,26 @@ module Control.Behaviour.Supervisor
   , terminateChild
   , terminateChildBy
   , whichChildren
-    -- * types
-  , newChildSpec
+    -- * init result
+  , Init
+  , initOk
+  , initIgnore
+    -- * child spec
+  , childSpec
+  , supChildSpec
   , module Control.Behaviour.Supervisor.Types
   ) where
 
 import Control.Behaviour.Supervisor.Types
+import Control.Monad (return)
 import Control.Process (Process)
-import Data.Atom (mod)
 import Data.Pid (Pid)
 import Data.Maybe (Maybe)
 import Data.Result (Result)
 import Data.Unit (Unit)
+
+-- | Init callback
+type Init = Process InitResult
 
 -- Start a supervisor process.
 foreign import startSup :: Init -> Process Pid
@@ -79,12 +87,33 @@ foreign import terminateChildBy
 
 foreign import whichChildren :: SupRef -> Process [ChildId]
 
-newChildSpec :: ChildId -> Process Pid -> ChildSpec
-newChildSpec childId startFun =
+childSpec :: ChildId -> Process Pid -> ChildSpec
+childSpec childId startFun =
   { childId = childId
   , startFun = startFun
   , restart = Permanent
   , shutdown = Shutdown 5000
   , childType = Worker
-  , modules = [mod(childId)]
+  , modules = []
   }
+
+supChildSpec :: ChildId -> Process Pid -> ChildSpec
+supChildSpec childId startFun =
+  { childId = childId
+  , startFun = startFun
+  , restart = Permanent
+  , shutdown = Infinity
+  , childType = Supervisor
+  , modules = []
+  }
+
+-----------------------------------------------------------------------------
+-- | Init result
+-----------------------------------------------------------------------------
+
+initOk :: SupFlags -> [ChildSpec] -> Process InitResult
+initOk flags specs = return (InitOk flags specs)
+
+initIgnore :: Process InitResult
+initIgnore = return InitIgnore
+

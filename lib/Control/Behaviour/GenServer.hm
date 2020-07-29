@@ -27,6 +27,7 @@ module Control.Behaviour.GenServer
   , startMonitor
   , startMonitorWith
   , stop
+  , stopPid
   , stopRef
   , stopWith
     -- * client apis
@@ -68,12 +69,16 @@ import Data.Pid (Pid)
 import Data.Ref (Reference)
 import Data.Timeout (Timeout)
 import Data.Unit (Unit)
+import Foreign (ffiIO2)
 
+-- | Init callback
 type Init req st = Process (InitResult req st)
 
+-- | HandleCall callback
 type HandleCall req rep st
   = req -> From -> st -> Process (Reply req rep st)
 
+-- | HandleCast callback
 type HandleCast req rep st
   = req -> st -> Process (Reply req rep st)
 
@@ -91,7 +96,7 @@ foreign import startWith
   :: forall req rep st. GenServer req rep st
   => Name -> (Init req st) -> Process Pid
 
--- | Start a standalone server process.
+-- | Start a server process as part of a supervision tree.
 foreign import startLink
   :: forall req rep st. GenServer req rep st
   => (Init req st) -> Process Pid
@@ -100,6 +105,7 @@ foreign import startLinkWith
   :: forall req rep st. GenServer req rep st
   => Name -> (Init req st) -> Process Pid
 
+-- | Start and monitor a server process
 foreign import startMonitor
   :: forall req rep st. GenServer req rep st
   => (Init req st) -> Process (Pid, Reference)
@@ -110,6 +116,8 @@ foreign import startMonitorWith
 
 -- | Stop the server process.
 foreign import stop :: Name -> Process ()
+
+foreign import stopPid :: Pid -> Process ()
 
 foreign import stopRef :: ServerRef -> Process ()
 
@@ -153,13 +161,13 @@ foreign import castRef
   :: forall req. ServerRef -> req -> Process ()
 
 foreign import multiCall
-  :: forall req rep. Name -> req -> Process [MultiReply rep]
+  :: forall req rep. Name -> req -> Process (Replies rep)
 
 foreign import multiCallAt
-  :: forall req rep. [Node] -> Name -> req -> Process [MultiReply rep]
+  :: forall req rep. [Node] -> Name -> req -> Process (Replies rep)
 
 foreign import multiCallTimeoutAt
-  :: forall req rep. [Node] -> Name -> req -> Timeout -> Process [MultiReply rep]
+  :: forall req rep. [Node] -> Name -> req -> Timeout -> Process (Replies rep)
 
 foreign import sendRequest
   :: forall req. ServerRef -> req -> Process RequestId
@@ -180,8 +188,8 @@ initStop :: forall req st. ExitReason -> Process (InitResult req st)
 initStop = return <<< InitStop
 
 -- | Send a reply to the caller explicitly.
-foreign import replyTo
-  :: forall rep. From -> rep -> Process ()
+replyTo :: forall rep. From -> rep -> Process ()
+replyTo = ffiIO2 :gen_server :reply
 
 reply :: forall req rep st. rep -> st -> Process (Reply req rep st)
 reply rep st = return $ Reply rep st Nothing
