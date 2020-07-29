@@ -46,9 +46,12 @@ import Data.Function ((<<<))
 import Data.Pid (Pid)
 import Data.Timeout (Timeout)
 import Data.Unit (Unit)
+import Foreign (ffiIO1, ffiIO2)
 
+-- | Init callback
 type Init st = Process (InitResult st)
 
+-- | HandleEvent callback
 type HandleEvent e st = e -> st -> Process st
 
 class GenEvent e st | e -> st, st -> e where
@@ -66,7 +69,11 @@ foreign import startLink
 foreign import startLinkWith
   :: forall e st. GenEvent e st => Name -> (Init st) -> Process Pid
 
-foreign import stop :: EMgrRef -> Process ()
+stop :: Name -> Process ()
+stop = ffiIO1 :gen_event :stop
+
+stopPid :: Pid -> Process ()
+stopPid = ffiIO1 :gen_event :stop
 
 foreign import stopRef :: EMgrRef -> Process ()
 
@@ -74,13 +81,14 @@ foreign import stopWith
   :: EMgrRef -> ExitReason -> Timeout -> Process ()
 
 foreign import addHandler
-  :: forall e st. GenEvent e st => EMgrRef -> (Init st) -> Process ()
+  :: forall e st. GenEvent e st
+  => EMgrRef -> (Init st) -> Process ()
 
-foreign import notify
-  :: forall e. Name -> e -> Process ()
+notify :: forall e. Name -> e -> Process ()
+notify = ffiIO2 :gen_event :notify
 
-foreign import notifyTo
-  :: forall e. Pid -> e -> Process ()
+notifyTo :: forall e. Pid -> e -> Process ()
+notifyTo = ffiIO2 :gen_event :notifyTo
 
 foreign import notifyRef
   :: forall e. EMgrRef -> e -> Process ()
@@ -93,6 +101,10 @@ foreign import syncNotifyTo
 
 foreign import syncNotifyRef
   :: forall e. EMgrRef -> e -> Process ()
+
+-----------------------------------------------------------------------------
+-- | Init result
+-----------------------------------------------------------------------------
 
 initOk :: forall st. st -> Process (InitResult st)
 initOk = return <<< InitOk

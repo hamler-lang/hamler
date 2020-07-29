@@ -15,3 +15,13 @@
 module Control.Application.Resource where
 
 -- TODO: http://erlang.org/doc/man/app.html
+
+{-
+get_all_key() -> [] | {ok, Keys}
+
+get_all_key(Application) -> undefined | Keys
+
+get_key(Key) -> undefined | {ok, Val}
+
+get_key(Application, Key) -> undefined | {ok, Val}
+-}

@@ -43,89 +43,65 @@ ensureAllStarted(Application) ->
   ?IO(return(ensure_all_started(Application))).
 
 ensureAllRestarted(Application, Type) ->
-  ?IO(return(ensure_all_started(Application, restartType(Type)))).
+  ?IO(return(ensure_all_started(Application, translate(Type)))).
 
 ensureStarted(Application) ->
   ?IO(return(ensure_started(Application))).
 
 ensureRestarted(Application, Type) ->
-  ?IO(return(ensure_started(Application, restartType(Type)))).
+  ?IO(return(ensure_started(Application, translate(Type)))).
 
 getApplication() ->
-  ?IO(case application:get_application() of
-        undefined -> {'Nothing'};
-        {ok, App} -> {'Just', atom_to_list(App)}
-      end).
+  ?IO(maybe(application:get_application())).
 
 getApplicationOfPid(Pid) ->
-  ?IO(case application:get_application(Pid) of
-        undefined -> {'Nothing'};
-        {ok, App} -> {'Just', atom_to_list(App)}
-      end).
+  ?IO(maybe(application:get_application(Pid))).
 
 load(Application) ->
-  ?IO(case application:load(Application) of
-        ok -> ok;
-        {error, {already_loaded, _}} -> ok;
-        {error, {"no such file or directory", Name}} ->
-          error({'AppNotFound', Name});
-        {error, Reason} -> error(Reason)
-      end).
+  ?IO(return(application:load(Application))).
 
 loadedApplications() ->
   ?IO(lists:map(fun appDescr/1, application:loaded_applications())).
 
 start(Application) ->
-  ?IO(case application:start(Application) of
-        ok -> ok;
-        {error, {already_started, _}} -> ok;
-        {error, {"no such file or directory", Name}} ->
-          error({'AppNotFound', Name});
-        {error, Reason} -> error(Reason)
-      end).
+  ?IO(return(application:start(Application))).
 
 restart(Application, Type) ->
-  ?IO(case application:start(Application, restartType(Type)) of
-        ok -> ok;
-        {error, {already_started, _}} -> ok;
-        {error, {"no such file or directory", Name}} ->
-          error({'AppNotFound', Name});
-        {error, Reason} -> error(Reason)
-    end).
+  ?IO(return(application:start(Application, translate(Type)))).
 
 stop(Application) ->
-  ?IO(case application:stop(Application) of
-        ok -> ok;
-        {error, {not_started, _}} ->
-          error('AppNotStarted');
-        {error, Reason} -> error(Reason)
-      end).
+  ?IO(return(application:stop(Application))).
 
 takeover(Application, Type) ->
-  ?IO(case application:takeover(Application, restartType(Type)) of
-        ok -> ok;
-        {error, Reason} -> error(Reason)
-    end).
+  ?IO(return(application:takeover(Application, translate(Type)))).
 
 unload(Application) ->
-  ?IO(case application:unload(Application) of
-        ok -> ok;
-        {error, {not_loaded, _}} ->
-          error('AppNotLoaded');
-        {error, Reason} -> error(Reason)
-      end).
+  ?IO(return(application:unload(Application))).
 
 whichApplications() ->
   ?IO(lists:map(fun appDescr/1, application:which_applications())).
 
-restartType({'Permanent'}) -> permanent;
-restartType({'Transient'}) -> transient;
-restartType({'Temporary'}) -> temporary.
+%%---------------------------------------------------------------------------
+%% | Internal functions
+%%---------------------------------------------------------------------------
+
+translate({'Permanent'}) -> permanent;
+translate({'Transient'}) -> transient;
+translate({'Temporary'}) -> temporary.
 
 appDescr({App, Descr, Vsn}) ->
-  #{name => atom_to_list(App), desc => Descr, vsn => Vsn}.
+  #{name => App, desc => Descr, vsn => Vsn}.
+
+maybe(undefined) -> ?Nothing;
+maybe({ok, App}) -> ?Just(App).
 
 return(ok) -> ok;
 return({ok, Result}) -> Result;
+return({error, {already_loaded, _}}) -> ok;
+return({error, {already_started, _}}) -> ok;
+return({error, {not_loaded, _}}) -> error('AppNotLoaded');
+return({error, {not_started, _}}) -> error('AppNotStarted');
+return({error, {"no such file or directory", Name}}) ->
+  error({'AppNotFound', Name});
 return({error, Reason}) -> error(Reason).
 

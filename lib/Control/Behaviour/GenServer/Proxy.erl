@@ -35,7 +35,7 @@ init([Class, Init]) ->
         {'InitOk', State, ?Nothing} ->
             {ok, initOk(Class, State)};
         {'InitOk', State, ?Just(Action)} ->
-            {ok, initOk(Class, State), transAction(Action)};
+            {ok, initOk(Class, State), trans(Action)};
         {'InitIgnore'} ->
             ignore;
         {'InitStop', Reason} ->
@@ -50,11 +50,11 @@ handle_call(Request, From, Proxy = #proxy{class = #{handleCall := HandleCall}, s
         {'Reply', Rep, NState, ?Nothing} ->
             {reply, Rep, Proxy#proxy{state = NState}};
         {'Reply', Rep, NState, ?Just(Action)} ->
-            {reply, Rep, Proxy#proxy{state = NState}, transAction(Action)};
+            {reply, Rep, Proxy#proxy{state = NState}, trans(Action)};
         {'NoReply', NState, ?Nothing} ->
             {noreply, Proxy#proxy{state = NState}};
         {'NoReply', NState, ?Just(Action)} ->
-            {noreply, Proxy#proxy{state = NState}, transAction(Action)};
+            {noreply, Proxy#proxy{state = NState}, trans(Action)};
         {'Shutdown', Reason, NState} ->
             {stop, shutdown(Reason), Proxy#proxy{state = NState}}
     end.
@@ -66,30 +66,27 @@ handle_cast(Msg, Proxy = #proxy{class = #{handleCast := HandleCast}, state = Sta
         {'NoReply', NState, ?Nothing} ->
             {noreply, Proxy#proxy{state = NState}};
         {'NoReply', NState, ?Just(Action)} ->
-            {noreply, Proxy#proxy{state = NState}, transAction(Action)};
+            {noreply, Proxy#proxy{state = NState}, trans(Action)};
         {'Shutdown', Reason, NState} ->
             {stop, shutdown(Reason), Proxy#proxy{state = NState}}
     end.
 
 handle_info(Info, Proxy) ->
-  error_logger:error_msg("Unexpected Info: ~p", [Info]),
-  {noreply, Proxy}.
+    error_logger:error_msg("Unexpected Info: ~p", [Info]),
+    {noreply, Proxy}.
 
 terminate(_Reason, _Proxy) -> ok.
 
 code_change(_OldVsn, Proxy, _Extra) ->
-  {ok, Proxy}.
+    {ok, Proxy}.
 
 %%---------------------------------------------------------------------------
 %% | Internal functions
 %%---------------------------------------------------------------------------
 
-transAction({'Continue', Req}) ->
-    {continue, Req};
-transAction({'Hibernate'}) ->
-    hibernate;
-transAction({'Timeout', Time}) ->
-    Time.
+trans({'Continue', Req}) -> {continue, Req};
+trans({'Hibernate'}) -> hibernate;
+trans({'Timeout', Time}) -> Time.
 
 shutdown({'ExitNormal'}) -> normal;
 shutdown({'ExitShutdown'}) -> shutdown;

@@ -20,14 +20,11 @@
         , startWith/3
         , startLink/2
         , startLinkWith/3
-        , stop/1
         , stopRef/1
         , stopWith/3
         ]).
 
 -export([ addHandler/3
-        , notify/2
-        , notifyTo/2
         , notifyRef/2
         , syncNotify/2
         , syncNotifyTo/2
@@ -41,77 +38,68 @@
 %%---------------------------------------------------------------------------
 
 start(Class, Init) ->
-  ?IO(doStart(fun gen_event:start/0, Class, Init)).
+    ?IO(doStart(fun gen_event:start/0, Class, Init)).
 
 startWith(Class, Name, Init) ->
-  ?IO(doStartWith(fun gen_event:start/1, {local, Name}, Class, Init)).
+    ?IO(doStartWith(fun gen_event:start/1, {local, Name}, Class, Init)).
 
 startLink(Class, Init) ->
-  ?IO(doStart(fun gen_event:start_link/0, Class, Init)).
+    ?IO(doStart(fun gen_event:start_link/0, Class, Init)).
 
 startLinkWith(Class, Name, Init) ->
-  ?IO(doStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init)).
-
-stop(Name) ->
-  ?IO(gen_event:stop(Name)).
+    ?IO(doStartWith(fun gen_event:start_link/1, {local, Name}, Class, Init)).
 
 stopRef(EMgrRef) ->
-  ?IO(gen_event:stop(toErl(EMgrRef))).
+    ?IO(gen_event:stop(unwrap(EMgrRef))).
 
 stopWith(EMgrRef, Reason, Timeout) ->
-  ?IO(apply(gen_event, stop, [toErl(A) || A <- [EMgrRef, Reason, Timeout]])).
+    ?IO(apply(gen_event, stop, [unwrap(A) || A <- [EMgrRef, Reason, Timeout]])).
 
 %%---------------------------------------------------------------------------
 %% | GenEvent APIs
 %%---------------------------------------------------------------------------
 
 addHandler(Class, EMgrRef, Init) ->
-  ?IO(case gen_event:add_handler(EMgrRef, {?MOD, Class}, [Class, Init]) of
-        ok -> ok;
-        {'EXIT', Reason} -> error(Reason)
-      end).
-
-notify(Name, Event) ->
-  ?IO(gen_event:notify(Name, Event)).
-
-notifyTo(Pid, Event) ->
-  ?IO(gen_event:notify(Pid, Event)).
+    ?IO(case gen_event:add_handler(EMgrRef, {?MOD, Class}, [Class, Init]) of
+            ok -> ok;
+            {'EXIT', Reason} -> error(Reason)
+        end).
 
 notifyRef(EMgrRef, Event) ->
-  ?IO(gen_event:notify(toErl(EMgrRef), Event)).
+    ?IO(gen_event:notify(unwrap(EMgrRef), Event)).
 
 syncNotify(Name, Event) ->
-  ?IO(gen_event:sync_notify(Name, Event)).
+    ?IO(gen_event:sync_notify(Name, Event)).
 
 syncNotifyTo(Pid, Event) ->
-  ?IO(gen_event:sync_notify(Pid, Event)).
+    ?IO(gen_event:sync_notify(Pid, Event)).
 
 syncNotifyRef(EMgrRef, Event) ->
-  ?IO(gen_event:sync_notify(toErl(EMgrRef), Event)).
+    ?IO(gen_event:sync_notify(unwrap(EMgrRef), Event)).
 
 %%---------------------------------------------------------------------------
 %% | Internal functions
 %%---------------------------------------------------------------------------
 
 doStart(Start, Class, Init) ->
-  {ok, Pid} = Start(),
-  ok = (addHandler(Class, Pid, Init))(),
-  Pid.
+    {ok, Pid} = Start(),
+    ok = (addHandler(Class, Pid, Init))(),
+    Pid.
 
 doStartWith(Start, Name, Class, Init) ->
-  case Start(Name) of
-    {ok, Pid} ->
-      ok = (addHandler(Class, Pid, Init))(),
-      Pid;
-    {error, Reason} ->
-      error(Reason)
-  end.
+    case Start(Name) of
+        {ok, Pid} ->
+            ok = (addHandler(Class, Pid, Init))(),
+            Pid;
+        {error, Reason} ->
+            error(Reason)
+    end.
 
-toErl({'EMgrPid', Pid}) -> Pid;
-toErl({'EMgrRef', Name}) -> Name;
-toErl({'EMgrRefAt', Name, Node}) -> {Name, Node};
-toErl({'EMgrRefGlobal', Name}) -> {global, Name};
+unwrap({'EMgrPid', Pid}) -> Pid;
+unwrap({'EMgrRef', Name}) -> Name;
+unwrap({'EMgrRefAt', Name, Node}) -> {Name, Node};
+unwrap({'EMgrRefGlobal', Name}) -> {global, Name};
 
-toErl({'Infinity'}) -> infinity;
-toErl({'Timeout', I}) -> I.
+unwrap({'Infinity'}) -> infinity;
+unwrap({'Timeout', I}) -> I.
 

@@ -15,8 +15,8 @@
 module Control.Behaviour.GenServer.Types
   ( Action(..)
   , InitResult(..)
-  , MultiReply(..)
   , Reply(..)
+  , Replies
   , ServerRef(..)
   , module Control.Behaviour.GenTypes
   ) where
@@ -41,15 +41,14 @@ data InitResult req st
   | InitStop ExitReason
     -- ^ {stop, Reason}
 
--- | MultiReply
-data MultiReply rep
-  = MultiReply Node (Maybe rep)
-
 -- | Server Reply
 data Reply req rep st
   = Reply rep st (Maybe (Action req))
   | NoReply st (Maybe (Action req))
   | Shutdown ExitReason st
+
+-- | Replies
+type Replies rep = [(Node, Maybe rep)]
 
 -- | Server Ref.
 data ServerRef
