@@ -70,7 +70,7 @@ equalIgnoreCase(S1, S2) -> string:equal(S1, S2, true).
 
 -spec(hasPrefix(string(), prefix()) -> boolean()).
 hasPrefix(String, Prefix) ->
-    string:prefix(String, Prefix).
+    string:prefix(String, Prefix) /= nomatch.
 
 -spec(hasSuffix(string(), suffix()) -> boolean()).
 hasSuffix(String, Suffix) ->
