@@ -21,7 +21,7 @@ module Control.Monad
     -- ^ Monad
   , liftM1, liftM2, liftM3, liftM4
     -- ^ liftM
-  , IO
+  , IO(..)
   , discard
   , guardF
   , seqio

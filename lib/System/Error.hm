@@ -14,43 +14,51 @@
 -----------------------------------------------------------------------------
 module System.Error where
 
-import Control.Monad (IO, pure)
+import Control.Monad (IO, pure, (>>=), bind)
+import Data.Function(identity)
+import Data.Maybe (Maybe(..))
 import Data.Functor (map)
 import Data.Either (Either(..))
 import Data.Show (class Show)
 
--- IO Exception
-foreign import data Error :: Type
-
-data SomeException = SomeException e
-
-class Show e => Exception e where
-    toException :: e -> SomeException
-    fromException :: SomeException -> Maybe e
-    displayException :: e -> String
-    displayException = show
-
-instance Exception SomeException
-   toException = id
-   fromException = Just
-   displayException (SomeException e) = displayException e
-
-instance Show Error where
-  show = showErrorImpl
-
-foreign import showErrorImpl :: Error -> String
-
+--
+-- foreign import data Error :: Type
+--
+-- class Show e => Exception e where
+--     toException :: e -> SomeException
+--     fromException :: SomeException -> Maybe e
+--     displayException :: e -> String
+--
+-- instance Exception SomeException where
+--    toException = identity
+--    fromException = Just
+--    displayException (SomeException e) = displayException e
+--
+-- instance Show Error where
+--   show = showErrorImpl
+--
+-- foreign import showErrorImpl :: Error -> String
+--
 -- erlang:raise(Class, Reason, Stacktrace) -> no_return()
 
-throw :: Exception e => forall a e. e -> IO a
+throw :: forall a e. e -> IO a
 throw s = throwException (displayException s)
 
-try :: Exception e => forall a e. IO a -> IO (Either e a)
-try action = catch (a >>= \x -> return (Right x)) (\e -> pure (Left e))
+try :: forall a e. IO a -> IO (Either e a)
+try action = catch (action >>= \x -> pure (Right x)) (\e -> pure (Left e))
 
-catch :: Exception e => forall a e. IO a -> (e -> IO a) -> IO a
-catch  (IO io) handler = IO (catchException io handler)
+catch :: forall a e. IO a -> (e -> IO a) -> IO a
+catch io handler = catchException io handler
 
+onException :: forall a b. IO a -> IO b -> IO a
+onException io what = io `catch` \e -> do _ <- what
+                                          throw e
+
+foreign import bracket :: IO a -> (a -> IO b) -> (a -> IO c) -> IO c
+bracket before after thing =
+try before Z -> ?IO(thing(Z)()) catch X -> throw X after after(Z)()
+try io catch _ -> what();?IO(throw)
+finally ::
 {-
 foreign import error :: String -> Error
 
