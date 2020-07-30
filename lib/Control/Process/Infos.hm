@@ -22,6 +22,8 @@ foreign import data ProcessInfo :: Type
 
 foreign import processInfo :: Pid -> Process (Maybe ProcessInfo)
 
+foreign import processMsgs :: forall a. Pid -> Process [a]
+
 {- TODO:
 process_info(Pid) -> Info
 process_info(Pid, Item) -> InfoTuple | [] | undefined
