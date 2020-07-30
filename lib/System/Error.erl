@@ -28,7 +28,7 @@ showErrorImpl(Error) ->
 throwException(Ex) -> ?IO(throw(Ex)).
 
 catchException(X, Y) -> try X() of
-                          Z -> ?IO(Z)
+                          _Z -> ?IO(_Z)
                         catch
                           throw:Throw -> Y(Throw);
                           error:Error -> Y(Error);
@@ -36,13 +36,18 @@ catchException(X, Y) -> try X() of
                         end.
 
 bracket(X, Y, Z) ->
-  try X() of
-    Result  ->
-      ?IO(Y(Result))
+  X2 = X(),
+  try
+    Y(X2)
   catch
         throw:A -> throw(A);
         error:B -> error(B);
-        exit:C  -> exit(C);
+        exit:C  -> exit(C)
   after
-    ?IO((Z(Result))())
+    Z(X2)
+  end.
+
+finally(X, Y) ->
+  try ?IO(X())
+  after Y()
   end.

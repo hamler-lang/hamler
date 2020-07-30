@@ -55,10 +55,8 @@ onException io what = io `catch` \e -> do _ <- what
                                           throw e
 
 foreign import bracket :: IO a -> (a -> IO b) -> (a -> IO c) -> IO c
-bracket before after thing =
-try before Z -> ?IO(thing(Z)()) catch X -> throw X after after(Z)()
-try io catch _ -> what();?IO(throw)
-finally ::
+
+foreign import finally :: IO a -> IO b -> IO a
 {-
 foreign import error :: String -> Error
 
