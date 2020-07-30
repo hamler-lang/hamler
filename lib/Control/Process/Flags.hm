@@ -12,15 +12,14 @@
 -- The Process Flags module.
 --
 -----------------------------------------------------------------------------
-module Control.Process.Flags
-  ( Flag(..)
-  , MsgQueueData(..)
-  , PriorityLevel(..)
-  ) where
+module Control.Process.Flags where
+
+import Control.Process.Types
 
 data Flag
   = TrapExit Boolean
   | ErrorHandler Atom
+  | FullsweepAfter Integer
   | MinHeapSize Integer
   | MinBinVheapSize Integer
   | MaxHeapSize Integer
@@ -32,3 +31,10 @@ data Flag
 data MsgQueueData = OffHeap | OnHeap
 
 data PriorityLevel = Low | Normal | High | Max
+
+-- | Set process flag, and return the old value.
+foreign import processFlag :: Flag -> Process Flag
+
+-- | Set trap_exit flag of Process.
+foreign import trapExit :: Boolean -> Process Boolean
+

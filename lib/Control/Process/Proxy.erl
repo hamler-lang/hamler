@@ -1,6 +1,6 @@
 %%---------------------------------------------------------------------------
 %% |
-%% Module      :  Dict
+%% Module      :  Proxy
 %% Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 %% License     :  BSD-style (see the LICENSE file)
 %%
@@ -9,33 +9,14 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Dict FFI module.
+%% The Process Proxy FFI.
 %%
 %%---------------------------------------------------------------------------
--module('Dict').
+-module('Proxy').
 
 -include("../../Foreign.hrl").
 
--compile(no_auto_import).
+-export([wakeup/1]).
 
--export([ erase/1
-        , eraseAll/0
-        , get/1
-        , put/2
-        ]).
-
-erase(Key) ->
-  ?IO(maybe(erlang:erase(Key))).
-
-eraseAll() ->
-  ?IO(begin erlang:erase(), ok end).
-
-get(Key) ->
-  ?IO(maybe(erlang:get(Key))).
-
-put(Key, Val) ->
-  ?IO(maybe(erlang:put(Key, Val))).
-
-maybe(undefined) -> ?Nothing;
-maybe(Val) -> ?Just(Val).
+wakeup(Fun) -> ?RunIO(Fun).
 

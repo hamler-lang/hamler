@@ -14,19 +14,22 @@
 -----------------------------------------------------------------------------
 module Control.Process.Dict where
 
-import Data.Maybe (Maybe)
 import Control.Process.Types (Process)
+import Data.Maybe (Maybe)
+import Data.Unit (Unit)
+
+import Foreign (ffiIO0)
 
 foreign import erase :: forall k v. k -> Process (Maybe v)
 
--- TODO: Fixme later
--- | Returns the process dictionary and deletes it.
-foreign import eraseAll :: forall k v. Process [(k, v)]
+-- | Erase all the items in the process dictionary.
+foreign import eraseAll :: Process ()
 
-{-
-get() -> [{Key, Val}]
-get(Key) -> Val | undefined
-get_keys() -> [Key]
-get_keys(Val) -> [Key]
-put(Key, Val) -> term()
--}
+getKeys :: Process [Atom]
+getKeys = ffiIO0 :erlang :get_keys
+
+foreign import get :: forall v. Atom -> Process (Maybe v)
+
+foreign import put :: forall v. Atom -> v -> Process (Maybe v)
+
+{- TODO: get() -> [{Key, Val}] -}

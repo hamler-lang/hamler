@@ -14,8 +14,9 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenServer.Proxy where
 
-import Control.Process (From, Process)
+import Control.Process (Process)
 import Data.Unit (Unit)
+import Control.Behaviour.GenTypes
 
 -- | Module:init(Args) -> Result
 foreign import init :: forall a res. a -> Process res

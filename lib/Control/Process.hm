@@ -16,32 +16,40 @@ module Control.Process
   ( self
   , selfPid
   , isAlive
-    -- * send/recv
+    -- * Send/recv
   , send
+  , sendc, (!)
   , recv
   , receiveAfter
-    -- * Registered Processes
-  , register
-  , unregister
-  , registered
-  , whereis
     -- * Linking and Monitoring
   , link
   , unlink
   , monitor
   , demonitor
-    -- * Process Flags
-  , processFlag
-  , trapExit
-    -- * Process Info
-  , processInfo
-    -- * Process Termination
+  , demonitorWith
+    -- * Registeration
+  , register
+  , unregister
+  , registered
+  , whereis
+    -- * Group Leader
+  , groupLeader
+  , setGroupLeader
+    -- * Termination
   , exit
-  , kill
-    -- * Process Dictionary
+  , exitProc
+  , killProc
+    -- * Scheduling
+  , resume
+  , suspend
+  , yield
+    -- * Process Dict
   , module Control.Process.Dict
     -- * Process Flags
   , module Control.Process.Flags
+    -- * Process GC
+  , module Control.Process.GC
+    -- * Process Infos
   , module Control.Process.Infos
     -- * Spawn Process
   , module Control.Process.Spawn
@@ -49,11 +57,32 @@ module Control.Process
   ) where
 
 import Control.Monad (IO, (>>=))
-import Control.Process.Dict (erase, eraseAll)
-import Control.Process.Flags (Flag)
-import Control.Process.Infos (ProcessInfo)
+import Control.Process.Dict
+  ( erase
+  , eraseAll
+  , get
+  , put
+  )
+import Control.Process.Flags
+  ( Flag(..)
+  , MsgQueueData(..)
+  , PriorityLevel(..)
+  , processFlag
+  , trapExit
+  )
+import Control.Process.GC
+  ( GcOption(..)
+  , garbageCollect
+  , garbageCollectProc
+  , garbageCollectProcWith
+  , hibernate
+  )
+import Control.Process.Infos
+  ( ProcessInfo
+  , processInfo
+  )
 import Control.Process.Spawn
-  ( Option(..)
+  ( Option
   , spawn
   , spawnAt
   , spawnWith
@@ -78,9 +107,11 @@ import Foreign (ffiIO0, ffiIO1, ffiIO2)
 self :: Process Pid
 self = selfPid
 
--- Return the Pid of calling process.
-foreign import selfPid :: Process Pid
+-- Return the Pid of the calling process.
+selfPid :: Process Pid
+selfPid = ffiIO0 :erlang :self
 
+-- | Is the process alive?
 isAlive :: Pid -> Process Boolean
 isAlive = ffiIO1 :erlang :is_process_alive
 
@@ -89,13 +120,16 @@ isAlive = ffiIO1 :erlang :is_process_alive
 -----------------------------------------------------------------------------
 
 -- Send a message to a Process.
-foreign import send :: forall a. Pid -> a -> Process a
+send :: forall a. Pid -> a -> Process a
+send = ffiIO2 :erlang :send
 
+-- TODO: how to define !
 infixr 1 sendc as !
 --- send pid1 ! send pid2 ! send pid3 ! send pid4  ! pure message
 sendc :: forall a. (a -> Process a) -> Process a -> Process a
 sendc f a = a >>= f
 
+-- TODO: receive expr
 foreign import recv :: forall a. Process a
 
 foreign import receiveAfter :: forall a. Integer -> Process a
@@ -103,68 +137,34 @@ foreign import receiveAfter :: forall a. Integer -> Process a
 -- foreign import receiveScanlMatch :: forall a b.(a -> Process b) -> Process b
 
 -----------------------------------------------------------------------------
--- | Registered Processes
------------------------------------------------------------------------------
-
-foreign import register :: Atom -> Pid -> Process ()
-
-unregister :: Atom -> Process ()
-unregister = ffiIO1 :erlang :unregister
-
-registered :: Process [Atom]
-registered = ffiIO0 :erlang :registered
-
-foreign import whereis :: Atom -> Process (Maybe Pid)
-
------------------------------------------------------------------------------
 -- | Linking and Monitoring
 -----------------------------------------------------------------------------
 
-link :: Pid -> Process ()
-link = ffiIO1 :erlang :link
+foreign import link :: Pid -> Process ()
 
-unlink :: Pid -> Process ()
-unlink = ffiIO1 :erlang :unlink
+foreign import unlink :: Pid -> Process ()
 
 foreign import monitor :: Pid -> Process Reference
 
-demonitor :: Reference -> IO ()
-demonitor = ffiIO1 :erlang :demonitor
+foreign import demonitor :: Reference -> IO ()
 
 demonitorWith :: Reference -> [Atom] -> IO Boolean
 demonitorWith = ffiIO2 :erlang :demonitor
 
 -----------------------------------------------------------------------------
--- | Process Flags
+-- | Registered Processes
 -----------------------------------------------------------------------------
 
--- | Set process flag, and return the old value.
-foreign import processFlag :: Flag -> Process Flag
+-- | Associates a Name with the process Pid.
+foreign import register :: Atom -> Pid -> Process ()
 
--- | Set trap_exit flag of Process.
-foreign import trapExit :: Boolean -> Process Boolean
+-- | Remove the Name to Pid association.
+foreign import unregister :: Atom -> Process ()
 
------------------------------------------------------------------------------
--- | Process Info
------------------------------------------------------------------------------
+registered :: Process [Atom]
+registered = ffiIO0 :erlang :registered
 
-foreign import processInfo :: Pid -> Process (Maybe ProcessInfo)
-
------------------------------------------------------------------------------
--- | Process GC and Hibernate
------------------------------------------------------------------------------
-
-garbageCollect :: Process ()
-garbageCollect = ffiIO0 :erlang :garbage_collect
-
-garbageCollectProc :: Pid -> Process ()
-garbageCollectProc = ffiIO1 :erlang :garbage_collect
-
-data GcOption = GcMajor | GcMinor | GcAsync Reference
-
-foreign import garbageCollectProcWith :: Pid -> [GcOption] -> Process ()
-
--- erlang:hibernate(Module, Function, Args) -> no_return()
+foreign import whereis :: Atom -> Process (Maybe Pid)
 
 -----------------------------------------------------------------------------
 -- | Process Group Leader
@@ -173,27 +173,25 @@ foreign import garbageCollectProcWith :: Pid -> [GcOption] -> Process ()
 groupLeader :: Process Pid
 groupLeader = ffiIO0 :erlang :group_leader
 
-isGroupLeader :: Pid -> Pid -> Process Boolean
-isGroupLeader = ffiIO2 :erlang :group_leader
+foreign import setGroupLeader :: Pid -> Pid -> Process ()
 
 -----------------------------------------------------------------------------
 -- | Process Termination
 -----------------------------------------------------------------------------
 
-exit :: forall r. r -> Process ()
-exit = ffiIO1 :erlang :exit
+foreign import exit :: ExitReason -> Process ()
 
--- TODO:
--- exit(Pid, Reason) -> true
+foreign import exitProc :: Pid -> ExitReason -> Process()
 
-foreign import kill :: Pid -> Process ()
+foreign import killProc :: Pid -> Process ()
 
-resume :: Pid -> Process ()
-resume = ffiIO1 :erlang :resume_process
+-----------------------------------------------------------------------------
+-- | Process Scheduling
+-----------------------------------------------------------------------------
 
-suspend :: Pid -> Process ()
-suspend = ffiIO1 :erlang :suspend_process
+foreign import resume :: Pid -> Process ()
 
-yield :: Process ()
-yield = ffiIO0 :erlang :yield
+foreign import suspend :: Pid -> Process ()
+
+foreign import yield :: Process ()
 

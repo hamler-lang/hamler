@@ -14,7 +14,8 @@
 -----------------------------------------------------------------------------
 module Control.Behaviour.Supervisor.Impl where
 
-import Control.Process (From, Process)
+import Control.Process (Process)
+import Control.Behaviour.GenTypes
 
 -- | supervisor api
 foreign import start_link :: forall a b c. a -> b -> Process c
