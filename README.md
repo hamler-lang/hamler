@@ -170,7 +170,11 @@ You can reach the **Hamler** community and core team via the following channels:
 To contribute to **Hamler** project:
 
 - Report issues : submit any bugs, issues to [hamler/issues][hamler-issues]
-- Contribute code: Fork the project, and submit feature requests to [hamler-lang/hamler][hamler-project]
+
+- Contribute code: Reference [**roadmap**](https://github.com/hamler-lang/hamler/milestones) as a guidance for new features.
+
+  ​                            Fork the project, and submit feature requests to [hamler-lang/hamler][hamler-project]
+
 - Submit a proposal: Fork the [hamler-wiki][hamler-wiki] project and submit pull request
 
 [hamler-issues]: https://github.com/hamler-lang/hamler/issues
