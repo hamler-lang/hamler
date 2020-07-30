@@ -17,8 +17,8 @@ module Control.Process
   , selfPid
   , isAlive
     -- * Send/recv
-  , send
-  , sendc, (!)
+  , send, (!)
+  , sendNosuspend
   , recv
   , receiveAfter
     -- * Linking and Monitoring
@@ -56,7 +56,7 @@ module Control.Process
   , module Control.Process.Types
   ) where
 
-import Control.Monad (IO, (>>=))
+import Control.Monad (IO)
 import Control.Process.Dict
   ( erase
   , eraseAll
@@ -80,6 +80,7 @@ import Control.Process.GC
 import Control.Process.Infos
   ( ProcessInfo
   , processInfo
+  , processMsgs
   )
 import Control.Process.Spawn
   ( Option
@@ -119,15 +120,14 @@ isAlive = ffiIO1 :erlang :is_process_alive
 -- | Message passing
 -----------------------------------------------------------------------------
 
+infixr 1 send as !
+
 -- Send a message to a Process.
 send :: forall a. Pid -> a -> Process a
 send = ffiIO2 :erlang :send
 
--- TODO: how to define !
-infixr 1 sendc as !
---- send pid1 ! send pid2 ! send pid3 ! send pid4  ! pure message
-sendc :: forall a. (a -> Process a) -> Process a -> Process a
-sendc f a = a >>= f
+sendNosuspend :: forall a. Pid -> a -> Process Boolean
+sendNosuspend = ffiIO2 :erlang :send_nosuspend
 
 -- TODO: receive expr
 foreign import recv :: forall a. Process a
