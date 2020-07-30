@@ -62,7 +62,7 @@ module Control.Behaviour.GenServer
 import Control.Behaviour.GenServer.Types
 import Control.Distributed.Node (Node)
 import Control.Monad (return)
-import Control.Process (From, Process, ExitReason(..))
+import Control.Process (Process, ExitReason(..))
 import Data.Function (($), (<<<))
 import Data.Maybe (Maybe(..))
 import Data.Pid (Pid)

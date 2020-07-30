@@ -39,15 +39,17 @@ import Foreign (ffiIO1, ffiIO2)
 
 import Control.Distributed.Node (Node)
 import Control.Process.Types (Process)
-import Control.Process.Flags (PriorityLevel , MsgQueueData)
+import Control.Process.Flags (Flag)
 
-data Option
-  = Priority PriorityLevel
-  | FullsweepAfter Integer
-  | MinHeapSize Integer
-  | MinBinVheapSize Integer
-  | MaxHeapSize Integer
-  | MessageQueueData MsgQueueData
+type Option = Flag
+{-
+= Priority PriorityLevel
+| FullsweepAfter Integer
+| MinHeapSize Integer
+| MinBinVheapSize Integer
+| MaxHeapSize Integer
+| MessageQueueData MsgQueueData
+-}
 
 spawn :: forall a. IO a -> Process Pid
 spawn = ffiIO1 :erlang :spawn

@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.Process.Types
+-- Module      :  Control.Process.Proxy
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -9,18 +9,14 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Process Types.
+-- The Process Proxy.
 --
 -----------------------------------------------------------------------------
-module Control.Process.Types where
+module Control.Process.Proxy where
 
 import Control.Monad (IO)
+import Data.Unit (Unit)
+import Control.Process.Types
 
--- An Alias of IO.
-type Process = IO
-
-data ExitReason
-  = ExitNormal
-  | ExitShutdown
-  | ExitReason Atom
+foreign import wakeup :: IO () -> Process ()
 

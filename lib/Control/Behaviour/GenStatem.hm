@@ -59,7 +59,7 @@ module Control.Behaviour.GenStatem
   ) where
 
 import Control.Monad (return)
-import Control.Process (From, Process, ExitReason(..))
+import Control.Process (Process, ExitReason(..))
 import Data.Function (($), (<<<))
 import Data.Map as M
 import Data.Pid (Pid)

@@ -21,9 +21,15 @@ type Module = Atom
 
 type Application = Atom
 
-data StartType = Normal | Takeover Node | Failover Node
+data StartType
+  = Normal
+  | Takeover Node
+  | Failover Node
 
-data RestartType = Permanent | Transient | Temporary
+data RestartType
+  = Permanent
+  | Transient
+  | Temporary
 
 -- [{Par :: atom(), Val :: term()}]
 foreign import data Config :: Type
@@ -62,3 +68,4 @@ type AppDescr =
   , desc :: String
   , vsn  :: String
   }
+
