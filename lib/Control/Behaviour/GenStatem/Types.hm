@@ -23,7 +23,7 @@ module Control.Behaviour.GenStatem.Types
 
 import Control.Behaviour.GenTypes
 import Control.Distributed.Node (Node)
-import Control.Process (ExitReason, From)
+import Control.Process (ExitReason)
 import Data.Pid (Pid)
 
 -- | Event Type

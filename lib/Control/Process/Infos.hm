@@ -14,14 +14,19 @@
 -----------------------------------------------------------------------------
 module Control.Process.Infos where
 
--- TODO:
+import Data.Maybe (Maybe)
+import Data.Pid (Pid)
+import Control.Process.Types
+
 foreign import data ProcessInfo :: Type
 
--- process_info(Pid) -> Info
--- process_info(Pid, Item) -> InfoTuple | [] | undefined
--- process_info(Pid, ItemList) -> InfoTupleList | [] | undefined
+foreign import processInfo :: Pid -> Process (Maybe ProcessInfo)
 
-{-
+{- TODO:
+process_info(Pid) -> Info
+process_info(Pid, Item) -> InfoTuple | [] | undefined
+process_info(Pid, ItemList) -> InfoTupleList | [] | undefined
+
 Info = [InfoTuple] | undefined
 InfoTuple = process_info_result_item()
 process_info_result_item() =
