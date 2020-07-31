@@ -15,7 +15,6 @@
 -module('VM').
 
 -include("../Foreign.hrl").
--include("../Foreign/Maybe.hrl").
 
 -export([ memory/0
         , info/1

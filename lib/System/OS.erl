@@ -15,7 +15,6 @@
 -module('OS').
 
 -include("../Foreign.hrl").
--include("../Foreign/Maybe.hrl").
 
 -export([ findExe/1
         , findExeIn/2

@@ -15,7 +15,6 @@
 -module('Supervisor').
 
 -include("../../Foreign.hrl").
--include("../../Foreign/Maybe.hrl").
 -include("./Supervisor/Impl.hrl").
 
 -compile({no_auto_import, [error/1]}).

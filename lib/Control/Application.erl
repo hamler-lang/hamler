@@ -15,7 +15,6 @@
 -module('Application').
 
 -include("../Foreign.hrl").
--include("../Foreign/Maybe.hrl").
 
 -import(application,
         [ ensure_all_started/1
