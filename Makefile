@@ -33,7 +33,7 @@ endif
 	@cp -r lib  $(HAMLER_HOME)
 
 test:
-	$(stack) run  test
+	$(stack) run test
 
 repl:
 	$(stack) run repldev
