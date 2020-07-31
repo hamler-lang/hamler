@@ -1,7 +1,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Compile (command,initProject,runProject, buildTest) where
+module Compile (command, initProject, runProject, buildTest) where
 
 import           Control.Monad
 import qualified Data.Aeson as A
@@ -100,7 +100,6 @@ howBuild= Opts.switch $
   <> Opts.long "libraries"
   <> Opts.help "build the libraries to ebin"
 
-
 inline :: Opts.Parser Bool
 inline= Opts.switch $
      Opts.short 'i'
@@ -160,7 +159,6 @@ cc :: Char -> Char
 cc ('/')= ' '
 cc x = x
 
-
 -- build lib
 buildlib :: Bool -> IO ()
 buildlib bl = do
@@ -191,7 +189,6 @@ buildlib bl = do
     SS.shelly $ SS.run_ "rm" [T.pack $ tpath <> "/" <> fp]
 
   exitSuccess
-
 
 buildTest :: Opts.Parser (IO ())
 buildTest = pure $ do
@@ -226,8 +223,6 @@ buildTest = pure $ do
     SS.run  "erl" ["-pa",T.pack (tpath), "-noshell","-eval" ,"('Test':main())()","-s","init","stop" ]
   return ()
   exitSuccess
-
-
 
 runProject :: Opts.Parser (IO ())
 runProject  =pure $ do
