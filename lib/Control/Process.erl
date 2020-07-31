@@ -18,12 +18,11 @@
 
 -compile(no_auto_import).
 
--export([ recv/0
-        , receiveAfter/1
-        , link/1
+-export([ link/1
         , unlink/1
         , monitor/1
         , demonitor/1
+        , demonitorFlush/1
         , register/2
         , unregister/1
         , whereis/1
@@ -35,14 +34,6 @@
         , suspend/1
         , yield/0
         ]).
-
-%% TODO: Fixme later:(
-recv() ->
-  ?IO(receive X -> X end).
-
-%% TODO: Fixme later:(
-receiveAfter(Timeout) ->
-  ?IO(receive X -> X after Timeout -> ok end).
 
 link(Pid) ->
   ?IO(ok(erlang:link(Pid))).
@@ -56,6 +47,9 @@ monitor(Pid) ->
 demonitor(Ref) ->
   ?IO(ok(erlang:demonitor(Ref))).
 
+demonitorFlush(Ref) ->
+  ?IO(ok(erlang:demonitor(Ref, [flush]))).
+
 register(Name, Pid) ->
   ?IO(ok(erlang:register(Name, Pid))).
 
@@ -64,8 +58,8 @@ unregister(Name) ->
 
 whereis(Name) ->
   ?IO(case erlang:whereis(Name) of
-        undefined -> {'Nothing'};
-        Pid -> {'Just', Pid}
+        undefined -> ?Nothing;
+        Pid -> ?Just(Pid)
       end).
 
 setGroupLeader(LeaderPid, Pid) ->
