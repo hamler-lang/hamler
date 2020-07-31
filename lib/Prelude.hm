@@ -46,7 +46,7 @@ module Prelude
 
 import Data.Atom (atom)
 import Data.Bits (band, bor, bxor, bnot, bsl, bsr)
-import Data.Bool (Bool, (&&), (||), and, or, not)
+import Data.Bool (Bool, (&&), (||), and, or, not, otherwise)
 import Data.Either (Either(..))
 import Data.Enum (class Enum, range, rangeStep)
 import Data.Eq (class Eq, eq, (==), notEq, (/=))
