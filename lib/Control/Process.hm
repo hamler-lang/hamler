@@ -16,17 +16,15 @@ module Control.Process
   ( self
   , selfPid
   , isAlive
-    -- * Send/recv
+    -- * Message passing
   , send, (!)
   , sendNosuspend
-  , recv
-  , receiveAfter
     -- * Linking and Monitoring
   , link
   , unlink
   , monitor
   , demonitor
-  , demonitorWith
+  , demonitorFlush
     -- * Registeration
   , register
   , unregister
@@ -129,13 +127,6 @@ send = ffiIO2 :erlang :send
 sendNosuspend :: forall a. Pid -> a -> Process Boolean
 sendNosuspend = ffiIO2 :erlang :send_nosuspend
 
--- TODO: receive expr
-foreign import recv :: forall a. Process a
-
-foreign import receiveAfter :: forall a. Integer -> Process a
-
--- foreign import receiveScanlMatch :: forall a b.(a -> Process b) -> Process b
-
 -----------------------------------------------------------------------------
 -- | Linking and Monitoring
 -----------------------------------------------------------------------------
@@ -148,8 +139,7 @@ foreign import monitor :: Pid -> Process Reference
 
 foreign import demonitor :: Reference -> IO ()
 
-demonitorWith :: Reference -> [Atom] -> IO Boolean
-demonitorWith = ffiIO2 :erlang :demonitor
+foreign import demonitorFlush :: Reference -> Process ()
 
 -----------------------------------------------------------------------------
 -- | Registered Processes
