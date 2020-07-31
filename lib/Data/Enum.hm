@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Enum data type.
+-- The Enum typeclass.
 --
 -----------------------------------------------------------------------------
 module Data.Enum
@@ -26,13 +26,12 @@ instance Enum Char where
   range = enumCharRange
   rangeStep = enumCharRangeStep
 
-foreign import enumCharRange     :: Char -> Char -> [Char]
+foreign import enumCharRange :: Char -> Char -> [Char]
 foreign import enumCharRangeStep :: Char -> Char -> Char -> [Char]
 
 instance Enum Integer where
   range = enumIntegerRange
   rangeStep = enumIntegerRangeStep
 
-foreign import enumIntegerRange     :: Integer -> Integer -> [Integer]
+foreign import enumIntegerRange :: Integer -> Integer -> [Integer]
 foreign import enumIntegerRangeStep :: Integer -> Integer -> Integer -> [Integer]
-

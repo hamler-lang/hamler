@@ -9,7 +9,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Functor FFI Module.
+%% The Functor FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Functor').

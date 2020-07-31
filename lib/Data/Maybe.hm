@@ -57,4 +57,3 @@ isNothing = maybe true (const false)
 fromJust :: forall a. Maybe a -> a
 fromJust (Just a) = a
 fromJust (Nothing) = error "This is Nothing!"
-

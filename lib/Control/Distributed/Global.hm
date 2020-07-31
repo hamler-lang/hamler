@@ -52,7 +52,4 @@ foreign import transRetriesAt :: forall res. LockId -> IO () -> [Node] -> Proces
 foreign import unregisterName :: Name -> Process ()
 foreign import whereisName :: Name -> Process (Maybe Pid)
 
-{- TODO
-global_group	Grouping nodes to global name registration groups.
--}
-
+{- TODO: global_group -	Grouping nodes to global name registration groups. -}

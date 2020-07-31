@@ -30,4 +30,3 @@ data TimeUnit
 foreign import data UTCTime :: Type
 
 foreign import getCurrentTime :: IO UTCTime
-

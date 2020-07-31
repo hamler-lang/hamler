@@ -81,4 +81,3 @@ stopWith = ffiIO1 :init :stop
     Halts the Erlang runtime system. Has no return value.
       Depending on Status, the following occurs:
 -}
-

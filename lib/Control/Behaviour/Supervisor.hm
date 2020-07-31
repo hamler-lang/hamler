@@ -116,4 +116,3 @@ initOk flags specs = return (InitOk flags specs)
 
 initIgnore :: Process InitResult
 initIgnore = return InitIgnore
-

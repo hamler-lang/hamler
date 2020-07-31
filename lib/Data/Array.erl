@@ -14,8 +14,9 @@
 %%---------------------------------------------------------------------------
 -module('Array').
 
--export([ new/1 
-        ]).
+-export([new/1]).
+
+new(Opt) -> array:new(trans(Opt)).
 
 trans([]) -> [];
 trans([X | Xs]) -> [ case X of
@@ -23,5 +24,3 @@ trans([X | Xs]) -> [ case X of
     { 'Fix', B } -> { fixed, B };
     { 'Default', V } -> { default, V }
 end | trans(Xs) ].
-
-new(Opt) -> array:new(trans(Opt)).

@@ -105,4 +105,3 @@ info(G) ->
                ({portection, Y}) ->
                 {'GraphTypeInfo', {case Y of protected -> 'Protected'; private -> 'Private' end}}
             end, digraph:info(G)).
-

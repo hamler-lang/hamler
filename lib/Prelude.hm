@@ -25,7 +25,6 @@ module Prelude
   , module Data.Int
   , module Data.List
   , module Data.Maybe
-  , module Data.Map
   , module Data.Ord
   , module Data.Pid
   , module Data.Ref
@@ -44,32 +43,31 @@ module Prelude
   , module System.IO
   ) where
 
+import Control.Distributed.Node (Node)
+import Control.Monad (class Applicative, pure, (<*>), class Monad, return, bind, IO, discard, guardF, seqio, (>>=), unsafePerformIO, replApply)
+import Control.Process (Process, self, spawn, send, (!), link, unlink, monitor, demonitor)
 import Data.Atom (atom)
 import Data.Bits (band, bor, bxor, bnot, bsl, bsr)
 import Data.Bool (Bool, (&&), (||), and, or, not, otherwise)
+import Data.Pid (Pid)
 import Data.Either (Either(..))
 import Data.Enum (class Enum, range, rangeStep)
 import Data.Eq (class Eq, eq, (==), notEq, (/=))
 import Data.Int (Int)
-import Data.List (cons,head, splitAt, last, reverse, concat, filter, (++), take, drop, zip, sort, replicate, length, tail) --init,
+import Data.List (cons, head, splitAt, last, reverse, concat, filter, (++), take, drop, zip, sort, replicate, length, tail) --init,
 import Data.Float (Double)
 import Data.Functor (class Functor, map, (<$>))
 import Data.Function (($), apply, const, flip, identity, error, (>>>), (<<<))
 import Data.Maybe (Maybe(..))
-import Data.Map (fromList)
-import Data.Ord (class Ord, between, compare, comparing, greaterThan, greaterThanOrEq, lessThan, lessThanOrEq, max, min, (<), (<=), (>), (>=))
+import Data.Ord (class Ord, max, min, (<), (<=), (>), (>=), between, compare, comparing, greaterThan, greaterThanOrEq, lessThan, lessThanOrEq)
 import Data.Ref (Ref, Reference, makeRef)
-import Data.Ring (class Ring, (-), (%),(/),negate)
+import Data.Ring (class Ring, (-), (%), (/), negate)
 import Data.Semigroup (class Semigroup, append, (<>))
 import Data.Semiring (class Semiring, add, mul, one, zero, (*), (+))
-import Data.Show (class Show, show,showAny)
+import Data.Show (class Show, show, showAny)
 import Data.Tuple (fst, snd)
 import Data.Foldable(class Foldable, foldl, foldr, foldMap)
 import Data.Traversable(class Traversable, traverse, sequence)
-import Data.Unit (Unit,unit)
-import Control.Monad (class Applicative, pure, (<*>), class Monad, return, bind, IO, discard, guardF, seqio, (>>=), unsafePerformIO, replApply)
+import Data.Unit (Unit, unit)
 import System.Error (throw, try)
 import System.IO (print, printf, println, readFile, writeFile, appendFile)
-import Control.Distributed.Node (Node)
-import Control.Process (Process, self, spawn, send, (!), link, unlink, monitor, demonitor)
-import Data.Pid (Pid)

@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Record DataType.
+-- The Record dataType.
 --
 -----------------------------------------------------------------------------
 module Data.Record where

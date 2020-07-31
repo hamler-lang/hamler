@@ -9,7 +9,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Char FFI Module.
+%% The Char FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Char').
@@ -66,72 +66,56 @@ isSpace($\r) -> true;
 isSpace(_)   -> false.
 
 -spec(isLower(char()) -> boolean()).
-isLower(C) when $a =< C, C =< $z ->
-    true;
+isLower(C) when $a =< C, C =< $z -> true;
 isLower(_) -> false.
 
 -spec(isUpper(char()) -> boolean()).
-isUpper(C) when $A =< C, C =< $Z ->
-    true;
+isUpper(C) when $A =< C, C =< $Z -> true;
 isUpper(_) -> false.
 
 -spec(isAlpha(char()) -> boolean()).
-isAlpha(C) ->
-    isLower(C) orelse isUpper(C).
+isAlpha(C) -> isLower(C) orelse isUpper(C).
 
 -spec(isAlphaNum(char()) -> boolean()).
-isAlphaNum(C) ->
-    isAlpha(C) orelse isDigit(C).
+isAlphaNum(C) -> isAlpha(C) orelse isDigit(C).
 
 -spec(isPrint(char()) -> boolean()).
 isPrint(C) -> not isControl(C).
 
 -spec(isDigit(char()) -> boolean()).
-isDigit(C) when $0 =< C, C =< $9 ->
-    true;
+isDigit(C) when $0 =< C, C =< $9 -> true;
 isDigit(_) -> false.
 
 -spec(isOctDigit(char()) -> boolean()).
-isOctDigit(C) when $0 =< C, C =< $7 ->
-    true;
+isOctDigit(C) when $0 =< C, C =< $7 -> true;
 isOctDigit(_) -> false.
 
 -spec(isHexDigit(char()) -> boolean()).
-isHexDigit(C) when $a =< C, C =< $f ->
-    true;
-isHexDigit(C) when $A =< C, C =< $F ->
-    true;
+isHexDigit(C) when $a =< C, C =< $f -> true;
+isHexDigit(C) when $A =< C, C =< $F -> true;
 isHexDigit(C) -> isDigit(C).
 
 -spec(isAscii(char()) -> boolean()).
-isAscii(C) when 0 =< C, C =< 127 ->
-    true;
+isAscii(C) when 0 =< C, C =< 127 -> true;
 isAscii(_) -> false.
 
 -spec(toUpper(char()) -> char()).
-toUpper(C) when $a =< C, C =< $z ->
-    C - $a + $A;
+toUpper(C) when $a =< C, C =< $z -> C - $a + $A;
 toUpper(C) -> C.
 
 -spec(toLower(char()) -> char()).
-toLower(C) when $A =< C, C =< $Z ->
-    C - $A + $a;
+toLower(C) when $A =< C, C =< $Z -> C - $A + $a;
 toLower(C) -> C.
 
 -spec(digitToInt(char()) -> integer()).
-digitToInt(C) when $0 =< C, C =< $9 ->
-    C - $0;
-digitToInt(C) when $a =< C, C =< $f ->
-    (C - $a) + 10;
-digitToInt(C) when $A =< C, C =< $F ->
-    (C - $A) + 10;
+digitToInt(C) when $0 =< C, C =< $9 -> C - $0;
+digitToInt(C) when $a =< C, C =< $f -> (C - $a) + 10;
+digitToInt(C) when $A =< C, C =< $F -> (C - $A) + 10;
 digitToInt(_) -> error("Not a digit char").
 
 -spec(intToDigit(integer()) -> char()).
-intToDigit(I) when 0 =< I, I =< 9 ->
-    I + $0;
-intToDigit(I) when 10 =< I, I =< 15 ->
-    (I - 10) + $a;
+intToDigit(I) when 0 =< I, I =< 9 -> I + $0;
+intToDigit(I) when 10 =< I, I =< 15 -> (I - 10) + $a;
 intToDigit(_) -> error("Not in range 0..15").
 
 %% TODO: right?
@@ -144,4 +128,3 @@ ord(C) -> C.
 
 -spec(chr(integer()) -> char()).
 chr(I) -> I.
-

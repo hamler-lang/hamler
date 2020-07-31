@@ -33,4 +33,3 @@ data InitResult st
   = InitOk st
   | InitOkHib st
   | InitError ExitReason
-

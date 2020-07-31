@@ -40,10 +40,12 @@
         , matchObjectContinuation/1
         , matchObjectWithLimit/3
         , openFile/2
-        , pid2Nmae/1
+        , pid2Name/1
         , slot/2
         , sync/1
         ]).
+
+-import('Maybe', [maybe/1]).
 
 delete(Name, Key) ->
   ?IO(return(dets:delete(Name, Key))).
@@ -56,8 +58,8 @@ deleteObject(Name, Object) ->
 
 first(Name) ->
   ?IO(case dets:first(Name) of
-        '$end_of_table' -> {'Nothing'};
-        Key -> {'Just', Key}
+        '$end_of_table' -> ?Nothing;
+        Key -> ?Just(Key)
       end).
 
 fromETS(Name, EtsTab) ->
@@ -65,8 +67,8 @@ fromETS(Name, EtsTab) ->
 
 info(Name) ->
   ?IO(case dets:info(Name) of
-        undefined -> {'Nothing'};
-        Info -> {'Just', infoRec(Info, #{})}
+        undefined -> ?Nothing;
+        Info -> ?Just(infoRec(Info, #{}))
       end).
 
 insert(Name, Objects) ->
@@ -83,89 +85,80 @@ member(Name, Key) ->
 
 next(Name, Key1) ->
   ?IO(case dets:next(Name, Key1) of
-        '$end_of_table' -> {'Nothing'};
-        Key2 -> {'Just', Key2}
+        '$end_of_table' -> ?Nothing;
+        Key2 -> ?Just(Key2)
       end).
 
 toETS(Name, EtsTab) ->
   ?IO(return(dets:to_ets(Name, EtsTab))).
 
 foldl(Fun, Acc0, Tab) ->
-    F = fun(R, Acc) -> (Fun(R))(Acc) end,
-    ?IO(dets:foldl(F, Acc0, Tab)).
+  ?IO(dets:foldl(fun(R, Acc) -> (Fun(R))(Acc) end, Acc0, Tab)).
 
 foldr(Fun, Acc0, Tab) ->
-    F = fun(R, Acc) -> (Fun(R))(Acc) end,
-    ?IO(dets:foldr(F, Acc0, Tab)).
+  ?IO(dets:foldr(fun(R, Acc) -> (Fun(R))(Acc) end, Acc0, Tab)).
 
 infoWith(Name, Item) ->
-    ?IO(case dets:info(Name, Item) of
-            undefined -> {'Nothing'};
-            Info -> {'Just', infoRec(Info, #{})}
-        end).
+  ?IO(case dets:info(Name, Item) of
+        undefined -> {'Nothing'};
+        Info -> {'Just', infoRec(Info, #{})}
+      end).
 
 isDetsFile(FilePath) ->
-    ?IO(return(dets:is_dets_file(FilePath))).
+  ?IO(return(dets:is_dets_file(FilePath))).
 
 match(Name, Pattern) ->
-    ?IO(return(dets:match(Name, Pattern))).
+  ?IO(return(dets:match(Name, Pattern))).
 
 matchContinuation(Continuation) ->
-    ?IO(case dets:match(Continuation) of
-            {error, Reason} -> error(Reason);
-            {Match, Contin} -> {'Just', {Match, Contin}};
-            '$end_of_table' -> {'Nothing'}
-        end).
+  ?IO(case dets:match(Continuation) of
+        {error, Reason} -> error(Reason);
+        {Match, Contin} -> {'Just', {Match, Contin}};
+        '$end_of_table' -> {'Nothing'}
+      end).
 
 matchWithLimit(Name, Pattern, N) ->
-    ?IO(case dets:match(Name, Pattern, N) of
-            {error, Reason} -> error(Reason);
-            {Match, Contin} -> {'Just', {Match, Contin}};
-            '$end_of_table' -> {'Nothing'}
-        end).
+  ?IO(case dets:match(Name, Pattern, N) of
+        {error, Reason} -> error(Reason);
+        {Match, Contin} -> ?Just({Match, Contin});
+        '$end_of_table' -> ?Nothing
+      end).
 
 matchDelete(Name, Pattern) ->
-    ?IO(return(dets:match_delete(Name, Pattern))).
+  ?IO(return(dets:match_delete(Name, Pattern))).
 
 matchObject(Name, Pattern) ->
-    ?IO(return(dets:match_object(Name, Pattern))).
+  ?IO(return(dets:match_object(Name, Pattern))).
 
 matchObjectContinuation(Continuation) ->
-    ?IO(case dets:match_object(Continuation) of
-            {error, Reason} -> error(Reason);
-            {Match, Contin} -> {'Just', {Match, Contin}};
-            '$end_of_table' -> {'Nothing'}
-        end).
+  ?IO(case dets:match_object(Continuation) of
+        {error, Reason} -> error(Reason);
+        {Match, Contin} -> ?Just({Match, Contin});
+        '$end_of_table' -> ?Nothing
+      end).
 
 matchObjectWithLimit(Name, Pattern, N) ->
-    ?IO(case dets:match_object(Name, Pattern, N) of
-            {error, Reason} -> error(Reason);
-            {Match, Contin} -> {'Just', {Match, Contin}};
-            '$end_of_table' -> {'Nothing'}
-        end).
+  ?IO(case dets:match_object(Name, Pattern, N) of
+        {error, Reason} -> error(Reason);
+        {Match, Contin} -> ?Just({Match, Contin});
+        '$end_of_table' -> ?Nothing
+      end).
 
 openFile(Name, Args) ->
-     ?IO(return(dets:open_file(Name, parseOpts(Args, [])))).
+   ?IO(return(dets:open_file(Name, parseOpts(Args, [])))).
 
-pid2Nmae(Pid) ->
-    ?IO(case dets:pid2name(Pid) of
-            {ok, Name} -> {'Just', Name};
-            undefined -> {'Nothig'}
-        end).
+pid2Name(Pid) ->
+  ?IO(maybe(dets:pid2name(Pid))).
+
 slot(Name, I) ->
-    ?IO(case dets:slot(Name, I) of
-            {error, Reason} -> error(Reason);
-            '$end_of_table' -> {'Nothing'};
-            Objetcs -> {'Just', Objetcs}
-        end).
+  ?IO(case dets:slot(Name, I) of
+        {error, Reason} -> error(Reason);
+        '$end_of_table' -> ?Nothing;
+        Objetcs -> ?Just(Objetcs)
+      end).
 
 sync(Name) ->
-    ?IO(return(dets:sync(Name))).
-
-
-
-
-
+  ?IO(return(dets:sync(Name))).
 
 return({error, Reason}) -> error(Reason);
 return(Res) -> Res.
@@ -173,6 +166,38 @@ return(Res) -> Res.
 %%---------------------------------------------------------------------------
 %% | Internal functions
 %%---------------------------------------------------------------------------
+
+parseOpts([{'AccessRead'}|Opts], Acc) ->
+  parseOpts(Opts, [{access, read}|Acc]);
+parseOpts([{'AccessReadWrite'}|Opts], Acc) ->
+  parseOpts(Opts, [{access, read_write}|Acc]);
+parseOpts([{'AutoSaveInfinity'}|Opts], Acc) ->
+  parseOpts(Opts, [{auto_save, infinity}|Acc]);
+parseOpts([{'AutoSave', Time}|Opts], Acc) ->
+  parseOpts(Opts, [{auto_save, Time}|Acc]);
+parseOpts([{'EstimatedNoObjects', Time}|Opts], Acc) ->
+  parseOpts(Opts, [{estimated_no_objects, Time}|Acc]);
+parseOpts([{'File', FilePath}|Opts], Acc) ->
+  parseOpts(Opts, [{file, FilePath}|Acc]);
+parseOpts([{'MaxNoSlots', Value}|Opts], Acc) ->
+  parseOpts(Opts, [{max_no_slots, Value}|Acc]);
+parseOpts([{'MinNoSlots', Value}|Opts], Acc) ->
+  parseOpts(Opts, [{min_no_slots, Value}|Acc]);
+parseOpts([{'Keypos', Value}|Opts], Acc) ->
+  parseOpts(Opts, [{keypos, Value}|Acc]);
+parseOpts([{'RamFile', Value}|Opts], Acc) ->
+  parseOpts(Opts, [{ram_file, Value}|Acc]);
+parseOpts([{'RepairForce'}|Opts], Acc) ->
+  parseOpts(Opts, [{force}|Acc]);
+parseOpts([{'Repair', Value}|Opts], Acc) ->
+  parseOpts(Opts, [{repair, Value}|Acc]);
+parseOpts([{'Bag'}|Opts], Acc) ->
+  parseOpts(Opts, [{type, bag}|Acc]);
+parseOpts([{'DuplicateBag'}|Opts], Acc) ->
+  parseOpts(Opts, [{type, duplicate_bag}|Acc]);
+parseOpts([{'Set'}|Opts], Acc) ->
+  parseOpts(Opts, [{type, set}|Acc]);
+parseOpts([], Acc) -> Acc.
 
 infoRec([{file_size, Size}|Info], M) ->
   infoRec(Info, M#{fileSize => Size});
@@ -187,45 +212,3 @@ infoRec([{type, Type}|Info], M) ->
 infoRec([_|Info], M) ->
   infoRec(Info, M);
 infoRec([], M) -> M.
-
-
-%% data Arg
-%% | Set
-
-
-parseOpts([{'AccessRead'}|Opts], Acc) ->
-    parseOpts(Opts, [{access, read}|Acc]);
-parseOpts([{'AccessReadWrite'}|Opts], Acc) ->
-    parseOpts(Opts, [{access, read_write}|Acc]);
-parseOpts([{'AutoSaveInfinity'}|Opts], Acc) ->
-    parseOpts(Opts, [{auto_save, infinity}|Acc]);
-parseOpts([{'AutoSave', Time}|Opts], Acc) ->
-    parseOpts(Opts, [{auto_save, Time}|Acc]);
-parseOpts([{'EstimatedNoObjects', Time}|Opts], Acc) ->
-    parseOpts(Opts, [{estimated_no_objects, Time}|Acc]);
-parseOpts([{'File', FilePath}|Opts], Acc) ->
-    parseOpts(Opts, [{file, FilePath}|Acc]);
-parseOpts([{'MaxNoSlots', Value}|Opts], Acc) ->
-    parseOpts(Opts, [{max_no_slots, Value}|Acc]);
-parseOpts([{'MinNoSlots', Value}|Opts], Acc) ->
-    parseOpts(Opts, [{min_no_slots, Value}|Acc]);
-parseOpts([{'Keypos', Value}|Opts], Acc) ->
-    parseOpts(Opts, [{keypos, Value}|Acc]);
-parseOpts([{'RamFile', Value}|Opts], Acc) ->
-    parseOpts(Opts, [{ram_file, Value}|Acc]);
-parseOpts([{'RepairForce'}|Opts], Acc) ->
-    parseOpts(Opts, [{force}|Acc]);
-parseOpts([{'Repair', Value}|Opts], Acc) ->
-    parseOpts(Opts, [{repair, Value}|Acc]);
-parseOpts([{'Bag'}|Opts], Acc) ->
-    parseOpts(Opts, [{type, bag}|Acc]);
-parseOpts([{'DuplicateBag'}|Opts], Acc) ->
-    parseOpts(Opts, [{type, duplicate_bag}|Acc]);
-parseOpts([{'Set'}|Opts], Acc) ->
-    parseOpts(Opts, [{type, set}|Acc]);
-parseOpts([], Acc) -> Acc.
-
-
-
-
-

@@ -59,4 +59,3 @@ foreign import getStatWith
 foreign import peername :: Socket -> IO (IpAddress, PortNumber)
 
 foreign import sockname :: Socket -> IO (IpAddress, PortNumber)
-

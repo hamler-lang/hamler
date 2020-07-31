@@ -55,4 +55,3 @@ fromOk (Error _) = error "Error"
 fromError :: forall e a. Result e a -> e
 fromError (Error e) = e
 fromError (Ok _) = error "Ok"
-

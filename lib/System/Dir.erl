@@ -59,7 +59,7 @@ renameFile(Src, Dest) ->
   ?IO(return(file:rename(Src, Dest))).
 
 getCwd() ->
-    ?IO(return(file:get_cwd())).
+  ?IO(return(file:get_cwd())).
 
 %%---------------------------------------------------------------------------
 %% | Symbolic links

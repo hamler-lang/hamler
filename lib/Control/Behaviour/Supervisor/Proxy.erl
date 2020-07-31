@@ -63,4 +63,3 @@ translate(#{ childId := ChildId
    , type => translate(ChildType)
    , modules => Modules
    }.
-

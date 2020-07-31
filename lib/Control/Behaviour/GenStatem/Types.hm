@@ -72,4 +72,3 @@ data StatemRef
     -- ^ The GenStatem is locally registered on another node.
   | StatemRefGlobal Name
     -- ^ The GenStatem is globally registered in global.
-

@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Process Garbage Collect.
+-- The Process Garbage Collect module.
 --
 -----------------------------------------------------------------------------
 module Control.Process.GC where
@@ -33,4 +33,3 @@ garbageCollectProc = ffiIO1 :erlang :garbage_collect
 foreign import garbageCollectProcWith :: Pid -> [GcOption] -> Process ()
 
 foreign import hibernate :: IO () -> Process ()
-

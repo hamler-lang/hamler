@@ -41,4 +41,3 @@ traverseDefault
   -> t a
   -> m (t b)
 traverseDefault f ta = sequence (f <$> ta)
-

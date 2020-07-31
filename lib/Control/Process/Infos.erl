@@ -14,15 +14,12 @@
 %%---------------------------------------------------------------------------
 -module('Infos').
 
--export([ processInfo/1
-        , processMsgs/1
-        ]).
-
 -include("../../Foreign.hrl").
+
+-export([processInfo/1, processMsgs/1]).
 
 processInfo(Pid) ->
   ?IO(erlang:process_info(Pid)).
 
 processMsgs(Pid) ->
   ?IO(element(2, erlang:process_info(Pid, messages))).
-

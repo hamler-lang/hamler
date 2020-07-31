@@ -68,7 +68,6 @@
         , dirtyMatchObject/1
         ]).
 
-
 addTableCopy(Tab, N, ST) ->
   ?IO(return(mnesia:add_table_copy(Tab, N, toErl(ST)))).
 
@@ -85,7 +84,6 @@ createSchema(Nodes) ->
       end).
 
 createTable(Name, Options) ->
-  % ?IO(return(mnesia:create_table(Name, []))).
   ?IO(return(mnesia:create_table(Name, parseOpts(maps:to_list(Options), [])))).
 
 delTableCopy(Tab, Node) ->
@@ -142,16 +140,16 @@ transaction(Fun) ->
 transactionWithRetry(Fun, Retries) ->
   ?IO(transReturn(mnesia:transaction(Fun, decRet(Retries)))).
 
-changeTableAccessMode(Table, Acc) -> 
+changeTableAccessMode(Table, Acc) ->
   ?IO(return(mnesia:change_table_access_mode(Table, toErl(Acc)))).
 
-changeTableLoadOrder(Table, V) -> 
+changeTableLoadOrder(Table, V) ->
   ?IO(return(mnesia:change_table_load_order(Table, V))).
 
-changeTableMajority(Table, B) -> 
+changeTableMajority(Table, B) ->
   ?IO(return(mnesia:change_table_majority(Table, B))).
 
-forceLoadTable(Table) -> 
+forceLoadTable(Table) ->
   ?IO(return(mnesia:forceLoadTable(Table))).
 
 moveTableCopy(Table, From, To) ->
@@ -172,48 +170,46 @@ syncTransaction(Fun) ->
 syncTransactionWithRetries(Fun, Retries) ->
   ?IO(transReturn(mnesia:sync_transaction(Fun, decRet(Retries)))).
 
-activity(Activity, Fun) -> 
+activity(Activity, Fun) ->
   ?IO((mnesia:activity(decAct(Activity), Fun))).
 
-foldl(Fun, Acc0, Tab) -> 
-  F = fun(R, Acc) -> (Fun(R))(Acc) end,
-  ?IO(mnesia:foldl(F, Acc0, Tab)).
+foldl(Fun, Acc0, Tab) ->
+  ?IO(mnesia:foldl(fun(R, Acc) -> (Fun(R))(Acc) end, Acc0, Tab)).
 
-foldr(Fun, Acc0, Tab) -> 
-  F = fun(R, Acc) -> (Fun(R))(Acc) end,
-  ?IO(mnesia:foldr(F, Acc0, Tab)).
+foldr(Fun, Acc0, Tab) ->
+  ?IO(mnesia:foldr(fun(R, Acc) -> (Fun(R))(Acc) end, Acc0, Tab)).
 
-changeConfig(ConfigKey, ConfigVal) -> 
+changeConfig(ConfigKey, ConfigVal) ->
   ?IO(decConfig(mnesia:change_config(decConfig(ConfigKey), decConfig(ConfigVal)))).
 
-dumpTables(Tabs) -> 
+dumpTables(Tabs) ->
   ?IO(return(mnesia:dump_tables(Tabs))).
 
-lockRecord(Table, Key, LockKind) -> 
+lockRecord(Table, Key, LockKind) ->
   ?IO(mnesia:lock({record, Table, Key}, toErl(LockKind))).
 
-lockTable(Table, LockKind) -> 
+lockTable(Table, LockKind) ->
   ?IO(mnesia:lock({table, Table}, toErl(LockKind))).
 
-lockGlobal(Key, Nodes, LockKind) -> 
+lockGlobal(Key, Nodes, LockKind) ->
   ?IO(mnesia:lock({global, Key, Nodes}, toErl(LockKind))).
 
-matchObjectWith(Table, Pattern, LockKind) -> 
+matchObjectWith(Table, Pattern, LockKind) ->
   ?IO(mnesia:match_object(Table, Pattern, toErl(LockKind))).
 
-matchObject(Pattern) -> 
+matchObject(Pattern) ->
   ?IO(mnesia:match_object(element(1, Pattern), Pattern, read)).
 
-sdelete(Table, Key) -> 
+sdelete(Table, Key) ->
   ?IO(mnesia:s_delete({Table, Key})).
 
-sdeleteObject(Tuple) -> 
+sdeleteObject(Tuple) ->
   ?IO(mnesia:s_delete_object(Tuple)).
 
-swrite(Tuple) -> 
+swrite(Tuple) ->
   ?IO(mnesia:s_write(Tuple)).
 
-transformTable(Table, Fun, NewA, RecName) -> 
+transformTable(Table, Fun, NewA, RecName) ->
   ?IO(return(mnesia:transform_table(Table, Fun, NewA, RecName))).
 
 subscribe(What) ->
@@ -230,9 +226,6 @@ dirtyMatchObjectWith(Table, Pattern) ->
 
 dirtyMatchObject(Pattern) ->
   ?IO((mnesia:dirty_match_object(Pattern))).
-
-
-
 
 %%---------------------------------------------------------------------------
 %% | Internal functions

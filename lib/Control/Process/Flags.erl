@@ -53,4 +53,3 @@ level(low)    -> {'Low'};
 level(normal) -> {'Normal'};
 level(high)   -> {'High'};
 level(max)    -> {'Max'}.
-
