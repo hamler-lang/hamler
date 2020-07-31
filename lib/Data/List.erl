@@ -9,10 +9,12 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The List FFI Module.
+%% The List FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('List').
+
+-include("../Foreign/Maybe.hrl").
 
 %% FFI
 -export([ append/2
@@ -51,5 +53,5 @@ drop(N, L) -> lists:sublist(L, N+1, length(L)).
 slice(Start, End, L) ->
     lists:slice(Start, End-Start, L).
 
-uncons([])    -> {'Nothing'};
-uncons([H|T]) -> {'Just', {H, T}}.
+uncons([])    -> ?Nothing;
+uncons([H|T]) -> ?Just({H, T}).
