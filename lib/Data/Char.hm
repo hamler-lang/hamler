@@ -84,4 +84,3 @@ foreign import intToDigit :: Integer -> Char
 foreign import ord :: Char -> Integer
 
 foreign import chr :: Integer -> Char
-

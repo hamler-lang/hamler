@@ -37,4 +37,3 @@ get(Key) ->
 
 put(Key, Val) ->
   ?IO(maybe(erlang:put(Key, Val))).
-

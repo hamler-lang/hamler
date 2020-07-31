@@ -9,7 +9,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Application Resource FFI.
+%% The Application Resource FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Resource').

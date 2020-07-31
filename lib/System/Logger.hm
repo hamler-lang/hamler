@@ -81,4 +81,3 @@ emergency = ffiIO1 :logger :emergency
 
 log :: Priority -> String -> IO ()
 log = ffiIO2 :logger :log
-

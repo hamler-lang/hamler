@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Distributed networking kernel.
+-- The Distributed Networking Kernel module.
 --
 -----------------------------------------------------------------------------
 module Control.Distributed.NetKernel where
@@ -40,7 +40,4 @@ foreign import startWithTicktime :: Node -> NameType -> Ticktime -> Process Pid
 stop :: IO ()
 stop = ffiIO0 :net_kernel :stop
 
--- TODO: net_kernel
--- getopts/2
--- set_net_ticktime/2
--- setopts/2
+{- net_kernel: getopts/2, set_net_ticktime/2, setopts/2 -}

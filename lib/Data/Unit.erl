@@ -9,7 +9,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Tuple FFI Module.
+%% The Tuple FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Unit').

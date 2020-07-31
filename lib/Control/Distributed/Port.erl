@@ -25,8 +25,8 @@
         , command/2
         , connect/2
         , info/1
-        , link/1
-        , unlink/1
+        , linkPort/1
+        , unlinkPort/1
         ]).
 
 open(Command, Settings) ->
@@ -147,10 +147,10 @@ infoRec([{os_pid, OsPid}|Info], Rec) ->
 infoRec([_|Info], Rec) -> infoRec(Info, Rec);
 infoRec([], Rec) -> Rec.
 
-link(Port) ->
+linkPort(Port) ->
   ?IO(ok(erlang:link(Port))).
 
-unlink(Port) ->
+unlinkPort(Port) ->
   ?IO(ok(erlang:unlink(Port))).
 
 ok(true) -> ok.

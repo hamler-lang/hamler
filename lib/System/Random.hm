@@ -40,4 +40,3 @@ instance Random Float where
 
 foreign import randomFloatImpl  :: Float -> IO Float
 foreign import randomRFloatImpl :: Float -> Float -> IO Float
-

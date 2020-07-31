@@ -33,4 +33,3 @@ foreign import getString :: Get String
 foreign import getList :: forall a. Get [a]
 foreign import getMap :: forall k v. Get (Map k v)
 foreign import getRecord :: forall r. Get r
-

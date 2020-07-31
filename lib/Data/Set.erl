@@ -14,7 +14,7 @@
 %%---------------------------------------------------------------------------
 -module('Set').
 
--export([ singleton/1 ]).
+-export([singleton/1]).
 
 -spec(singleton(term()) -> sets:set()).
 singleton(A) -> sets:add_element(A, sets:new()).

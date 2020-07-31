@@ -40,4 +40,3 @@ sendAfter :: forall m. Time -> Pid -> m -> IO TimerRef
 sendAfter = ffiIO3 :erlang :send_after
 
 foreign import readTimer :: TimerRef -> IO (Maybe Time)
-

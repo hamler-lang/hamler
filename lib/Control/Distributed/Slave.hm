@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Slave node controlling module.
+-- The Slave Node controlling module.
 --
 -----------------------------------------------------------------------------
 module Control.Distributed.Slave where

@@ -23,4 +23,3 @@ isAbs(Path) ->
 
 isRel(Path) ->
   filename:pathtype(Path) == relative.
-

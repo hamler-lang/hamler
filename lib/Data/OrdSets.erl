@@ -10,23 +10,22 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The OrdSet FFI Module.
+%% The OrdSet FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('OrdSet').
 
--type ordset(T) :: [T].
+-type(ordset(T) :: [T]).
 
--export([ fold/3
-        ]).
+-export([fold/3]).
 
 %% forall a acc. (a -> acc -> acc) -> acc -> OrdSet a -> acc
--spec fold(Function, Acc0, Ordset) -> Acc1 when
+-spec(fold(Function, Acc0, Ordset) -> Acc1 when
       Function :: fun((Element :: T, AccIn :: term()) -> AccOut :: term()),
       Ordset :: ordset(T),
       Acc0 :: term(),
-      Acc1 :: term().
+      Acc1 :: term()).
 fold(Fun, Acc0, Ordset) ->
-    F = fun(Element, AccIn) -> 'Curry':apply(Fun, [Element, AccIn]) end,
-    ordsets:fold(F, Acc0, Ordset).
-
+  ordsets:fold(fun(Element, AccIn) ->
+                 'Curry':apply(Fun, [Element, AccIn])
+               end, Acc0, Ordset).

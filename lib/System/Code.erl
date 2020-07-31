@@ -63,8 +63,5 @@ privDir(Module) ->
         FilePath -> FilePath
       end).
 
-fixAtom(A) when is_atom(A) ->
-  atom_to_list(A);
+fixAtom(A) when is_atom(A) -> atom_to_list(A);
 fixAtom(S) -> S.
-
-

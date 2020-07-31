@@ -73,4 +73,3 @@ compareExchange = ffiIO4 :atomics :compare_exchange
 -- | Return information about an atomic array.
 info :: AtomicsRef -> IO AtomicsInfo
 info = ffiIO1 :atomics :info
-

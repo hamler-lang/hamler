@@ -33,24 +33,24 @@ showIntImpl(I) -> integer_to_list(I).
 %% Float -> String
 -spec(showFloatImpl(float()) -> string()).
 showFloatImpl(F) ->
-   erlang:float_to_list(F, [{decimals,precision(abs(F), 0)}]).
+  erlang:float_to_list(F, [{decimals,precision(abs(F), 0)}]).
 
 %% Float -> String
 -spec(showNumImpl(number()) -> string()).
 showNumImpl(N) when is_integer(N) ->
-    showIntImpl(N);
+  showIntImpl(N);
 showNumImpl(N) when is_float(N) ->
-    showFloatImpl(N).
+  showFloatImpl(N).
 
 %% showChar :: Char -> String
 -spec(showCharImpl(char()) -> string()).
 showCharImpl(C) -> [C].
 
 precision(A, P) ->
-    case A == trunc(A) of
-        true  -> P;
-        false -> precision(A*10.0, P+1)
-    end.
+  case A == trunc(A) of
+    true  -> P;
+    false -> precision(A*10.0, P+1)
+  end.
 
 -spec(showAny(any()) -> string()).
 showAny(A) -> lists:flatten(io_lib:format("~p", [A])).

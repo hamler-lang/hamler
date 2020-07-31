@@ -163,6 +163,5 @@ unwrap({'Infinity'}) -> infinity;
 unwrap({'Timeout', I}) -> I.
 
 replies({Replies, BadNodes}) ->
-  lists:append([{Node, ?Just(Rep)} || {Node, Rep} <- Replies],
-               [{Node, ?Nothing} || Node <- BadNodes]).
-
+  [{Node, ?Just(Rep)} || {Node, Rep} <- Replies]
+    ++ [{Node, ?Nothing} || Node <- BadNodes].

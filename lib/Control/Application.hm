@@ -32,7 +32,6 @@ module Control.Application
   , module Control.Application.Types
   ) where
 
-import Control.Application.Types
 import Control.Application.Config
   ( Get
   , getConfig
@@ -46,6 +45,7 @@ import Control.Application.Config
   , getRecord
   )
 import Control.Application.Resource (getAppSpec)
+import Control.Application.Types
 import Control.Monad (IO)
 import Data.Maybe (Maybe)
 import Data.Pid (Pid)
@@ -84,4 +84,3 @@ foreign import takeover :: Application -> RestartType -> IO ()
 foreign import unload :: Application -> IO ()
 
 foreign import whichApplications :: IO [AppSpec]
-

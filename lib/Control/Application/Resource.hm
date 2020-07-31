@@ -12,11 +12,10 @@
 -- The Application Resource module.
 --
 -----------------------------------------------------------------------------
-module Control.Application.Resource (getAppSpec) where
+module Control.Application.Resource where
 
 import Control.Application.Types
 import Control.Monad (IO)
 
 -- | See: http://erlang.org/doc/man/app.html
 foreign import getAppSpec :: Application -> IO AppSpec
-

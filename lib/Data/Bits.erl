@@ -39,4 +39,3 @@
 
 -spec('bsr'(integer(), integer()) -> integer()).
 'bsr'(X, Y) -> X bsr Y.
-

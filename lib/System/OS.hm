@@ -71,4 +71,3 @@ foreign import perfCounterIn :: TimeUnit -> IO Integer
 
 -- | Get OS Version.
 foreign import version :: IO String
-

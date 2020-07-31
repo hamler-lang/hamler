@@ -35,4 +35,3 @@ addFloat(F1, F2) -> F1 + F2.
 %% mulFloat :: Float -> Float -> Float
 -spec(mulFloat(float(), float()) -> float()).
 mulFloat(F1, F2) -> F1 * F2.
-

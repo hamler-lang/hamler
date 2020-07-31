@@ -69,4 +69,3 @@ note a = maybe (Left a) Right
 
 hush :: forall a b. Either a b -> Maybe b
 hush = either (const Nothing) Just
-

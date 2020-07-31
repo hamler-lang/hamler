@@ -48,4 +48,3 @@ info = ffiIO0 :persistent_term :info
 
 put :: forall k v. k -> v -> IO ()
 put = ffiIO2 :persistent_term :put
-

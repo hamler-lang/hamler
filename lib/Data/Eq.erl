@@ -41,4 +41,3 @@ eqFloatImpl(N1, N2) -> N1 =:= N2.
 eqStringImpl(S1, S2) -> S1 =:= S2.
 
 eqListImpl(L1, L2) -> L1 =:= L2.
-

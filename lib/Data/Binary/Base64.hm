@@ -22,4 +22,3 @@ encode = ffi1 :base64 :encode
 -- TODO: handle exception?
 decode :: Binary -> Binary
 decode = ffi1 :base64 :decode
-

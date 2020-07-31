@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Process Types.
+-- The Process Types module.
 --
 -----------------------------------------------------------------------------
 module Control.Process.Types where
@@ -23,4 +23,3 @@ data ExitReason
   = ExitNormal
   | ExitShutdown
   | ExitReason Atom
-

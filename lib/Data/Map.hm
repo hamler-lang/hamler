@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Map Datatype.
+-- The Map datatype.
 --
 -----------------------------------------------------------------------------
 module Data.Map where

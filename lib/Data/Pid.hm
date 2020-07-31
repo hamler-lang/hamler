@@ -21,10 +21,8 @@ import Data.Ord
   )
 import Data.Show (class Show)
 
--- | Erlang process id.
+-- | Erlang process identifier.
 foreign import data Pid :: Type
-
--- pid :: Int -> Int -> Int -> Pid
 
 instance Eq Pid where
   eq = eqPidImpl
@@ -46,4 +44,3 @@ foreign import cmpPidImpl
   -> Ordering
 
 foreign import showPidImpl :: Pid -> String
-

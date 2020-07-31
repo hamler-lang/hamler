@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Ring Typeclass.
+-- The Ring typeclass.
 --
 -----------------------------------------------------------------------------
 module Data.Ring where
@@ -51,4 +51,3 @@ foreign import intRem :: Integer -> Integer -> Integer
 
 negate :: forall a. Ring a => a -> a
 negate a = zero - a
-
