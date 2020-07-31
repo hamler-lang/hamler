@@ -15,6 +15,7 @@
 -module('Dict').
 
 -include("../../Foreign.hrl").
+-include("../../Foreign/Maybe.hrl").
 
 -compile(no_auto_import).
 
@@ -23,6 +24,8 @@
         , get/1
         , put/2
         ]).
+
+-import('Maybe', [maybe/1]).
 
 erase(Key) ->
   ?IO(maybe(erlang:erase(Key))).
@@ -35,7 +38,4 @@ get(Key) ->
 
 put(Key, Val) ->
   ?IO(maybe(erlang:put(Key, Val))).
-
-maybe(undefined) -> ?Nothing;
-maybe(Val) -> ?Just(Val).
 

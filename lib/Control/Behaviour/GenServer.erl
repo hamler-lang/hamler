@@ -15,6 +15,7 @@
 -module('GenServer').
 
 -include("../../Foreign.hrl").
+-include("../../Foreign/Maybe.hrl").
 
 -export([ start/2
         , startWith/3

@@ -15,6 +15,7 @@
 -module('RPC').
 
 -include("../../Foreign.hrl").
+-include("../../Foreign/Maybe.hrl").
 
 -export([ waitResponse/1
         , waitResponseTimeout/2
