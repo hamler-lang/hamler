@@ -31,4 +31,5 @@ bin/
 .swp
 *.core
 .tmp/
+.test/
 ebin/
