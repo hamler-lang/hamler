@@ -15,6 +15,7 @@
 -module('Application').
 
 -include("../Foreign.hrl").
+-include("../Foreign/Maybe.hrl").
 
 -import(application,
         [ ensure_all_started/1
@@ -38,6 +39,8 @@
         , unload/1
         , whichApplications/0
         ]).
+
+-import('Maybe', [maybe/1]).
 
 ensureAllStarted(Application) ->
   ?IO(return(ensure_all_started(Application))).
@@ -91,9 +94,6 @@ translate({'Temporary'}) -> temporary.
 
 appDescr({App, Descr, Vsn}) ->
   #{name => App, desc => Descr, vsn => Vsn}.
-
-maybe(undefined) -> ?Nothing;
-maybe({ok, App}) -> ?Just(App).
 
 return(ok) -> ok;
 return({ok, Result}) -> Result;

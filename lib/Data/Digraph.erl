@@ -14,7 +14,7 @@
 %%---------------------------------------------------------------------------
 -module('Digraph').
 
--include("Maybe.hrl").
+-include("../Foreign/Maybe.hrl").
 
 %% FFI
 -export([ new/1

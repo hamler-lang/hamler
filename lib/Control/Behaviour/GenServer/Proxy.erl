@@ -15,6 +15,7 @@
 -module('Proxy').
 
 -include("../../../Foreign.hrl").
+-include("../../../Foreign/Maybe.hrl").
 
 -behaviour(gen_server).
 

@@ -14,7 +14,7 @@
 %%---------------------------------------------------------------------------
 -module('String').
 
--include("Maybe.hrl").
+-include("../Foreign/Maybe.hrl").
 
 -export([ concat/2
         , reverse/1

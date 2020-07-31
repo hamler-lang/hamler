@@ -15,6 +15,7 @@
 -module('Node').
 
 -include("../../Foreign.hrl").
+-include("../../Foreign/Maybe.hrl").
 
 -export([ nodesOf/1
         , disconnect/1
