@@ -1,0 +1,86 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Result
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+--                Zhang Shiwei, zhangsw@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Result datatype.
+--
+-----------------------------------------------------------------------------
+
+module Data.Regex where
+
+import Data.Result (Result)
+import Foreign (ffi0)
+
+foreign import data Pattern :: Type
+
+version :: Binary
+version = ffi0 :re :version
+
+data NewlineSpec = Cr | CrLf | Lf | AnyCrLf | Any
+
+data CompileOption = Unicode | Anchored | Caseless
+  | DollarEndOnly | DotAll | Extended | Firstline
+  | Multiline | NoAutoCapture | Dupnames | Ungreedy
+  | Newline NewlineSpec | BsrAnyCrLf | BsrUnicode
+  | NoStartOptimize | UCP | NeverUTF
+
+-- iodata()?
+foreign import compile 
+  :: String
+  -> [CompileOption]
+  -> Result (String, Integer) Pattern
+--           ^--     ^--
+--           Err     Pos
+
+foreign import inspect :: Pattern -> [Binary]
+
+data RuntimeOption = Global | NotBOL | NotEOL | NotEmpty
+  | NotEmptyAtStart | Offset Integer | MatchLimit Integer
+  | MatchLimitRecursion Integer
+
+data ReplaceOption = ReplaceCompileOption CompileOption
+  | ReplaceRuntimeOption RuntimeOption
+
+data ValueID = IntVal Integer | StrVal String | AtomVal Atom
+
+data ValueSpec = All | AllButFirst | AllNames | First 
+  | None | ValueList [ValueID]
+
+data CaptureType = CaptureIndex | CaptureList | CaptureBinary
+
+data RunOption = RunCompileOption CompileOption
+  | RunRuntimeOption RuntimeOption
+  | ReportErrors | Capture ValueSpec CaptureType
+
+data SplitOption = SplitCompileOption CompileOption
+  | SplitRuntimeOption RuntimeOption | Parts Integer 
+  | Group | Trim
+
+foreign import replace 
+  :: String 
+  -> Pattern 
+  -> String 
+  -> [ReplaceOption] 
+  -> String
+{-
+data ErrType = MatchLimitErr | MatchLimitRecursionErr
+  | CompileErr (Sting, Integer)
+
+data CaptrueData = 
+
+data RunResult = Match [CaptureData] | NoMatch | Error ErrType
+
+foreign import run
+  :: String
+  -> Pattern
+  -> [RunOption]
+  -> RunResult
+-}
