@@ -1,0 +1,18 @@
+module Test where
+
+import Test.QuickCheck (TestGroup(..), runTest)
+import Prelude
+import Test.Data.String as S
+import Test.Data.Map as M
+import Test.Data.Binary as B
+
+
+main :: IO ()
+main = runTest ( TxG "Data" [
+                   TxG "Binary" [B.test]
+                 , TxG "Map"    [M.test ]
+                 , TxG "String" [S.test ]
+
+                 ]
+               )
+

@@ -15,7 +15,9 @@
 module Data.Map where
 
 import Data.Maybe (Maybe)
+import Control.Monad(bind, return)
 import Foreign (ffi0, ffi1, ffi2, ffi3, ffi4)
+import Test.QuickCheck (arbitrary, class Arbitrary)
 
 foreign import data Map :: Type -> Type -> Type
 
@@ -122,3 +124,17 @@ with = ffi2 :maps :with
 -- | TODO: docs later...
 without :: forall k v. [k] -> Map k v -> Map k v
 without = ffi2 :maps :without
+
+
+tzip :: forall a b. [a] -> [b] -> [(a,b)]
+tzip x [] = []
+tzip [] y = []
+tzip [x|xs] [y|ys] = [ (x,y) | tzip xs ys ]
+
+instance (Arbitrary k, Arbitrary v) => Arbitrary (Map k v) where
+  arbitrary = do
+       xs1 <- arbitrary
+       xs2 <- arbitrary
+       return (fromList (tzip xs1 xs2))
+
+

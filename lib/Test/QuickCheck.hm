@@ -1,0 +1,265 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  QuickCheck
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The QuickCheck module.
+--
+-----------------------------------------------------------------------------
+module Test.QuickCheck where
+
+import Data.Atom (atom)
+import Data.Bool (otherwise)
+import Data.Enum (range)
+import Data.Eq ((==))
+import Data.Int (Int)
+import Data.List (concat, replicate, length) --init,
+import Data.Functor (class Functor, map, (<$>))
+import Data.Function (($), identity, error, (<<<))
+import Data.Maybe (Maybe(..))
+import Data.Ord ((<), (<=), (>=))
+import Data.Ring ((-),(/),negate)
+import Data.Semigroup ((<>))
+import Data.Semiring ((+))
+import Data.Show (showAny)
+import Data.Tuple (fst)
+import Data.Foldable (foldl)
+import Data.Traversable (sequence)
+import Data.Unit (Unit)
+import Control.Monad (class Applicative, pure, class Monad, return, bind, IO, discard, seqio, (>>=))
+import System.IO (printf, println)
+import System.Random(randomRIO)
+import Data.Binary (listToBin)
+------------------------------------------------
+foreign import data Rand :: Type
+
+foreign import split :: Rand -> (Rand, Rand)
+
+foreign import next :: Rand -> Rand
+
+foreign import mkRand :: Integer -> Rand
+------------------------------------------------
+class Random a where
+  randomR :: (a, a) -> Rand -> a
+
+instance Random Integer where
+  randomR = randomRInt
+
+foreign import randomRInt :: (Integer, Integer) -> Rand -> Integer
+
+instance Random Float where
+  randomR = randomRFloat
+
+foreign import randomRFloat :: (Float, Float) -> Rand -> Float
+
+instance Random Char where
+  randomR = randomRChar
+
+foreign import randomRChar :: (Char, Char) -> Rand -> Char
+------------------------------------------------
+data Gen a = Gen (Integer -> Rand -> a)
+
+choose :: forall a. Random a => (a, a) -> Gen a
+choose bounds = Gen (\n r -> randomR bounds r)
+
+rands :: Integer -> Rand -> Rand
+rands 0 r = r
+rands i r0 = rands (i-1) (next r0)
+
+variant :: forall a. Integer -> Gen a -> Gen a
+variant v (Gen m) = Gen (\n r ->
+         m n $ rands (v+1) r )
+
+promote :: forall a b. (a -> Gen b) -> Gen (a -> b)
+promote f = Gen (\n r -> \a ->
+              let Gen m = f a
+              in m n r )
+
+sized :: forall a. (Int -> Gen a) -> Gen a
+sized fgen = Gen ( \n r ->
+               let Gen m = fgen n in m n r
+                 )
+------------------------------------------------
+instance Functor Gen where
+  map f (Gen m) = Gen $ \n r -> f (m n r)
+
+instance Applicative Gen where
+  apply (Gen f) (Gen a) = Gen $ \n r0 ->
+     let (r1, r2) = split r0
+         vf = f n r1
+         va = a n r2
+      in vf va
+  pure a = Gen $ \n r -> a
+
+instance Monad Gen where
+  return = pure
+  bind (Gen m1) k = Gen $ \n r0 ->
+    let (r1, r2) = split r0
+        Gen m2 = k (m1 n r1)
+    in m2 n r2
+------------------------------------------------
+
+index :: forall a. Integer -> [a] -> a
+index 0 [x | _] = x
+index i [x | xs] = index (i-1) xs
+index _  _ = error "error input"
+
+elements :: forall a. [a] -> Gen a
+elements xs = map (\v -> index v xs) $ choose (0, length xs -1)
+
+vector :: forall a. Arbitrary a => Integer -> Gen [a]
+vector 0 = return []
+vector n = sequence [ arbitrary | i <- [1..n]]
+
+oneof :: forall a. [Gen a] -> Gen a
+oneof gens = elements gens >>= identity
+
+pick :: forall a. Integer -> [(Integer, a)] -> a
+pick n [(k,x)| xs] | n <= k = x
+                   | otherwise = pick (n-k) xs
+pick _ _ = error "error input"
+
+frequency :: forall a. [(Integer, Gen a)] -> Gen a
+frequency xs = choose (1, foldl (+) 0 (map fst xs)) >>= \x -> pick x xs
+
+------------------------------------------------
+class ArbitraryM a where
+  arbitraryM :: Integer -> Gen a
+
+class Arbitrary a where
+  arbitrary :: Gen a
+
+instance Arbitrary Boolean where
+  arbitrary = elements [true, false]
+
+instance Arbitrary Integer where
+  arbitrary = sized (\n -> choose (-n, n))
+
+instance Arbitrary Float where
+  arbitrary = choose (-100000000.0, 100000000.0)
+
+instance Arbitrary Char where
+  arbitrary = choose ('A', 'z')
+
+instance Arbitrary Atom where
+  arbitrary = atom <$> arbitrary
+
+instance Arbitrary Binary where
+  arbitrary = listToBin <$> ( map tabs <$> arbitrary)
+    where tabs :: Integer -> Integer
+          tabs x | x >= 0 = x
+                 | otherwise = (-x)
+
+-- instance (Arbitrary a, Arbitrary b) => Arbitrary (a, b) where
+--   arbitrary = liftM2 (\x y -> (x,y)) arbitrary arbitrary
+
+instance Arbitrary a => Arbitrary [a] where
+  arbitrary = sized (\n -> choose (0,n) >>= vector)
+
+instance (Coarbitrary a, Arbitrary b) => Arbitrary (a -> b) where
+  arbitrary = promote (\x -> x `coarbitrary` arbitrary)
+
+------------------------------------------------
+
+class Coarbitrary a  where
+  coarbitrary :: forall b. a -> Gen b -> Gen b
+
+instance Coarbitrary Boolean where
+  coarbitrary b = variant (if b then 0 else 1)
+
+instance Coarbitrary Integer where
+  coarbitrary n
+    | n == 0 = variant 0
+    | n < 0 = variant 2 <<< coarbitrary (- n)
+    | otherwise = variant 1 <<< coarbitrary (n / 2)
+
+------------------------------------------------
+
+data Result = Result
+    {ok :: Maybe Boolean, stamp :: [String], arguments :: [String]}
+
+data Property = Prop (Gen Result)
+
+nothing :: forall a. {ok :: Maybe a, stamp :: [String], arguments :: [String]}
+nothing =  {ok = Nothing, stamp =[], arguments = []}
+
+result :: Result -> Property
+result res = Prop (return res)
+
+class Testable a where
+  property :: a -> Property
+
+instance Testable Boolean where
+  property b = result ( Result nothing{ok= Just b})
+
+instance Testable Property where
+  property prop = prop
+
+instance (Arbitrary a, Testable b) => Testable (a -> b) where
+  property f = forAll arbitrary f
+
+evaluate :: forall a. Testable a => a -> Gen Result
+evaluate a = gen where Prop gen = property a
+
+forAll :: forall a b. Testable b => Gen a -> (a -> b) -> Property
+forAll gen body = Prop $
+      do a <- gen
+         Result res <- evaluate (body a)
+         return $ Result (arg a res)
+    where
+      arg a res = res{arguments = [showAny a | res.arguments ]}
+
+type SpaceCounter = Integer
+
+check :: forall a. Testable a => String -> Integer -> a -> SpaceCounter -> IO TestResult
+check s 0 m n = (printf "%s----- 100 sample check success %s -----" (replicate n ' ') s :: IO ()) >>= \_ -> return Successed
+check s v m n = do
+  i <- randomRIO 1332292274972041455 7304856964418773083
+  let Gen fun = evaluate m
+      Result r = fun 10 (mkRand i)
+  case r.ok of
+    Just true -> check s (v-1) m n
+    Just false -> (printf "%s>>>>>>>>>> error of check prop: %s -----> %s"
+                    (replicate n ' ') s (showAny r.arguments) :: IO ()) >>= \_ -> return $ Failed s (showAny r.arguments)
+    Nothing -> (printf "%s /n error of check: %s" s (showAny r) :: IO ())
+                     >>= \_ -> return $ Failed s (showAny r.arguments)
+
+quickCheck :: forall a. Testable a => String -> a -> SpaceCounter -> IO TestResult
+quickCheck s m n = check s 100 m n
+
+data TestResult = Successed
+                | Failed String String
+
+data TestGroup a = TxG String [TestGroup a]
+                 | Exe [a]
+
+tgToList :: TestGroup TestResult -> [TestResult]
+tgToList (Exe xs) = xs
+tgToList (TxG _ xs) = concat $ map tgToList xs
+
+
+runTestGroup :: forall a. SpaceCounter -> TestGroup (Integer -> IO a) -> IO (TestGroup a)
+runTestGroup n (Exe fs) =  Exe <$> (seqio $ map (\x -> x n) fs)
+runTestGroup n (TxG s xs) = TxG s <$> (do
+                                     println ( replicate n ' ' <> "======== test group: " <> s <> "========")
+                                     seqio $ map (runTestGroup (n+5)) xs
+                                    )
+
+runTest :: TestGroup (Integer -> IO TestResult) -> IO ()
+runTest g = do
+  res <- runTestGroup 0 g
+  let res1 = tgToList res
+      (succ, fail, total) = tcount (0,0,0) res1
+  printf "total test functions %d, successed %d, failed %d"  total succ fail
+
+tcount :: (Integer, Integer, Integer) -> [TestResult] -> (Integer, Integer, Integer)
+tcount (a,b,c) [] = (a,b,c)
+tcount (a,b,c) [x|xs] = case x of
+                         Successed -> tcount (a+1,b,c+1) xs
+                         Failed _ _ -> tcount (a,b+1,c+1) xs
