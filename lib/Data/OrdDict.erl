@@ -15,7 +15,7 @@
 %%---------------------------------------------------------------------------
 -module('OrdDict').
 
--include("Maybe.hrl").
+-include("../Foreign/Maybe.hrl").
 
 -type orddict(Key, Value) :: [{Key, Value}].
 

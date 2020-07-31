@@ -14,7 +14,7 @@
 %%---------------------------------------------------------------------------
 -module('Map').
 
--include("Maybe.hrl").
+-include("../Foreign/Maybe.hrl").
 
 -export([ singleton/2
         , isEmpty/1
@@ -47,3 +47,4 @@ take(Key, Map) ->
         {Value, Map2} -> {'Just', {Value, Map2}};
         error -> 'Nothing'
     end.
+

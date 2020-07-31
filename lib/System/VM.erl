@@ -15,6 +15,7 @@
 -module('VM').
 
 -include("../Foreign.hrl").
+-include("../Foreign/Maybe.hrl").
 
 -import(erlang, [system_info/1]).
 
