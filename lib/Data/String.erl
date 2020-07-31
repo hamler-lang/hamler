@@ -60,24 +60,25 @@ reverse(String) -> lists:reverse(String).
 
 -spec(replicate(pos_integer(), string()) -> string()).
 replicate(N, S) ->
-    lists:flatten(lists:duplicate(N, S)).
+  lists:flatten(lists:duplicate(N, S)).
 
 -spec(strlen(string()) -> integer()).
 strlen(String) -> string:length(String).
 
 -spec(equalIgnoreCase(string(), string()) -> boolean()).
-equalIgnoreCase(S1, S2) -> string:equal(S1, S2, true).
+equalIgnoreCase(S1, S2) ->
+  string:equal(S1, S2, true).
 
 -spec(hasPrefix(string(), prefix()) -> boolean()).
 hasPrefix(String, Prefix) ->
-    string:prefix(String, Prefix) /= nomatch.
+  string:prefix(String, Prefix) /= nomatch.
 
 -spec(hasSuffix(string(), suffix()) -> boolean()).
 hasSuffix(String, Suffix) ->
-    Pos = (strlen(String) - strlen(Suffix)),
-    if Pos >= 0 -> string:equal(string:slice(String, Pos), Suffix);
-       true     -> false
-    end.
+  Pos = (strlen(String) - strlen(Suffix)),
+  if Pos >= 0 -> string:equal(string:slice(String, Pos), Suffix);
+     true     -> false
+  end.
 
 -spec(indexOf(char(), string()) -> integer()).
 indexOf(Char, String) -> string:chr(String, Char).
@@ -86,28 +87,30 @@ indexOf(Char, String) -> string:chr(String, Char).
 lastIndexOf(Char, String) -> string:rchr(String, Char).
 
 -spec(find(string(), pattern()) -> maybe(string())).
-find(String, Pattern) -> doFind(String, Pattern, leading).
+find(String, Pattern) ->
+  doFind(String, Pattern, leading).
 
 -spec(findLast(string(), pattern()) -> maybe(string())).
-findLast(String, Pattern) -> doFind(String, Pattern, trailing).
+findLast(String, Pattern) ->
+  doFind(String, Pattern, trailing).
 
 doFind(String, Pattern, Dir) ->
-    case string:find(String, Pattern, Dir) of
-        nomatch -> {'Nothing'};
-        SubStr  -> {'Just', SubStr}
-    end.
+  case string:find(String, Pattern, Dir) of
+    nomatch -> ?Nothing;
+    SubStr  -> ?Just(SubStr)
+  end.
 
 -spec(replace(string(), pattern(), replacement()) -> string()).
 replace(String, Pattern, Replacement) ->
-    string:replace(String, Pattern, Replacement, all).
+  string:replace(String, Pattern, Replacement, all).
 
 -spec(replaceFirst(string(), pattern(), replacement()) -> string()).
 replaceFirst(String, Pattern, Replacement) ->
-    string:replace(String, Pattern, Replacement, leading).
+  string:replace(String, Pattern, Replacement, leading).
 
 -spec(replaceLast(string(), pattern(), replacement()) -> string()).
 replaceLast(String, Pattern, Replacement) ->
-    string:replace(String, Pattern, Replacement, trailing).
+  string:replace(String, Pattern, Replacement, trailing).
 
 -spec(split(string(), Sep :: string()) -> [string()]).
 split(String, Sep) -> string:split(String, Sep, all).
@@ -120,15 +123,15 @@ words(String) -> string:tokens(String, ?Whitespace ++ ?LineFeed).
 
 -spec(sliceTo(string(), pos_integer(), pos_integer()) -> string()).
 sliceTo(String, Start, End) ->
-    string:slice(String, Start, (End - Start)).
+  string:slice(String, Start, (End - Start)).
 
 -spec(padLeft(string(), pos_integer()) -> string()).
 padLeft(String, Len) ->
-    string:pad(String, Len, leading).
+  string:pad(String, Len, leading).
 
 -spec(padRight(string(), pos_integer()) -> string()).
 padRight(String, Len) ->
-    string:pad(String, Len, trailing).
+  string:pad(String, Len, trailing).
 
 -spec(trimChars(string(), string()) -> string()).
 trimChars(String, Chars) -> string:trim(String, both, Chars).

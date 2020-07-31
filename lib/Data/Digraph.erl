@@ -30,63 +30,79 @@
         , info/1
         ]).
 
+-define(Left(V), {'Left', V}).
+-define(Right(V), {'Right', V}).
+
 trans([]) -> [];
-trans([X | Xs]) -> [case X of
-    { 'Cyclic' } -> digraph:cyclic();
-    { 'Acyclic' } -> digraph:acyclic();
-    { 'Protected' } -> digraph:protected();
-    { 'Private' } -> digraph:private()
-end | trans(Xs) ].
+trans([X | Xs]) ->
+  [case X of
+     {'Cyclic'} -> digraph:cyclic();
+     {'Acyclic'} -> digraph:acyclic();
+     {'Protected'} -> digraph:protected();
+     {'Private'} -> digraph:private()
+   end | trans(Xs)].
 
 new(Type) -> digraph:new(trans(Type)).
 
-addEdge(G, V1, V2, Labal) -> case digraph:add_edge(G, V1, V2, Labal) of
-    { error, { bad_edge, Path } } -> { 'Left', { 'BadEdge', Path } };
-    { error, { bad_vertex, V } } -> { 'Left', { 'BadVertex', V } };
-    V -> { 'Right', V }
-end.
+addEdge(G, V1, V2, Labal) ->
+  case digraph:add_edge(G, V1, V2, Labal) of
+    {error, {bad_edge, Path}} -> ?Left({'BadEdge', Path});
+    {error, {bad_vertex, V}} -> ?Left({'BadVertex', V});
+    V -> ?Right(V)
+  end.
 
-modifyEdge(G, E, V1, V2, Labal) -> case digraph:add_edge(G, E, V1, V2, Labal) of
-    { error, { bad_edge, Path } } -> { 'Left', { 'BadEdge', Path } };
-    { error, { bad_vertex, V } } -> { 'Left', { 'BadVertex', V } };
-    V -> { 'Right', V }
-end.
+modifyEdge(G, E, V1, V2, Labal) ->
+  case digraph:add_edge(G, E, V1, V2, Labal) of
+    {error, {bad_edge, Path}} -> ?Left({'BadEdge', Path});
+    {error, {bad_vertex, V}} -> ?Left({'BadVertex', V});
+    V -> ?Right(V)
+  end.
 
 addVertex(G, Labal) ->
-    digraph:add_vertex(g, digraph:add_vertex(G), Labal).
+  digraph:add_vertex(g, digraph:add_vertex(G), Labal).
 
-edge(G, E) -> case digraph:edge(G, E) of
-    {E, V1, V2, Labal} -> { 'Just', { V1, V2, Labal } };
-    false -> { 'Nothing' }
-end.
+edge(G, E) ->
+  case digraph:edge(G, E) of
+    {E, V1, V2, Labal} -> ?Just({V1, V2, Labal});
+    false -> ?Nothing
+  end.
 
-vertex(G, V) -> case digraph:vertex(G, V) of
-    {V, Labal} -> { 'Just', Labal };
-    false -> { 'Nothing' }
-end.
+vertex(G, V) ->
+  case digraph:vertex(G, V) of
+    {V, Labal} -> ?Just(Labal);
+    false -> ?Nothing
+  end.
 
-getCycle(G, V) -> case digraph:get_cycle(G, V) of
+getCycle(G, V) ->
+  case digraph:get_cycle(G, V) of
     false -> [];
     Else -> Else
-end.
+  end.
 
-getPath(G, V1, V2) -> case digraph:get_path(G, V1, V2) of
+getPath(G, V1, V2) ->
+  case digraph:get_path(G, V1, V2) of
     false -> [];
     Else -> Else
-end.
+  end.
 
-getShortCycle(G, V) -> case digraph:get_short_cycle(G, V) of
+getShortCycle(G, V) ->
+  case digraph:get_short_cycle(G, V) of
     false -> [];
     Else -> Else
-end.
+  end.
 
-getShortPath(G, V1, V2) -> case digraph:get_short_path(G, V1, V2) of
+getShortPath(G, V1, V2) ->
+  case digraph:get_short_path(G, V1, V2) of
     false -> [];
     Else -> Else
-end.
+  end.
 
-info(G) -> lists:map(fun (X) -> case X of
-    { memory, M } -> { 'GraphMemoryInfo', M };
-    { cyclicity, Y } -> { 'GraphTypeInfo', { case Y of cyclic -> 'Cyclic'; acyclic -> 'Acyclic' end } };
-    { portection, Y } -> { 'GraphTypeInfo', { case Y of protected -> 'Protected'; private -> 'Private' end }}
-end end, digraph:info(G)).
+info(G) ->
+  lists:map(fun({memory, M}) ->
+                {'GraphMemoryInfo', M};
+               ({cyclicity, Y}) ->
+                {'GraphTypeInfo', {case Y of cyclic -> 'Cyclic'; acyclic -> 'Acyclic' end}};
+               ({portection, Y}) ->
+                {'GraphTypeInfo', {case Y of protected -> 'Protected'; private -> 'Private' end}}
+            end, digraph:info(G)).
+

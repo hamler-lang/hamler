@@ -35,6 +35,8 @@
         , yield/0
         ]).
 
+-import('Maybe', [maybe/1]).
+
 link(Pid) ->
   ?IO(ok(erlang:link(Pid))).
 
@@ -57,10 +59,7 @@ unregister(Name) ->
   ?IO(ok(erlang:unregister(Name))).
 
 whereis(Name) ->
-  ?IO(case erlang:whereis(Name) of
-        undefined -> ?Nothing;
-        Pid -> ?Just(Pid)
-      end).
+  ?IO(maybe(erlang:whereis(Name))).
 
 setGroupLeader(LeaderPid, Pid) ->
   ?IO(ok(erlang:group_leader(LeaderPid, Pid))).
