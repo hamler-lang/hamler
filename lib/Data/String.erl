@@ -147,4 +147,3 @@ trimRight(String) -> string:trim(String, trailing).
 
 -spec(trimRightChars(string(), string()) -> string()).
 trimRightChars(String, Chars) -> string:trim(String, trailing, Chars).
-

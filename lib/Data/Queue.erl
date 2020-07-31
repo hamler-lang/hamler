@@ -14,20 +14,26 @@
 %%---------------------------------------------------------------------------
 -module('Queue').
 
--export([daeh/1, drop/1, out/1, outR/1, peek/1, peekR/1]).
+-include("../Foreign.hrl").
+
+-export([ daeh/1
+        , drop/1
+        , out/1
+        , outR/1
+        , peek/1
+        , peekR/1
+        ]).
 
 daeh(Q) ->
   try queue:daeh(Q) of
-    E -> {'Just', E}
+    E -> ?Just(E)
   catch error:empty ->
-    {'Nothing'}
+    ?Nothing
   end.
 
 %% TODO: Fixme later.
-
 drop(Q) -> queue:drop(Q).
 out(Q) -> queue:out(Q).
 outR(Q) -> queue:out_r(Q).
 peek(Q) -> queue:peek(Q).
 peekR(Q) -> queue:peek_r(Q).
-

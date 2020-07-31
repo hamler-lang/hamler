@@ -9,7 +9,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Application Callback FFI.
+%% The Application Callback FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Callback').

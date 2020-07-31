@@ -20,4 +20,3 @@
 
 maybe(undefined) -> ?Nothing;
 maybe(Val) -> ?Just(Val).
-

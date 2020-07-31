@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The UTF-8 String data type.
+-- The UTF-8 String datatype.
 --
 -----------------------------------------------------------------------------
 module Data.String where
@@ -187,4 +187,3 @@ foreign import trimLeftChars :: String -> String -> String
 foreign import trimRight :: String -> String
 
 foreign import trimRightChars :: String -> String -> String
-

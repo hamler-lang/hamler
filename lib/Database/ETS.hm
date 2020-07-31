@@ -20,8 +20,9 @@ import Data.Maybe (Maybe(..))
 import Data.Ref (Reference)
 import Data.Term (Term)
 import Data.Unit (Unit)
-import Foreign (ffiIO0, ffiIO1, ffiIO2, ffiIO3, ffiIO4)
 import System.IO (FilePath)
+
+import Foreign (ffiIO0, ffiIO1, ffiIO2, ffiIO3, ffiIO4)
 
 -- | Table name is an Atom.
 type TableName = Atom
@@ -223,21 +224,11 @@ updateCounterIncr = ffiIO3 :ets :update_counter
 updateCounterIncrWithDefault :: forall k a. TableId -> k -> Integer -> a -> IO Integer
 updateCounterIncrWithDefault = ffiIO4 :ets :update_counter
 
-
-
 {- TODO:
 is_compiled_ms/1
--- match/1
--- match/2
--- match/3
--- match_delete/2
--- match_object/1
--- match_object/2
--- match_object/3
 match_spec_compile/1
 match_spec_run/2
 repair_continuation/2
--- safe_fixtable/2
 select/1
 select/2
 select/3
@@ -248,17 +239,8 @@ select_reverse/1
 select_reverse/2
 select_reverse/3
 setopts/2
--- slot/2
--- tab2file/2
 tab2file/3
--- tab2list/1
--- tabfile_info/1
 table/1
 table/2
--- take/2
 test_ms/2
--- to_dets/2
--- update_counter/3
--- update_counter/4
--- update_element/3
 -}

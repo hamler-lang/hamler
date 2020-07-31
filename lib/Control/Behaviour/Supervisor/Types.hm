@@ -132,4 +132,3 @@ data SupRef
     -- ^ The supervisor is globally registered.
   | SupPid Pid
     -- ^ The supervisor pid.
-

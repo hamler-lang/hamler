@@ -43,4 +43,3 @@ foreign import terminate :: forall r st. r -> st -> Process ()
 -- Module:code_change(OldVsn, State, Extra) -> Result
 foreign import code_change
   :: forall vsn st ex res. vsn -> st -> ex -> Process res
-

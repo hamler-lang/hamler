@@ -15,8 +15,7 @@
 module Control.Process.Proxy where
 
 import Control.Monad (IO)
-import Data.Unit (Unit)
 import Control.Process.Types
+import Data.Unit (Unit)
 
 foreign import wakeup :: IO () -> Process ()
-

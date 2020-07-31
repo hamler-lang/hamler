@@ -62,4 +62,3 @@ foreign import eqIntImpl :: Integer -> Integer -> Boolean
 foreign import eqFloatImpl :: Float -> Float -> Boolean
 foreign import eqStringImpl :: String -> String -> Boolean
 foreign import eqListImpl :: forall a. List a -> List a -> Boolean
-

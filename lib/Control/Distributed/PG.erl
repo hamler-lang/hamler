@@ -72,4 +72,3 @@ whichGroupsIn(Scope) ->
 
 retPid({ok, Pid}) -> Pid;
 retPid({error, Reason}) -> error(Reason).
-

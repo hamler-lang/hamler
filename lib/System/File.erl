@@ -55,22 +55,15 @@ sync(IoDevice) ->
   ?IO(return(file:sync(IoDevice))).
 
 -compile({inline, [parseMode/1]}).
-parseMode({'ReadMode'}) ->
-  [read];
-parseMode({'WriteMode'}) ->
-  [write];
-parseMode({'AppendMode'}) ->
-  [append];
-parseMode({'ReadWriteMode'}) ->
-  [read, write].
+parseMode({'ReadMode'}) -> [read];
+parseMode({'WriteMode'}) -> [write];
+parseMode({'AppendMode'}) -> [append];
+parseMode({'ReadWriteMode'}) -> [read, write].
 
 -compile({inline, [location/2]}).
-location({'AbsoluteSeek'}, Offset) ->
-  {bof, Offset};
-location({'RelativeSeek'}, Offset) ->
-  {cur, Offset};
-location({'SeekFromEnd'}, Offset) ->
-  {eof, Offset}.
+location({'AbsoluteSeek'}, Offset) -> {bof, Offset};
+location({'RelativeSeek'}, Offset) -> {cur, Offset};
+location({'SeekFromEnd'}, Offset) -> {eof, Offset}.
 
 -compile({inline, [return/1]}).
 return(ok) -> ok;

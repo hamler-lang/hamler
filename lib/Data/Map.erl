@@ -9,7 +9,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Map FFI Module.
+%% The Map FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Map').
@@ -47,4 +47,3 @@ take(Key, Map) ->
     {Value, Map2} -> ?Just({Value, Map2});
     error -> ?Nothing
   end.
-

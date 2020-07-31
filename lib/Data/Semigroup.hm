@@ -35,4 +35,3 @@ foreign import stringAppend :: String -> String -> String
 
 -- | Append two Lists
 foreign import listAppend :: forall a. List a -> List a -> List a
-

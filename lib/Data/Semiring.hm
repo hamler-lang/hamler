@@ -39,4 +39,3 @@ foreign import addInt :: Integer -> Integer -> Integer
 foreign import mulInt :: Integer -> Integer -> Integer
 foreign import addFloat :: Float -> Float -> Float
 foreign import mulFloat :: Float -> Float -> Float
-

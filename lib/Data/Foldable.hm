@@ -34,7 +34,6 @@ instance Foldable List where
 foreign import foldlListImpl :: forall a b. (b -> a -> b) -> b -> [a] -> b
 foreign import foldrListImpl :: forall a b. (a -> b -> b) -> b -> [a] -> b
 
-
 foldMapDefaultR
   :: forall f a m
    . Foldable f

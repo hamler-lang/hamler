@@ -37,4 +37,3 @@ foreign import processFlag :: Flag -> Process Flag
 
 -- | Set trap_exit flag of Process.
 foreign import trapExit :: Boolean -> Process Boolean
-

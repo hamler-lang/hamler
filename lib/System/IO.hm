@@ -44,4 +44,3 @@ foreign import withFile
 
 -- Read Erlang terms
 foreign import consultFile :: FilePath -> IO [Term]
-

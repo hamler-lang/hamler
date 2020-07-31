@@ -12,7 +12,6 @@
 -- The Monad typeclass.
 --
 -----------------------------------------------------------------------------
-
 module Control.Monad
   ( class Applicative, pure, apply, (<*>)
     -- ^ Applicative
@@ -34,6 +33,7 @@ module Control.Monad
 
 import Data.Functor (class Functor, map, (<$>))
 import Data.Unit (Unit)
+
 -----------------------------------------------------------------------------
 -- | Applicative typeclass
 -----------------------------------------------------------------------------
@@ -48,10 +48,12 @@ instance Applicative List where
   pure x = [x]
   apply = applyListImpl
 
-foreign import applyListImpl :: forall a b. List (a -> b) -> List a -> List b
+foreign import applyListImpl
+  :: forall a b. List (a -> b) -> List a -> List b
 
 -----------------------------------------------------------------------------
 -- | Lift a function.
+-----------------------------------------------------------------------------
 
 liftA1 :: forall a b f. Applicative f => (a -> b) -> f a -> f b
 liftA1 f a = pure f <*> a
@@ -102,6 +104,7 @@ foreign import pureImpl :: forall a. a -> IO a
 
 -----------------------------------------------------------------------------
 -- | Lift a function to a monad
+-----------------------------------------------------------------------------
 
 liftM1 :: forall a b m. Monad m => (a -> b) -> m a -> m b
 liftM1 f ma = do
@@ -137,9 +140,9 @@ guardF :: Boolean  -> [Boolean]
 guardF true = [true]
 guardF false = []
 
-foreign import seqio ::forall a.[IO a] -> IO [a]
+foreign import seqio :: forall a. [IO a] -> IO [a]
 
-foreign import seqio_ ::forall a.[IO a] -> IO ()
+foreign import seqio_ ::forall a. [IO a] -> IO ()
 
 foreign import unsafePerformIO :: forall a. IO a -> a
 

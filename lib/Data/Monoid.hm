@@ -29,4 +29,3 @@ instance Monoid Ordering where
 
 instance Monoid Unit where
   mempty = unit
-

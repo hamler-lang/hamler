@@ -34,10 +34,10 @@ acceptTimeout(LSocket, Timeout) ->
   ?IO(return(gen_tcp:accept(LSocket, Timeout))).
 
 connect(Address, Port, Options) ->
-  ?IO(return(gen_tcp:connect(toErl(Address), Port, Options))).
+  ?IO(return(gen_tcp:connect(unwrap(Address), Port, Options))).
 
 connectTimeout(Address, Port, Options, Timeout) ->
-  ?IO(return(gen_tcp:connect(toErl(Address), Port, Options, Timeout))).
+  ?IO(return(gen_tcp:connect(unwrap(Address), Port, Options, Timeout))).
 
 listen(Port, Options) ->
   ?IO(return(gen_tcp:listen(Port, Options))).
@@ -54,9 +54,8 @@ send(Socket, Packet) ->
 shutdown(Socket, How) ->
   ?IO(return(gen_tcp:shutdown(Socket, How))).
 
-toErl({'Ip4Address', A, B, C, D}) -> {A, B, C, D};
-toErl({'Ip6Address', A, B, C, D, E, F, G, H}) ->
-  {A, B, C, D, E, F, G, H}.
+unwrap({'Ip4Address', Addr}) -> Addr;
+unwrap({'Ip6Address', Addr}) -> Addr.
 
 return(ok) -> ok;
 return({ok, Result}) -> Result;

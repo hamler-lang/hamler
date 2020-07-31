@@ -14,9 +14,11 @@
 %%---------------------------------------------------------------------------
 -module('Proxy').
 
--include("../../../Foreign.hrl").
-
 -behaviour(gen_server).
+
+-compile({no_auto_import, [apply/2]}).
+
+-include("../../../Foreign.hrl").
 
 %% gen_server callbacks
 -export([ init/1
@@ -27,6 +29,8 @@
         , terminate/2
         , code_change/3
         ]).
+
+-import('Curry', [apply/2]).
 
 -record(proxy, {class, state}).
 
@@ -46,7 +50,7 @@ initOk(Class, State) ->
   #proxy{class = Class, state = State}.
 
 handle_call(Request, From, Proxy = #proxy{class = #{handleCall := HandleCall}, state = State}) ->
-  case ?RunIO('Curry':apply(HandleCall, [Request, From, State])) of
+  case ?RunIO(apply(HandleCall, [Request, From, State])) of
     {'Reply', Rep, NState, ?Nothing} ->
       {reply, Rep, Proxy#proxy{state = NState}};
     {'Reply', Rep, NState, ?Just(Action)} ->
@@ -62,7 +66,7 @@ handle_call(Request, From, Proxy = #proxy{class = #{handleCall := HandleCall}, s
 handle_continue(Continue, Proxy) -> handle_cast(Continue, Proxy).
 
 handle_cast(Msg, Proxy = #proxy{class = #{handleCast := HandleCast}, state = State}) ->
-  case ?RunIO('Curry':apply(HandleCast, [Msg, State])) of
+  case ?RunIO(apply(HandleCast, [Msg, State])) of
     {'NoReply', NState, ?Nothing} ->
       {noreply, Proxy#proxy{state = NState}};
     {'NoReply', NState, ?Just(Action)} ->
@@ -91,4 +95,3 @@ translate({'Timeout', Time}) -> Time.
 shutdown({'ExitNormal'}) -> normal;
 shutdown({'ExitShutdown'}) -> shutdown;
 shutdown({'ExitReason', Reason}) -> {shutdown, Reason}.
-

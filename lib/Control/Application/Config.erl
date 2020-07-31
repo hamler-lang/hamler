@@ -61,4 +61,3 @@ isRecord(R) -> is_map(R) orelse is_list(R).
 
 toRecord(L) when is_list(L) -> maps:from(L);
 toRecord(M) when is_map(M) -> M.
-

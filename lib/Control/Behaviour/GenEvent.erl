@@ -102,4 +102,3 @@ unwrap({'EMgrRefGlobal', Name}) -> {global, Name};
 
 unwrap({'Infinity'}) -> infinity;
 unwrap({'Timeout', I}) -> I.
-

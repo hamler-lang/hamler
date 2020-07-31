@@ -52,33 +52,33 @@ file2tab(Filename) ->
       end).
 
 file2tabWithVerify(Filename) ->
-    ?IO(case ets:file2tab(Filename, {verify, true}) of
-            {ok, Tab} -> Tab;
-            {eror, Reason} -> error(Reason)
-        end).
+  ?IO(case ets:file2tab(Filename, {verify, true}) of
+        {ok, Tab} -> Tab;
+        {eror, Reason} -> error(Reason)
+      end).
 
 first(Tab) ->
   ?IO(case ets:first(Tab) of
-        '$end_of_table' -> {'Nothing'};
-        Key -> {'Just', Key}
+        '$end_of_table' -> ?Nothing;
+        Key -> ?Just(Key)
       end).
 
 last(Tab) ->
   ?IO(case ets:last(Tab) of
-        '$end_of_table' -> {'Nothing'};
-        Key -> {'Just', Key}
+        '$end_of_table' -> ?Nothing;
+        Key -> ?Just(Key)
       end).
 
 next(Tab, Key1) ->
   ?IO(case ets:next(Tab, Key1) of
-        '$end_of_table' -> {'Nothing'};
-        Key2 -> {'Just', Key2}
+        '$end_of_table' -> ?Nothing;
+        Key2 -> ?Just(Key2)
       end).
 
 prev(Tab, Key1) ->
   ?IO(case ets:prev(Tab, Key1) of
-        '$end_of_table' -> {'Nothing'};
-        Key2 -> {'Just', Key2}
+        '$end_of_table' -> ?Nothing;
+        Key2 -> ?Just(Key2)
       end).
 
 tab2file(Tab, Filename) ->
@@ -88,52 +88,49 @@ tab2file(Tab, Filename) ->
       end).
 
 matchContinuation(Continuation) ->
-    ?IO(case ets:match(Continuation) of
-            '$end_of_table' -> {'Nothing'};
-            Key2 -> {'Just', Key2}
-        end).
+  ?IO(case ets:match(Continuation) of
+        '$end_of_table' -> ?Nothing;
+        Key2 -> ?Just(Key2)
+      end).
 
 matchWithLimit(Tid, Pattern, Limit) ->
-    ?IO(case ets:match(Tid, Pattern, Limit) of
-            '$end_of_table' -> {'Nothing'};
-            Key2 -> {'Just', Key2}
-        end).
+  ?IO(case ets:match(Tid, Pattern, Limit) of
+        '$end_of_table' -> ?Nothing;
+        Key2 -> ?Just(Key2)
+      end).
 
 matchObjectContinuation(Continuation) ->
-    ?IO(case ets:match(Continuation) of
-            '$end_of_table' -> {'Nothing'};
-            Key2 -> {'Just', Key2}
-        end).
+  ?IO(case ets:match(Continuation) of
+        '$end_of_table' -> ?Nothing;
+        Key2 -> ?Just(Key2)
+      end).
 
 matchObjectWithLimit(Tid, Pattern, Limit) ->
-    ?IO(case ets:match(Tid, Pattern, Limit) of
-            '$end_of_table' -> {'Nothing'};
-            Key2 -> {'Just', Key2}
-        end).
+  ?IO(case ets:match(Tid, Pattern, Limit) of
+        '$end_of_table' -> ?Nothing;
+        Key2 -> ?Just(Key2)
+      end).
 
 slot(Tid, I) ->
-    ?IO(case ets:slot(Tid, I) of
-            '$end_of_table' -> {'Nothing'};
-            Key2 -> {'Just', Key2}
-        end).
+  ?IO(case ets:slot(Tid, I) of
+        '$end_of_table' -> ?Nothing;
+        Key2 -> ?Just(Key2)
+      end).
 
 tabfileInfo(FilePath) ->
-    ?IO(case ets:tabfile_info(FilePath) of
-            {ok, TabInfo} -> TabInfo;
-            {error, Reason} -> error(Reason)
-        end).
+  ?IO(case ets:tabfile_info(FilePath) of
+        {ok, TabInfo} -> TabInfo;
+        {error, Reason} -> error(Reason)
+      end).
 
 updateElement(Tabid, Key, Pos, Value) ->
-    ?IO(ets:update_element(Tabid, Key, {Pos, Value})).
-
+  ?IO(ets:update_element(Tabid, Key, {Pos, Value})).
 
 foldl(Fun, Acc0, Tab) ->
-    F = fun(R, Acc) -> (Fun(R))(Acc) end,
-    ?IO(ets:foldl(F, Acc0, Tab)).
+  ?IO(ets:foldl(fun(R, Acc) -> (Fun(R))(Acc) end, Acc0, Tab)).
 
 foldr(Fun, Acc0, Tab) ->
-    F = fun(R, Acc) -> (Fun(R))(Acc) end,
-    ?IO(ets:foldr(F, Acc0, Tab)).
+  ?IO(ets:foldr(fun(R, Acc) -> (Fun(R))(Acc) end, Acc0, Tab)).
 
 %%---------------------------------------------------------------------------
 %% | Internal functions
@@ -220,8 +217,3 @@ infoRec([{write_concurrency, Bool}|Info], M) ->
 infoRec([_|Info], M) ->
   infoRec(Info, M);
 infoRec([], M) -> M.
-
-%%---------------------------------------------------------------------------
-%% Internal functions
-%%---------------------------------------------------------------------------
-

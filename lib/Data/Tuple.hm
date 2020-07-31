@@ -28,4 +28,3 @@ curry f x y =  f (x, y)
 
 uncurry :: forall a b c. (a -> b -> c) -> ((a, b) -> c)
 uncurry f p =  f (fst p) (snd p)
-

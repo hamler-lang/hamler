@@ -31,6 +31,4 @@ parseGcOpts(Options) ->
                {'GcAsync', RequestId} -> {async, RequestId}
    end || Opt <- Options].
 
-%% erlang:hibernate(Module, Function, Args) -> no_return()
 hibernate(Fun) -> ?IO(erlang:hibernate(?MOD, wakeup, [Fun])).
-

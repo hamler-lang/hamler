@@ -47,7 +47,7 @@ foreign import data AppStartArgs :: Type
 foreign import data AppStartError :: Type
 
 type AppSpec =
-  { name         :: Atom
+  { name         :: Application
   , description  :: String
   , vsn          :: String
   , id           :: String
@@ -68,4 +68,3 @@ type AppDescr =
   , desc :: String
   , vsn  :: String
   }
-

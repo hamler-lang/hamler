@@ -93,7 +93,6 @@ map(Fun, Orddict1) ->
       Orddict2 :: orddict(Key, Value2),
       Orddict3 :: orddict(Key, Value).
 merge(Fun, Orddict1, Orddict2) ->
-    orddict:merge(fun(Key, Value1, Value2) ->
-                      apply(Fun, [Key, Value1, Value2])
-                  end, Orddict1, Orddict2).
-
+  orddict:merge(fun(Key, Value1, Value2) ->
+                    apply(Fun, [Key, Value1, Value2])
+                end, Orddict1, Orddict2).

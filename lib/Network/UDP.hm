@@ -87,4 +87,3 @@ close :: Socket -> IO ()
 close = ffiIO1 :gen_udp :close
 
 foreign import controllingProcess :: Socket -> Pid -> IO ()
-

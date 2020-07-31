@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Distributed node module.
+-- The Distributed Node module.
 --
 -----------------------------------------------------------------------------
 module Control.Distributed.Node
@@ -70,4 +70,3 @@ foreign import monitorNode :: Node -> Boolean -> IO Boolean
 
 -- spawn[_link|_opt](Node, Fun): Creates a process at a remote node.
 -- spawn[_link|opt](Node, Module, FunctionName, Args): Creates a process at a remote node.
-

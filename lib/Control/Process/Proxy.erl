@@ -19,4 +19,3 @@
 -export([wakeup/1]).
 
 wakeup(Fun) -> ?RunIO(Fun).
-

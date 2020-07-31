@@ -105,4 +105,3 @@ unwrap({'ExitShutdown'}) -> shutdown;
 
 unwrap({'Infinity'}) -> infinity;
 unwrap({'Timeout', I}) -> I.
-

@@ -184,4 +184,3 @@ foreign import resume :: Pid -> Process ()
 foreign import suspend :: Pid -> Process ()
 
 foreign import yield :: Process ()
-
