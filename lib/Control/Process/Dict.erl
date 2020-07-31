@@ -15,7 +15,6 @@
 -module('Dict').
 
 -include("../../Foreign.hrl").
--include("../../Foreign/Maybe.hrl").
 
 -compile(no_auto_import).
 
