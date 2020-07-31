@@ -15,7 +15,6 @@
 -module('Port').
 
 -include("../../Foreign.hrl").
--include("../../Foreign/Maybe.hrl").
 
 -compile({no_auto_import, [link/1, unlink/1]}).
 
