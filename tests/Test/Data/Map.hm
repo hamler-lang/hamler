@@ -20,9 +20,26 @@ propMapFilter m v = let m1 = M.filter (\(k,_) -> k > v) m
                     in foldl (&&) true vs
 
 
+propMapMerge :: M.Map Integer Integer -> M.Map Integer Integer -> Boolean
+propMapMerge m1 m2 = M.merge m1 m2 /= M.merge m2 m1
+
+propMapFTList :: M.Map Integer Integer -> Boolean
+propMapFTList m = M.fromList (M.toList m) == m
+
+propMapMap :: M.Map Integer Integer -> (Integer -> Integer) -> Boolean
+propMapMap m1 f = let l1 = M.toList m1
+                      lf = \(k,v) -> (k, f v)
+                      lf1 = \(k,v) -> f v
+                  in M.fromList (map lf l1) == M.map lf1 m1
+
+
+
 test :: TestGroup (Integer -> IO TestResult)
-test = Exe [ quickCheck "propMapPutGet " propMapPutGet
+test = Exe [ quickCheck "propMapPutGet "     propMapPutGet
            , quickCheck "propMapPutMember "  propMapPutMember
-         -- , quickCheck "propMapFilter "  propMapFilter
+           , quickCheck "propMapFilter "     propMapFilter
+           , quickCheck "propMapMerge "      propMapMerge
+           , quickCheck "propMapFTList "     propMapFTList
+           , quickCheck "propMapMap "        propMapMap
            ]
 

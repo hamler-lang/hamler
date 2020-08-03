@@ -21,6 +21,9 @@
         , lookup/2
         , notMember/2
         , take/2
+        , filter/2
+        , eqMapImpl/2
+        , map/2
         ]).
 
 %% forall k v. k -> v -> Map k v
@@ -47,3 +50,12 @@ take(Key, Map) ->
     {Value, Map2} -> ?Just({Value, Map2});
     error -> ?Nothing
   end.
+
+filter(Fun, Map) ->
+    maps:filter(fun(K, V) -> Fun({K,V}) end, Map).
+
+eqMapImpl(Map1, Map2) ->
+     Map1 == Map2.
+
+map(Fun, Map) ->
+    maps:map(fun(K, V) -> Fun({K,V}) end, Map).
