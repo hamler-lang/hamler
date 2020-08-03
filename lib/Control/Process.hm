@@ -13,8 +13,7 @@
 --
 -----------------------------------------------------------------------------
 module Control.Process
-  ( self
-  , selfPid
+  ( selfPid
   , isAlive
     -- * Message passing
   , send, (!)
@@ -103,8 +102,8 @@ import Data.Unit (Unit)
 import Foreign (ffiIO0, ffiIO1, ffiIO2)
 
 -- An alias of selfPid.
-self :: Process Pid
-self = selfPid
+-- self :: Process Pid
+-- self = selfPid
 
 -- Return the Pid of the calling process.
 selfPid :: Process Pid
