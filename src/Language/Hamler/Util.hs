@@ -138,3 +138,66 @@ aPrimop v =
     . EPrimOp
       (Atom "match_fail" "")
     $ [ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "function_clause"] ++ v
+
+recvPeekMessage :: Expr Text
+recvPeekMessage = ann $ EPrimOp (ann $ Atom "recv_peek_message") []
+
+removeMessage :: Expr Text
+removeMessage = ann $ EPrimOp (ann $ Atom "remove_message") []
+
+recvWaitTimeout :: Expr Text -> Exprs Text
+recvWaitTimeout e = ann $ Expr $ ann $ EPrimOp (ann $ Atom "recv_wait_timeout") [ann $ Expr e]
+
+timeout :: Expr Text
+timeout = ann $ EPrimOp (ann $ Atom "timeout") []
+
+varfun :: Integer -> Var Text
+varfun i = ann $ Var (pack $ ("_" ++  show i))
+
+atomTrue :: Atom Text
+atomTrue = ann $ Atom "true"
+
+atomFalse :: Atom Text
+atomFalse = ann $ Atom "false"
+
+insertPrimopRemoveMess :: Clause Text -> Clause Text
+insertPrimopRemoveMess (Clause pts es0 es1 a)= (Clause pts es0 es1' a)
+  where es1' = ann $ Expr $ ann $ EDo (ann $ Expr $ removeMessage) es1
+
+clauseTrue :: [Clause Text] ->  Clause Text
+clauseTrue xs
+  = ann $ Clause [ann $ PLiteral $ ann $ LAtom atomTrue]
+                          (ann $ Expr $ ann $ ELit $ ann $ LAtom atomTrue)
+                          (ann $ Expr $ ann $ ECase (ann $ Expr $ ann $ EVar $ varfun 0)
+                           (fmap insertPrimopRemoveMess xs))
+
+clauseFalse :: Expr Text -> Expr Text ->  Clause Text
+clauseFalse resExpr actExpr
+  = annText "[\'dialyzer_ignore\']" $ Clause [ann $ PLiteral $ ann $ LAtom atomFalse]
+                          ( ann $ Expr $ ann $ ELit $ ann $ LAtom atomTrue)
+                          ( ann $ Expr $ ann $ ELet [varfun 1] (recvWaitTimeout resExpr)
+                            ( ann $ Expr $ ann $
+                                 ECase (ann $ Expr $ ann $ EVar $ varfun 1)
+                                 [ctrue, cfalse]
+                            ))
+  where ctrue = ann $ Clause [ann $ PLiteral $ ann $ LAtom atomTrue]
+                (ann $ Expr $ ann $ ELit $ ann $ LAtom atomTrue)
+                (ann $ Expr $ ann $ EDo (ann $ Expr $ timeout)
+                  (ann $ Expr $ actExpr) )
+        cfalse = annText "[\'dialyzer_ignore\']" $ Clause [ann $ PLiteral $ ann $ LAtom atomFalse]
+                (ann $ Expr $ ann $ ELit $ ann $ LAtom atomTrue)
+                (ann $ Expr $ annText "[\'dialyzer_ignore\']" $ EApp (ann $ Expr $ ann $ EFunN recv0) [])
+
+recv0 :: FunName Text
+recv0 = ann $ FunName (ann $ Atom "recv$^0") 0
+
+recFunDef :: [Clause Text] -> Expr Text -> Expr Text -> FunDef Text
+recFunDef eCase etExpr actExpr = FunDef recv0 (ann $ Fun [] (ann $ Expr $ letin))
+  where caseExpr = ann $  ECase (ann $ Expr $ ann $ EVar $ varfun 2)
+                   [clauseTrue eCase, clauseFalse etExpr actExpr]
+        letin = ann $ ELet [varfun 2, varfun 0] (ann $ Expr $ recvPeekMessage) (ann $ Expr caseExpr)
+
+recvExpr :: [Clause Text] -> Expr Text -> Expr Text -> Expr Text
+recvExpr eCase etExpr actExpr = annText "[\'letrec_goto\']" $ ELetRec [recFunDef eCase etExpr actExpr]
+                                     (ann $ Expr $ annText "[\'dialyzer_ignore\']" $ EApp (ann $ Expr $ ann $ EFunN recv0) [])
+
