@@ -167,15 +167,10 @@ foreign import setGroupLeader :: Pid -> Pid -> Process ()
 -- | Process Termination
 -----------------------------------------------------------------------------
 
-exit :: Process ()
-exit = exitWith :normal
+exit :: Atom -> Process ()
+exit = ffiIO1 :erlang :exit
 
-foreign import exitWith :: Atom -> Process ()
-
-exitProc :: Pid -> Process()
-exitProc pid = exitProcWith pid :normal
-
-foreign import exitProcWith :: Pid -> Atom -> Process ()
+foreign import exitProc :: Pid -> Atom -> Process()
 
 foreign import killProc :: Pid -> Process ()
 
