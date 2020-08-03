@@ -262,11 +262,16 @@ exprToErl (C.Case _ es alts) = do
   forM_ (zip varName is) $ \(n, i) -> do
     modify (\x -> x & localVar %~ M.insert n i)
   return . ann $ ELet vars (ann $ Exprs es') (ann . Expr . ann $ ECase (ann . E.Exprs $ fmap (ann . EVar) vars) alts')
-exprToErl (C.Receive _ e1 e2 alts) = do
+exprToErl (C.Receive _ (Just (e1, e2)) alts) = do
   alts' <- mapM dealRecAlt alts
   e2' <- exprToErl e2
   return $ ann $ EFun $ ann $ Fun [] $ ann $ Expr $
-    ann $ EFun $ ann $ Fun [] $ ann $ Expr $ ann $ EReceive alts' (ann $ Expr $ ann $ ELit $ ann $ LInt e1 ) (ann $ Expr $ appExpr e2')
+    ann $ EFun $ ann $ Fun [] $ ann $ Expr $ recvExpr alts' (ann $ ELit $ ann $ LInt e1) e2'
+exprToErl (C.Receive _ Nothing alts) = do
+  alts' <- mapM dealRecAlt alts
+  return $ ann $ EFun $ ann $ Fun [] $ ann $ Expr $
+    ann $ EFun $ ann $ Fun [] $ ann $ Expr $ recvExpr alts' (ann $ ELit $ ann $ LAtom $ ann $ Atom "infinity")
+                                                            (ann $ ELit $ ann $ LAtom $ ann $ Atom "true")
 exprToErl (C.List _ es e) = do
   es' <- mapM exprToErl es
   e' <- exprToErl e
