@@ -218,14 +218,14 @@ forAll gen body = Prop $
 type SpaceCounter = Integer
 
 check :: forall a. Testable a => String -> Integer -> a -> SpaceCounter -> IO TestResult
-check s 0 m n = (printf "%s----- 100 sample check success %s -----" (replicate n ' ') s :: IO ()) >>= \_ -> return Successed
+check s 0 m n = (printf "%s----- 100 sample check success %s      " (replicate n ' ') s :: IO ()) >>= \_ -> return Successed
 check s v m n = do
   i <- randomRIO 1332292274972041455 7304856964418773083
   let Gen fun = evaluate m
       Result r = fun 10 (mkRand i)
   case r.ok of
     Just true -> check s (v-1) m n
-    Just false -> (printf "%s>>>>>>>>>> error of check prop: %s -----> %s"
+    Just false -> (printf "%sxxxxx error of check prop: %s -----> %s"
                     (replicate n ' ') s (showAny r.arguments) :: IO ()) >>= \_ -> return $ Failed s (showAny r.arguments)
     Nothing -> (printf "%s /n error of check: %s" s (showAny r) :: IO ())
                      >>= \_ -> return $ Failed s (showAny r.arguments)
