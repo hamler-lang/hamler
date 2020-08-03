@@ -51,6 +51,7 @@ type Option = Flag
 | MessageQueueData MsgQueueData
 -}
 
+-- | Create a process
 spawn :: forall a. IO a -> Process Pid
 spawn = ffiIO1 :erlang :spawn
 
@@ -63,6 +64,7 @@ foreign import spawnWith
 foreign import spawnAtWith
   :: forall a. Node -> IO a -> [Option] -> Process Pid
 
+-- | Create and link a process
 spawnLink :: forall a. IO a -> Process Pid
 spawnLink = ffiIO1 :erlang :spawn_link
 
@@ -75,6 +77,7 @@ foreign import spawnLinkWith
 foreign import spawnLinkAtWith
   :: forall a. Node -> IO a -> [Option] -> Process Pid
 
+-- | Create and monitor a process
 spawnMonitor :: forall a. IO a -> Process (Pid, Ref)
 spawnMonitor = ffiIO1 :erlang :spawn_monitor
 

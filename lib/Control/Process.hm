@@ -120,8 +120,7 @@ isAlive = ffiIO1 :erlang :is_process_alive
 infixr 1 send as !
 
 -- Send a message to a Process.
-send :: forall a. Pid -> a -> Process a
-send = ffiIO2 :erlang :send
+foreign import send :: forall a. Pid -> a -> Process ()
 
 sendNosuspend :: forall a. Pid -> a -> Process Boolean
 sendNosuspend = ffiIO2 :erlang :send_nosuspend
@@ -168,9 +167,15 @@ foreign import setGroupLeader :: Pid -> Pid -> Process ()
 -- | Process Termination
 -----------------------------------------------------------------------------
 
-foreign import exit :: ExitReason -> Process ()
+exit :: Process ()
+exit = exitWith :normal
 
-foreign import exitProc :: Pid -> ExitReason -> Process()
+foreign import exitWith :: Atom -> Process ()
+
+exitProc :: Pid -> Process()
+exitProc pid = exitProcWith pid :normal
+
+foreign import exitProcWith :: Pid -> Atom -> Process ()
 
 foreign import killProc :: Pid -> Process ()
 
