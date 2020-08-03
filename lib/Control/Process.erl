@@ -28,8 +28,7 @@
         , unregister/1
         , whereis/1
         , setGroupLeader/2
-        , exitWith/1
-        , exitProcWith/2
+        , exitProc/2
         , killProc/1
         , resume/1
         , suspend/1
@@ -68,10 +67,7 @@ whereis(Name) ->
 setGroupLeader(LeaderPid, Pid) ->
   ?IO(ok(erlang:group_leader(LeaderPid, Pid))).
 
-exitWith(Reason) ->
-  ?IO(erlang:exit(Reason)).
-
-exitProcWith(Pid, Reason) ->
+exitProc(Pid, Reason) ->
   ?IO(ok(erlang:exit(Pid, Reason))).
 
 killProc(Pid) ->
