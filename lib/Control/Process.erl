@@ -18,7 +18,8 @@
 
 -compile(no_auto_import).
 
--export([ link/1
+-export([ send/2
+        , link/1
         , unlink/1
         , monitor/1
         , demonitor/1
@@ -27,8 +28,8 @@
         , unregister/1
         , whereis/1
         , setGroupLeader/2
-        , exit/1
-        , exitProc/2
+        , exitWith/1
+        , exitProcWith/2
         , killProc/1
         , resume/1
         , suspend/1
@@ -36,6 +37,9 @@
         ]).
 
 -import('Maybe', [maybe/1]).
+
+send(Pid, Msg) ->
+  ?IO(ok(erlang:send(Pid, Msg))).
 
 link(Pid) ->
   ?IO(ok(erlang:link(Pid))).
@@ -64,11 +68,11 @@ whereis(Name) ->
 setGroupLeader(LeaderPid, Pid) ->
   ?IO(ok(erlang:group_leader(LeaderPid, Pid))).
 
-exit(Reason) ->
-  ?IO(erlang:exit(translate(Reason))).
+exitWith(Reason) ->
+  ?IO(erlang:exit(Reason)).
 
-exitProc(Pid, Reason) ->
-  ?IO(ok(erlang:exit(Pid, translate(Reason)))).
+exitProcWith(Pid, Reason) ->
+  ?IO(ok(erlang:exit(Pid, Reason))).
 
 killProc(Pid) ->
   ?IO(ok(erlang:exit(Pid, kill))).
@@ -81,9 +85,5 @@ suspend(Pid) ->
 
 yield() -> ?IO(ok(erlang:yield())).
 
-translate({'ExitNormal'}) -> normal;
-translate({'ExitShutdown'}) -> shutdown;
-translate({'ExitReason', Reason}) -> Reason.
-
-ok(true) -> ok.
-
+-compile({inline, [ok/1]}).
+ok(_) -> ok.
