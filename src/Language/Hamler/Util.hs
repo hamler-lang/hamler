@@ -163,8 +163,8 @@ atomTrue = ann $ Atom "true"
 atomFalse :: Atom Text
 atomFalse = ann $ Atom "false"
 
-otherCluse :: Clause Text
-otherCluse = (Clause [ann $ PVar (ann $ Var "Other")] (ann $ Expr $ ann $ ELit $ ann $ LAtom atomTrue)
+otherClause :: Clause Text
+otherClause = (Clause [ann $ PVar (ann $ Var "Other")] (ann $ Expr $ ann $ ELit $ ann $ LAtom atomTrue)
                (ann $ Expr $ ann $ EDo (ann $ Expr $ recvNext)
                 (ann $ Expr $ annText "[\'dialyzer_ignore\']" $ EApp (ann $ Expr $ ann $ EFunN recv0) [])) "")
 
@@ -185,7 +185,7 @@ clauseTrue xs
                                 itp = any id $ fmap (\(Clause pts _ _ _) -> all id $ fmap isTpat pts) clau
                              in case itp of
                                   True -> clau
-                                  False -> clau <> [otherCluse]
+                                  False -> clau <> [otherClause]
                            ))
 
 clauseFalse :: Expr Text -> Expr Text ->  Clause Text
