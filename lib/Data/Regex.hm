@@ -91,4 +91,8 @@ foreign import run
   -> [RunOption]
   -> RunResult
 
-
+foreign import split
+  :: String
+  -> Pattern
+  -> [SplitOption]
+  -> [String]

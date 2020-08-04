@@ -3,7 +3,8 @@
 -export([compile/2
         , inspect/1
         , replace/4
-        , run/4
+        , run/3
+        , split/3
         ]).
 
 match_newline(X) -> case X of
@@ -119,10 +120,23 @@ trans_captured([{error, X, Y} | Xs]) ->
 trans_captured([{incomplete, X, Y} | Xs]) ->
   [{'DataIncomplete', {X, Y}} | trans_captured(Xs)].
 
-run(Sub, RE, Rep, Opt) -> 
-  case re:run(Sub, RE, Rep, trans_run(Opt)) of
+run(Sub, RE, Opt) -> case re:run(Sub, RE, trans_run(Opt)) of
     {match, X} -> {'Match', {trans_captured(X)}};
     match -> {'Match', {[]}};
     nomatch -> {'NoMatch'};
     {error, X} -> match_run_err(X)
 end.
+
+trans_split([]) -> [];
+trans_split([{'SplitCompileOption', X} | Xs]) ->
+  [match_compile(X) | trans_split(Xs)];
+trans_split([{'SplitRuntimeOption', X} | Xs]) ->
+  [match_runtime(X) | trans_split(Xs)];
+trans_split([X | Xs]) -> [ case X of
+  {'Parts', {Y}} -> {parts, Y};
+  {'Group'} -> group;
+  {'Trim'} -> trim
+end | trans_split(Xs)].
+
+split(Sub, RE, Opt) -> 
+  re:split(Sub, RE, trans_split([{return, list} | Opt])).
