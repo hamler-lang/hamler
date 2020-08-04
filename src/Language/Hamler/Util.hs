@@ -148,6 +148,9 @@ removeMessage = ann $ EPrimOp (ann $ Atom "remove_message") []
 recvWaitTimeout :: Expr Text -> Exprs Text
 recvWaitTimeout e = ann $ Expr $ ann $ EPrimOp (ann $ Atom "recv_wait_timeout") [ann $ Expr e]
 
+recvNext :: Expr Text
+recvNext = ann $ EPrimOp (ann $ Atom "recv_next") []
+
 timeout :: Expr Text
 timeout = ann $ EPrimOp (ann $ Atom "timeout") []
 
@@ -160,6 +163,15 @@ atomTrue = ann $ Atom "true"
 atomFalse :: Atom Text
 atomFalse = ann $ Atom "false"
 
+otherClause :: Clause Text
+otherClause = (Clause [ann $ PVar (ann $ Var "Other")] (ann $ Expr $ ann $ ELit $ ann $ LAtom atomTrue)
+               (ann $ Expr $ ann $ EDo (ann $ Expr $ recvNext)
+                (ann $ Expr $ annText "[\'dialyzer_ignore\']" $ EApp (ann $ Expr $ ann $ EFunN recv0) [])) "")
+
+isTpat :: Pat Text -> Bool
+isTpat (PVar _ _) = True
+isTpat _ = False
+
 insertPrimopRemoveMess :: Clause Text -> Clause Text
 insertPrimopRemoveMess (Clause pts es0 es1 a)= (Clause pts es0 es1' a)
   where es1' = ann $ Expr $ ann $ EDo (ann $ Expr $ removeMessage) es1
@@ -169,7 +181,12 @@ clauseTrue xs
   = ann $ Clause [ann $ PLiteral $ ann $ LAtom atomTrue]
                           (ann $ Expr $ ann $ ELit $ ann $ LAtom atomTrue)
                           (ann $ Expr $ ann $ ECase (ann $ Expr $ ann $ EVar $ varfun 0)
-                           (fmap insertPrimopRemoveMess xs))
+                           (let clau = fmap insertPrimopRemoveMess xs -- <> [otherCluse]
+                                itp = any id $ fmap (\(Clause pts _ _ _) -> all id $ fmap isTpat pts) clau
+                             in case itp of
+                                  True -> clau
+                                  False -> clau <> [otherClause]
+                           ))
 
 clauseFalse :: Expr Text -> Expr Text ->  Clause Text
 clauseFalse resExpr actExpr
