@@ -200,10 +200,14 @@ clauseFalse resExpr actExpr
   where ctrue = ann $ Clause [ann $ PLiteral $ ann $ LAtom atomTrue]
                 (ann $ Expr $ ann $ ELit $ ann $ LAtom atomTrue)
                 (ann $ Expr $ ann $ EDo (ann $ Expr $ timeout)
-                  (ann $ Expr $ actExpr) )
+                  (ann $ Expr $ isAtom actExpr))
         cfalse = annText "[\'dialyzer_ignore\']" $ Clause [ann $ PLiteral $ ann $ LAtom atomFalse]
                 (ann $ Expr $ ann $ ELit $ ann $ LAtom atomTrue)
                 (ann $ Expr $ annText "[\'dialyzer_ignore\']" $ EApp (ann $ Expr $ ann $ EFunN recv0) [])
+
+isAtom :: Expr Text -> Expr Text
+isAtom e@(ELit (LAtom _ _) _) = e
+isAtom other = ann $ EApp (ann $ Expr $ other) []
 
 recv0 :: FunName Text
 recv0 = ann $ FunName (ann $ Atom "recv$^0") 0
