@@ -36,7 +36,7 @@ import Control.Monad (class Applicative, pure, class Monad, return, bind, IO, di
 import System.IO (printf, println)
 import System.Random(randomRIO)
 import Data.Binary (listToBin)
-------------------------------------------------
+
 foreign import data Rand :: Type
 
 foreign import split :: Rand -> (Rand, Rand)
@@ -44,7 +44,7 @@ foreign import split :: Rand -> (Rand, Rand)
 foreign import next :: Rand -> Rand
 
 foreign import mkRand :: Integer -> Rand
-------------------------------------------------
+
 class Random a where
   randomR :: (a, a) -> Rand -> a
 
@@ -62,7 +62,7 @@ instance Random Char where
   randomR = randomRChar
 
 foreign import randomRChar :: (Char, Char) -> Rand -> Char
-------------------------------------------------
+
 data Gen a = Gen (Integer -> Rand -> a)
 
 choose :: forall a. Random a => (a, a) -> Gen a
@@ -85,7 +85,7 @@ sized :: forall a. (Int -> Gen a) -> Gen a
 sized fgen = Gen ( \n r ->
                let Gen m = fgen n in m n r
                  )
-------------------------------------------------
+
 instance Functor Gen where
   map f (Gen m) = Gen $ \n r -> f (m n r)
 
@@ -103,7 +103,8 @@ instance Monad Gen where
     let (r1, r2) = split r0
         Gen m2 = k (m1 n r1)
     in m2 n r2
-------------------------------------------------
+
+-----------------------------------------------------------------------------
 
 index :: forall a. Integer -> [a] -> a
 index 0 [x | _] = x
@@ -128,7 +129,8 @@ pick _ _ = error "error input"
 frequency :: forall a. [(Integer, Gen a)] -> Gen a
 frequency xs = choose (1, foldl (+) 0 (map fst xs)) >>= \x -> pick x xs
 
-------------------------------------------------
+-----------------------------------------------------------------------------
+
 class ArbitraryM a where
   arbitraryM :: Integer -> Gen a
 
@@ -165,7 +167,7 @@ instance Arbitrary a => Arbitrary [a] where
 instance (Coarbitrary a, Arbitrary b) => Arbitrary (a -> b) where
   arbitrary = promote (\x -> x `coarbitrary` arbitrary)
 
-------------------------------------------------
+-----------------------------------------------------------------------------
 
 class Coarbitrary a  where
   coarbitrary :: forall b. a -> Gen b -> Gen b
@@ -179,7 +181,7 @@ instance Coarbitrary Integer where
     | n < 0 = variant 2 <<< coarbitrary (- n)
     | otherwise = variant 1 <<< coarbitrary (n / 2)
 
-------------------------------------------------
+-----------------------------------------------------------------------------
 
 data Result = Result
     {ok :: Maybe Boolean, stamp :: [String], arguments :: [String]}
@@ -242,7 +244,6 @@ data TestGroup a = TxG String [TestGroup a]
 tgToList :: TestGroup TestResult -> [TestResult]
 tgToList (Exe xs) = xs
 tgToList (TxG _ xs) = concat $ map tgToList xs
-
 
 runTestGroup :: forall a. SpaceCounter -> TestGroup (Integer -> IO a) -> IO (TestGroup a)
 runTestGroup n (Exe fs) =  Exe <$> (seqio $ map (\x -> x n) fs)
