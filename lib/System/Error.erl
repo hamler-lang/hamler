@@ -20,6 +20,8 @@
 
 -export([ throwException/1
         , catchException/2
+        , bracket/3
+        , finally/2
         ]).
 
 showErrorImpl(Error) ->
@@ -30,9 +32,9 @@ throwException(Ex) -> ?IO(throw(Ex)).
 catchException(X, Y) -> try X() of
                           _Z -> ?IO(_Z)
                         catch
-                          throw:Throw -> Y(Throw);
-                          error:Error -> Y(Error);
-                          exit:Exit   -> Y(Exit)
+                          throw:_Throw -> Y(_Throw);
+                          error:_Error -> Y(_Error);
+                          exit:_Exit   -> Y(_Exit)
                         end.
 
 bracket(X, Y, Z) ->
@@ -48,6 +50,7 @@ bracket(X, Y, Z) ->
   end.
 
 finally(X, Y) ->
-  try ?IO(X())
+  try X() of
+    Z -> ?IO(Z)
   after Y()
   end.

@@ -19,10 +19,10 @@ import Data.Function(identity)
 import Data.Maybe (Maybe(..))
 import Data.Functor (map)
 import Data.Either (Either(..))
-import Data.Show (class Show)
-
+import Data.Show (class Show, show)
+import Data.Ring ((/))
 --
--- foreign import data Error :: Type
+foreign import data Error :: Type
 --
 -- class Show e => Exception e where
 --     toException :: e -> SomeException
@@ -37,12 +37,12 @@ import Data.Show (class Show)
 -- instance Show Error where
 --   show = showErrorImpl
 --
--- foreign import showErrorImpl :: Error -> String
+foreign import showErrorImpl :: forall e. e -> String
 --
 -- erlang:raise(Class, Reason, Stacktrace) -> no_return()
 
 throw :: forall a e. e -> IO a
-throw s = throwException (displayException s)
+throw s = throwException (showErrorImpl s)
 
 try :: forall a e. IO a -> IO (Either e a)
 try action = catch (action >>= \x -> pure (Right x)) (\e -> pure (Left e))
@@ -50,13 +50,19 @@ try action = catch (action >>= \x -> pure (Right x)) (\e -> pure (Left e))
 catch :: forall a e. IO a -> (e -> IO a) -> IO a
 catch io handler = catchException io handler
 
+foo :: IO Integer
+foo =  pure (1/0)
+
+gee :: IO Integer
+gee = catchException foo (\_ -> pure 1)
+
 onException :: forall a b. IO a -> IO b -> IO a
 onException io what = io `catch` \e -> do _ <- what
                                           throw e
 
-foreign import bracket :: IO a -> (a -> IO b) -> (a -> IO c) -> IO c
+foreign import bracket :: forall a b c. IO a -> (a -> IO b) -> (a -> IO c) -> IO c
 
-foreign import finally :: IO a -> IO b -> IO a
+foreign import finally :: forall a b. IO a -> IO b -> IO a
 {-
 foreign import error :: String -> Error
 
@@ -67,7 +73,7 @@ foreign import name :: Error -> String
 
 foreign import throwException :: forall a. String -> IO a
 
-foreign import catchException :: forall a. (Error -> IO a) -> IO a -> IO a
+foreign import catchException :: forall a e. IO a -> (e -> IO a) -> IO a
 
 {-
 throw(Any) -> no_return()
