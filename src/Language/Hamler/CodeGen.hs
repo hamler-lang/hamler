@@ -137,6 +137,9 @@ bindToErl (NonRec _ ident e) = do
   let name = showQualified runIdent $ mkQualified ident (gs ^. gsmoduleName)
       wname = runIdent ident
   case e' of
+    EFun v@(Fun [] (Expr (ELetRec _ _ "[\'letrec_goto\']") _) _) _ -> do
+      modify (\x -> x & globalVar %~ M.insert name 0)
+      return $ [FunDef (ann $ FunName (ann $ Atom wname) 0) (ann $ Fun [] (ann $ Expr $ ann $ EFun v))]
     EFun v@(Fun vrs _ _) _ -> do
       modify (\x -> x & globalVar %~ M.insert name (length vrs))
       return $ [FunDef (ann $ FunName (ann $ Atom wname) (toInteger $ length vrs)) v]
@@ -265,12 +268,10 @@ exprToErl (C.Case _ es alts) = do
 exprToErl (C.Receive _ (Just (e1, e2)) alts) = do
   alts' <- mapM dealRecAlt alts
   e2' <- exprToErl e2
-  return $ ann $ EFun $ ann $ Fun [] $ ann $ Expr $
-    ann $ EFun $ ann $ Fun [] $ ann $ Expr $ recvExpr alts' (ann $ ELit $ ann $ LInt e1) e2'
+  return $ ann $ EFun $ ann $ Fun [] $ ann $ Expr $ recvExpr alts' (ann $ ELit $ ann $ LInt e1) e2'
 exprToErl (C.Receive _ Nothing alts) = do
   alts' <- mapM dealRecAlt alts
-  return $ ann $ EFun $ ann $ Fun [] $ ann $ Expr $
-    ann $ EFun $ ann $ Fun [] $ ann $ Expr $ recvExpr alts' (ann $ ELit $ ann $ LAtom $ ann $ Atom "infinity")
+  return $ ann $ EFun $ ann $ Fun [] $ ann $ Expr $ recvExpr alts' (ann $ ELit $ ann $ LAtom $ ann $ Atom "infinity")
                                                             (ann $ ELit $ ann $ LAtom $ ann $ Atom "true")
 exprToErl (C.List _ es e) = do
   es' <- mapM exprToErl es
