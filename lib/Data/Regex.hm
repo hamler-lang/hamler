@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Data.Result
+-- Module      :  Data.Regex
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
@@ -10,7 +10,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Result datatype.
+-- The Regex datatype.
 --
 -----------------------------------------------------------------------------
 
@@ -32,7 +32,7 @@ data CompileOption = Unicode | Anchored | Caseless
   | Newline NewlineSpec | BsrAnyCrLf | BsrUnicode
   | NoStartOptimize | UCP | NeverUTF
 
--- iodata()?
+-- TODO: iodata()?
 foreign import compile 
   :: String
   -> [CompileOption]
@@ -56,25 +56,32 @@ data ValueSpec = All | AllButFirst | AllNames | First
 
 data CaptureType = CaptureIndex | CaptureList | CaptureBinary
 
+-- TODO: CaptureType == CaptureData (use typeclass)
 data RunOption = RunCompileOption CompileOption
   | RunRuntimeOption RuntimeOption
   | ReportErrors | Capture ValueSpec CaptureType
 
 data SplitOption = SplitCompileOption CompileOption
-  | SplitRuntimeOption RuntimeOption | Parts Integer 
+  | SplitRuntimeOption RuntimeOption | Parts Integer
   | Group | Trim
 
+-- TODO: Allow String instead of Pattern(use typeclass)
 foreign import replace 
   :: String 
   -> Pattern 
   -> String 
   -> [ReplaceOption] 
   -> String
-{-
-data ErrType = MatchLimitErr | MatchLimitRecursionErr
-  | CompileErr (Sting, Integer)
 
-data CaptrueData = 
+data ErrType = MatchLimitErr | MatchLimitRecursionErr
+  | CompileErr (String, Integer)
+
+data CaptureData = DataIndex (Integer, Integer) 
+  | DataString String
+  | DataBinary Binary
+  | DataErr String Binary
+  | DataIncomplete String Binary
+  | Datas [CaptureData]
 
 data RunResult = Match [CaptureData] | NoMatch | Error ErrType
 
@@ -83,4 +90,5 @@ foreign import run
   -> Pattern
   -> [RunOption]
   -> RunResult
--}
+
+
