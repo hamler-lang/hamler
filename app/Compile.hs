@@ -216,11 +216,11 @@ buildTest = pure $ do
   SS.shelly $ SS.command_ "erlc" ["-o" ,T.pack tpath] (fmap (\fp -> T.pack $ tpath <> "/" <> fp) cfs)
   forM_ cfs $ \fp -> do
     SS.shelly $ SS.run_ "rm" [T.pack $ tpath <> "/" <> fp]
-  dir <- getCurrentDirectory
-  let tpath = dir <> "/.test"
+
+  let testpath = dir <> "/.test"
   _ <- SS.shelly $ do
-    SS.setenv "ERL_LIBS" (T.pack tpath)
-    SS.run  "erl" ["-pa",T.pack (tpath), "-noshell","-eval" ,"('Test':main())()","-s","init","stop" ]
+    SS.setenv "ERL_LIBS" (T.pack testpath)
+    SS.run  "erl" ["-pa",T.pack (testpath), "-noshell","-eval" ,"('Test':main())()","-s","init","stop" ]
   return ()
   exitSuccess
 
