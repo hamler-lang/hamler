@@ -1,0 +1,20 @@
+module Test.Data.Bool where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+import Data.Bool
+
+propAnd :: Boolean -> Boolean -> Boolean
+propAnd b1 b2 = and b1 b2 == and b2 b1
+
+propOr :: Boolean -> Boolean -> Boolean
+propOr b1 b2 = or b1 b2 == or b2 b1
+
+propNot :: Boolean -> Boolean
+propNot b1 = b1 == (not $ not b1)
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ quickCheck "and" propAnd
+           , quickCheck "or"  propOr
+           , quickCheck "not"  propNot
+           ]
