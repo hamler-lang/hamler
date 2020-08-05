@@ -16,12 +16,13 @@
 
 -include("../Foreign.hrl").
 
--import(erlang, [system_info/1]).
-
 -export([ memory/0
         , info/1
         , stats/1
         ]).
+
+-import(erlang, [system_info/1]).
+-import('Maybe', [maybe/1]).
 
 memory() ->
   ?IO(maps:from_list(erlang:memory())).
@@ -106,9 +107,6 @@ fixMaxHeap(M) when is_map(M) -> M.
 
 msaccThread(#{type := Type, id := Id, counters := Counters}) ->
   #{thread => {Type, Id}, counters => Counters}.
-
-maybe(undefined) -> ?Nothing;
-maybe(X) -> ?Just(X).
 
 timeout(infinity) -> {'Infinity'};
 timeout(I) -> {'Timeout', I}.

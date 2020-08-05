@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The GenServer Behaviour.
+-- The GenServer Behaviour module.
 --
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenServer
@@ -62,7 +62,7 @@ module Control.Behaviour.GenServer
 import Control.Behaviour.GenServer.Types
 import Control.Distributed.Node (Node)
 import Control.Monad (return)
-import Control.Process (From, Process, ExitReason(..))
+import Control.Process (Process, ExitReason(..))
 import Data.Function (($), (<<<))
 import Data.Maybe (Maybe(..))
 import Data.Pid (Pid)
@@ -205,4 +205,3 @@ noReplyWith st action = return $ NoReply st (Just action)
 
 shutdown :: forall req rep st. Atom -> st -> Process (Reply req rep st)
 shutdown r = return <<< Shutdown (ExitReason r)
-

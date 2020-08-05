@@ -45,4 +45,3 @@ put = ffiIO3 :counters :put
 
 info :: CountersRef -> IO CountersInfo
 info = ffiIO1 :counters :info
-

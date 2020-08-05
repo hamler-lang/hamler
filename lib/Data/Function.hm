@@ -22,8 +22,6 @@ module Data.Function
   , error
   ) where
 
-
-
 compose :: forall a b c. (b -> c) -> (a -> b) -> (a -> c)
 compose f g = \x -> f (g x)
 

@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- Distributed named process groups.
+-- Distributed Named Process Groups module.
 --
 -----------------------------------------------------------------------------
 module Control.Distributed.PG where

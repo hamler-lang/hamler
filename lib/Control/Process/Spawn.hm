@@ -39,16 +39,19 @@ import Foreign (ffiIO1, ffiIO2)
 
 import Control.Distributed.Node (Node)
 import Control.Process.Types (Process)
-import Control.Process.Flags (PriorityLevel , MsgQueueData)
+import Control.Process.Flags (Flag)
 
-data Option
-  = Priority PriorityLevel
-  | FullsweepAfter Integer
-  | MinHeapSize Integer
-  | MinBinVheapSize Integer
-  | MaxHeapSize Integer
-  | MessageQueueData MsgQueueData
+type Option = Flag
+{-
+= Priority PriorityLevel
+| FullsweepAfter Integer
+| MinHeapSize Integer
+| MinBinVheapSize Integer
+| MaxHeapSize Integer
+| MessageQueueData MsgQueueData
+-}
 
+-- | Create a process
 spawn :: forall a. IO a -> Process Pid
 spawn = ffiIO1 :erlang :spawn
 
@@ -61,6 +64,7 @@ foreign import spawnWith
 foreign import spawnAtWith
   :: forall a. Node -> IO a -> [Option] -> Process Pid
 
+-- | Create and link a process
 spawnLink :: forall a. IO a -> Process Pid
 spawnLink = ffiIO1 :erlang :spawn_link
 
@@ -73,6 +77,7 @@ foreign import spawnLinkWith
 foreign import spawnLinkAtWith
   :: forall a. Node -> IO a -> [Option] -> Process Pid
 
+-- | Create and monitor a process
 spawnMonitor :: forall a. IO a -> Process (Pid, Ref)
 spawnMonitor = ffiIO1 :erlang :spawn_monitor
 
@@ -90,4 +95,3 @@ spawnRequest = ffiIO1 :erlang :spawn_request
 
 spawnRequestAt :: forall a. Node -> IO a -> Process Ref
 spawnRequestAt = ffiIO2 :erlang :spawn_request
-

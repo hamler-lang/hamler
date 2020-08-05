@@ -9,7 +9,7 @@
 %% Stability   :  experimental
 %% Portability :  portable
 %%
-%% The Enum FFI Module.
+%% The Enum FFI module.
 %%
 %%---------------------------------------------------------------------------
 -module('Enum').
@@ -21,21 +21,21 @@
         ]).
 
 enumCharRange(Start, Stop) when Stop >= Start ->
-    range(Start, Stop, 1);
+  range(Start, Stop, 1);
 enumCharRange(Start, Stop) when Stop < Start ->
-    range(Start, Stop, -1).
+  range(Start, Stop, -1).
 
 enumCharRangeStep(Start, Next, Stop) ->
-    range(Start, Stop, Next-Start).
+  range(Start, Stop, Next-Start).
 
 enumIntegerRange(Start, Stop) when Stop >= Start ->
-    range(Start, Stop, 1);
+  range(Start, Stop, 1);
 enumIntegerRange(Start, Stop) when Stop < Start ->
-    range(Start, Stop, -1).
+  range(Start, Stop, -1).
 
 enumIntegerRangeStep(Start, Next, Stop) ->
-    range(Start, Stop, Next-Start).
+  range(Start, Stop, Next-Start).
 
 -compile({inline, [range/3]}).
 range(Start, Stop, Step) ->
-    lists:seq(Start, Stop, Step).
+  lists:seq(Start, Stop, Step).

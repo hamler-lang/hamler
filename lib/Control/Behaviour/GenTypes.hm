@@ -9,11 +9,12 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Genernal Types for behaviours.
+-- The Genernal Types for Behaviours.
 --
 -----------------------------------------------------------------------------
 module Control.Behaviour.GenTypes where
 
+import Data.Pid (Pid)
 import Data.Ref (Reference)
 
 -- | Name of Process.
@@ -21,3 +22,7 @@ type Name = Atom
 
 -- | Request Id.
 type RequestId = Reference
+
+type Tag = Reference
+
+type From = (Pid, Tag)

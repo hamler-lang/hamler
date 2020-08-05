@@ -19,8 +19,6 @@ import Control.Monad (IO)
 -- An Alias of IO.
 type Process = IO
 
-foreign import data From :: Type
-
 data ExitReason
   = ExitNormal
   | ExitShutdown

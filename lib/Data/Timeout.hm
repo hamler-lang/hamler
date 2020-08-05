@@ -35,4 +35,3 @@ instance Ord Timeout where
 isInfinity :: Timeout -> Boolean
 isInfinity Infinity = true
 isInfinity _        = false
-

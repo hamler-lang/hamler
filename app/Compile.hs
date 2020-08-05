@@ -1,7 +1,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Compile (command,initProject,runProject) where
+module Compile (command, initProject, runProject, buildTest) where
 
 import           Control.Monad
 import qualified Data.Aeson as A
@@ -100,7 +100,6 @@ howBuild= Opts.switch $
   <> Opts.long "libraries"
   <> Opts.help "build the libraries to ebin"
 
-
 inline :: Opts.Parser Bool
 inline= Opts.switch $
      Opts.short 'i'
@@ -160,7 +159,6 @@ cc :: Char -> Char
 cc ('/')= ' '
 cc x = x
 
-
 -- build lib
 buildlib :: Bool -> IO ()
 buildlib bl = do
@@ -192,6 +190,40 @@ buildlib bl = do
 
   exitSuccess
 
+buildTest :: Opts.Parser (IO ())
+buildTest = pure $ do
+  dir <- getCurrentDirectory
+  fps1 <- gethmFiles (dir <> "/lib")
+  fps2 <- gethmFiles (dir <> "/tests")
+  let fps = fmap (\v -> (v, False)) (fps1 <> fps2)
+      tpath = dir <> "/.test"
+  r <- doesDirectoryExist tpath
+  if r
+    then return ()
+    else createDirectory tpath
+
+  recErlc (dir <> "/lib")
+
+  compile (PSCMakeOptions { pscmInput      = fps
+                          , pscmOutputDir  = dir <>  "/.test"
+                          , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
+                          , pscmUsePrefix  = False
+                          , pscmJSONErrors = False
+                          , isInline       = False
+                          }
+          )
+  cfs <- findFile1 ".core" tpath
+  SS.shelly $ SS.command_ "erlc" ["-o" ,T.pack tpath] (fmap (\fp -> T.pack $ tpath <> "/" <> fp) cfs)
+  forM_ cfs $ \fp -> do
+    SS.shelly $ SS.run_ "rm" [T.pack $ tpath <> "/" <> fp]
+
+  let testpath = dir <> "/.test"
+  _ <- SS.shelly $ do
+    SS.setenv "ERL_LIBS" (T.pack testpath)
+    SS.run  "erl" ["-pa",T.pack (testpath), "-noshell","-eval" ,"('Test':main())()","-s","init","stop" ]
+  return ()
+  exitSuccess
+
 runProject :: Opts.Parser (IO ())
 runProject  =pure $ do
   dir <- getCurrentDirectory
@@ -203,6 +235,7 @@ runProject  =pure $ do
       else SS.setenv "ERL_LIBS" (T.pack $ dir <> ".deps/hamler")
     SS.run  "erl" ["-pa",T.pack (tpath), "-noshell","-eval" ,"('Main':main())()","-s","init","stop" ]
   return ()
+
 
 -- | isFile  ".core" "Main.core"   -> True
 isFile :: String -> String -> Bool

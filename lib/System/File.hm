@@ -51,4 +51,3 @@ foreign import write :: IODevice -> Binary -> IO ()
 foreign import close :: IODevice -> IO ()
 
 foreign import sync :: IODevice -> IO ()
-

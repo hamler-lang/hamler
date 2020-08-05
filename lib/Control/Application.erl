@@ -16,13 +16,6 @@
 
 -include("../Foreign.hrl").
 
--import(application,
-        [ ensure_all_started/1
-        , ensure_all_started/2
-        , ensure_started/1
-        , ensure_started/2
-        ]).
-
 -export([ ensureAllStarted/1
         , ensureAllRestarted/2
         , ensureStarted/1
@@ -38,6 +31,15 @@
         , unload/1
         , whichApplications/0
         ]).
+
+-import(application,
+        [ ensure_all_started/1
+        , ensure_all_started/2
+        , ensure_started/1
+        , ensure_started/2
+        ]).
+
+-import('Maybe', [maybe/1]).
 
 ensureAllStarted(Application) ->
   ?IO(return(ensure_all_started(Application))).
@@ -92,9 +94,6 @@ translate({'Temporary'}) -> temporary.
 appDescr({App, Descr, Vsn}) ->
   #{name => App, desc => Descr, vsn => Vsn}.
 
-maybe(undefined) -> ?Nothing;
-maybe({ok, App}) -> ?Just(App).
-
 return(ok) -> ok;
 return({ok, Result}) -> Result;
 return({error, {already_loaded, _}}) -> ok;
@@ -104,4 +103,3 @@ return({error, {not_started, _}}) -> error('AppNotStarted');
 return({error, {"no such file or directory", Name}}) ->
   error({'AppNotFound', Name});
 return({error, Reason}) -> error(Reason).
-

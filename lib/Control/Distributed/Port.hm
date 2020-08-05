@@ -17,7 +17,7 @@ module Control.Distributed.Port
   , PortInfo
   , PortSettings
   , settings
-  , all
+  , allPorts
   , call
   , command
   , connect
@@ -29,8 +29,8 @@ module Control.Distributed.Port
   , openDriver
   , openExe
   , openFd
-  , link
-  , unlink
+  , linkPort
+  , unlinkPort
   ) where
 
 import Control.Distributed.Node (Node)
@@ -94,8 +94,8 @@ settings =
   , busyLimitsMsgQ = (0, 0)
   }
 
-all :: IO [Port]
-all = ffiIO0 :erlang :ports
+allPorts :: IO [Port]
+allPorts = ffiIO0 :erlang :ports
 
 call :: Port -> Integer -> Binary -> IO Binary --TODO: check later
 call = ffiIO3 :erlang :port_call
@@ -123,9 +123,9 @@ foreign import openExe :: FilePath -> PortSettings -> IO Port
 
 foreign import openFd :: Integer -> Integer -> PortSettings -> IO Port
 
-foreign import link :: Port -> IO ()
+foreign import linkPort :: Port -> IO ()
 
-foreign import unlink :: Port -> IO ()
+foreign import unlinkPort :: Port -> IO ()
 
 instance Show Port where
   show = showPortImpl

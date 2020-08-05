@@ -1,0 +1,21 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Control.Process.Proxy
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Process Proxy.
+--
+-----------------------------------------------------------------------------
+module Control.Process.Proxy where
+
+import Control.Monad (IO)
+import Control.Process.Types
+import Data.Unit (Unit)
+
+foreign import wakeup :: IO () -> Process ()

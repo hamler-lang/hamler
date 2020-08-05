@@ -27,9 +27,24 @@ module Control.Application
   , takeover
   , unload
   , whichApplications
+  , module Control.Application.Config
+  , module Control.Application.Resource
   , module Control.Application.Types
   ) where
 
+import Control.Application.Config
+  ( Get
+  , getConfig
+  , getAtom
+  , getBool
+  , getInt
+  , getFloat
+  , getString
+  , getList
+  , getMap
+  , getRecord
+  )
+import Control.Application.Resource (getAppSpec)
 import Control.Application.Types
 import Control.Monad (IO)
 import Data.Maybe (Maybe)
@@ -69,4 +84,3 @@ foreign import takeover :: Application -> RestartType -> IO ()
 foreign import unload :: Application -> IO ()
 
 foreign import whichApplications :: IO [AppSpec]
-

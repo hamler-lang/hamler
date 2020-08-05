@@ -1,0 +1,26 @@
+module Test.Data.String where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Data.String as S
+import Prelude
+
+propReverse :: String -> Boolean
+propReverse s = (S.reverse $ S.reverse s) == s
+
+propHasPrefix :: String -> String -> Boolean
+propHasPrefix s1 s2 = S.startsWith (s1 <> s2) s1
+
+propHasSuff :: String -> String -> Boolean
+propHasSuff s1 s2 = S.endsWith (s1 <> s2) s2
+
+propHasPreSu :: String  -> String -> Boolean
+propHasPreSu s1 s2 = let s3 = s1 <> s2
+                     in S.startsWith s3 s1 && S.endsWith s3 s2
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ quickCheck "reverse_reverse" propReverse
+           , quickCheck "startsWith" propHasPrefix
+           , quickCheck "endsWith" propHasSuff
+           , quickCheck "startsWith_endsWith" propHasPreSu
+           ]
+

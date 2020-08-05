@@ -1,3 +1,17 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Unit
+-- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- License     :  BSD-style (see the LICENSE file)
+--
+-- Maintainer  :  Feng Lee, feng@emqx.io
+--                Yang M, yangm@emqx.io
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- The Unit datatype.
+--
+-----------------------------------------------------------------------------
 module Data.Unit where
 
 import Data.Show (class Show)
@@ -18,4 +32,3 @@ foreign import unit :: Unit
 
 instance Show Unit where
   show _ = "unit"
-

@@ -6,7 +6,6 @@
 module Minteractive
   ( handleCommand,
     module Interactive,
-    -- TODO: remove these exports
     make,
     runMake,
   )
@@ -40,11 +39,9 @@ import qualified Language.PureScript.Names as N
 import Prelude.Compat
 import Protolude (ordNub)
 import System.Directory (getCurrentDirectory)
-import System.FilePath ((</>))
 import System.FilePath.Glob (glob)
 import Prelude ()
-import qualified Shelly as SS
-import System.IO (BufferMode (..), Handle, hFlush, hClose, hGetChar, hGetLine, hPutStrLn,hPutStr, hSetBuffering)
+import System.IO (Handle, hPutStrLn)
 import Control.Concurrent
 import Version (hamlerEnv)
 
@@ -141,7 +138,7 @@ handleCommand _ _ p (ShowInfo QueryImport) = handleShowImportedModules p
 handleCommand _ _ p (ShowInfo QueryPrint) = handleShowPrint p
 handleCommand _ _ p (CompleteStr prefix) = handleComplete p prefix
 handleCommand _ _ p (SetInteractivePrint ip) = handleSetInteractivePrint p ip
-handleCommand _ _ p (Setval _ s2)  = handleSetVal s2
+handleCommand _ _ _ (Setval _ s2)  = handleSetVal s2
 handleCommand _ _ _ _ = P.internalError "handleCommand: unexpected command"
 
 -- | Reload the application state
@@ -179,7 +176,7 @@ handleExpression ::
   (Handle,Handle) ->
   P.Expr ->
   m ()
-handleExpression (hin,hout) val = do
+handleExpression (hin, _) val = do
   st <- get
   let m = createTemporaryModule True st val
   dirs <- asks moduleDirs

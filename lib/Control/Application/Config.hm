@@ -9,26 +9,27 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Application Config module. See: http://erlang.org/doc/man/config.html
+-- The Application Config module.
 -----------------------------------------------------------------------------
 module Control.Application.Config where
 
 import Control.Application.Types
 import Control.Monad (IO)
+import Data.Map (Map)
 
-import Foreign (ffiIO0, ffiIO1)
+import Foreign (ffiIO1)
 
-getAllEnv :: IO AppEnv
-getAllEnv = ffiIO0 :application :get_all_env
+type Get t = Atom -> Config -> t
 
-getAllEnvOf :: Application -> IO AppEnv
-getAllEnvOf = ffiIO1 :application :get_all_env
+-- | See: http://erlang.org/doc/man/config.html
+getConfig :: Application -> IO Config
+getConfig = ffiIO1 :application :get_all_env
 
-{-
-get_env(Par) -> undefined | {ok, Val}
-
-get_env(Application, Par) -> undefined | {ok, Val}
-
-get_env(Application, Par, Def) -> Val
--}
-
+foreign import getAtom :: Get Atom
+foreign import getBool :: Get Boolean
+foreign import getInt :: Get Integer
+foreign import getFloat :: Get Float
+foreign import getString :: Get String
+foreign import getList :: forall a. Get [a]
+foreign import getMap :: forall k v. Get (Map k v)
+foreign import getRecord :: forall r. Get r

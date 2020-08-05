@@ -14,7 +14,7 @@
 %%---------------------------------------------------------------------------
 -module('Tuple').
 
-%% Deprecated later.
+%%TODO: Deprecated later.
 
 -export([ elem/2
         , setElem/3

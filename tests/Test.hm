@@ -1,0 +1,22 @@
+module Test where
+
+import Test.QuickCheck (TestGroup(..), runTest)
+import Prelude
+import Test.Data.String as S
+import Test.Data.Map as M
+import Test.Data.Binary as B
+import Test.Data.Atom as A
+import Test.Data.Array as A1
+import Test.Data.Bool as TB
+
+main :: IO ()
+main = runTest ( TxG "Data" [
+                   TxG "Binary" [B.test]
+                 , TxG "Map"    [M.test]
+                 , TxG "String" [S.test]
+                 , TxG "Atom"   [A.test]
+                 , TxG "Array"  [A1.test]
+                 , TxG "Bool"  [TB.test]
+                 ]
+               )
+

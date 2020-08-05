@@ -44,4 +44,3 @@ setEnv(Name, Value) ->
 
 unsetEnv(Name) ->
   ?IO(os:unsetenv(Name)).
-

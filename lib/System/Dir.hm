@@ -107,45 +107,8 @@ foreign import makeSymLink :: FilePath -> FilePath -> IO ()
 deleteLink :: FilePath -> IO ()
 deleteLink = deleteFile
 
-{-
--- Existence tests
-foreign import doesPathExist :: FilePath -> IO Boolean
-foreign import doesFileExist :: FilePath -> IO Boolean
-foreign import doesDirectoryExist :: FilePath -> IO Boolean
-
--- Permissions
-type Permissions = { readable :: Boolean
-                   , writable :: Boolean
-                   , executable :: Boolean
-                   , searchable :: Boolean
-                   }
-
-emptyPermissions :: Permissions
-emptyPermissions = { readable : false
-                   , writable : false
-                   , executable : false
-                   , searchable : false
-                   }
-
-foreign import getPermissions :: FilePath -> IO Permissions
-foreign import setPermissions :: FilePath -> Permissions -> IO ()
-foreign import copyPermissions :: FilePath -> FilePath -> IO ()
--}
-
 -----------------------------------------------------------------------------
 -- | File timestamps
 -----------------------------------------------------------------------------
 
 foreign import getLastModified :: FilePath -> IO DateTime
-
-{-
--- timestamps
-foreign import getAccessTime :: FilePath -> IO UTCTime
-foreign import getModificationTime :: FilePath -> IO UTCTime
-foreign import setAccessTime :: FilePath -> UTCTime -> IO ()
-foreign import setModificationTime :: FilePath -> UTCTime -> IO ()
-
--- $PATH methods
-foreign import getSearchPath :: IO [FilePath]
--}
-

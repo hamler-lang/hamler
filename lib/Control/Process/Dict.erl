@@ -20,12 +20,20 @@
 
 -export([ erase/1
         , eraseAll/0
+        , get/1
+        , put/2
         ]).
+
+-import('Maybe', [maybe/1]).
 
 erase(Key) ->
   ?IO(maybe(erlang:erase(Key))).
 
-eraseAll() -> ?IO(erlang:erase()).
+eraseAll() ->
+  ?IO(begin erlang:erase(), ok end).
 
-maybe(undefined) -> {'Nothing'};
-maybe(Val) -> {'Just', Val}.
+get(Key) ->
+  ?IO(maybe(erlang:get(Key))).
+
+put(Key, Val) ->
+  ?IO(maybe(erlang:put(Key, Val))).

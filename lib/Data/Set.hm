@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Set Datatype.
+-- The Set datatype.
 --
 -----------------------------------------------------------------------------
 module Data.Set where
@@ -84,4 +84,3 @@ filter = ffi2 :sets :filter
 -- | Folds Function over every element in Set and returns the final value of the accumulator.
 fold :: forall a b. (a -> b -> b) -> b -> Set a -> b
 fold = ffi3 :sets :fold
-

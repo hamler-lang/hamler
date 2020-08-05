@@ -60,4 +60,3 @@ data ServerRef
     -- ^ The GenServer is locally registered at another node.
   | ServerRefGlobal Name
     -- ^ The GenServer is globally registered in global.
-

@@ -18,96 +18,68 @@
 
 -compile(no_auto_import).
 
--export([ selfPid/0
-        , send/2
-        , 'recv'/0
-        , receiveAfter/1
+-export([ send/2
+        , link/1
+        , unlink/1
+        , monitor/1
+        , demonitor/1
+        , demonitorFlush/1
         , register/2
-        , 'monitor'/1
-        , garbageCollectProcWith/2
+        , unregister/1
         , whereis/1
-        , kill/1
-        , trapExit/1
-        , processFlag/1
-        , processInfo/1
+        , setGroupLeader/2
+        , exitProc/2
+        , killProc/1
+        , resume/1
+        , suspend/1
+        , yield/0
         ]).
 
--spec(selfPid() -> pid()).
-selfPid() -> ?IO(erlang:self()).
+-import('Maybe', [maybe/1]).
 
--spec(send(pid(), term()) -> term()).
-send(Pid, Msg) -> ?IO(erlang:send(Pid, Msg)).
+send(Pid, Msg) ->
+  ?IO(ok(erlang:send(Pid, Msg))).
 
--spec('recv'() -> term()).
-'recv'() -> ?IO(receive X -> X end).
+link(Pid) ->
+  ?IO(ok(erlang:link(Pid))).
 
-%% TODO: Fixme later:(
--spec(receiveAfter(integer()) -> term()).
-receiveAfter(Timeout) ->
-  ?IO(receive X -> X after Timeout -> ok end).
+unlink(Pid) ->
+  ?IO(ok(erlang:unlink(Pid))).
 
-register(Name, Pid) ->
-  true = erlang:register(Name, Pid), ok.
-
--spec('monitor'(pid()) -> reference()).
-'monitor'(Pid) ->
+monitor(Pid) ->
   ?IO(erlang:monitor(process, Pid)).
 
-garbageCollectProcWith(Pid, Options) ->
-  ?IO(erlang:garbage_collect(Pid, parseGcOpts(Options, []))).
+demonitor(Ref) ->
+  ?IO(ok(erlang:demonitor(Ref))).
 
-parseGcOpts([{'GcMajor'}|Opts], Acc) ->
-  parseGcOpts(Opts, [{type, major}|Acc]);
-parseGcOpts([{'GcMinor'}|Opts], Acc) ->
-  parseGcOpts(Opts, [{type, minor}|Acc]);
-parseGcOpts([{'GcAsync', RequestId}|Opts], Acc) ->
-  parseGcOpts(Opts, [{async, RequestId}|Acc]);
-parseGcOpts([], Acc) -> Acc.
+demonitorFlush(Ref) ->
+  ?IO(ok(erlang:demonitor(Ref, [flush]))).
+
+register(Name, Pid) ->
+  ?IO(ok(erlang:register(Name, Pid))).
+
+unregister(Name) ->
+  ?IO(ok(erlang:unregister(Name))).
 
 whereis(Name) ->
-  ?IO(case erlang:whereis(Name) of
-        undefined -> {'Nothing'};
-        Pid -> {'Just', Pid}
-      end).
+  ?IO(maybe(erlang:whereis(Name))).
 
-kill(Pid) -> ?IO(erlang:exit(Pid, kill)).
+setGroupLeader(LeaderPid, Pid) ->
+  ?IO(ok(erlang:group_leader(LeaderPid, Pid))).
 
--spec(trapExit(boolean()) -> boolean()).
-trapExit(Flag) ->
-  ?IO(erlang:process_flag(trap_exit, Flag)).
+exitProc(Pid, Reason) ->
+  ?IO(ok(erlang:exit(Pid, Reason))).
 
-processFlag({'TrapExit', Bool}) ->
-  ?IO({'TrapExit', erlang:process_flag(trap_exit, Bool)});
-processFlag({'ErrorHandler', Module}) ->
-  ?IO({'ErrorHandler', erlang:process_flag(error_handler, Module)});
-processFlag({'MinHeapSize', Size}) ->
-  ?IO({'MinHeapSize', erlang:process_flag(min_heap_size, Size)});
-processFlag({'MinBinVheapSize', Size}) ->
-  ?IO({'MinBinVheapSize', erlang:process_flag(min_bin_vheap_size, Size)});
-processFlag({'MaxHeapSize', Size}) ->
-  ?IO({'MaxHeapSize', erlang:process_flag(max_heap_size, Size)});
-processFlag({'MsgQueueData', MQD}) ->
-  ?IO({'MsgQueueData', mqd(erlang:process_flag(message_queue_data, mqd(MQD)))});
-processFlag({'Priority', Level}) ->
-  ?IO({'Priority', level(erlang:process_flag(priority, level(Level)))});
-processFlag({'SaveCalls', N}) ->
-  ?IO({'SaveCalls', erlang:process_flag(save_calls, N)});
-processFlag({'Sensitive', Bool}) ->
-  ?IO({'Sensitive', erlang:process_flag(sensitive, Bool)}).
+killProc(Pid) ->
+  ?IO(ok(erlang:exit(Pid, kill))).
 
-processInfo(Pid) -> ?IO(erlang:process_info(Pid)).
+resume(Pid) ->
+  ?IO(ok(erlang:resume_process(Pid))).
 
-mqd({'OffHeap'}) -> off_heap;
-mqd({'OnHeap'})  -> on_heap;
-mqd(off_heap)    -> {'OffHeap'};
-mqd(on_heap)     -> {'OnHeap'}.
+suspend(Pid) ->
+  ?IO(ok(erlang:suspend_process(Pid))).
 
-level({'Low'})    -> low;
-level({'Normal'}) -> normal;
-level({'High'})   -> high;
-level({'Max'})    -> max;
-level(low)    -> {'Low'};
-level(normal) -> {'Normal'};
-level(high)   -> {'High'};
-level(max)    -> {'Max'}.
+yield() -> ?IO(ok(erlang:yield())).
 
+-compile({inline, [ok/1]}).
+ok(_) -> ok.

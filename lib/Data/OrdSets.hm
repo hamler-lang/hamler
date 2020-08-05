@@ -10,7 +10,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Ordered set datatype.
+-- The Ordered Set datatype.
 --
 -----------------------------------------------------------------------------
 module Data.OrdSets where

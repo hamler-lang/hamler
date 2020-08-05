@@ -9,7 +9,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Ordering module comes from purescript.
+-- The Ordering datatype
 --
 -----------------------------------------------------------------------------
 module Data.Ordering

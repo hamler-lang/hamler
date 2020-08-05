@@ -9,13 +9,16 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- The Map Datatype.
+-- The Map datatype.
 --
 -----------------------------------------------------------------------------
 module Data.Map where
 
 import Data.Maybe (Maybe)
+import Control.Monad(bind, return)
 import Foreign (ffi0, ffi1, ffi2, ffi3, ffi4)
+import Test.QuickCheck (arbitrary, class Arbitrary)
+import Data.Eq
 
 foreign import data Map :: Type -> Type -> Type
 
@@ -49,8 +52,8 @@ get = ffi2 :maps :get
 foreign import lookup :: forall k v. k -> Map k v -> Maybe v
 
 -- | TODO: docs later...
-map :: forall k v. ((k, v) -> v) -> Map k v -> Map k v
-map = ffi2 :maps :map
+foreign import map :: forall k v. ((k, v) -> v) -> Map k v -> Map k v
+-- map = ffi2 :maps :map
 
 -- | Test if a key is a member of a Map.
 member :: forall k v. k -> Map k v -> Boolean
@@ -88,8 +91,7 @@ size :: forall k v. Map k v -> Integer
 size = ffi1 :maps :size
 
 -- | Returns a map Map for which predicate Pred holds true in Map.
-filter :: forall k v. ((k, v) -> Boolean) -> Map k v -> Map k v
-filter = ffi2 :maps :filter
+foreign import filter :: forall k v. ((k, v) -> Boolean) -> Map k v -> Map k v
 
 -- | Merges two maps into a single map.
 merge :: forall k v. Map k v -> Map k v -> Map k v
@@ -122,3 +124,20 @@ with = ffi2 :maps :with
 -- | TODO: docs later...
 without :: forall k v. [k] -> Map k v -> Map k v
 without = ffi2 :maps :without
+
+
+tzip :: forall a b. [a] -> [b] -> [(a,b)]
+tzip x [] = []
+tzip [] y = []
+tzip [x|xs] [y|ys] = [ (x,y) | tzip xs ys ]
+
+instance (Arbitrary k, Arbitrary v) => Arbitrary (Map k v) where
+  arbitrary = do
+       xs1 <- arbitrary
+       xs2 <- arbitrary
+       return (fromList (tzip xs1 xs2))
+
+instance Eq (Map a b) where
+  eq = eqMapImpl
+
+foreign import eqMapImpl :: forall a b. Map a b -> Map a b -> Boolean

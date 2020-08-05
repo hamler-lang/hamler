@@ -25,7 +25,6 @@ import qualified Language.PureScript as P
 import qualified Language.PureScript.CST as CST
 import Minteractive
 import qualified Options.Applicative as Opts
-import Prelude.Compat
 import System.Console.Haskeline
 import System.Directory (doesDirectoryExist, getTemporaryDirectory, createDirectory, getCurrentDirectory, listDirectory)
 import System.Exit
@@ -34,7 +33,6 @@ import System.IO (BufferMode (..), Handle, hGetLine, hSetBuffering)
 import System.Process
 import qualified Shelly as SS
 import qualified Data.Text as T
-import qualified Prelude as P
 import qualified Control.Exception as CE
 import Version (hamlerEnv)
 import System.FilePath.Posix ((</>))
@@ -91,10 +89,10 @@ getCommand s = handleInterrupt (return (Right [])) $ do
   case line of
     Nothing -> return (Right [QuitPSCi]) -- Ctrl-D when input is empty
     Just "" -> return (Right [])
-    Just s -> return (parseCommand s)
+    Just sv -> return (parseCommand sv)
 
-addSpace :: String -> String 
-addSpace w = case words w of 
+addSpace :: String -> String
+addSpace w = case words w of
               [r] -> r++" "
               _ -> w
 
@@ -191,6 +189,7 @@ nullReplConfig =
       coreFilePath = "ebin/$REPL.core"
     }
 
+dictlist :: [FilePath]
 dictlist =["ebin","src","test",".deps"]
 
 sourceDirectory :: Opts.Parser FilePath
@@ -272,7 +271,7 @@ startReplsrv ReplConfig {..} fp = do
   hSetBuffering hin NoBuffering
   hSetBuffering hout NoBuffering
   hSetBuffering err NoBuffering
-  forkIO $ dout hout
+  _ <- forkIO $ dout hout
   loop hin hout (PSCiOptions fs nodeBackend)
   where
     loop :: Handle -> Handle -> PSCiOptions -> IO ()
@@ -286,7 +285,7 @@ startReplsrv ReplConfig {..} fp = do
         (externs, _) <- ExceptT . runMake . make fp $ fmap (\(a, b, c) -> (a, CST.pureResult b, c)) modules
         return (modules, externs)
       case psciBackend of
-        Backend setup eval reload (shutdown :: state -> IO ()) ->
+        Backend setup _ reload (shutdown :: state -> IO ()) ->
           case e of
             Left errs -> do
               pwd <- getCurrentDirectory

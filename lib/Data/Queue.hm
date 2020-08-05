@@ -103,4 +103,3 @@ tail = ffi1 :queue :tail
 
 toList :: forall e. Queue e -> List e
 toList = ffi1 :queue :to_list
-

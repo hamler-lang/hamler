@@ -19,7 +19,7 @@ module Control.Behaviour.GenStatem
   , HandleEvent
   , handleEvent
   , handleWith
-    -- * start and stop
+    -- * start/stop
   , start
   , startWith
   , startLink
@@ -59,7 +59,7 @@ module Control.Behaviour.GenStatem
   ) where
 
 import Control.Monad (return)
-import Control.Process (From, Process, ExitReason(..))
+import Control.Process (Process, ExitReason(..))
 import Data.Function (($), (<<<))
 import Data.Map as M
 import Data.Pid (Pid)
@@ -84,28 +84,22 @@ class GenStatem e s d | e -> s, s -> d, d -> e where
   handleEvent :: HandleEvent e s d
 
 foreign import start
-  :: forall e s d. GenStatem e s d
-  => (Init e s d) -> Process Pid
+  :: forall e s d. GenStatem e s d => (Init e s d) -> Process Pid
 
 foreign import startWith
-  :: forall e s d. GenStatem e s d
-  => Name -> (Init e s d) -> Process Pid
+  :: forall e s d. GenStatem e s d => Name -> (Init e s d) -> Process Pid
 
 foreign import startLink
-  :: forall e s d. GenStatem e s d
-  => (Init e s d) -> Process Pid
+  :: forall e s d. GenStatem e s d => (Init e s d) -> Process Pid
 
 foreign import startLinkWith
-  :: forall e s d. GenStatem e s d
-  => Name -> (Init e s d) -> Process Pid
+  :: forall e s d. GenStatem e s d => Name -> (Init e s d) -> Process Pid
 
 foreign import startMonitor
-  :: forall e s d. GenStatem e s d
-  => (Init e s d) -> Process (Pid, Reference)
+  :: forall e s d. GenStatem e s d => (Init e s d) -> Process (Pid, Reference)
 
 foreign import startMonitorWith
-  :: forall e s d. GenStatem e s d
-  => Name -> (Init e s d) -> Process (Pid, Reference)
+  :: forall e s d. GenStatem e s d => Name -> (Init e s d) -> Process (Pid, Reference)
 
 -- Stop the Statem Process.
 stop :: Name -> Process ()
@@ -202,4 +196,3 @@ repeatWith d = return <<< Repeat d
 
 shutdown :: forall e s d. Atom -> d -> Process (Transition e s d)
 shutdown r = return <<< Shutdown (ExitReason r)
-

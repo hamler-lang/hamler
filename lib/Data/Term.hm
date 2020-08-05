@@ -19,4 +19,3 @@ foreign import data Term :: Type
 
 class ToTerm a where
   toTerm :: a -> Term
-
