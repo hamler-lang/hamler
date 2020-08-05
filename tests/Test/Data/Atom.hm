@@ -1,0 +1,17 @@
+module Test.Data.Atom where
+
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+import Data.Atom as A
+
+propAtomSA :: Atom -> Boolean
+propAtomSA s = A.existingAtom (A.toString s) == s
+
+propAtomSA1 :: String -> Boolean
+propAtomSA1 s = A.toString (A.atom s) == s
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ quickCheck "toString_existingAtom "  propAtomSA
+           , quickCheck "atom_toString "  propAtomSA1
+           ]
