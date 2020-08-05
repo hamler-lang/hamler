@@ -18,8 +18,11 @@
 
 -export([ print/1
         , println/1
+        , println_/1
         ]).
 
 print(S) -> ?IO(io:format(S)).
 
 println(S) -> ?IO(io:format(S ++ "~n")).
+
+println_(S) -> ?IO(io:format(S ++ "~n")).
