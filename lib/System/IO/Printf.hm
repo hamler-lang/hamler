@@ -40,6 +40,7 @@ import Data.Unit (Unit)
 -- Simple IO operations
 foreign import print :: String -> IO ()
 foreign import println :: String -> IO ()
+foreign import println_ :: forall a. String -> IO a
 
 data Dir = L | R
 
@@ -76,8 +77,8 @@ parse ss = let  vlast = last ss
 class Printf t where
   printf :: String -> t
 
-instance Printf (IO ()) where
-  printf s = println s
+instance Printf (IO a) where
+  printf s = println_ s
 
 instance (PrintArg a, Printf t) => Printf (a -> t) where
    printf s = \a -> printf (format s a)
