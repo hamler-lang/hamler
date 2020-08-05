@@ -571,7 +571,7 @@ literalBinderToPat (TupleLiteral xs) = do
 literalBinderToPat (ObjectLiteral xs) = do
   xs' <- forM xs $ \(pps, e) -> do
     e' <- binderToPat e
-    return . ann $ Insert (ann . PLiteral . ann . LAtom . ann . Atom . T.pack $ decodePPS pps) e'
+    return . ann $ Update (ann . PLiteral . ann . LAtom . ann . Atom . T.pack $ decodePPS pps) e'
   return $ ann $ PMap $ E.Map xs'
 literalBinderToPat x = error $ show x
 
