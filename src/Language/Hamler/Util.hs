@@ -155,7 +155,7 @@ timeout :: Expr Text
 timeout = ann $ EPrimOp (ann $ Atom "timeout") []
 
 varfun :: Integer -> Var Text
-varfun i = ann $ Var (pack $ ("_" ++  show i))
+varfun i = ann $ Var (pack $ ("Receive" ++  show i))
 
 atomTrue :: Atom Text
 atomTrue = ann $ Atom "true"
