@@ -24,8 +24,14 @@ module Data.Maybe
 import Control.Monad (class Applicative, class Monad, pure)
 import Data.Functor (class Functor, map)
 import Data.Function (const, error, identity)
+import Data.Eq
 
 data Maybe a = Nothing | Just a
+
+instance Eq a => Eq (Maybe a) where
+  eq Nothing Nothing = true
+  eq (Just a) (Just b) = a == b
+  eq _ _ = false
 
 instance Functor Maybe where
   map fn (Just x) = Just (fn x)
