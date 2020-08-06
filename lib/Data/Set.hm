@@ -15,8 +15,13 @@
 module Data.Set where
 
 import Foreign (ffi0, ffi1, ffi2, ffi3)
+import Test.QuickCheck (arbitrary, class Arbitrary)
+import Control.Monad((<$>))
 
 foreign import data Set :: Type -> Type
+
+instance Arbitrary v => Arbitrary (Set v) where
+  arbitrary = fromList <$> arbitrary
 
 -- | Returns a new empty set.
 empty :: forall a. Set a

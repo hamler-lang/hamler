@@ -22,6 +22,14 @@ import Data.Eq
 
 foreign import data Map :: Type -> Type -> Type
 
+instance (Arbitrary k, Arbitrary v) => Arbitrary (Map k v) where
+  arbitrary = fromList <$> arbitrary
+
+instance Eq (Map a b) where
+  eq = eqMapImpl
+
+foreign import eqMapImpl :: forall a b. Map a b -> Map a b -> Boolean
+
 -- | Returns a new empty map.
 empty :: forall k v. Map k v
 empty = ffi0 :maps :new
@@ -130,11 +138,3 @@ tzip :: forall a b. [a] -> [b] -> [(a,b)]
 tzip x [] = []
 tzip [] y = []
 tzip [x|xs] [y|ys] = [ (x,y) | tzip xs ys ]
-
-instance (Arbitrary k, Arbitrary v) => Arbitrary (Map k v) where
-  arbitrary = fromList <$> arbitrary
-
-instance Eq (Map a b) where
-  eq = eqMapImpl
-
-foreign import eqMapImpl :: forall a b. Map a b -> Map a b -> Boolean
