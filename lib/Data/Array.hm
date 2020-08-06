@@ -30,6 +30,8 @@ import Control.Monad (liftA1)
 
 import Foreign (ffi1, ffi2, ffi3)
 
+import Test.QuickCheck (arbitrary, class Arbitrary)
+
 foreign import data Array :: Type -> Type
 
 instance Eq t => Eq (Array t) where
@@ -53,6 +55,9 @@ instance Foldable Array where
 instance Traversable Array where
   traverse f ta = sequence (f <$> ta)
   sequence x = liftA1 fromList (sequence (toList x))
+
+instance Arbitrary v => Arbitrary (Array v) where
+  arbitrary = fromList <$> arbitrary
 
 {- TODO: functions
 is_array/1             Why a strong type system language need this?

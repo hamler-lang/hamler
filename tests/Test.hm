@@ -4,7 +4,6 @@ import Test.QuickCheck (TestGroup(..), runTest)
 import Prelude
 import Test.Data.String as S
 import Test.Data.Map as M
-import Test.Data.Binary as B
 import Test.Data.Atom as A
 import Test.Data.Array as A1
 import Test.Data.Bool as TB
