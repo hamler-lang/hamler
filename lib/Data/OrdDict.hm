@@ -17,8 +17,13 @@ module Data.OrdDict where
 
 import Data.Maybe (Maybe)
 import Foreign (ffi0, ffi1, ffi2, ffi3, ffi4)
+import Test.QuickCheck (arbitrary, class Arbitrary)
+import Control.Monad((<$>))
 
 foreign import data OrdDict :: Type -> Type -> Type
+
+instance (Arbitrary k, Arbitrary v) => Arbitrary (OrdDict k v) where
+  arbitrary = fromList <$> arbitrary
 
 new :: forall a b. OrdDict a b
 new = ffi0 :orddict :new

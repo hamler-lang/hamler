@@ -16,8 +16,13 @@ module Data.Queue where
 
 import Data.Maybe (Maybe)
 import Foreign (ffi0, ffi1, ffi2)
+import Test.QuickCheck (arbitrary, class Arbitrary)
+import Control.Monad((<$>))
 
 foreign import data Queue :: Type -> Type
+
+instance Arbitrary v => Arbitrary (Queue v) where
+  arbitrary = fromList <$> arbitrary
 
 -- | Inserts Item at the head of queue Q1.
 cons :: forall e. e -> Queue e -> Queue e

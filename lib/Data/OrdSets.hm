@@ -16,8 +16,13 @@
 module Data.OrdSets where
 
 import Foreign (ffi0, ffi1, ffi2)
+import Test.QuickCheck (arbitrary, class Arbitrary)
+import Control.Monad((<$>))
 
 foreign import data OrdSet :: Type -> Type
+
+instance Arbitrary v => Arbitrary (OrdSet v) where
+  arbitrary = fromList <$> arbitrary
 
 new :: forall a. OrdSet a
 new = ffi0 :ordsets :new

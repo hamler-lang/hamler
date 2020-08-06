@@ -31,7 +31,7 @@ import Data.Show (showAny)
 import Data.Tuple (fst)
 import Data.Foldable (foldl)
 import Data.Traversable (sequence)
-import Data.Unit (Unit)
+import Data.Unit (Unit,unit)
 import Control.Monad (liftM2, class Applicative, pure, class Monad, return, bind, IO, discard, seqio, (>>=))
 import System.IO (printf, println)
 import System.Random(randomRIO)
@@ -245,21 +245,18 @@ tgToList :: TestGroup TestResult -> [TestResult]
 tgToList (Exe xs) = xs
 tgToList (TxG _ xs) = concat $ map tgToList xs
 
-runTestGroup :: forall a. SpaceCounter -> TestGroup (Integer -> IO a) -> IO (TestGroup a)
+runTestGroup :: SpaceCounter -> TestGroup (Integer -> IO TestResult) -> IO (TestGroup TestResult)
 runTestGroup n (Exe fs) =  Exe <$> (seqio $ map (\x -> x n) fs)
-runTestGroup n (TxG s xs) = TxG s <$> (do
-                                     println (replicate n ' ' <> s  <> ( let len = length s
-                                                                         in [' '| replicate (70-len-n) '-']
-                                                                       ))
-                                     seqio $ map (runTestGroup (n+5)) xs
-                                    )
+runTestGroup n (TxG s xs) =
+  TxG s <$> do println (replicate n ' ' <> s  <> ( let len = length s in [' '| replicate (70-len-n) '=']))
+               res <- seqio $ map (runTestGroup (n+5)) xs
+               let res1 = concat $ map tgToList res
+                   (succ, fail, total) = tcount (0,0,0) res1
+               printf "%s----> total %d, successed %d, failed %d." (replicate n ' ')  total succ fail
+               return res
 
 runTest :: TestGroup (Integer -> IO TestResult) -> IO ()
-runTest g = do
-  res <- runTestGroup 0 g
-  let res1 = tgToList res
-      (succ, fail, total) = tcount (0,0,0) res1
-  printf "total test functions %d, successed %d, failed %d."  total succ fail
+runTest g = runTestGroup 0 g >>= \_ -> return ()
 
 tcount :: (Integer, Integer, Integer) -> [TestResult] -> (Integer, Integer, Integer)
 tcount (a,b,c) [] = (a,b,c)
