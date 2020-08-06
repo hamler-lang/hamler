@@ -15,7 +15,7 @@
 module Data.Map where
 
 import Data.Maybe (Maybe)
-import Control.Monad(bind, return)
+import Control.Monad((<$>))
 import Foreign (ffi0, ffi1, ffi2, ffi3, ffi4)
 import Test.QuickCheck (arbitrary, class Arbitrary)
 import Data.Eq
@@ -132,10 +132,7 @@ tzip [] y = []
 tzip [x|xs] [y|ys] = [ (x,y) | tzip xs ys ]
 
 instance (Arbitrary k, Arbitrary v) => Arbitrary (Map k v) where
-  arbitrary = do
-       xs1 <- arbitrary
-       xs2 <- arbitrary
-       return (fromList (tzip xs1 xs2))
+  arbitrary = fromList <$> arbitrary
 
 instance Eq (Map a b) where
   eq = eqMapImpl

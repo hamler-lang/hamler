@@ -410,6 +410,10 @@ literalToErl (ListLiteral xs) = do
 literalToErl (TupleLiteral xs) = do
   xs' <- mapM exprToErl xs
   return . ann . ETuple $ fmap (ann . Expr) xs'
+literalToErl (Tuple2Literal a b) = do
+  a' <- exprToErl a
+  b' <- exprToErl b
+  return . ann . ETuple $ fmap (ann . Expr) [a', b']
 literalToErl (ObjectLiteral xs) = do
   xs' <- forM xs $ \(pps, e) -> do
     e' <- exprToErl e
@@ -568,6 +572,10 @@ literalBinderToPat (ListLiteral xs) = do
 literalBinderToPat (TupleLiteral xs) = do
   xs' <- mapM binderToPat xs
   return . ann $ E.PTuple xs'
+literalBinderToPat (Tuple2Literal a b) = do
+  a' <- binderToPat a
+  b' <- binderToPat b
+  return . ann $ E.PTuple [a', b']
 literalBinderToPat (ObjectLiteral xs) = do
   xs' <- forM xs $ \(pps, e) -> do
     e' <- binderToPat e

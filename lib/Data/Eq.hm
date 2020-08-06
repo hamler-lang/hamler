@@ -19,6 +19,7 @@ module Data.Eq
   ) where
 
 import Data.Unit (Unit)
+import Data.Bool ((&&))
 
 class Eq a where
   eq :: a -> a -> Boolean
@@ -50,6 +51,9 @@ instance Eq Float where
 
 instance Eq a => Eq (List a) where
   eq = eqListImpl
+
+instance (Eq a, Eq b) => Eq (a, b) where
+  eq (a, b) (c, d) = a == c && b == d
 
 instance Eq Unit where
   eq _ _ = true
