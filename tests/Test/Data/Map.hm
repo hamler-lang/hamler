@@ -32,6 +32,9 @@ propMapMap m1 f = let l1 = M.toList m1
                       lf1 = \(k,v) -> f v
                   in M.fromList (map lf l1) == M.map lf1 m1
 
+propInsert :: M.Map Integer Integer -> Integer -> Integer -> Boolean
+propInsert m k v = M.insert k v m == M.insert k v (M.insert k v m)
+
 baseMap :: M.Map Integer Integer
 baseMap = M.fromList [(1,2),(2,3),(3,4)]
 
@@ -43,6 +46,7 @@ test = Exe [ quickCheck "put_get "     propMapPutGet
            , quickCheck "singleton" (M.singleton 1 2 == M.fromList [(1,2)])
            , quickCheck "isKey"     (M.isKey 1 baseMap)
            , quickCheck "insert"    (M.insert 1 3 baseMap == M.fromList [(1,3),(2,3),(3,4)])
+           , quickCheck "prop_insert"    propInsert
            , quickCheck "get"       (M.get 1 baseMap == 2)
            , quickCheck "lookup_Just"    (M.lookup 1 baseMap == Just 2)
            , quickCheck "lookup_Nothing"    (M.lookup 10 baseMap == Nothing)
@@ -52,7 +56,7 @@ test = Exe [ quickCheck "put_get "     propMapPutGet
            , quickCheck "not_member"  (M.notMember 10 baseMap == true)
            , quickCheck "update"      (M.update 1 10 baseMap == M.fromList [(1,10),(2,3),(3,4)])
            , quickCheck "updateWith"  (M.updateWith 1 (\x -> x+1) baseMap == M.fromList [(1,3),(2,3),(3,4)])
-           , quickCheck "updateWithInit"  (M.updateWithInit 10 (\x -> x+1) 10 baseMap == M.fromList [(1,3),(2,3),(3,4),(10,10)])
+           , quickCheck "updateWithInit"  (M.updateWithInit 10 (\x -> x+1) 10 baseMap == M.fromList [(1,2),(2,3),(3,4),(10,10)])
            , quickCheck "take"          (case M.take 1 baseMap of
                                             Just (2, v) -> v == M.fromList [(2,3),(3,4)]
                                             _  -> error "error happened"
