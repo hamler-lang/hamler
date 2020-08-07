@@ -1,8 +1,7 @@
 module Test.Data.Bool where
 
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
-import Prelude
-import Data.Bool
+import Prelude (IO, and, not, or, ($), (==))
 
 propAnd :: Boolean -> Boolean -> Boolean
 propAnd b1 b2 = and b1 b2 == and b2 b1

@@ -19,6 +19,8 @@ import Data.Show (class Show, show)
 import Data.Eq (class Eq, eq)
 import Data.Ord (class Ord, compare)
 import Foreign (ffi0, ffi1, ffi2)
+import Test.QuickCheck (arbitrary, class Arbitrary)
+import Control.Monad((<$>))
 
 foreign import data Queue :: Type -> Type
 
@@ -30,6 +32,8 @@ instance Eq a => Eq (Queue a) where
 
 instance Ord a => Ord (Queue a) where
   compare x y = compare (toList x) (toList y)
+instance Arbitrary v => Arbitrary (Queue v) where
+  arbitrary = fromList <$> arbitrary
 
 -- | Inserts Item at the head of queue Q1.
 cons :: forall e. e -> Queue e -> Queue e
