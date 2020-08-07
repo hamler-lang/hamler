@@ -1,0 +1,60 @@
+module Test.Data.List where
+
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+import Data.List
+
+propAppend1 :: [Int]->Bool
+propAppend1 xs = ([] ++ xs) == xs 
+
+propAppend2 :: Int->[Int]->Bool
+propAppend2 n xs = ([n] ++ xs) == (cons n xs)
+
+propAppend3 :: [Int]->[Int]->[Int]->Bool
+propAppend3 xs ys zs = ((xs ++ ys) ++ zs) == (xs ++ (ys ++ zs))
+
+propLength :: [Int]->[Int]->Bool
+propLength xs ys = (length xs) + (length ys) == (length (xs ++ ys))
+
+propReverse :: [Int]->Bool
+propReverse xs = reverse ( reverse xs) == xs
+
+propReverseLength :: [Int]->Bool
+propReverseLength xs = (length xs == length (reverse xs))
+
+propReverse2 :: Bool
+propReverse2 = (reverse [1,2,3,4]) == ([4,3,2,1])
+
+propLast :: [Int]->[Int]->Bool
+propLast [] [] = true
+propLast xs [] = last (xs ++ []) == last xs
+propLast xs ys = last (xs ++ ys) == last ys
+
+propConcat1 :: [[Int]]->[[Int]]->Bool
+propConcat1 xs ys = (concat xs ++ concat ys) == concat (xs ++ ys)
+
+propConcat2 :: [Int]->[Int]->[Int]->Bool
+propConcat2 xs ys zs = concat [concat [xs, ys], zs] == concat [xs, concat [ys, zs]]
+
+propReplicate1 :: Int->Int->Char->Bool
+propReplicate1 n m c 
+                | (n < 0 || m < 0) = true 
+                | otherwise =  (replicate n c) ++ (replicate m c) == replicate (n + m) c
+
+propReplicate2 :: Bool
+propReplicate2 = replicate 1 'a' == ['a']
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ quickCheck "append1" propAppend1
+           , quickCheck "append2" propAppend2
+           , quickCheck "length" propLength
+           , quickCheck "reverse" propReverse
+           , quickCheck "concat1" propConcat1
+           , quickCheck "concat2" propConcat2
+           , quickCheck "replicate2" propReplicate2
+           , quickCheck "replicate1" propReplicate1
+           , quickCheck "last" propLast
+           , quickCheck "reverse length" propReverseLength
+           , quickCheck "reverse example" propReverse2
+           ]

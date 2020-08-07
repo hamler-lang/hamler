@@ -8,6 +8,7 @@ import Test.Data.Binary as B
 import Test.Data.Atom as A
 import Test.Data.Array as A1
 import Test.Data.Bool as TB
+import Test.Data.List as TL
 
 main :: IO ()
 main = runTest ( TxG "Data" [
@@ -17,6 +18,7 @@ main = runTest ( TxG "Data" [
                  , TxG "Atom"   [A.test]
                  , TxG "Array"  [A1.test]
                  , TxG "Bool"  [TB.test]
+                 , TxG "List"  [TL.test]
                  ]
                )
 
