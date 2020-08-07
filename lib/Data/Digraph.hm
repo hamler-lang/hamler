@@ -18,6 +18,8 @@ import Control.Monad (IO)
 import Data.Unit (Unit)
 import Data.Maybe (Maybe)
 import Data.Either (Either)
+import Data.Eq (class Eq)
+import Data.Bool (Bool)
 import Foreign (ffiIO1, ffiIO2, ffiIO3)
 
 foreign import data Graph :: Type -> Type -> Type
@@ -26,6 +28,11 @@ foreign import data Graph :: Type -> Type -> Type
 
 foreign import data Edge :: Type -> Type
 foreign import data Vertex :: Type -> Type
+
+foreign import eqImpl :: forall a b. Graph a b -> Graph a b -> Bool
+
+instance Eq (Graph a b) where
+  eq = eqImpl
 
 data GraphType = Cyclic | Acyclic | Protected | Private
 
