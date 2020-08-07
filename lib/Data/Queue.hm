@@ -32,6 +32,7 @@ instance Eq a => Eq (Queue a) where
 
 instance Ord a => Ord (Queue a) where
   compare x y = compare (toList x) (toList y)
+  
 instance Arbitrary v => Arbitrary (Queue v) where
   arbitrary = fromList <$> arbitrary
 
