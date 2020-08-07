@@ -18,9 +18,17 @@ import Data.Maybe (Maybe)
 import Control.Monad((<$>))
 import Foreign (ffi0, ffi1, ffi2, ffi3, ffi4)
 import Test.QuickCheck (arbitrary, class Arbitrary)
-import Data.Eq
+import Data.Eq (class Eq)
+import Data.Ord (class Ord, compare)
+import Data.Show (class Show, show)
 
 foreign import data Map :: Type -> Type -> Type
+
+instance (Show a, Show b) => Show (Map a b) where
+  show x = show (toList x)
+
+instance (Ord a, Ord b) => Ord (Map a b) where
+  compare x y = compare (toList x) (toList y)
 
 instance (Arbitrary k, Arbitrary v) => Arbitrary (Map k v) where
   arbitrary = fromList <$> arbitrary
