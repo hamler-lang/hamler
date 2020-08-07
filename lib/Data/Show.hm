@@ -16,6 +16,10 @@ module Data.Show
   ( class Show, show, showAny
   ) where
 
+import Data.Maybe (Maybe(..))
+import Data.Unit (Unit)
+import Data.List ((++))
+
 class Show a where
   show :: a -> String
 
@@ -35,8 +39,15 @@ instance Show Float where
 instance Show Char where
   show c = showCharImpl c
 
-instance Show [Char] where
-  show s = s
+instance Show a => Show [a] where
+  show x = "[" ++ showListImpl x ++ "]"
+
+instance Show Unit where
+  show _ = "unit"
+
+instance Show a => Show (Maybe a) where
+  show Nothing = "Nothing"
+  show (Just x) = "Just " ++ show x
 
 foreign import showAtomImpl :: Atom -> String
 foreign import showIntImpl :: Integer -> String
@@ -44,3 +55,8 @@ foreign import showFloatImpl :: Float -> String
 foreign import showCharImpl :: Char -> String
 
 foreign import showAny :: forall a. a -> String
+
+showListImpl :: forall a. (Show a) => [a] -> String
+showListImpl [] = ""
+showListImpl [x] = show x
+showListImpl [x | xs] = show x ++ ", " ++ showListImpl xs

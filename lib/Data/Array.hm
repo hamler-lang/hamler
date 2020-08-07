@@ -25,7 +25,6 @@ import Data.Traversable (class Traversable, sequence)
 import Data.Bool (Bool)
 import Data.Monoid (mempty)
 import Data.Semigroup ((<>))
-import Data.String ((++))
 import Data.OrdDict (OrdDict)
 import Control.Monad (liftA1)
 
@@ -41,10 +40,7 @@ instance Ord t => Ord (Array t) where
 
 -- TODO: Show List
 instance Show t => Show (Array t) where
-  show a = "[" ++ showList (toList a) ++ "]"
-    where showList [] = ""
-          showList [x | []] = show x
-          showList [x | xs] = show x ++ ", "
+  show a = show (toList a)
 
 instance Functor Array where
   map = ffi2 :array :map

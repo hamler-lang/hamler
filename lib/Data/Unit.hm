@@ -14,7 +14,7 @@
 -----------------------------------------------------------------------------
 module Data.Unit where
 
-import Data.Show (class Show)
+-- import Data.Show (class Show)
 {-
 import Data.Map
 import Control.Monad
@@ -30,5 +30,3 @@ foreign import data Unit :: Type
 -- | `unit` is the sole inhabitant of the `Unit` type.
 foreign import unit :: Unit
 
-instance Show Unit where
-  show _ = "unit"
