@@ -27,6 +27,7 @@ module Data.Ord
 import Data.Eq (class Eq)
 import Data.Ordering (Ordering(..))
 import Data.Unit (Unit)
+import Data.Maybe (Maybe(..))
 -- import Data.Void (Void)
 
 class Eq a => Ord a where
@@ -53,6 +54,12 @@ instance Ord Float where
 instance Ord Unit where
   compare _ _ = EQ
 
+instance (Ord a, Ord b) => Ord (a, b) where
+  compare (x, y) (p, q) =
+    let result = compare x p in case result of
+      EQ -> compare y q
+      _ -> result
+
 instance Ord a => Ord [a] where
   compare [] [] = EQ
   compare [] _ = LT
@@ -61,6 +68,12 @@ instance Ord a => Ord [a] where
     let result = compare x y in case result of
       EQ -> compare xs ys
       _ -> result
+
+instance Ord a => Ord (Maybe a) where
+  compare Nothing Nothing = EQ
+  compare _ Nothing = GT
+  compare Nothing _ = LT
+  compare (Just x) (Just y) = compare x y
 
 {-
 instance Ord Void where

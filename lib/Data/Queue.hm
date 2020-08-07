@@ -15,9 +15,21 @@
 module Data.Queue where
 
 import Data.Maybe (Maybe)
+import Data.Show (class Show, show)
+import Data.Eq (class Eq, eq)
+import Data.Ord (class Ord, compare)
 import Foreign (ffi0, ffi1, ffi2)
 
 foreign import data Queue :: Type -> Type
+
+instance Show a => Show (Queue a) where
+  show x = show (toList x)
+
+instance Eq a => Eq (Queue a) where
+  eq x y = eq (toList x) (toList y)
+
+instance Ord a => Ord (Queue a) where
+  compare x y = compare (toList x) (toList y)
 
 -- | Inserts Item at the head of queue Q1.
 cons :: forall e. e -> Queue e -> Queue e

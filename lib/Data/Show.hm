@@ -60,3 +60,6 @@ showListImpl :: forall a. (Show a) => [a] -> String
 showListImpl [] = ""
 showListImpl [x] = show x
 showListImpl [x | xs] = show x ++ ", " ++ showListImpl xs
+
+instance (Show a, Show b) => Show (a, b) where
+  show (a', b') = "(" ++ show a' ++ ", " ++ show b' ++ ")"
