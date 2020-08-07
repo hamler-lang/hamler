@@ -86,10 +86,14 @@ instance (PrintArg a, Printf t) => Printf (a -> t) where
 class PrintArg a where
   render :: Control -> a -> String
 
+partcal' :: Integer -> Integer -> String
+partcal' _  0 = ""
+partcal' k x = let (a,b) = (x/k,x%k)
+               in  partcal' k a <> rhex b
+
 partcal :: Integer -> Integer -> String
-partcal _  0 = ""
-partcal k x = let (a,b) = (x/k,x%k)
-               in  partcal k a <> rhex b
+partcal _ 0 = "0"
+partcal k x = partcal' k x
 
 rstr :: Integer -> String
 rstr 2 = "0B"

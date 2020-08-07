@@ -32,7 +32,7 @@ import Data.Tuple (fst)
 import Data.Foldable (foldl)
 import Data.Traversable (sequence)
 import Data.Unit (Unit)
-import Control.Monad (class Applicative, pure, class Monad, return, bind, IO, discard, seqio, (>>=))
+import Control.Monad (liftM2, class Applicative, pure, class Monad, return, bind, IO, discard, seqio, (>>=))
 import System.IO (printf, println)
 import System.Random(randomRIO)
 import Data.Binary (listToBin)
@@ -158,8 +158,8 @@ instance Arbitrary Binary where
           tabs x | x >= 0 = x
                  | otherwise = (-x)
 
--- instance (Arbitrary a, Arbitrary b) => Arbitrary (a, b) where
---   arbitrary = liftM2 (\x y -> (x,y)) arbitrary arbitrary
+instance (Arbitrary a, Arbitrary b) => Arbitrary (a, b) where
+  arbitrary = liftM2 (\x y -> (x,y)) arbitrary arbitrary
 
 instance Arbitrary a => Arbitrary [a] where
   arbitrary = sized (\n -> choose (0,n) >>= vector)
@@ -224,7 +224,7 @@ check s 0 m n = (printf "%s----- %s      " (replicate n ' ') s :: IO ()) >>= \_ 
 check s v m n = do
   i <- randomRIO 1332292274972041455 7304856964418773083
   let Gen fun = evaluate m
-      Result r = fun 10 (mkRand i)
+      Result r = fun 15 (mkRand i)
   case r.ok of
     Just true -> check s (v-1) m n
     Just false -> (printf "%sxxxxx %s -----> %s"
@@ -259,7 +259,7 @@ runTest g = do
   res <- runTestGroup 0 g
   let res1 = tgToList res
       (succ, fail, total) = tcount (0,0,0) res1
-  printf "total test functions %d, successed %d, failed %d"  total succ fail
+  printf "total test functions %d, successed %d, failed %d."  total succ fail
 
 tcount :: (Integer, Integer, Integer) -> [TestResult] -> (Integer, Integer, Integer)
 tcount (a,b,c) [] = (a,b,c)
