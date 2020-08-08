@@ -109,12 +109,12 @@ buildMakeActions libfp isInline outputDir filePathMap foreigns _ =
         for_ Docs.Prim.primModules $ \docsMod@Docs.Module {..} ->
           writeJSONFile (outputFilename modName "docs.json") docsMod
 
-    readModuleInfo :: HasCallStack => ModuleName -> SupplyT Make (Text, M.Map Text Int)
+    readModuleInfo :: HasCallStack => ModuleName -> SupplyT Make (Text, M.Map Text Integer)
     readModuleInfo mn = do
       let mn' = runModuleName mn
           path = getFilePath ".info" mn filePathMap
       con <- lift $ makeIO "read module infor" $ TIO.readFile path
-      let list = read (unpack con) :: [(String, Int)]
+      let list = read (unpack con) :: [(String, Integer)]
       return $ (mn', M.fromList $ fmap (\(a, b) -> (pack (unpack mn' <> "." <> a), b)) list)
 
     codegen :: HasCallStack => CF.Module CF.Ann -> Docs.Module -> ExternsFile -> SupplyT Make ()
@@ -133,7 +133,7 @@ buildMakeActions libfp isInline outputDir filePathMap foreigns _ =
       let mods = filter (/= mn) $ filter (/= ModuleName [ProperName "Prim"]) $ fmap snd $ CF.moduleImports m
       modInfoList <- mapM readModuleInfo mods
       let modInfoMap = M.fromList modInfoList
-          ((erl, _), _) = runTranslate isInline modInfoMap (ffiModule, mn) $ moduleToErl m ffiModule
+          ((erl, _), _) = runTranslate isInline modInfoMap (ffiModule, mn) $ moduleToErl m 
       case erl of
         Left e -> throwError e
         Right e@(CE.Module _ exports _ _ _) -> do

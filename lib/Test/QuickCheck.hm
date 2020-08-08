@@ -226,7 +226,6 @@ errorPipe :: String
 errorPipe = "x    "
 
 check :: forall a. Testable a => String -> Integer -> a -> SpaceCounter -> IO TestResult
--- check s 0 m n = (printf "%s----- %s      " (replicate (n-5) ' ' <> "|   ") s :: IO ()) >>= \_ -> return Successed
 check s 0 m n = (printf "%s----- %s      " (concat $ replicate (n/5) basePipe) s :: IO ()) >>= \_ -> return Successed
 check s v m n = do
   i <- randomRIO 1332292274972041455 7304856964418773083
@@ -255,7 +254,6 @@ tgToList (TxG _ xs) = concat $ map tgToList xs
 runTestGroup :: SpaceCounter -> TestGroup (Integer -> IO TestResult) -> IO (TestGroup TestResult)
 runTestGroup n (Exe fs) =  Exe <$> (seqio $ map (\x -> x n) fs)
 runTestGroup n (TxG s xs) =
-  -- TxG s <$> do println (replicate n ' ' <> s  <> ( let len = length s in [' '| replicate (70-len-n) '=']))
   TxG s <$> do println (concat (replicate (n/5) basePipe) <> s  <> ( let len = length s in [' '| replicate (70-len-n) '=']))
                res <- seqio $ map (runTestGroup (n+5)) xs
                let res1 = concat $ map tgToList res
