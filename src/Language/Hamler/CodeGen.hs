@@ -1,10 +1,4 @@
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE TemplateHaskell #-}
-
 -----------------------------------------------------------------------------
-
--- |
 -- Module      :  Language.Hamler.CodeGen
 -- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
@@ -16,53 +10,112 @@
 --
 -- Generate CoreErlang AST from Purescript source code.
 -----------------------------------------------------------------------------
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
-module Language.Hamler.CodeGen
-  ( moduleToErl
-  , runTranslate
-  )
-where
+module Language.Hamler.CodeGen where
 
-import Control.Lens
 import Control.Monad.Except
+import Control.Monad.Reader
 import Control.Monad.State
 import Control.Monad.Writer
 import Data.List as LL
 import Data.Map as M
 import Data.Text (Text, toLower, unpack)
 import qualified Data.Text as T
-import qualified Data.Text.Lazy as L
 import Language.CoreErlang as E
 import Language.Hamler.Util
+import qualified Language.PureScript as P
 import qualified Language.PureScript.AST.Literals as L
 import Language.PureScript.CoreFn as C
-import qualified Language.PureScript as P
 import Language.PureScript.Names
-import Text.Pretty.Simple
 import Prelude
 
-type MError = P.MultipleErrors
-
-type MLog = Text
-
-type Translate = ExceptT MError (StateT GState (Writer MLog))
-
-data GState = GState
-  { _gsmoduleName :: ModuleName,
-    _ffiFun :: M.Map Text Int,
-    _globalVar :: M.Map Text Int,
-    _localVar :: M.Map Text Int,
-    _letMap :: M.Map Text (Int, E.Expr Text),
-    _binderVarIndex :: Int,
-    _modInfoMap :: M.Map Text (M.Map Text Int),
-    _isInline :: Bool
-  }
+data PF
+  = Param (Var Text)
+  | FunctionName Integer
+  | LetFun (Var Text, Integer)
+  | LetRecFun (FunName Text, Integer)
   deriving (Show)
 
-makeLenses ''GState
+type VarMap = M.Map Ident PF
 
-emptyGState :: GState
-emptyGState = GState (ModuleName []) M.empty M.empty M.empty M.empty 0 M.empty False
+data VarState = VarState Integer VarMap deriving (Show)
+
+class Monad m => MonadVarState m where
+  freshVar :: m (Var Text)
+  lookVar :: Ident -> m (Maybe PF)
+  insertParam :: Ident -> m (Var Text)
+  insertFunctionName :: Ident -> Integer -> m ()
+  insertLetFun :: Ident -> Integer -> m (Var Text)
+  insertLetRecFun :: Ident -> Integer -> m (FunName Text)
+  withVarState :: m a -> m a
+  reset :: m ()
+
+type Tain a = (Functor a, Applicative a, Monad a, MonadReader Tenv a, MonadState VarState a, MonadError P.MultipleErrors a, MonadWriter Text a, MonadVarState a)
+
+type Tenv = (Maybe (E.Module Text), M.Map Text Int, M.Map Text (M.Map Text Integer), ModuleName)
+
+newtype Translate a = Translate (ExceptT P.MultipleErrors (StateT VarState (ReaderT Tenv (Writer Text))) a)
+  deriving (Functor, Applicative, Monad, MonadState VarState, MonadReader Tenv, MonadError P.MultipleErrors, MonadWriter Text)
+
+runTranslate ::
+  Bool ->
+  (M.Map Text (M.Map Text Integer)) ->
+  (Maybe (E.Module Text), ModuleName) ->
+  Translate a ->
+  (((Either P.MultipleErrors a), VarState), Text)
+runTranslate _ moduleInfo (ffiModule, mn) (Translate translate) =
+  runWriter $ runReaderT (runStateT (runExceptT translate) (VarState 0 M.empty)) (ffiModule, M.fromList $ moduleToFuns mn ffiModule, moduleInfo, mn)
+
+instance MonadVarState Translate where
+  freshVar = do
+    VarState v m <- get
+    put $ VarState (v + 1) m
+    return (ann $ E.Var $ T.pack $ "_" <> show v)
+  lookVar var = do
+    VarState _ varMap <- get
+    return $ M.lookup var varMap
+  insertParam var = do
+    VarState i m <- get
+    put $ VarState (i + 1) $ M.insert var (Param $ ann $ E.Var $ T.pack $ "_" <> show i) m
+    return . ann . E.Var . T.pack $ "_" <> show i
+  insertFunctionName var i = modify' $ \(VarState n m) -> VarState n (M.insert var (FunctionName i) m)
+  insertLetFun var v = do
+    VarState i m <- get
+    put $ VarState (i + 1) $ M.insert var (LetFun ((ann $ E.Var $ T.pack $ "_" <> show i), v)) m
+    return . ann . E.Var . T.pack $ "_" <> show i
+  insertLetRecFun var v = do
+    let tfunName = ann $ FunName (ann $ Atom ("$LetRecFun_" <> runIdent var)) v
+    modify'
+      ( \(VarState i m) ->
+          VarState i (M.insert var (LetRecFun (tfunName, v)) m)
+      )
+    return tfunName
+  withVarState act = do
+    VarState _ m <- get
+    v <- act
+    VarState i _ <- get
+    put (VarState i m)
+    return v
+  reset = do
+    VarState _ v <- get
+    put $ VarState 0 v
+
+exprToFunDef :: Integer -> FunName Text -> E.Expr Text -> FunDef Text
+exprToFunDef 1 fn (EFun f _) = FunDef fn f
+exprToFunDef 0 fn e = FunDef fn (ann $ Fun [] $ ann $ Expr e)
+exprToFunDef _ _ _ = error "internal error"
+
+exprToExpr :: Integer -> E.Expr Text -> E.Expr Text
+exprToExpr 1 f = f
+exprToExpr 0 e = ann $ EFun $ ann $ Fun [] $ ann $ Expr e
+exprToExpr _ _ = error "internal error"
+
+funArgs :: C.Expr C.Ann -> Integer
+funArgs e = case e of
+  Abs _ _ _ -> 1
+  Constructor _ _ _ vs | length vs > 0 -> 1
+  _ -> 0
 
 moduleToFuns :: ModuleName -> Maybe (E.Module Text) -> [(Text, Int)]
 moduleToFuns _ Nothing = []
@@ -74,35 +127,20 @@ moduleToFunDefs :: Maybe (E.Module Text) -> [FunDef Text]
 moduleToFunDefs Nothing = []
 moduleToFunDefs (Just (E.Module _ _ _ xs _)) = xs
 
-runTranslate ::
-  Bool ->
-  (M.Map Text (M.Map Text Int)) ->
-  (Maybe (E.Module Text), ModuleName) ->
-  Translate a ->
-  (((Either MError a), GState), MLog)
-runTranslate isinline modinfos (ffiModule, mn) translate =
-  runWriter $
-    runStateT
-      (runExceptT translate)
-      ( (emptyGState & ffiFun .~ (M.fromList $ moduleToFuns mn ffiModule))
-          & modInfoMap .~ modinfos
-          & isInline .~ isinline
-      )
-
--- | CoreFn Module to CoreErlang AST
-moduleToErl :: C.Module C.Ann -> Maybe (E.Module Text) -> Translate (E.Module Text)
-moduleToErl C.Module {..} ffiModule = do
-  modify (\x -> x & gsmoduleName .~ moduleName)
+moduleToErl :: Tain m => C.Module C.Ann -> m (E.Module Text)
+moduleToErl C.Module {..} = do
   let tt = runModuleName moduleName
   funDecls <- concat <$> mapM bindToErl moduleDecls
   let funDecls' = moduleInfo0 tt : moduleInfo1 tt : funDecls
-  gs <- get
+  (ffiModule, ffiFun, _, _) <- ask
   exports <- forM moduleExports $ \ident -> do
-    let name = showQualified runIdent $ mkQualified ident (gs ^. gsmoduleName)
+    let name = showQualified runIdent $ mkQualified ident moduleName
         wname = runIdent ident
-    case M.lookup name (gs ^. globalVar) of
-      Just args -> return . ann $ FunName (ann $ Atom wname) (toInteger args)
-      Nothing -> case M.lookup name (gs ^. ffiFun) of
+    tvar <- lookVar ident
+    case tvar of
+      Just (FunctionName args) -> return . ann $ FunName (ann $ Atom wname) (toInteger args)
+      Just _ -> error "internal error"
+      Nothing -> case M.lookup name ffiFun of
         Just args ->
           return . ann $ FunName (ann $ Atom wname) (toInteger args)
         Nothing -> throwError $ P.MultipleErrors [P.ErrorMessage [] $ P.MissingFFIImplementations moduleName [ident]]
@@ -115,73 +153,57 @@ moduleToErl C.Module {..} ffiModule = do
         (ann $ Attrs [])
         (funDecls' ++ ffiDefs)
 
-filterFunDef :: ModuleName -> [FunDef Text] -> [FunDef Text] -> Translate [FunDef Text]
-filterFunDef moduleName  s source = do
+filterFunDef :: Tain m => ModuleName -> [FunDef Text] -> [FunDef Text] -> m [FunDef Text]
+filterFunDef moduleName s source = do
   let nameSet = fmap (\(FunDef fn _) -> fn) s
       source' = Prelude.filter (\(FunDef fn _) -> not $ fn `elem` [mm0, mm1]) source
       v = Prelude.filter (\(FunDef fn _) -> not $ fn `elem` nameSet) source'
   if length v == length source'
     then return v
     else do
-    let allDupFun =fmap (\(FunDef (FunName (Atom fn _) _ _) _) -> Ident fn)
-                    $ Prelude.filter (\(FunDef fn _) -> fn `elem` nameSet) source'
-    throwError $ P.MultipleErrors [P.ErrorMessage [] $ P.FFIFunSameNameWithModule moduleName allDupFun]
+      let allDupFun =
+            fmap (\(FunDef (FunName (Atom fn _) _ _) _) -> Ident fn) $
+              Prelude.filter (\(FunDef fn _) -> fn `elem` nameSet) source'
+      throwError $ P.MultipleErrors [P.ErrorMessage [] $ P.FFIFunSameNameWithModule moduleName allDupFun]
 
--- | CoreFn Bind to CoreErlang FunDef
-bindToErl :: C.Bind C.Ann -> Translate [FunDef Text]
+bindToErl :: Tain m => C.Bind C.Ann -> m [FunDef Text]
 bindToErl (NonRec _ ident e) = do
-  modify (\x -> x & binderVarIndex .~ 100)
-  e' <- exprToErl e
-  modify (\x -> x & localVar .~ M.empty)
-  gs <- get
-  let name = showQualified runIdent $ mkQualified ident (gs ^. gsmoduleName)
-      wname = runIdent ident
-  case e' of
-    EFun v@(Fun [] (Expr (ELetRec _ _ "[\'letrec_goto\']") _) _) _ -> do
-      modify (\x -> x & globalVar %~ M.insert name 0)
-      return $ [FunDef (ann $ FunName (ann $ Atom wname) 0) (ann $ Fun [] (ann $ Expr $ ann $ EFun v))]
-    EFun v@(Fun vrs _ _) _ -> do
-      modify (\x -> x & globalVar %~ M.insert name (length vrs))
-      return $ [FunDef (ann $ FunName (ann $ Atom wname) (toInteger $ length vrs)) v]
-    _ -> do
-      modify (\x -> x & globalVar %~ M.insert name 0)
-      return $
-        [ FunDef
-            (ann $ FunName (ann $ Atom wname) 0)
-            (ann $ Fun [] (ann $ Expr e'))
-        ]
+  let fi = funArgs e
+  reset
+  insertFunctionName ident fi
+  e' <- withVarState $ exprToErl e
+  return $ [exprToFunDef fi (ann $ FunName (ann $ Atom $ runIdent ident) fi) e']
 bindToErl (C.Rec xs) = do
-  modify (\x -> x & binderVarIndex .~ 100)
-  gs <- get
-  let ns = fmap (\((_, a), b) -> (mkname gs a, getArgNum b)) xs
-  modify (\x -> x & globalVar %~ mapInsertList ns)
-  concat <$> mapM (\((_, a), b) -> bindToErl (NonRec undefined a b)) xs
-  where
-    expend s (Abs _ ident expr) = expend (ident : s) expr
-    expend s exp1 = (s, exp1)
-    getArgNum s = length $ fst $ expend [] s
-    mkname gs ident = showQualified runIdent $ mkQualified ident (gs ^. gsmoduleName)
+  mapM_ (\((_, a), b) -> insertFunctionName a (funArgs b)) xs
+  forM xs $ \((_, a), b) -> withVarState $ do
+    reset
+    b' <- exprToErl b
+    let fi = funArgs b
+    return $ exprToFunDef fi (ann $ FunName (ann $ Atom $ runIdent a) fi) b'
 
-bindToLetFunDef :: C.Bind C.Ann -> Translate ()
-bindToLetFunDef (NonRec _ ident e) = do
-  e' <- exprToErl e
-  let name = runIdent ident
-  case e' of
-    EFun (Fun vrs _ _) _ -> do
-      modify (\x -> x & letMap %~ M.insert name (length vrs, e'))
-    _ -> do
-      modify (\x -> x & letMap %~ M.insert name (0, ann . EFun . ann $ Fun [] (ann $ Expr e')))
-bindToLetFunDef x = error $ L.unpack $ pShow x
+letFunDef :: Tain m => C.Bind C.Ann -> m (Var Text, E.Expr Text)
+letFunDef (NonRec _ ident e) = do
+  let fi = funArgs e
+  vn <- insertLetFun ident fi
+  e' <- withVarState $ exprToErl e
+  return $ (vn, exprToExpr fi e')
+letFunDef x = error $ show x
 
--- | CoreFn Expr to CoreErlang Expr
-exprToErl :: C.Expr C.Ann -> Translate (E.Expr Text)
+letFunDefRec :: Tain m => C.Bind C.Ann -> m [FunDef Text]
+letFunDefRec (C.Rec xs) = do
+  vns <- mapM (\((_, a), b) -> insertLetRecFun a (funArgs b)) xs
+  forM (zip vns xs) $ \(vn, ((_, _), b)) -> withVarState $ do
+    let fi = funArgs b
+    b' <- exprToErl b
+    return $ exprToFunDef fi vn b'
+letFunDefRec x = error $ show x
+
+exprToErl :: Tain m => C.Expr C.Ann -> m (E.Expr Text)
 exprToErl (Literal _ l) = literalToErl l
 exprToErl (Constructor _ _ (ProperName p) ids) = do
-  let args = length ids
-      popAtom = ann . ELit . ann . LAtom . ann . Atom $ p
-      cvar i = ann . E.Var $ T.pack ("_" <> show i)
-      vars = fmap cvar [0 .. args -1]
-  return $ netConst (popAtom) vars []
+  let constrName = ann . ELit . ann . LAtom . ann . Atom $ p :: E.Expr Text
+  vars <- mapM insertParam ids
+  return $ netConst constrName vars []
 exprToErl (Accessor _ pps e) = do
   e' <- exprToErl e
   return . ann $ EModCall mapsAtom getAtom [ppsToAtomExprs pps, ann $ Expr e']
@@ -189,90 +211,69 @@ exprToErl (ObjectUpdate _ e xs) = do
   e' <- exprToErl e
   let foldFun m (k, v) = do
         v' <- exprToErl v
-        return
-          . ann
-          $ EModCall
-            mapsAtom
-            putAtom
-            [ppsToAtomExprs k, ann $ Expr v', ann $ Expr m]
+        return $ ann $ EModCall mapsAtom putAtom [ppsToAtomExprs k, ann $ Expr v', ann $ Expr m]
   foldM foldFun e' xs
 exprToErl (Abs _ i e) = do
-  gs <- get
-  let allVar = M.size (gs ^. localVar)
-      var = ann . E.Var $ T.pack ("_" <> show allVar)
-  modify (\x -> x & localVar %~ M.insert (runIdent i) allVar)
+  var <- insertParam i
   e' <- exprToErl e
-  put gs
   return . ann . EFun . ann $ Fun [var] (ann $ Expr e')
-exprToErl (C.App _ e1@(C.App _ _ _) e2) = do
-  e1' <- exprToErl e1
-  e2' <- exprToErl e2
-  gs <- get
-  let allVar = M.size (gs ^. localVar)
-      var = ann $ E.Var $ T.pack $ ("_" <> show allVar)
-  modify (\x -> x & localVar %~ M.insert ("letBinderVar" <> (T.pack $ show allVar)) allVar)
-  return . ann $ ELet [var] (ann $ Expr e1') (ann . Expr . ann $ EApp (ann . Expr . ann $ EVar var) [ann $ Expr e2'])
 exprToErl (C.App _ e1 e2) = do
   e1' <- exprToErl e1
   e2' <- exprToErl e2
   return . ann $ EApp (ann $ Expr e1') [ann $ Expr e2']
-exprToErl (C.Var _ qi@(Qualified _ tema)) = do
-  let name = showQualified runIdent qi
-      wname = runIdent tema
-  gs <- get
-  case M.lookup name (gs ^. localVar) of
-    Just i -> return . ann . E.EVar . ann . E.Var $ T.pack ("_" <> show i)
-    Nothing -> case M.lookup name (gs ^. letMap) of
-      Just (0, e) -> return . ann $ EApp (ann $ Expr e) []
-      Just (_, e) -> return e
-      Nothing -> case M.lookup name (gs ^. globalVar) of
-        Just a -> case a of
-          0 -> return . ann $ EApp (ann $ Expr $ ann $ EFunN $ ann $ FunName (ann $ Atom wname) 0) []
-          _ -> return . ann . EFunN . ann $ E.FunName (ann $ Atom wname) 1
-        Nothing -> case M.lookup name (gs ^. ffiFun) of
-          Just 0 -> return . ann $ EApp (ann . Expr . ann . EFunN . ann $ E.FunName (ann $ Atom wname) 0) []
-          Just x -> do
-            let ndd = ann . EFunN . ann $ FunName (ann $ Atom wname) (toInteger x)
-                vars = fmap (\k -> ann $ E.Var $ T.pack ("_" <> show k)) [0 .. x -1]
+exprToErl (C.Var _ qi@(Qualified mdi ident)) = do
+  (_, ffiMap, otherModule, mName) <- ask
+  case mdi of
+    Just mn | mn /= mName -> do
+          let mn' = runModuleName mn
+          case M.lookup mn' otherModule >>= M.lookup (showQualified runIdent qi) of
+            Nothing ->
+               if unpack mn' == "Prim" && unpack (runIdent ident) == "undefined"
+               then return . ann . EFun . ann $ Fun [ann $ E.Var "_0"] (ann . Expr . ann . EVar . ann . E.Var $ "_0")
+               else throwError $ P.MultipleErrors [P.ErrorMessage [] $ P.MissingFFIImplementations mn [ident]]
+            Just i -> cModCall (fromInteger i) mn' (runIdent ident)
+    _ -> do
+      lookVar ident >>= \case
+        Just (Param v) -> return $ ann $ EVar v
+        Just (FunctionName x) -> case x of
+          0 -> return $ evalFunWithArgs0 ident
+          _ -> return . ann . EFunN . ann $ E.FunName (ann $ Atom $ runIdent ident) 1
+        Just (LetFun (v, x)) -> case x of
+          0 -> return $ ann $ EApp (ann $ Expr $ ann $ EVar v) []
+          _ -> return $ ann $ EVar v
+        Just (LetRecFun (v, x)) -> case x of
+          0 -> return $ ann $ EApp (ann $ Expr $ ann $ EFunN v) []
+          _ -> return $ ann $ EFunN v
+        Nothing -> case M.lookup (showQualified runIdent qi) ffiMap of
+          Just 0 -> return $ evalFunWithArgs0 ident
+          Just n -> do
+            let ndd = ann . EFunN . ann $ FunName (ann $ Atom $ runIdent ident) (toInteger n)
+            vars <- sequence $ replicate n freshVar
             return $ netLambda vars ndd []
-          Nothing -> case qi of
-            Qualified (Just mn) _ -> do
-              let mn' = runModuleName mn
-                  funName = showQualified runIdent qi
-                  res = do
-                    r1 <- M.lookup mn' (gs ^. modInfoMap)
-                    M.lookup funName r1
-              case res of
-                Nothing ->
-                  if unpack mn' == "Prim" && unpack wname == "undefined"
-                    then return . ann . EFun . ann $ Fun [ann $ E.Var "_0"] (ann . Expr . ann . EVar . ann . E.Var $ "_0")
-                    else throwError $ P.MultipleErrors [P.ErrorMessage [] $ P.MissingFFIImplementations mn [tema]]
-                Just i -> return $ cModCall i mn' wname
-            Qualified Nothing _ ->
-              throwError $ P.MultipleErrors [P.ErrorMessage [] $ P.MissingFFIImplementations (gs ^. gsmoduleName) [tema]]
-exprToErl (C.Let _ bs e) = do
-  mapM_ bindToLetFunDef bs
-  e' <- exprToErl e
-  return e'
+          Nothing -> throwError $ P.MultipleErrors [P.ErrorMessage [] $ P.MissingFFIImplementations mName [ident]]
+exprToErl r@(C.Let _ _ _) = handleLetExpr r
 exprToErl (C.Case _ es alts) = do
   es' <- mapM exprToErl es
   alts' <- dealAlts es' alts
-  gs <- get
-  let allVar = M.size (gs ^. localVar)
-      is = [allVar .. allVar + length es' -1]
-      vars = fmap (\i -> ann . E.Var $ T.pack ("_" <> show i)) is
-      varName = fmap (\i -> ("CaseVar" <> (T.pack $ show i))) is
-  forM_ (zip varName is) $ \(n, i) -> do
-    modify (\x -> x & localVar %~ M.insert n i)
-  return . ann $ ELet vars (ann $ Exprs es') (ann . Expr . ann $ ECase (ann . E.Exprs $ fmap (ann . EVar) vars) alts')
+  let len = length es'
+  vars <- sequence $ replicate len freshVar
+  return . ann $
+    ELet
+      vars
+      (ann $ Exprs es')
+      (ann . Expr . ann $ ECase (ann . E.Exprs $ fmap (ann . EVar) vars) alts')
 exprToErl (C.Receive _ (Just (e1, e2)) alts) = do
   alts' <- mapM dealRecAlt alts
   e2' <- exprToErl e2
   return $ ann $ EFun $ ann $ Fun [] $ ann $ Expr $ recvExpr alts' (ann $ ELit $ ann $ LInt e1) e2'
 exprToErl (C.Receive _ Nothing alts) = do
   alts' <- mapM dealRecAlt alts
-  return $ ann $ EFun $ ann $ Fun [] $ ann $ Expr $ recvExpr alts' (ann $ ELit $ ann $ LAtom $ ann $ Atom "infinity")
-                                                            (ann $ ELit $ ann $ LAtom $ ann $ Atom "true")
+  return $
+    ann $ EFun $ ann $ 
+          Fun [] $ ann $ 
+              Expr $ recvExpr alts'
+                  (ann $ ELit $ ann $ LAtom $ ann $ Atom "infinity")
+                  (ann $ ELit $ ann $ LAtom $ ann $ Atom "true")
 exprToErl (C.List _ es e) = do
   es' <- mapM exprToErl es
   e' <- exprToErl e
@@ -281,17 +282,15 @@ exprToErl (C.List _ es e) = do
 appExpr :: E.Expr Text -> E.Expr Text
 appExpr expr = ann $ EApp (ann $ Expr expr) []
 
-matchFail :: CaseAlternative C.Ann -> Translate [Clause Text]
+matchFail :: Tain m => CaseAlternative C.Ann -> m [Clause Text]
 matchFail ca =
   case Prelude.filter isBinaryBinder $ caseAlternativeBinders ca of
     [] -> return []
     _ -> do
-      gs <- get
       let len = length $ caseAlternativeBinders ca
-      let index1 = gs ^. binderVarIndex
-          indexs = fmap (\v -> ann . PVar . ann . E.Var . T.pack $ "_" <> show v) [index1 .. index1 + len -1]
-          indexs' = fmap (\v -> ann . Expr . ann . EVar . ann . E.Var . T.pack $ "_" <> show v) [index1 .. index1 + len -1]
-      modify (\x -> x & binderVarIndex %~ (+ len))
+      indexs0 <- mapM (\_ -> freshVar) [1 .. len]
+      let indexs = fmap (\v -> ann $ PVar v) indexs0
+          indexs' = fmap (\v -> ann $ Expr $ ann $ EVar v) indexs0
       return [ann . Clause indexs guardv $ aPrimop indexs']
 
 isBinaryBinder :: Binder C.Ann -> Bool
@@ -300,15 +299,14 @@ isBinaryBinder (MapBinder _ _) = True
 isBinaryBinder _ = False
 
 isWildBinder :: Binder C.Ann -> Bool
-isWildBinder (NullBinder  _) = True
+isWildBinder (NullBinder _) = True
 isWildBinder (VarBinder _ _) = True
 isWildBinder _ = False
-
 
 guardv :: Exprs Text
 guardv = ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "true"
 
-dealRecAlt :: CaseAlternative C.Ann -> Translate (E.Clause Text)
+dealRecAlt :: Tain m => CaseAlternative C.Ann -> m (E.Clause Text)
 dealRecAlt (CaseAlternative bs res) = do
   pats <- mapM binderToPat bs
   let guard1 = ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "true"
@@ -319,12 +317,8 @@ dealRecAlt (CaseAlternative bs res) = do
         . ann
         $ Clause pats guard1 (ann . Expr $ appExpr expr')
     Left xs -> error $ show xs
-      -- xs' <- guardToErl xs
-      -- return
-      --   . ann
-      --   $ Clause pats guard1 (ann $ Exprs [xs'])
 
-dealAlts :: [E.Expr Text] -> [CaseAlternative C.Ann] -> Translate [Clause Text]
+dealAlts :: Tain m => [E.Expr Text] -> [CaseAlternative C.Ann] -> m [Clause Text]
 dealAlts _ [] = error "strange happened"
 dealAlts _ alts@[(CaseAlternative bs res)] = do
   let guard1 = ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "true" :: Exprs Text
@@ -338,17 +332,17 @@ dealAlts _ alts@[(CaseAlternative bs res)] = do
       x' <- guardToErl x
       return
         [ann $ Clause pats guard1 (ann $ Expr $ x')]
-dealAlts es ((CaseAlternative bs res):xs) = do
+dealAlts es ((CaseAlternative bs res) : xs) = do
   let guard1 = ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "true" :: Exprs Text
   pats <- mapM binderToPat bs
   case res of
     Right expr -> do
       expr' <- exprToErl expr
       exprs' <- dealAlts es xs
-      return
-        $  (ann $ Clause pats guard1 (ann . Expr $ expr')) : exprs'
+      return $
+        (ann $ Clause pats guard1 (ann . Expr $ expr')) : exprs'
     Left x -> do
-      x' <- gdToErl x  es xs
+      x' <- gdToErl x es xs
       exprs' <- do
         let t1 = length $ Prelude.filter isWildBinder bs
         if t1 == length bs
@@ -356,9 +350,9 @@ dealAlts es ((CaseAlternative bs res):xs) = do
           else dealAlts es xs
       return $ (ann $ Clause pats guard1 (ann $ Expr $ x')) : exprs'
 
-gdToErl :: [(C.Guard C.Ann, C.Expr C.Ann)] -> [E.Expr Text] -> [CaseAlternative C.Ann] -> Translate (E.Expr Text)
+gdToErl :: Tain m => [(C.Guard C.Ann, C.Expr C.Ann)] -> [E.Expr Text] -> [CaseAlternative C.Ann] -> m (E.Expr Text)
 gdToErl [] _ _ = error "strange happened"
-gdToErl [(g, e)] res rxs= do
+gdToErl [(g, e)] res rxs = do
   g' <- exprToErl g
   e' <- exprToErl e
   res' <- dealAlts res rxs
@@ -368,7 +362,7 @@ gdToErl [(g, e)] res rxs= do
       altTrue = ann $ Clause [true] guard1 (ann $ Expr e')
       altFalse = ann $ Clause [false] guard1 . ann $ Expr (ann $ ECase (ann $ Exprs $ res) res')
   return . ann $ ECase (ann $ E.Expr g') [altTrue, altFalse]
-gdToErl ((g, e) : xs) res rxs= do
+gdToErl ((g, e) : xs) res rxs = do
   g' <- exprToErl g
   e' <- exprToErl e
   xs' <- gdToErl xs res rxs
@@ -379,11 +373,13 @@ gdToErl ((g, e) : xs) res rxs= do
       altFalse = ann $ Clause [false] guard1 . ann $ Expr xs'
   return $ ann $ ECase (ann $ E.Expr g') [altTrue, altFalse]
 
-guardToErl :: [(C.Guard C.Ann, C.Expr C.Ann)] -> Translate (E.Expr Text)
-guardToErl [] = return . ann
-  $ EModCall (stringToAtomExprs "erlang")
-             (stringToAtomExprs "error")
-             [ann $ Expr $ ann $ ELit $ ann $ LString "error"]
+guardToErl :: Tain m => [(C.Guard C.Ann, C.Expr C.Ann)] -> m (E.Expr Text)
+guardToErl [] =
+  return . ann $
+    EModCall
+      (stringToAtomExprs "erlang")
+      (stringToAtomExprs "error")
+      [ann $ Expr $ ann $ ELit $ ann $ LString "error"]
 guardToErl ((g, e) : xs) = do
   g' <- exprToErl g
   e' <- exprToErl e
@@ -395,8 +391,10 @@ guardToErl ((g, e) : xs) = do
       altFalse = ann $ Clause [false] guard1 . ann $ Expr xs'
   return $ ann $ ECase (ann $ E.Expr g') [altTrue, altFalse]
 
--- | CoreFn Literal to CoreErlang Expr
-literalToErl :: L.Literal (C.Expr C.Ann) -> Translate (E.Expr Text)
+evalFunWithArgs0 :: Ident -> E.Expr Text
+evalFunWithArgs0 ident = ann $ EApp (ann $ Expr $ ann $ EFunN $ ann $ FunName (ann $ Atom (runIdent ident)) 0) []
+
+literalToErl :: Tain m => L.Literal (C.Expr C.Ann) -> m (E.Expr Text)
 literalToErl (NumericLiteral (Left i)) = return . ann . ELit . ann $ LInt i
 literalToErl (NumericLiteral (Right i)) = return . ann . ELit . ann $ LFloat i
 literalToErl (StringLiteral s) = return . ann . ELit . ann . LString . T.pack $ decodePPS s
@@ -424,49 +422,6 @@ literalToErl (ObjectLiteral xs) = do
           (ann $ Expr e')
   return . ann . EMap $ E.Map xs'
 literalToErl (BinaryLiteral xs) = return . ann . EBinary $ fmap tupleToBinaryVal xs
-
--- | Binder to Pat
-binderToPat :: Binder C.Ann -> Translate (Pat Text)
-binderToPat (NullBinder _) = do
-  gs <- get
-  let i = gs ^. binderVarIndex
-  modify (\x -> x & binderVarIndex %~ (+ 1))
-  return . ann . PVar . ann . E.Var . T.pack $ "_" <> show i
-binderToPat (LiteralBinder _ l) = literalBinderToPat l
-binderToPat (VarBinder _ i) = do
-  gs <- get
-  let index1 = gs ^. binderVarIndex
-  modify (\x -> x & localVar %~ M.insert (runIdent i) index1)
-  modify (\x -> x & binderVarIndex %~ (+ 1))
-  return . ann . PVar . ann . E.Var $ T.pack ("_" <> show index1)
-binderToPat (ConstructorBinder _ _ (Qualified _ (ProperName p)) bs) = do
-  let popName = unpack p
-      popAtom = ann . PLiteral . ann . LAtom . ann . Atom $ T.pack popName
-  bs' <- mapM (binderToPat) bs
-  return . ann . PTuple $ popAtom : (fmap (\(_, v) -> v) $ zip ([0 ..] :: [Integer]) bs')
-binderToPat (NamedBinder _ i b) = do
-  gs <- get
-  let index1 = gs ^. binderVarIndex
-  modify (\x -> x & localVar %~ M.insert (runIdent i) index1)
-  modify (\x -> x & binderVarIndex %~ (+ 1))
-  b' <- binderToPat b
-  return . ann $ PAlias ( ann $ E.Var $ T.pack $ "_" <> show index1) b'
-binderToPat (MapBinder _ xs) = do
-  xs' <- forM xs $ \(x, y) -> do
-    x' <- binderToPat x
-    y' <- binderToPat y
-    return . ann $ Update x' y'
-  return . ann . PMap $ Map xs'
-binderToPat (BinaryBinder _ xs) = do
-  xs' <- forM (addEnd xs) $ \(b, (x, y, z)) -> do
-    x' <- binderToPat x
-    (a, b1, c, d) <- paToC y z b
-    return . ann $ Bitstring x' a b1 c d
-  return . ann $ PBinary xs'
-binderToPat (ListBinder _ xs b) = do
-  xs' <- mapM binderToPat xs
-  b' <- binderToPat b
-  return $ elistpat xs' b'
 
 tText :: [Text] -> Pat Text
 tText xs =
@@ -522,7 +477,7 @@ addEnd [] = []
 addEnd [x] = [(True, x)]
 addEnd (x : xs) = (False, x) : addEnd xs
 
-paToC :: Maybe Integer -> Maybe [Text] -> Bool -> Translate (Pat Text, Pat Text, Pat Text, Pat Text)
+paToC :: Tain m => Maybe Integer -> Maybe [Text] -> Bool -> m (Pat Text, Pat Text, Pat Text, Pat Text)
 paToC mi ts b = case ts of
   Nothing -> return $ dealMI mi []
   Just ts' -> case ddType ts' of
@@ -556,9 +511,76 @@ tupleToBinaryVal (a, b) =
       (ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "integer")
       (ann . Expr . tText' $ LL.delete "Integer" [])
 
+netConst :: E.Expr Text -> [Var Text] -> [Var Text] -> E.Expr Text
+netConst c [] [] = ann $ ETuple [ann $ Expr c]
+netConst c [x] s = ann . EFun . ann $ Fun [x] (ann . Expr . ann . ETuple $ (ann $ Expr c) : fmap (ann . Expr . ann . EVar) (reverse $ x : s))
+netConst c (x : xs) s = ann . EFun . ann $ Fun [x] (ann . Expr $ netConst c xs (x : s))
+netConst _ _ _ = error "strange happend"
 
--- | Literal Binder to Pat
-literalBinderToPat :: L.Literal (C.Binder C.Ann) -> Translate (E.Pat Text)
+netLambda :: [Var Text] -> E.Expr Text -> [Var Text] -> E.Expr Text
+netLambda [] _ [] = error "internal error"
+netLambda [x] e s = ann . EFun . ann $ Fun [x] (ann . Expr . ann $ EApp (ann $ Expr e) (fmap (ann . Expr . ann . EVar) (reverse $ x : s)))
+netLambda (x : xs) e s = ann . EFun . ann $ Fun [x] (ann . Expr $ netLambda xs e (x : s))
+netLambda _ _ _ = error "strange happend"
+
+handleLetExpr :: Tain m => C.Expr C.Ann -> m (E.Expr Text)
+handleLetExpr (C.Let _ [] _) = error "internal error"
+handleLetExpr (C.Let _ [x] e) = do
+  case x of
+    r@(NonRec _ _ _) -> do
+      (vsr, expr) <- letFunDef r
+      e' <- exprToErl e
+      return $ ann $ ELet [vsr] (ann $ Expr expr) (ann $ Expr $ e')
+    r@(Rec _) -> do
+      funDefs <- letFunDefRec r
+      e' <- exprToErl e
+      return $ ann $ ELetRec funDefs $ ann $ Expr $ e'
+handleLetExpr (C.Let a (x : xs) e) = do
+  case x of
+    r@(NonRec _ _ _) -> do
+      (vsr, expr) <- letFunDef r
+      revs <- handleLetExpr (C.Let a xs e)
+      return $ ann $ ELet [vsr] (ann $ Expr expr) (ann $ Expr revs)
+    r@(Rec _) -> do
+      funDefs <- letFunDefRec r
+      revs <- handleLetExpr (C.Let a xs e)
+      return $ ann $ ELetRec funDefs $ ann $ Expr revs
+handleLetExpr _ = error "internal error"
+
+binderToPat :: Tain m => C.Binder C.Ann -> m (E.Pat Text)
+binderToPat (NullBinder _) = do
+  var <- freshVar
+  return $ ann $ PVar var
+binderToPat (LiteralBinder _ l) = literalBinderToPat l
+binderToPat (VarBinder _ i) = do
+  var <- insertParam i
+  return $ ann $ PVar var
+binderToPat (ConstructorBinder _ _ (Qualified _ (ProperName p)) bs) = do
+  let popName = ann . PLiteral . ann . LAtom . ann $ Atom p :: Pat Text
+  bs' <- mapM binderToPat bs
+  return . ann . PTuple $ popName : bs'
+binderToPat (NamedBinder _ i b) = do
+  var <- insertParam i
+  b' <- binderToPat b
+  return $ ann $ PAlias var b'
+binderToPat (MapBinder _ xs) = do
+  xs' <- forM xs $ \(x, y) -> do
+    x' <- binderToPat x
+    y' <- binderToPat y
+    return . ann $ Update x' y'
+  return . ann . PMap $ Map xs'
+binderToPat (BinaryBinder _ xs) = do
+  xs' <- forM (addEnd xs) $ \(b, (x, y, z)) -> do
+    x' <- binderToPat x
+    (a, b1, c, d) <- paToC y z b
+    return . ann $ Bitstring x' a b1 c d
+  return . ann $ PBinary xs'
+binderToPat (ListBinder _ xs b) = do
+  xs' <- mapM binderToPat xs
+  b' <- binderToPat b
+  return $ elistpat xs' b'
+
+literalBinderToPat :: Tain m => L.Literal (C.Binder C.Ann) -> m (E.Pat Text)
 literalBinderToPat (NumericLiteral (Left i)) = return . ann . PLiteral . ann $ LInt i
 literalBinderToPat (NumericLiteral (Right i)) = return . ann . PLiteral . ann $ LFloat i
 literalBinderToPat (StringLiteral s) = return . ann . PLiteral . ann . LString . T.pack $ decodePPS s
@@ -583,14 +605,17 @@ literalBinderToPat (ObjectLiteral xs) = do
   return $ ann $ PMap $ E.Map xs'
 literalBinderToPat x = error $ show x
 
-netLambda :: [Var Text] -> E.Expr Text -> [Var Text] -> E.Expr Text
-netLambda [] _ [] = error "nice"
-netLambda [x] e s = ann . EFun . ann $ Fun [x] (ann . Expr . ann $ EApp (ann $ Expr e) (fmap (ann . Expr . ann . EVar) (reverse $ x : s)))
-netLambda (x : xs) e s = ann . EFun . ann $ Fun [x] (ann . Expr $ netLambda xs e (x : s))
-netLambda _ _ _ = error "strange happend"
+cModCall :: Tain m => Int -> Text -> Text -> m ( E.Expr Text)
+cModCall 0 s1 s2 = return $ ann $ EModCall (stringToAtomExprs s1) (stringToAtomExprs s2) []
+cModCall n s1 s2 = do 
+  vars <- sequence $ replicate n freshVar
+  return $ netLambda1 vars [] (stringToAtomExprs s1) (stringToAtomExprs s2)
 
-netConst :: E.Expr Text -> [Var Text] -> [Var Text] -> E.Expr Text
-netConst c [] [] = ann $ ETuple [ann $ Expr c]
-netConst c [x] s = ann . EFun . ann $ Fun [x] (ann . Expr . ann . ETuple $ (ann $ Expr c) : fmap (ann . Expr . ann . EVar) (reverse $ x : s))
-netConst c (x : xs) s = ann . EFun . ann $ Fun [x] (ann . Expr $ netConst c xs (x : s))
-netConst _ _ _ = error "strange happend"
+netLambda1 :: [Var Text] -> [Var Text] -> E.Exprs Text -> E.Exprs Text -> (E.Expr Text)
+netLambda1 [] [] _ _ = error "strange error "
+netLambda1 [x] s p1 p2 =
+  ann . EFun . ann $ Fun [x] (ann . Expr . ann $ EModCall p1 p2 (fmap (ann . Expr . ann . EVar) (reverse $ x : s)))
+netLambda1 (x : xs) s p1 p2 =
+  ann . EFun . ann $ Fun [x] (ann . Expr $ netLambda1 xs (x : s) p1 p2)
+netLambda1 _ _ _ _ = error "stringe error"
+
