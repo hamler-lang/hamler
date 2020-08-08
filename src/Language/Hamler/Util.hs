@@ -118,20 +118,6 @@ tcc :: Char -> Char
 tcc '.' = ' '
 tcc x = x
 
-cModCall :: Int -> Text -> Text -> E.Expr Text
-cModCall 0 s1 s2 = ann $ EModCall (stringToAtomExprs s1) (stringToAtomExprs s2) []
-cModCall n s1 s2 = netLambda1 (fmap cv [0 .. n -1]) [] (stringToAtomExprs s1) (stringToAtomExprs s2)
-  where
-    cv i = ann $ E.Var $ pack $ "_" ++ show i
-
-netLambda1 :: [Var Text] -> [Var Text] -> E.Exprs Text -> E.Exprs Text -> E.Expr Text
-netLambda1 [] [] _ _ = error "strange error "
-netLambda1 [x] s p1 p2 =
-  ann . EFun . ann $ Fun [x] (ann . Expr . ann $ EModCall p1 p2 (fmap (ann . Expr . ann . EVar) (reverse $ x : s)))
-netLambda1 (x : xs) s p1 p2 =
-  ann . EFun . ann $ Fun [x] (ann . Expr $ netLambda1 xs (x : s) p1 p2)
-netLambda1 _ _ _ _ = error "stringe error"
-
 aPrimop :: [Exprs Text] -> Exprs Text
 aPrimop v =
   ann . Expr . ann
