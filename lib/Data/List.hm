@@ -15,7 +15,7 @@
 module Data.List where
 
 import Data.Maybe (Maybe)
-import Foreign (ffi1, ffi2, ffi3, ffi4)
+import Foreign (ffi1, ffi2, ffi3)
 
 -----------------------------------------------------------------------------
 -- Basic functions
@@ -126,11 +126,9 @@ zip = ffi2 :lists :zip
 zip3 :: forall a b c. [a] -> [b] -> [c] -> [(a, b, c)]
 zip3 = ffi3 :lists :zip3
 
-zipWith :: forall a b c. (a -> b -> c) -> [a] -> [b] -> [c]
-zipWith = ffi3 :lists :zipWith
+foreign import zipWith :: forall a b c. (a -> b -> c) -> [a] -> [b] -> [c]
 
-zipWith3 :: forall a b c d. (a -> b -> c -> d) -> [a] -> [b] -> [c] -> [d]
-zipWith3 = ffi4 :lists :zipWith3
+foreign import zipWith3 :: forall a b c d. (a -> b -> c -> d) -> [a] -> [b] -> [c] -> [d]
 
 unzip :: forall a b. [(a, b)] -> ([a], [b])
 unzip = ffi1 :lists :unzip
