@@ -26,6 +26,8 @@
         , drop/2
         , slice/3
         , uncons/1
+        , zipWith/3
+        , zipWith3/4
         ]).
 
 -spec(append(list(), list()) -> list()).
@@ -55,3 +57,9 @@ slice(Start, End, L) ->
 
 uncons([])    -> ?Nothing;
 uncons([H|T]) -> ?Just({H, T}).
+
+zipWith(Fun, A, B) -> 
+    lists:zipwith(fun(L, R) -> (Fun(L))(R) end, A, B).
+
+zipWith3(Fun, A, B, C) -> 
+    lists:zipwith3(fun(L, R, K) -> ((Fun(L))(R))(K) end, A, B, C).
