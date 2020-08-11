@@ -452,23 +452,23 @@ dealMI Nothing ts =
   ( ann . PLiteral . ann $ LInt 8,
     ann . PLiteral . ann $ LInt 1,
     ann . PLiteral . ann . LAtom . ann $ Atom "integer",
-    tText $ LL.delete "Integer" ts
+    tText $ LL.delete "integer" ts
   )
 dealMI (Just i) ts =
   ( ann . PLiteral . ann $ LInt i,
     ann . PLiteral . ann $ LInt 1,
     ann . PLiteral . ann . LAtom . ann $ Atom "integer",
-    tText $ LL.delete "Integer" ts
+    tText $ LL.delete "integer" ts
   )
 
 data MType = N | B | I deriving (Show, Eq, Ord)
 
 ddType :: [Text] -> MType
 ddType xs =
-  if "Integer" `elem` xs
+  if "integer" `elem` xs
     then I
     else
-      if "Binary" `elem` xs
+      if "binary" `elem` xs
         then B
         else N
 
@@ -489,7 +489,7 @@ paToC mi ts b = case ts of
           ( ann . PLiteral . ann $ LInt i,
             ann . PLiteral . ann $ LInt 8,
             ann . PLiteral . ann $ LAtom . ann $ Atom "binary",
-            tText $ LL.delete "Binary" ts'
+            tText $ LL.delete "binary" ts'
           )
       Nothing -> case b of
         False -> throwError . error $ "unsupport binary syntax" <> show b
@@ -498,7 +498,7 @@ paToC mi ts b = case ts of
             ( ann . PLiteral . ann . LAtom . ann $ Atom "all",
               ann . PLiteral . ann $ LInt 8,
               ann . PLiteral . ann . LAtom . ann $ Atom "binary",
-              tText $ LL.delete "Binary" ts'
+              tText $ LL.delete "binary" ts'
             )
 
 tupleToBinaryVal :: (Integer, Integer) -> Bitstring (Exprs Text) Text
@@ -509,7 +509,7 @@ tupleToBinaryVal (a, b) =
       (ann . Expr . ann . ELit . ann $ LInt b)
       (ann . Expr . ann . ELit . ann $ LInt 1)
       (ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "integer")
-      (ann . Expr . tText' $ LL.delete "Integer" [])
+      (ann . Expr . tText' $ LL.delete "integer" [])
 
 netConst :: E.Expr Text -> [Var Text] -> [Var Text] -> E.Expr Text
 netConst c [] [] = ann $ ETuple [ann $ Expr c]
