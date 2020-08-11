@@ -18,7 +18,20 @@ import Foreign (ffi0, ffi1, ffi2, ffi3)
 import Test.QuickCheck (arbitrary, class Arbitrary)
 import Control.Monad((<$>))
 
+import Data.Show (class Show, show)
+import Data.Eq (class Eq, eq)
+import Data.Ord (class Ord, compare)
+
 foreign import data Set :: Type -> Type
+
+instance Show a => Show (Set a) where
+  show x = show (toList x)
+
+instance Eq a => Eq (Set a) where
+  eq x y = eq (toList x) (toList y)
+
+instance Ord a => Ord (Set a) where
+  compare x y = compare (toList x) (toList y)
 
 instance Arbitrary v => Arbitrary (Set v) where
   arbitrary = fromList <$> arbitrary

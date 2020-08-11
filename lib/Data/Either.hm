@@ -27,6 +27,11 @@ import Control.Monad (class Applicative, class Monad, pure)
 import Data.Functor (class Functor, map)
 import Data.Function (error, const)
 import Data.Maybe (Maybe(..), maybe)
+import Data.Show (class Show, show)
+import Data.List ((++))
+import Data.Eq (class Eq, eq)
+import Data.Ord (class Ord, compare)
+import Data.Ordering (Ordering(..))
 
 data Either a b = Left a | Right b
 
@@ -43,6 +48,21 @@ instance Monad (Either e) where
   bind (Right x) k = k x
   bind (Left e)  _ = Left e
   return = pure
+
+instance (Show a, Show b) => Show (Either a b) where
+  show (Left x) = "Left " ++ show x
+  show (Right x) = "Right " ++ show x
+
+instance (Eq a, Eq b) => Eq (Either a b) where
+  eq (Left x) (Left y) = eq x y
+  eq (Right x) (Right y) = eq x y
+  eq _ _ = false
+
+instance (Ord a, Ord b) => Ord (Either a b) where
+  compare (Left _) (Right _) = LT
+  compare (Right _) (Left _) = GT
+  compare (Left x) (Left y) = compare x y
+  compare (Right x) (Right y) = compare x y
 
 either :: forall a b c. (a -> c) -> (b -> c) -> Either a b -> c
 either f _ (Left a)  = f a

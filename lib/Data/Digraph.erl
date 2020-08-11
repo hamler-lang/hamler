@@ -28,10 +28,13 @@
         , getShortCycle/2
         , getShortPath/3
         , info/1
+        , eqImpl/2
         ]).
 
 -define(Left(V), {'Left', V}).
 -define(Right(V), {'Right', V}).
+
+eqImpl(X, Y) -> X =:= Y.
 
 trans([]) -> [];
 trans([X | Xs]) ->

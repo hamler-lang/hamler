@@ -23,6 +23,11 @@ module Data.Result
 import Control.Monad (class Applicative, class Monad, pure)
 import Data.Functor (class Functor, map)
 import Data.Function (error)
+import Data.List ((++))
+import Data.Show (class Show, show)
+import Data.Eq (class Eq, eq)
+import Data.Ord (class Ord, compare)
+import Data.Ordering (Ordering(..))
 
 data Result e a = Ok a | Error e
 
@@ -39,6 +44,21 @@ instance Monad (Result e) where
   bind (Ok a) k    = k a
   bind (Error e) _ = Error e
   return = pure
+
+instance (Show a, Show e) => Show (Result e a) where
+  show (Ok x) = "Ok " ++ show x
+  show (Error x) = "Error " ++ show x
+
+instance (Eq a, Eq e) => Eq (Result e a) where
+  eq (Ok x) (Ok y) = eq x y
+  eq (Error x) (Error y) = eq x y
+  eq _ _ = false
+
+instance (Ord a, Ord e) => Ord (Result e a) where
+  compare (Ok x) (Ok y) = compare x y
+  compare (Error x) (Error y) = compare x y
+  compare (Ok _) (Error _) = GT
+  compare (Error _) (Ok _) = LT
 
 isOk :: forall e a. Result e a -> Boolean
 isOk (Ok _) = true
