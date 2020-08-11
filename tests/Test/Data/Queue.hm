@@ -1,6 +1,6 @@
 module Test.Data.Queue where
 
-import Test.QuickCheck (TestGroup(..), TestResult)
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
 import Prelude
 import Data.Queue as Q
 
@@ -23,8 +23,18 @@ dropTest1 = (Q.drop example == Q.fromList [2,3,4,5])
 
 --getTest2 = (Q.getR example == 5)
 
+propShow :: Q.Queue Integer -> Bool
+propShow x = show x == show (Q.toList x)
 
+propEq :: Q.Queue Integer -> Bool
+propEq x = x == x
+
+propOrd :: Q.Queue Integer -> Q.Queue Integer -> Bool
+propOrd x y = (x < y) == (Q.toList x < Q.toList y)
 
 test :: TestGroup (Integer -> IO TestResult)
-test = Exe [ 
+test = Exe [ quickCheck "show" propShow
+           , quickCheck "eq" propEq
+           , quickCheck "ord" propOrd
            ]
+
