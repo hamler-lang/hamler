@@ -1,0 +1,10 @@
+module Test.Data.Tuple where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ quickCheck "show" (show (2, [2]) == "(2, [2])")
+           , quickCheck "ord" ((2, [2]) > (2, [1]))
+           , quickCheck "eq" ((2, [2]) == (2, [2]))
+           ]

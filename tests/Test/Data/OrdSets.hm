@@ -1,0 +1,22 @@
+module Test.Data.OrdSets where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+import Data.OrdSets as OS
+
+-- may need `unify` function for test `toList . fromList`
+
+propShow :: OS.OrdSet Integer -> Bool
+propShow lst = show lst == show (OS.toList lst)
+
+propEq :: OS.OrdSet Integer -> Bool
+propEq lst = lst == lst
+
+propOrd :: OS.OrdSet Integer -> OS.OrdSet Integer -> Bool
+propOrd l1 l2 = (l1 < l2) == (OS.toList l1 < OS.toList l2)
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ quickCheck "show" propShow
+           , quickCheck "eq" propEq
+           , quickCheck "ord" propOrd
+           ]

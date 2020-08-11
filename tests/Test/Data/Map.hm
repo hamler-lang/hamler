@@ -35,6 +35,9 @@ propMapMap m1 f = let l1 = M.toList m1
 propInsert :: M.Map Integer Integer -> Integer -> Integer -> Boolean
 propInsert m k v = M.insert k v m == M.insert k v (M.insert k v m)
 
+propEq :: M.Map Integer Integer -> Boolean
+propEq x = x == x
+
 baseMap :: M.Map Integer Integer
 baseMap = M.fromList [(1,2),(2,3),(3,4)]
 
@@ -69,4 +72,7 @@ test = Exe [ quickCheck "put_get "     propMapPutGet
            , quickCheck "keys "      (M.keys baseMap == [1,2,3])
            , quickCheck "valuse "    (M.values baseMap == [2,3,4])
            , quickCheck "fromList_toList "     propMapFTList
+           , quickCheck "eq"         propEq
+           , quickCheck "show"       (show baseMap == "[(1, 2), (2, 3), (3, 4)]")
+           , quickCheck "ord"        (baseMap < M.fromList [(2, 1), (2, 3), (3, 4)])
            ]

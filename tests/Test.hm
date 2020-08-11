@@ -7,6 +7,14 @@ import Test.Data.Map as M
 import Test.Data.Atom as A
 import Test.Data.Array as A1
 import Test.Data.Bool as TB
+import Test.Data.Either as Ei
+import Test.Data.Tuple as Tu
+import Test.Data.Maybe as May
+import Test.Data.OrdDict as OD
+import Test.Data.OrdSets as OS
+import Test.Data.Queue as Q
+import Test.Data.Result as R
+import Test.Data.Set as St
 
 main :: IO ()
 main = runTest ( TxG "Data" [
@@ -16,6 +24,14 @@ main = runTest ( TxG "Data" [
                  , TxG "Atom"   [A.test]
                  , TxG "Array"  [A1.test]
                  , TxG "Bool"  [TB.test]
+                 , TxG "Either" [Ei.test]
+                 , TxG "Tuple" [Tu.test]
+                 , TxG "Maybe" [May.test]
+                 , TxG "OrdDict" [OD.test]
+                 , TxG "OrdSets" [OS.test]
+                 , TxG "Queue" [Q.test]
+                 , TxG "Result" [R.test]
+                 , TxG "Set"   [St.test]
                  ]
                )
 
