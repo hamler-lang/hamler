@@ -1,0 +1,20 @@
+module Test.Data.OrdDict where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+import Data.OrdDict as OD
+
+propShow :: OD.OrdDict Integer Integer -> Bool
+propShow lst = show (OD.toList lst) == show lst
+
+propEq :: OD.OrdDict Integer Integer -> Bool
+propEq x = x == x
+
+propOrd :: OD.OrdDict Integer Integer -> OD.OrdDict Integer Integer -> Bool
+propOrd x y = (x < y) == (OD.toList x < OD.toList y)
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ quickCheck "show" propShow
+           , quickCheck "eq" propEq
+           , quickCheck "ord" propOrd
+           ]
