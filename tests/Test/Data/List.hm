@@ -1,0 +1,95 @@
+module Test.Data.List where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+import Data.List as L 
+
+propAppend1 :: [Int]->Bool
+propAppend1 xs = ([] ++ xs) == xs 
+
+propAppend2 :: Int->[Int]->Bool
+propAppend2 n xs = ([n] ++ xs) == (L.cons n xs)
+
+propAppend3 :: [Int]->[Int]->[Int]->Bool
+propAppend3 xs ys zs = ((xs ++ ys) ++ zs) == (xs ++ (ys ++ zs))
+
+propLength :: [Int]->[Int]->Bool
+propLength xs ys = (L.length xs) + (L.length ys) == (L.length (xs ++ ys))
+
+propReverse :: [Int]->Bool
+propReverse xs = L.reverse ( L.reverse xs) == xs
+
+propReverseLength :: [Int]->Bool
+propReverseLength xs = (L.length xs == L.length (L.reverse xs))
+
+propReverse2 :: Bool
+propReverse2 = (L.reverse [1,2,3,4]) == ([4,3,2,1])
+
+propLast :: [Int]->[Int]->Bool
+propLast [] [] = true
+propLast xs [] = last (xs ++ []) == last xs
+propLast xs ys = last (xs ++ ys) == last ys
+
+propConcat1 :: [[Int]]->[[Int]]->Bool
+propConcat1 xs ys = (L.concat xs ++ L.concat ys) == L.concat (xs ++ ys)
+
+propConcat2 :: [Int]->[Int]->[Int]->Bool
+propConcat2 xs ys zs = L.concat [L.concat [xs, ys], zs] == L.concat [xs, L.concat [ys, zs]]
+
+propReplicate1 :: Int->Int->Char->Bool
+propReplicate1 n m c 
+                | (n < 0 || m < 0) = true 
+                | otherwise =  (L.replicate n c) ++ (L.replicate m c) == L.replicate (n + m) c
+
+propReplicate2 :: Bool
+propReplicate2 = L.replicate 1 'a' == ['a']
+
+propSplitAt2 :: Int->[Int]->Bool
+propSplitAt2 n xs
+    | n > L.length xs || n < 0 = true 
+    | otherwise = case L.splitAt n xs of
+            (h, t) -> (L.length h == n) && (L.length t == (L.length xs) - n)
+
+propZip :: [Int]->[Int]->Bool
+propZip xs ys = L.length (L.zip xs ys) == min (L.length xs) (L.length ys)
+
+propZip2 :: Bool
+propZip2 = L.zip [1,2] [3,4] == [(1,3),(2,4)]
+
+propFilter :: Bool
+propFilter = L.filter (\x-> x > 0) [-1,2,2,-2,5] == [2,2,5]
+
+propZipWith :: [Int]->[Int]->Bool
+propZipWith xs ys = L.zipWith (\x-> \y->x+y) xs ys == map (\(x, y)->x+y) (L.zip xs ys) 
+
+propZipWith2 :: Bool
+propZipWith2 = L.zipWith (\x-> \y->x+y) [1,2,3] [4,5,6] == [5,7,9]
+
+propMember :: Bool
+propMember = L.member 5 [1,2,3,4,5]
+
+propMember2 :: Bool
+propMember2 = not (L.member 0 [1,2,3,4,5])
+
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ quickCheck "append1" propAppend1
+           , quickCheck "append2" propAppend2
+           , quickCheck "length" propLength
+           , quickCheck "reverse" propReverse
+           , quickCheck "concat1" propConcat1
+           , quickCheck "concat2" propConcat2
+           , quickCheck "replicate2" propReplicate2
+           , quickCheck "replicate1" propReplicate1
+           , quickCheck "last" propLast
+           , quickCheck "reverse length" propReverseLength
+           , quickCheck "reverse example" propReverse2
+           , quickCheck "split general" propSplitAt2
+           , quickCheck "filter example" propFilter
+           , quickCheck "zipWith Example" propZipWith2 
+           , quickCheck "member example" propMember
+           , quickCheck "member example2 " propMember2
+           , quickCheck "propmember" propMember
+           , quickCheck "propFilter" propFilter
+           --, quickCheck "propZipWith" propZipWith
+           ]
