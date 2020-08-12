@@ -106,6 +106,19 @@ putAtom = stringToAtomExprs "put"
 mapInsertList :: Ord k => [(k, v)] -> M.Map k v -> M.Map k v
 mapInsertList xs m0 = foldl' (\m (k, v) -> M.insert k v m) m0 xs
 
+aPat :: Text -> Pat Text
+aPat t = ann $ PLiteral (ann $ LAtom (ann $ Atom t))
+
+vPat :: Var Text -> Pat Text
+vPat v = ann $ PVar v
+
+vExprs :: Var Text -> Exprs Text
+vExprs v = ann $ Expr $ ann $ EVar v
+
+trueAtom :: Exprs Text
+trueAtom = stringToAtomExprs "true"
+
+
 isJust :: Maybe a -> Bool
 isJust Nothing = False
 isJust (Just _) = True
@@ -124,6 +137,10 @@ aPrimop v =
     . EPrimOp
       (Atom "match_fail" "")
     $ [ann . Expr . ann . ELit . ann . LAtom . ann $ Atom "function_clause"] ++ v
+
+amodcall :: Exprs Text -> Exprs Text
+amodcall v = 
+  ann $ Expr $ ann $ EModCall (stringToAtomExprs "System.Error") (stringToAtomExprs "throw") [v]
 
 recvPeekMessage :: Expr Text
 recvPeekMessage = ann $ EPrimOp (ann $ Atom "recv_peek_message") []
