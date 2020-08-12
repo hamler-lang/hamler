@@ -8,19 +8,18 @@ import Data.Queue (Queue, len, cons)
 example = Q.fromList [1,2,3,4,5]
 emptyQ = Q.fromList []
 
-dropTest1 = Q.drop example == Q.fromList [2,3,4,5]
+--dropTest1 = (Q.drop example == Q.fromList [2,3,4,5])
 
-dropTest2 = Q.drop emptyQ == emptyQ
+--dropTest2 = (Q.drop emptyQ == emptyQ)
 
-dropTest3 = Q.dropR example == Q.fromList [1,2,3,4]
+--dropTest3 = (Q.dropR example == Q.fromList [1,2,3,4])
 
-dropTest4 = Q.dropR emptyQ == emptyQ
+--dropTest4 = (Q.dropR emptyQ == emptyQ)
 
-getTest1 = Q.get example == 1
+--getTest1 = (Q.get example == 1)
 
-getTest2 = Q.getR example == 5
+--getTest2 = (Q.getR example == 5)
 
-head 
 
 
 test :: TestGroup (Integer -> IO TestResult)
