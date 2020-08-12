@@ -107,4 +107,5 @@ test = Exe [ quickCheck "append1" propAppend1
            , quickCheck "propUnzip" propUnZip
            --, quickCheck "zip3" zip3Test
            --, quickCheck "prop zip3" propZip3
+
            ]

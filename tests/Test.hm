@@ -8,6 +8,7 @@ import Test.Data.Atom as A
 import Test.Data.Array as A1
 import Test.Data.Bool as TB
 import Test.Data.List as L
+import Test.Data.Tuple as T
 
 main :: IO ()
 main = runTest ( TxG "Data" [
@@ -18,6 +19,7 @@ main = runTest ( TxG "Data" [
                  , TxG "Array"  [A1.test]
                  , TxG "Bool"   [TB.test]
                  , TxG "List"   [L.test]
+                 , TxG "Tuple"  [T.test]
                  ]
                )
 
