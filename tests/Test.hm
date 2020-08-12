@@ -15,6 +15,7 @@ import Test.Data.OrdSets as OS
 import Test.Data.Queue as Q
 import Test.Data.Result as R
 import Test.Data.Set as St
+import Test.Data.List as L
 
 main :: IO ()
 main = runTest ( TxG "Data" [
@@ -32,6 +33,8 @@ main = runTest ( TxG "Data" [
                  , TxG "Queue" [Q.test]
                  , TxG "Result" [R.test]
                  , TxG "Set"   [St.test]
+                 , TxG "Bool"   [TB.test]
+                 , TxG "List"   [L.test]
                  ]
                )
 

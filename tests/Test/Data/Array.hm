@@ -14,6 +14,12 @@ baseArray = A.fromList [1,3,4,5]
 
 baseArray1 :: A.Array Integer
 baseArray1 = A.fromList [0, 3, 4, 6]
+--propArrayToList :: A.Array Int -> Bool
+--propArrayToList arr = (A.fromList $ A.toList arr) == arr
+
+--propListToArray :: [Int] -> Bool
+--propListToArray xs =(A.toList $ A.fromList xs) == xs
+
 
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [ quickCheck "fromList_toList "  propArrayFt
@@ -25,4 +31,7 @@ test = Exe [ quickCheck "fromList_toList "  propArrayFt
            , quickCheck "eq" (baseArray == baseArray)
            , quickCheck "ord1" (compare baseArray baseArray == EQ)
            , quickCheck "ord2" (compare baseArray baseArray1 == GT)
+           --, quickCheck "Array to List" (propArrayToList)
+           --, quickCheck "List to Array" (propListToArray)
            ]
+

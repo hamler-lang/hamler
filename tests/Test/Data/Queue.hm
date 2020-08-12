@@ -13,6 +13,25 @@ propEq x = x == x
 propOrd :: Q.Queue Integer -> Q.Queue Integer -> Bool
 propOrd x y = (x < y) == (Q.toList x < Q.toList y)
 
+example :: Q.Queue Int
+example = Q.fromList [1,2,3,4,5]
+
+emptyQ :: Q.Queue Int
+emptyQ = Q.fromList []
+
+dropTest1 :: Bool
+dropTest1 = (Q.drop example == Q.fromList [2,3,4,5])
+
+--dropTest2 = (Q.drop emptyQ == emptyQ)
+
+--dropTest3 = (Q.dropR example == Q.fromList [1,2,3,4])
+
+--dropTest4 = (Q.dropR emptyQ == emptyQ)
+
+--getTest1 = (Q.get example == 1)
+
+--getTest2 = (Q.getR example == 5)
+
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [ quickCheck "show" propShow
            , quickCheck "eq" propEq
