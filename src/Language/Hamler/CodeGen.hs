@@ -18,6 +18,7 @@ import Control.Monad.Except
 import Control.Monad.Reader
 import Control.Monad.State
 import Control.Monad.Writer
+import Control.Monad.Fail
 import Data.List as LL
 import Data.Map as M
 import Data.Text (Text, toLower, unpack)
@@ -51,12 +52,15 @@ class Monad m => MonadVarState m where
   withVarState :: m a -> m a
   reset :: m ()
 
-type Tain a = (Functor a, Applicative a, Monad a, MonadReader Tenv a, MonadState VarState a, MonadError P.MultipleErrors a, MonadWriter Text a, MonadVarState a)
+type Tain a = (Functor a, Applicative a, Monad a, MonadFail a, MonadReader Tenv a, MonadState VarState a, MonadError P.MultipleErrors a, MonadWriter Text a, MonadVarState a)
 
 type Tenv = (Maybe (E.Module Text), M.Map Text Int, M.Map Text (M.Map Text Integer), ModuleName)
 
 newtype Translate a = Translate (ExceptT P.MultipleErrors (StateT VarState (ReaderT Tenv (Writer Text))) a)
   deriving (Functor, Applicative, Monad, MonadState VarState, MonadReader Tenv, MonadError P.MultipleErrors, MonadWriter Text)
+
+instance MonadFail Translate where 
+  fail s = error s
 
 runTranslate ::
   Bool ->
@@ -217,6 +221,25 @@ exprToErl (Abs _ i e) = do
   var <- insertParam i
   e' <- exprToErl e
   return . ann . EFun . ann $ Fun [var] (ann $ Expr e')
+exprToErl (C.App _ 
+     (C.App _  (C.Var _ (Qualified (Just (ModuleName [ProperName "System", ProperName "Error"])) (Ident "catchException"))) e1) 
+     e2) = do
+  e1' <- exprToErl e1 
+  e2' <- exprToErl e2
+  var <- freshVar
+  [v4, v5, v6, v9, v10, v11, v12, v13, v14, v15, v16, v17] <- sequence $ replicate 12 freshVar
+  return $ ann $ ETry (ann $ Expr $ ann $ EApp (ann $ Expr e1') []) 
+                 [var] 
+                 (ann $ Expr $ ann $ EFun $ ann $ Fun [] $ ann $ Expr $ ann $ EVar var) 
+                 [v4, v5, v6]
+                 (ann $ Expr $ ann  $ 
+                  ECase (ann $ Exprs [ann $ EVar v4, ann $ EVar v5, ann $ EVar v6]) 
+                   [ ann $ Clause [aPat "throw", vPat v12, ann $ PVar v9 ] trueAtom  (ann $ Expr $ ann $ EApp (ann $ Expr e2') [vExprs v12])
+                   , ann $ Clause [aPat "error", vPat v13, ann $ PVar v10 ] trueAtom  (ann $ Expr $ ann $ EApp (ann $ Expr e2') [vExprs v13])
+                   , ann $ Clause [aPat "exit", vPat v14, ann $ PVar v11 ] trueAtom  (ann $ Expr $ ann $ EApp (ann $ Expr e2') [vExprs v14])
+                   , ann $ Clause [vPat v15, vPat v16, vPat v17] trueAtom (ann $ Expr $ ann $ EPrimOp (ann $ Atom "raise") $ fmap  (ann . Expr . ann . EVar ) [v16, v17])
+                   ]
+                 )
 exprToErl (C.App _ e1 e2) = do
   e1' <- exprToErl e1
   e2' <- exprToErl e2
@@ -283,15 +306,33 @@ appExpr :: E.Expr Text -> E.Expr Text
 appExpr expr = ann $ EApp (ann $ Expr expr) []
 
 matchFail :: Tain m => CaseAlternative C.Ann -> m [Clause Text]
-matchFail ca =
-  case Prelude.filter isBinaryBinder $ caseAlternativeBinders ca of
-    [] -> return []
-    _ -> do
-      let len = length $ caseAlternativeBinders ca
-      indexs0 <- mapM (\_ -> freshVar) [1 .. len]
+matchFail ca = do
+  vbs <- case Prelude.filter isBinaryBinder $ caseAlternativeBinders ca of
+            [] -> return []
+            _ -> do
+              let len = length $ caseAlternativeBinders ca
+              indexs0 <- mapM (\_ -> freshVar) [1 .. len]
+              let indexs = fmap (\v -> ann $ PVar v) indexs0
+                  indexs' = fmap (\v -> ann $ Expr $ ann $ EVar v) indexs0
+              return $ [ann . Clause indexs guardv $ aPrimop indexs']
+  vcs <- matchConstr ca
+  return $ vcs ++ vbs
+
+matchConstr :: Tain m => CaseAlternative C.Ann -> m [Clause Text] 
+matchConstr ca = do 
+  let cabs = caseAlternativeBinders ca
+      len = length cabs
+  case all isConstrBinder cabs of 
+    True -> do
+      indexs0 <- sequence $ replicate len freshVar
       let indexs = fmap (\v -> ann $ PVar v) indexs0
-          indexs' = fmap (\v -> ann $ Expr $ ann $ EVar v) indexs0
-      return [ann . Clause indexs guardv $ aPrimop indexs']
+          indexs' = ann $ Expr $ head $ fmap (\v ->  ann $ EVar v) indexs0
+      return [ann . Clause indexs guardv $ amodcall indexs']
+    False -> return []
+
+isConstrBinder :: Binder C.Ann -> Bool 
+isConstrBinder (ConstructorBinder _ _ _ _) = True
+isConstrBinder _ = False
 
 isBinaryBinder :: Binder C.Ann -> Bool
 isBinaryBinder (BinaryBinder _ _) = True
@@ -618,4 +659,3 @@ netLambda1 [x] s p1 p2 =
 netLambda1 (x : xs) s p1 p2 =
   ann . EFun . ann $ Fun [x] (ann . Expr $ netLambda1 xs (x : s) p1 p2)
 netLambda1 _ _ _ _ = error "stringe error"
-

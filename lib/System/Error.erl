@@ -27,4 +27,10 @@ showErrorImpl(Error) ->
 
 throwException(Ex) -> ?IO(throw(Ex)).
 
-catchException(_X, _Y) -> ok.
+catchException(X, Y) -> try X() of
+                          _Z -> ?IO(_Z)
+                        catch
+                          throw:_Throw -> Y(_Throw);
+                          error:_Error -> Y(_Error);
+                          exit:_Exit   -> Y(_Exit)
+                        end.

@@ -29,12 +29,14 @@ foreign import showErrorImpl :: Error -> String
 
 -- erlang:raise(Class, Reason, Stacktrace) -> no_return()
 
-throw :: forall a. String -> IO a
-throw s = throwException (s)
+throw :: forall a e. e -> IO a
+throw s = throwException s
 
-try :: forall a. IO a -> IO (Either Error a)
-try action = catchException (\e -> pure (Left e)) (map Right action)
+try :: forall a e. IO a -> IO (Either e a)
+try action = catchException (map Right action) (\e -> pure (Left e))
 
+catch :: forall a e. IO a -> (e -> IO a) -> IO a
+catch = catchException
 {-
 foreign import error :: String -> Error
 
@@ -43,12 +45,6 @@ foreign import message :: Error -> String
 foreign import name :: Error -> String
 -}
 
-foreign import throwException :: forall a. String -> IO a
+foreign import throwException :: forall a e. e -> IO a
 
-foreign import catchException :: forall a. (Error -> IO a) -> IO a -> IO a
-
-{-
-throw(Any) -> no_return()
-
--}
-
+foreign import catchException :: forall a e. IO a -> (e -> IO a) -> IO a
