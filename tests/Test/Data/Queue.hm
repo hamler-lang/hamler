@@ -1,14 +1,17 @@
 module Test.Data.Queue where
 
-import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Test.QuickCheck (TestGroup(..), TestResult)
 import Prelude
 import Data.Queue as Q
-import Data.Queue (Queue, len, cons)
 
+example :: Q.Queue Int
 example = Q.fromList [1,2,3,4,5]
+
+emptyQ :: Q.Queue Int
 emptyQ = Q.fromList []
 
---dropTest1 = (Q.drop example == Q.fromList [2,3,4,5])
+dropTest1 :: Bool
+dropTest1 = (Q.drop example == Q.fromList [2,3,4,5])
 
 --dropTest2 = (Q.drop emptyQ == emptyQ)
 
