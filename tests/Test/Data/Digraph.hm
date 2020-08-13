@@ -1,0 +1,39 @@
+module Test.Data.Digraph where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+import Data.Digraph as G
+
+emptyGraph :: [G.GraphType] -> IO (G.Graph Integer Integer)
+emptyGraph = G.new
+
+{-
+   (1) <-2-1-> (2) --3-> (3)
+-}
+getBaseGraph1 :: IO (G.Graph Integer Integer)
+getBaseGraph1 = do
+  g <- emptyGraph []
+  v1 <- G.addVertex g 1
+  v2 <- G.addVertex g 2
+  v3 <- G.addVertex g 3
+  r1 <- G.addEdge g v1 v2 1
+  r2 <- G.addEdge g v2 v1 2
+  r3 <- G.addEdge g v2 v3 3
+  return g
+
+propNoEdges :: IO Bool
+propNoEdges = do
+  g <- getBaseGraph1
+  r <- G.noEdges g
+  return (r == 3)
+
+propNoVertices :: IO Bool
+propNoVertices = do
+  g <- getBaseGraph1
+  r <- G.noVertices g
+  return (r == 3)
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ quickCheck "noEdges" propNoEdges
+           , quickCheck "noVertices" propNoVertices
+           ]
