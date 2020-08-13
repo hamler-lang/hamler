@@ -33,6 +33,14 @@ propNoVertices = do
   r <- G.noVertices g
   return (r == 3)
 
+propDelete :: IO Bool
+propDelete = do
+  g <- getBaseGraph1
+  G.delete g
+  v <- G.noVertices g
+  e <- G.noVertices g
+  return (v == 0 && e == 0)
+
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [ quickCheck "noEdges" propNoEdges
            , quickCheck "noVertices" propNoVertices
