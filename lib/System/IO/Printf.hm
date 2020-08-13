@@ -21,7 +21,57 @@ module System.IO.Printf
   , println
   , render
   ) where
+{-
+`printf` in Hamler is defined like in Haskell. It has type `Printf r => String -> r`. The String argument represent how the format of the output, just like printfs in ohter languages.
 
+exmaple 1:
+
+```haskell
+$
+> printf "%d is one" 1
+1 is one
+
+```
+
+The Following list are format characters, specify the type and the output form.
+c      character
+d      decimal
+o      octal
+x      hexadecimal
+b      binary
+f      floating point
+s      string
+
+In our specification we can have flags to limit the length and precision of the output.
+
+-      left adjust (default is right adjust)
+
++      right adjust
+       after flag there will be number specify field length, which is a mininum not maximum.
+       we can also have precision with after field lenght
+       .num   precision
+       .      same as .0
+
+example 2:
+
+```haskell
+$
+> printf "%s %10.2f" "pi" pi
+pi       3.14
+
+```
+
+exmaple 3:
+
+```haskell
+$
+> printf "%-10.2f %s" pi "pi"
+3.14        pi
+
+```
+
+
+-}
 import Control.Monad (IO)
 import Data.Bool (not)
 import Data.Eq ((/=))
@@ -157,4 +207,3 @@ format ['%'|xs] a = case span (\c -> not $ member c formatCharacter) xs of
                          _ -> error "bad format"
 format [x|xs] a = [x| format xs a]
 format [] _ =[]
-
