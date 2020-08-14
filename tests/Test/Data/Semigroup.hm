@@ -1,0 +1,18 @@
+ 
+module Test.Data.Semigroup where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+
+propList :: [Int]->[Int]->[Int]->Bool
+propList xs ys zs = ((xs <> ys) <> zs) == (xs <> (ys <> zs))
+
+propUnit :: Bool
+propUnit = ((unit <> unit) <> unit) == (unit <> (unit <> unit))
+
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [
+    quickCheck "List" propList
+   ,quickCheck "Unit" propUnit
+]

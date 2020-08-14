@@ -1,3 +1,4 @@
+ 
 module Test.Data.Queue where
 
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
@@ -13,28 +14,59 @@ emptyQ = Q.fromList []
 dropTest1 :: Bool
 dropTest1 = (Q.drop example == Q.fromList [2,3,4,5])
 
---dropTest2 = (Q.drop emptyQ == emptyQ)
+dropTest2 :: Bool
+dropTest2 = (Q.drop emptyQ == emptyQ)
 
---dropTest3 = (Q.dropR example == Q.fromList [1,2,3,4])
+dropTest3 :: Bool
+dropTest3 = (Q.dropR example == Q.fromList [1,2,3,4])
 
---dropTest4 = (Q.dropR emptyQ == emptyQ)
+dropTest4 :: Bool
+dropTest4 = (Q.dropR emptyQ == emptyQ)
 
---getTest1 = (Q.get example == 1)
+getTest1 :: Bool 
+getTest1 = (Q.get example == 1)
 
---getTest2 = (Q.getR example == 5)
+getTest2 :: Bool
+getTest2 = (Q.getR example == 5)
 
-propShow :: Q.Queue Integer -> Bool
-propShow x = show x == show (Q.toList x)
+lastTest :: Bool
+lastTest = (Q.last example == 5)
 
-propEq :: Q.Queue Integer -> Bool
-propEq x = x == x
+memberTest :: Bool
+memberTest = (Q.member 3 example) && (Q.member 1 example) && (Q.member 5 example)
 
-propOrd :: Q.Queue Integer -> Q.Queue Integer -> Bool
-propOrd x y = (x < y) == (Q.toList x < Q.toList y)
+newTest :: Bool
+newTest = Q.isEmpty Q.new 
+
+propJoin :: Q.Queue Int->Q.Queue Int->Bool
+propJoin q1 q2 = Q.toList q1 ++ Q.toList q2 == Q.toList (Q.join q1 q2)
+
+--reverseTest :: Bool
+--reverseTest = (Q.reverse )
+
+propTail :: Q.Queue Int->Bool
+propTail q = ( (Q.toList $ Q.tail example) == [2,3,4,5])
+
+--splitTest :: Bool
+--splitTest (Q.split 0 example == )
+
+toListTest :: Bool
+toListTest = (Q.toList example) == [1,2,3,4,5] 
 
 test :: TestGroup (Integer -> IO TestResult)
-test = Exe [ quickCheck "show" propShow
-           , quickCheck "eq" propEq
-           , quickCheck "ord" propOrd
+test = Exe [ 
+             quickCheck "dropTest 1" dropTest1
+            --,quickCheck "dropTest 2" dropTest2
+            ,quickCheck "dropTest 3" dropTest3
+            --,quickCheck "dropTest 4" dropTest4
+            ,quickCheck "get 1" getTest1
+            ,quickCheck "get 2" getTest2
+            ,quickCheck "last"  lastTest
+            ,quickCheck "member" memberTest
+            ,quickCheck "new" newTest
+            ,quickCheck "join" propJoin
+            ,quickCheck "tail" propTail
+            ,quickCheck "toList" toListTest
            ]
+
 

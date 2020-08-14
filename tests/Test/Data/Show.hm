@@ -1,0 +1,72 @@
+ 
+module Test.Data.Show where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+
+boolTest :: Bool
+boolTest = (show true == "true") && (show false == "false")
+
+intTest :: Bool
+intTest = (show 1 == "1") && (show 0 == "0") && (show 1234567890 == "1234567890")
+
+charTest :: Bool
+charTest = ((let c = 'a' in show c) == "a")
+        && ((let c = 'b' in show c) == "b") 
+        && ((let c = 'c' in show c) == "c") 
+        && ((let c = 'd' in show c) == "d") 
+        && ((let c = 'e' in show c) == "e") 
+        && ((let c = 'f' in show c) == "f") 
+        && ((let c = 'g' in show c) == "g") 
+        && ((let c = 'h' in show c) == "h") 
+        && ((let c = 'j' in show c) == "j") 
+        && ((let c = 'k' in show c) == "k") 
+        && ((let c = 'l' in show c) == "l") 
+        && ((let c = 'm' in show c) == "m")
+        && ((let c = 'n' in show c) == "n") 
+        && ((let c = 'o' in show c) == "o") 
+        && ((let c = 'p' in show c) == "p") 
+        && ((let c = 'r' in show c) == "r") 
+        && ((let c = 's' in show c) == "s") 
+        && ((let c = 't' in show c) == "t") 
+        && ((let c = 'u' in show c) == "u") 
+        && ((let c = 'v' in show c) == "v")
+        && ((let c = 'w' in show c) == "w")
+        && ((let c = 'x' in show c) == "x") 
+        && ((let c = 'y' in show c) == "y")
+        && ((let c = 'z' in show c) == "z") 
+
+unitTest :: Bool
+unitTest = (show () == "unit")
+
+earr :: [Int]
+earr = []
+
+arrTest :: Bool
+arrTest = (show [1,2,3,4,5] == "[1,2,3,4,5]") && (show earr == "[]")
+
+just10 :: Maybe Int
+just10 = Just 10
+
+nothing :: Maybe Int
+nothing = Nothing
+
+maybeTest :: Bool
+maybeTest = ((show just10) == "Just 10") && ((show nothing) == "Nothing")
+
+floatTest :: Bool
+floatTest = show 1.23 == "1.23"
+
+tupleTest :: Bool
+tupleTest = (show (1,2) == "(1,2)")
+ 
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [
+    quickCheck "bool" boolTest
+   ,quickCheck "int" intTest
+   ,quickCheck "char" charTest
+   ,quickCheck "arr" arrTest
+   ,quickCheck "maybe" maybeTest
+   ,quickCheck "floatTest" floatTest
+   ,quickCheck "tuple" tupleTest
+]
