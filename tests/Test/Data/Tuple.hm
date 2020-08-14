@@ -1,10 +1,39 @@
+ 
 module Test.Data.Tuple where
 
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
 import Prelude
+import Data.Tuple as T
+
+testfunc :: (Int, Int)->Int
+testfunc (a, b) = a + b
+
+testfunc2 :: Int->Int->Int
+testfunc2 a b = a + b
+
+propfst :: (Int, Int)->Bool
+propfst t@(a, b) = T.fst t == a
+
+propsnd :: (Int, Int)->Bool
+propsnd t@(a, b) = T.snd t== b
+
+propSwap :: (Int, Int)->Bool
+propSwap t@(a, b) = T.swap t == (b, a)
+
+propCurry :: (Int, Int)->Bool
+propCurry (a, b) = (T.curry testfunc a b) == testfunc (a, b)  
+
+propUncurry :: Int->Int->Bool
+propUncurry a b = (T.uncurry testfunc2 (a, b)) == (testfunc2 a b)
 
 test :: TestGroup (Integer -> IO TestResult)
-test = Exe [ quickCheck "show" (show (2, [2]) == "(2, [2])")
-           , quickCheck "ord" ((2, [2]) > (2, [1]))
-           , quickCheck "eq" ((2, [2]) == (2, [2]))
-           ]
+test = Exe [
+            quickCheck "first" propfst
+            ,quickCheck "second" propsnd
+            ,quickCheck "swap" propSwap
+            ,quickCheck "curry" propCurry
+            ,quickCheck "uncurry" propUncurry
+            ,quickCheck "show" (show (2, [2]) == "(2, [2])")
+            ,quickCheck "ord" ((2, [2]) > (2, [1]))
+            ,quickCheck "eq" ((2, [2]) == (2, [2]))
+        ]
