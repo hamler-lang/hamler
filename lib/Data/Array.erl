@@ -15,6 +15,8 @@
 -module('Array').
 
 -export([ new/1
+        , arrayFoldl/3
+        , arrayFoldr/3
         , sparseFoldl/3
         , sparseFoldr/3
         , sparseMap/2
@@ -29,8 +31,14 @@ trans([X | Xs]) -> [ case X of
     { 'Default', V } -> { default, V }
 end | trans(Xs) ].
 
+arrayFoldl(Fun, B0, Arr) ->
+    array:foldl(fun(I, A, B) -> ((Fun(I))(B))(A) end, B0, Arr ).
+
+arrayFoldr(Fun, B0, Arr) ->
+    array:foldr(fun(I, A, B) -> ((Fun(I))(A))(B) end, B0, Arr ).
+
 sparseFoldl(Fun, B0, Arr) ->
-    array:sparse_foldl(fun(I, A, B) -> ((Fun(I))(A))(B) end, B0, Arr ).
+    array:sparse_foldl(fun(I, A, B) -> ((Fun(I))(B))(A) end, B0, Arr ).
 
 sparseFoldr(Fun, B0, Arr) ->
     array:sparse_foldr(fun(I, A, B) -> ((Fun(I))(A))(B) end, B0, Arr ).
