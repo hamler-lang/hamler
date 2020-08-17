@@ -33,3 +33,4 @@ bin/
 .tmp/
 .test/
 ebin/
+erl_crash.dump

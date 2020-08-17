@@ -26,6 +26,9 @@ foreign import data Graph :: Type -> Type -> Type
 --                           ^-----  ^---
 --               Label Type: Vertex  Edge
 
+-- notice that Edge in Erlang is ['$e' | id] and 
+-- Vertex is ['$v' | id], maybe constructor for
+-- them could be added to lib
 foreign import data Edge :: Type -> Type
 foreign import data Vertex :: Type -> Type
 
@@ -64,6 +67,7 @@ delVertex = ffiIO2 :digraph :del_vertex
 delVertices :: forall a b. Graph a b -> [Vertex a] -> IO ()
 delVertices = ffiIO2 :digraph :del_vertices
 
+-- | use graph after delete is a undefined behaviour
 delete :: forall a b. Graph a b -> IO ()
 delete = ffiIO1 :digraph :delete
 
@@ -92,7 +96,7 @@ inDegree :: forall a b. Graph a b -> Vertex a -> IO Integer
 inDegree = ffiIO2 :digraph :in_degree
 
 inEdges :: forall a b. Graph a b -> Vertex a -> IO [Edge b]
-inEdges = ffiIO2 :digraph :in_degree
+inEdges = ffiIO2 :digraph :in_edges
 
 inNeighbours :: forall a b. Graph a b -> Vertex a -> IO [Vertex a]
 inNeighbours = ffiIO2 :digraph :in_neighbours

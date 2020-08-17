@@ -1,0 +1,191 @@
+module Test.Data.Digraph where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+import Data.Digraph as G
+
+-- TODO: add to stdlib
+mapM :: forall f a b m. Monad m => Traversable f => (a -> m b) -> f a -> m (f b) 
+mapM f l = sequence (map f l)
+
+
+emptyGraph :: [G.GraphType] -> IO (G.Graph Integer Integer)
+emptyGraph = G.new
+
+{-
+   (1) <-2-1-> (2) --3-> (3)
+-}
+getBaseGraph1 :: IO (G.Graph Integer Integer)
+getBaseGraph1 = do
+  g <- emptyGraph []
+  v1 <- G.addVertex g 1
+  v2 <- G.addVertex g 2
+  v3 <- G.addVertex g 3
+  r1 <- G.addEdge g v1 v2 1
+  r2 <- G.addEdge g v2 v1 2
+  r3 <- G.addEdge g v2 v3 3
+  return g
+
+getBaseGraph2 :: IO (G.Graph Integer Integer, G.Vertex Integer)
+getBaseGraph2 = do
+  g <- emptyGraph []
+  v1 <- G.addVertex g 1
+  v2 <- G.addVertex g 2
+  v3 <- G.addVertex g 3
+  r1 <- G.addEdge g v1 v2 1
+  r2 <- G.addEdge g v2 v1 2
+  r3 <- G.addEdge g v2 v3 3
+  return (g, v2)
+
+getBaseGraph3 :: IO (G.Graph Integer Integer, G.Vertex Integer, G.Vertex Integer)
+getBaseGraph3 = do
+  g <- emptyGraph []
+  v1 <- G.addVertex g 1
+  v2 <- G.addVertex g 2
+  v3 <- G.addVertex g 3
+  r1 <- G.addEdge g v1 v2 1
+  r2 <- G.addEdge g v2 v1 2
+  r3 <- G.addEdge g v2 v3 3
+  return (g, v1, v3)
+
+getBaseGraph4 :: IO (G.Graph Integer Integer, G.Edge Integer)
+getBaseGraph4 = do
+  g <- emptyGraph []
+  v1 <- G.addVertex g 1
+  v2 <- G.addVertex g 2
+  v3 <- G.addVertex g 3
+  r1 <- G.addEdge g v1 v2 1
+  r2 <- G.addEdge g v2 v1 2
+  r3 <- G.addEdge g v2 v3 3
+  return (g, getEdge r2)
+  where getEdge (Right e) = e
+        getEdge (Left _) = error "failed to create edge"
+
+propNoEdges :: IO Bool
+propNoEdges = do
+  g <- getBaseGraph1
+  r <- G.noEdges g
+  return (r == 3)
+
+propNoVertices :: IO Bool
+propNoVertices = do
+  g <- getBaseGraph1
+  r <- G.noVertices g
+  return (r == 3)
+
+propAllVertices :: IO Bool
+propAllVertices = do
+  g <- getBaseGraph1
+  r <- G.allVertices g
+  vs <- mapM (G.vertex g) r
+  return (sort vs == [Just 1, Just 2, Just 3])
+
+extractValue :: Maybe (G.Vertex Integer, G.Vertex Integer, Integer) -> Maybe Integer
+extractValue = map (\(_, _, l) -> l)
+
+propAllEdges :: IO Bool
+propAllEdges = do
+  g <- getBaseGraph1
+  r <- G.allEdges g
+  es <- mapM (G.edge g) r
+  let ls = map extractValue es
+  return (sort ls == [Just 1, Just 2, Just 3])
+
+propInDegree :: IO Bool
+propInDegree = do
+  (g, v) <- getBaseGraph2
+  d <- G.inDegree g v
+  return (d == 1)
+
+propOutDegree :: IO Bool
+propOutDegree = do
+  (g, v) <- getBaseGraph2
+  d <- G.outDegree g v
+  return (d == 2)
+
+propInEdges :: IO Bool
+propInEdges = do
+  (g, v) <- getBaseGraph2
+  r <- G.inEdges g v
+  es <- mapM (G.edge g) r
+  let ls = map extractValue es
+  return (ls == [Just 1])
+
+propOutEdges :: IO Bool
+propOutEdges = do
+  (g, v) <- getBaseGraph2
+  r <- G.outEdges g v
+  es <- mapM (G.edge g) r
+  let ls = map extractValue es
+  return (sort ls == [Just 2, Just 3])
+
+propInNeighbours :: IO Bool
+propInNeighbours = do
+  (g, v) <- getBaseGraph2
+  r <- G.inNeighbours g v
+  vs <- mapM (G.vertex g) r
+  return (vs == [Just 1])
+
+propOutNeighbours :: IO Bool
+propOutNeighbours = do
+  (g, v) <- getBaseGraph2
+  r <- G.outNeighbours g v
+  vs <- mapM (G.vertex g) r
+  return (sort vs == [Just 1, Just 3])
+
+propGetCycle :: IO Bool
+propGetCycle = do
+  (g, v) <- getBaseGraph2
+  r <- G.getCycle g v
+  vs <- mapM (G.vertex g) r
+  return (vs == [Just 2, Just 1, Just 2])
+
+propGetPath :: IO Bool
+propGetPath = do
+  (g, v1, v3) <- getBaseGraph3
+  r <- G.getPath g v1 v3
+  vs <- mapM (G.vertex g) r
+  return (vs == [Just 1, Just 2, Just 3])
+
+propDelVertex :: IO Bool
+propDelVertex = do
+  (g, v) <- getBaseGraph2
+  G.delVertex g v
+  r <- G.allVertices g
+  vs <- mapM (G.vertex g) r
+  return (sort vs == [Just 1, Just 3])
+
+propDelEdge :: IO Bool
+propDelEdge = do
+  (g, e) <- getBaseGraph4
+  G.delEdge g e
+  r <- G.allEdges g
+  es <- mapM (G.edge g) r
+  let ls = map extractValue es
+  return (sort ls == [Just 1, Just 3])
+
+propModifyVertex :: IO Bool
+propModifyVertex = do
+  (g, v) <- getBaseGraph2
+  G.modifyVertex g v 5
+  r <- G.allVertices g
+  vs <- mapM (G.vertex g) r
+  return (sort vs == [Just 1, Just 3, Just 5])
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ quickCheck "noEdges"       (unsafePerformIO propNoEdges)
+           , quickCheck "noVertices"    (unsafePerformIO propNoVertices)
+           , quickCheck "allVertices"   (unsafePerformIO propAllVertices)
+           , quickCheck "allEdges"      (unsafePerformIO propAllEdges)
+           , quickCheck "inDegree"      (unsafePerformIO propInDegree)
+           , quickCheck "outDegree"     (unsafePerformIO propOutDegree)
+           , quickCheck "inEdges"       (unsafePerformIO propInEdges)
+           , quickCheck "outEdges"      (unsafePerformIO propOutEdges)
+           , quickCheck "inNeighbours"  (unsafePerformIO propInNeighbours)
+           , quickCheck "outNeighbours" (unsafePerformIO propOutNeighbours)
+           , quickCheck "getCycle"      (unsafePerformIO propGetCycle)
+           , quickCheck "getPath"       (unsafePerformIO propGetPath)
+           , quickCheck "delVertex"     (unsafePerformIO propDelVertex)
+           , quickCheck "delEdge"       (unsafePerformIO propDelEdge)
+           , quickCheck "modifyVertex"  (unsafePerformIO propModifyVertex)
+           ]
