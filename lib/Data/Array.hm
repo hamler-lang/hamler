@@ -48,9 +48,19 @@ instance Functor Array where
   map = ffi2 :array :map
 
 instance Foldable Array where
-  foldl = ffi3 :array :foldl
-  foldr = ffi3 :array :foldr
+  foldl = foldlImpl
+  foldr = foldrImpl
   foldMap f = foldr (\x acc -> f x <> acc) mempty
+
+foldlImpl :: forall a b. (b -> a -> b) -> b -> Array a -> b
+foldlImpl f b0 a = arrayFoldl (\_ -> f) b0 a
+
+foldrImpl :: forall a b. (a -> b -> b) -> b -> Array a -> b
+foldrImpl f b0 a = arrayFoldr (\_ -> f) b0 a
+
+foreign import arrayFoldl :: forall a b. (Integer -> b -> a -> b) -> b -> Array a -> b
+
+foreign import arrayFoldr :: forall a b. (Integer -> a -> b -> b) -> b -> Array a -> b
 
 instance Traversable Array where
   traverse f ta = sequence (f <$> ta)
@@ -128,6 +138,6 @@ reset = ffi2 :array :reset
 
 foreign import sparseFoldl :: forall a b. (Integer -> b -> a -> b) -> b -> Array a -> b
 
-foreign import sparseFoldr :: forall a b. (Integer -> b -> a -> b) -> b -> Array a -> b
+foreign import sparseFoldr :: forall a b. (Integer -> a -> b -> b) -> b -> Array a -> b
 
 foreign import sparseMap :: forall a b. (Integer -> a -> b) -> Array a -> Array b

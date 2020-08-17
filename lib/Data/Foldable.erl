@@ -19,7 +19,7 @@
         ]).
 
 foldlListImpl(Fun, Acc, List) ->
-  F = fun(A, B) -> (Fun(A))(B) end,
+  F = fun(A, B) -> (Fun(B))(A) end,
   lists:foldl(F, Acc, List).
 
 foldrListImpl(Fun, Acc, List) ->
