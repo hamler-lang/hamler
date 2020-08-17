@@ -126,11 +126,8 @@ resize = ffi2 :array :resize
 reset :: forall a. Integer -> Array a -> Array a
 reset = ffi2 :array :reset
 
-sparseFoldl :: forall a b. (b -> a -> b) -> b -> Array a -> b
-sparseFoldl = ffi3 :array :sparse_foldl
+foreign import sparseFoldl :: forall a b. (Integer -> b -> a -> b) -> b -> Array a -> b
 
-sparseFoldr :: forall a b. (a -> b -> b) -> b -> Array a -> b
-sparseFoldr = ffi3 :array :sparse_foldr
+foreign import sparseFoldr :: forall a b. (Integer -> b -> a -> b) -> b -> Array a -> b
 
-sparseMap :: forall a b. (a -> b) -> Array a -> Array b
-sparseMap = ffi2 :array :array :sparse_map
+foreign import sparseMap :: forall a b. (Integer -> a -> b) -> Array a -> Array b

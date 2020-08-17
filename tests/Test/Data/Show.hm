@@ -43,7 +43,7 @@ earr :: [Int]
 earr = []
 
 arrTest :: Bool
-arrTest = (show [1,2,3,4,5] == "[1,2,3,4,5]") && (show earr == "[]")
+arrTest = (show [1,2,3,4,5] == "[1, 2, 3, 4, 5]") && (show earr == "[]")
 
 just10 :: Maybe Int
 just10 = Just 10
@@ -58,7 +58,7 @@ floatTest :: Bool
 floatTest = show 1.23 == "1.23"
 
 tupleTest :: Bool
-tupleTest = (show (1,2) == "(1,2)")
+tupleTest = (show (1,2) == "(1, 2)")
  
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [
