@@ -49,14 +49,6 @@ propNoVertices = do
   r <- G.noVertices g
   return (r == 3)
 
-propDelete :: IO Bool
-propDelete = do
-  g <- getBaseGraph1
-  G.delete g
-  v <- G.noVertices g
-  e <- G.noVertices g
-  return (v == 0 && e == 0)
-
 propAllVertices :: IO Bool
 propAllVertices = do
   g <- getBaseGraph1
@@ -98,7 +90,7 @@ propInEdges = do
 propOutEdges :: IO Bool
 propOutEdges = do
   (g, v) <- getBaseGraph2
-  r <- G.inEdges g v
+  r <- G.outEdges g v
   es <- mapM (G.edge g) r
   let ls = map extractValue es
   return (sort ls == [Just 2, Just 3])
@@ -120,7 +112,6 @@ propOutNeighbours = do
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [ quickCheck "noEdges" (unsafePerformIO propNoEdges)
            , quickCheck "noVertices" (unsafePerformIO propNoVertices)
-           , quickCheck "delete" (unsafePerformIO propDelete)
            , quickCheck "allVertices" (unsafePerformIO propAllVertices)
            , quickCheck "allEdges" (unsafePerformIO propAllEdges)
            , quickCheck "inDegree" (unsafePerformIO propInDegree)
