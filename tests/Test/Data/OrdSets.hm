@@ -21,7 +21,7 @@ baseOS = OS.fromList [1,2,3,5]
 propAdd :: Bool
 propAdd = ((OS.toList $ (OS.add 4 baseOS)) == [1,2,3,4,5])
        && ((OS.toList $ (OS.add 6 baseOS)) == [1,2,3,5,6])
-       && ((OS.toList $ (OS.add 0 baseOS)) == [0,1,2,3,4])
+       && ((OS.toList $ (OS.add 0 baseOS)) == [0,1,2,3,5])
 
 propDel :: Bool
 propDel = ((OS.toList $ OS.del 1 baseOS) == [2,3,5])
