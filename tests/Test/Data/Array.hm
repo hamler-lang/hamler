@@ -31,7 +31,7 @@ propFoldr :: String -> Bool
 propFoldr s = (foldr (\a b -> [a|b]) [] $ A.fromList  s ) == s
 
 propResize :: Int->A.Array Int->Bool
-propResize n arr = ((A.size $ A.resize n' arr) == n')
+propResize n arr = (A.size $ A.resize n' arr) == n'
    where n' = if n <0 then (-n) else n
 
 propSize :: Int->Int->A.Array Int->Bool
