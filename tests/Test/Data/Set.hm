@@ -1,7 +1,7 @@
 module Test.Data.Set where
 
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
-import Prelude
+import Prelude hiding (filter)
 import Data.Set as S
 
 propShow :: S.Set Integer -> Bool

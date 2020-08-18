@@ -2,7 +2,7 @@ module Test.Data.Function where
 
 import Data.Function as Func
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
-import Prelude
+import Prelude hiding (flip, const, apply, identity, filter)
 
 f :: Int->[Int]
 f n = [n]

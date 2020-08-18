@@ -1,7 +1,7 @@
 module Test.Data.OrdDict where
 
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
-import Prelude
+import Prelude hiding (take)
 import Data.OrdDict as OD
 
 propShow :: OD.OrdDict Integer Integer -> Bool
@@ -36,7 +36,7 @@ isKey :: Bool
 isKey = (OD.isKey 'a' baseOD) && not (OD.isKey 'e' baseOD)
 
 update :: Bool
-update = (OD.update 'a' (\[b]->[b + 1]) baseOD) == OD.fromList [('a', [2]), ('b', [2]),('c',[3]),('d',[4])]
+update = (OD.update 'a' (\b->[ (head b) + 1]) baseOD) == OD.fromList [('a', [2]), ('b', [2]),('c',[3]),('d',[4])]
 
 store :: Bool
 store = ((OD.store 'x' [10] baseOD) == OD.fromList [('a', [1]), ('b',[2]),('c',[3]),('d',[4]), ('x', [10])])
@@ -53,7 +53,7 @@ map :: Bool
 map = (OD.map (\c-> \b->[1]) baseOD) == OD.fromList [('a', [1]),('b', [1]), ('c', [1]),('d', [1])]
 
 merge :: Bool
-merge = (OD.merge (\a-> \[x]-> \[y] -> [x + y]) baseOD baseOD) == (OD.fromList [('a', [2]),('b', [4]), ('c', [6]),('d', [8])])
+merge = (OD.merge (\a-> \x-> \y -> [head x + head y]) baseOD baseOD) == (OD.fromList [('a', [2]),('b', [4]), ('c', [6]),('d', [8])])
 
 find :: Bool
 find = (OD.find 'b' baseOD == Just [2])
@@ -63,7 +63,7 @@ filter :: Bool
 filter = (OD.filter (\x -> \y -> head y < 4) baseOD == OD.fromList [('a', [1]), ('b', [2]),('c', [3])])
 
 fold :: Bool
-fold = (OD.fold (\k -> \[v] -> \ac -> (ac + v)) 0 baseOD) == 10
+fold = (OD.fold (\k -> \v -> \ac -> (ac + head v)) 0 baseOD) == 10
 
 
 
