@@ -24,22 +24,24 @@ propRelax arr = (A.isFix $ A.relax arr) == false
 propFix :: A.Array Int->Bool
 propFix arr = (A.isFix $ A.fix arr) == true
 
---crashed
+propFoldl :: String -> Bool
+propFoldl s = (foldl (\b a -> [a|b]) [] $ A.fromList  s ) == reverse  s
+
+propFoldr :: String -> Bool
+propFoldr s = (foldr (\a b -> [a|b]) [] $ A.fromList  s ) == s
+
 propResize :: Int->A.Array Int->Bool
-propResize n arr
-    | n < 0 = true
-    | otherwise = (A.size $ A.resize n arr) == n
+propResize n arr = ((A.size $ A.resize n' arr) == n')
+   where n' = if n <0 then (-n) else n
 
 propSize :: Int->Int->A.Array Int->Bool
-propSize n e arr
-    | n < 0 = true
-    | otherwise = (A.size $ (A.set n e arr)) == (A.size arr)
+propSize n e arr = (A.size $ (A.set n e arr)) == (A.size arr)
 
 propSet :: Bool
 propSet = [1,0,3,4] == A.toList(A.set 1 0 baseArray)
 
-plus :: Int->Int->Int
-plus a b = a + b
+plus :: Int->Int->Int->Int
+plus _ a b = a + b
 
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [ quickCheck "fromList_toList "  propArrayFt
@@ -51,9 +53,9 @@ test = Exe [ quickCheck "fromList_toList "  propArrayFt
            , quickCheck "List to Array" (propListToArray)
            , quickCheck "relax" propRelax
            , quickCheck "fix" propFix
-           --, quickCheck "Resize" propResize
-           -- , quickCheck "foldl" ((A.sparseFoldl plus 0 baseArray) == 13)
-           --, quickCheck "foldr" ((A.sparseFoldr plus 0 baseArray) == 13)
-           -- , quickCheck "map" (A.sparseMap (plus 1) baseArray == (A.fromList [2,3,4,5,6]))
-            , quickCheck "default" ((A.default $ A.fromList [1,1,1]) == 1)
+           , quickCheck "Resize" propResize
+           , quickCheck "foldl" ((A.sparseFoldl plus 0 baseArray) == 13)
+           , quickCheck "foldr" ((A.sparseFoldr plus 0 baseArray) == 13)
+           , quickCheck "map" (A.sparseMap (plus 1) baseArray == (A.fromList [2,3,4,5,6]))
+           , quickCheck "default" ((A.default $ A.fromList [1,1,1]) == 1)
            ]

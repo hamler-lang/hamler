@@ -18,8 +18,10 @@ import Test.Data.Result as R
 import Test.Data.Set as St
 import Test.Data.Show as Show
 import Test.Data.Monoid as Monoid
+import Test.Data.Digraph as G
 import Test.Data.Ord as Ord
 import Test.Data.Function as Func
+
 
 main :: IO ()
 main = runTest ( TxG "Data" [
@@ -42,6 +44,7 @@ main = runTest ( TxG "Data" [
                  , TxG "Tuple" [Tu.test]
                  , TxG "Show"  [Show.test]
                  , TxG "Monoid" [Monoid.test]
+                 , TxG "Diag" [G.test]
                  , TxG "Ord" [Ord.test]
                  , TxG "Function" [Func.test]
                  ]
