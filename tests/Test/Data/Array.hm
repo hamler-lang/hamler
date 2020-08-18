@@ -29,7 +29,9 @@ propResize :: Int->A.Array Int->Bool
 propResize n arr = (A.size $ A.resize n arr) == n
 
 propSize :: Int->Int->A.Array Int->Bool
-propSize n e arr = (A.size $ (A.set n e arr)) == (A.size arr)
+propSize n e arr
+    | n < 0 = true
+    | otherwise = (A.size $ (A.set n e arr)) == (A.size arr)
 
 propSet :: Bool
 propSet = [1,0,3,4] == A.toList(A.set 1 0 baseArray)
