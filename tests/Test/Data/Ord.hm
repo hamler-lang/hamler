@@ -1,0 +1,39 @@
+module Test.Data.Ord where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+
+
+propMin :: Int->Int->Bool
+propMin x y
+    | x <= y = ((min x y) == x)
+    | otherwise = ((min x y )== y)
+
+propMin2 :: Float->Float->Bool
+propMin2 x y
+    | x <= y = ((min x y) == x)
+    | otherwise = ((min x y )== y)
+
+propMax :: Int->Int->Bool
+propMax x y
+    | x <= y = (max x y == y)
+    | otherwise = (max x y) == x
+
+propMax2 :: Float->Float->Bool
+propMax2 x y
+    | x <= y = (max x y == y)
+    | otherwise = (max x y) == x
+
+propBetween :: Int->Int->Int->Bool
+propBetween low hi x = if (low <= x && x <= hi) then (between low hi x) else true 
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [
+    quickCheck ">" (1 > 0)
+    ,quickCheck ">" (20.5 > 20.0)
+    ,quickCheck "minInt" propMin
+    ,quickCheck "minFloat" propMin2
+    ,quickCheck "max" propMax
+    ,quickCheck "maxFloat" propMax2
+    ,quickCheck "propBetween" propBetween
+]

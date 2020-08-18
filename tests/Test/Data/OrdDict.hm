@@ -1,7 +1,7 @@
 module Test.Data.OrdDict where
 
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
-import Prelude
+import Prelude hiding (take)
 import Data.OrdDict as OD
 
 propShow :: OD.OrdDict Integer Integer -> Bool
@@ -13,8 +13,77 @@ propEq x = x == x
 propOrd :: OD.OrdDict Integer Integer -> OD.OrdDict Integer Integer -> Bool
 propOrd x y = (x < y) == (OD.toList x < OD.toList y)
 
+baseOD :: OD.OrdDict Char [Integer]
+baseOD = OD.fromList [('a', [1]), ('b',[2]),('c',[3]),('d',[4])]
+
+fromToList :: Bool
+fromToList = ((OD.fromList $ OD.toList baseOD) == baseOD) 
+            && ( (OD.toList $ OD.fromList [('a', 1), ('b',2),('c',3),('d',4)]) == [('a', 1), ('b',2),('c',3),('d',4)] )
+
+testAppend :: Bool
+testAppend = (OD.append 'e' 5 baseOD) == OD.fromList [('a', [1]), ('b',[2]),('c',[3]),('d',[4]), ('e', [5])]
+
+testAppendList :: Bool
+testAppendList = (OD.appendList 'e' [1,2,3,4,5] baseOD) == OD.fromList [('a', [1]), ('b',[2]),('c',[3]),('d',[4]), ('e', [1,2,3,4,5])]
+
+testErase :: Bool
+testErase = (OD.erase 'b' baseOD == OD.fromList [('a',[1]),('c',[3]),('d',[4])])
+
+fetchKey :: Bool
+fetchKey = (OD.fetchKeys baseOD == ['a','b','c','d'])
+
+isKey :: Bool
+isKey = (OD.isKey 'a' baseOD) && not (OD.isKey 'e' baseOD)
+
+update :: Bool
+update = (OD.update 'a' (\b->[ (head b) + 1]) baseOD) == OD.fromList [('a', [2]), ('b', [2]),('c',[3]),('d',[4])]
+
+store :: Bool
+store = ((OD.store 'x' [10] baseOD) == OD.fromList [('a', [1]), ('b',[2]),('c',[3]),('d',[4]), ('x', [10])])
+     && ((OD.store 'a' [10] baseOD) == OD.fromList [('a', [10]), ('b', [2]),('c', [3]),('d',[4])])
+
+size :: Bool
+size = (OD.size baseOD == 4)
+
+take :: Bool
+take = (OD.take 'a' baseOD == Just ([1], OD.fromList [('b',[2]),('c',[3]),('d',[4])] ))
+    && (OD.take 'x' baseOD == Nothing)
+
+map :: Bool
+map = (OD.map (\c-> \b->[1]) baseOD) == OD.fromList [('a', [1]),('b', [1]), ('c', [1]),('d', [1])]
+
+merge :: Bool
+merge = (OD.merge (\a-> \x-> \y -> [head x + head y]) baseOD baseOD) == (OD.fromList [('a', [2]),('b', [4]), ('c', [6]),('d', [8])])
+
+find :: Bool
+find = (OD.find 'b' baseOD == Just [2])
+    && (OD.find 'v' baseOD == Nothing)
+
+filter :: Bool
+filter = (OD.filter (\x -> \y -> head y < 4) baseOD == OD.fromList [('a', [1]), ('b', [2]),('c', [3])])
+
+fold :: Bool
+fold = (OD.fold (\k -> \v -> \ac -> (ac + head v)) 0 baseOD) == 10
+
+
+
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [ quickCheck "show" propShow
            , quickCheck "eq" propEq
            , quickCheck "ord" propOrd
+           , quickCheck "fromToList" fromToList
+           , quickCheck "append" testAppend
+           , quickCheck "appendList" testAppendList
+           , quickCheck "erase" testErase
+           , quickCheck "fetchKey" fetchKey
+           , quickCheck "iskey" isKey
+           , quickCheck "update" update
+           , quickCheck "store" store
+           , quickCheck "size" size
+           , quickCheck "take" take
+           --, quickCheck "map" map
+           --, quickCheck "merge" merge 
+           , quickCheck "find" find
+           --, quickCheck "filter" filter
+           --, quickCheck "fold" fold
            ]

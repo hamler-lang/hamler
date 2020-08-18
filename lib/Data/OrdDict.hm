@@ -41,10 +41,10 @@ instance (Arbitrary k, Arbitrary v) => Arbitrary (OrdDict k v) where
 new :: forall a b. OrdDict a b
 new = ffi0 :orddict :new
 
-append :: forall a b. a -> a -> OrdDict a b -> OrdDict a b
+append :: forall a b. a -> b -> OrdDict a [b] -> OrdDict a [b]
 append = ffi3 :orddict :append
 
-appendList :: forall a b. a -> [b] -> OrdDict a b -> OrdDict a b
+appendList :: forall a b. a -> [b] -> OrdDict a [b] -> OrdDict a [b]
 appendList = ffi3 :orddict :append_list
 
 erase :: forall a b. a -> OrdDict a b -> OrdDict a b
