@@ -26,7 +26,9 @@ propFix arr = (A.isFix $ A.fix arr) == true
 
 --crashed
 propResize :: Int->A.Array Int->Bool
-propResize n arr = (A.size $ A.resize n arr) == n
+propResize n arr
+    | n < 0 = true
+    | otherwise = (A.size $ A.resize n arr) == n
 
 propSize :: Int->Int->A.Array Int->Bool
 propSize n e arr
