@@ -48,14 +48,16 @@ test = Exe [ quickCheck "fromList_toList "  propArrayFt
            , quickCheck "fromList"  (A.toList baseArray == [1,3,4,5])
            , quickCheck "get"  (A.get 0 baseArray == 1)
            , quickCheck "set"  (A.set 0 10 baseArray == A.fromList [10,3,4,5])
+           , quickCheck "foldl" propFoldl
+           , quickCheck "foldr" propFoldr
            , quickCheck "size"  (A.size baseArray == 4)
            , quickCheck "Array to List" (propArrayToList)
            , quickCheck "List to Array" (propListToArray)
            , quickCheck "relax" propRelax
            , quickCheck "fix" propFix
            , quickCheck "Resize" propResize
-           , quickCheck "foldl" propFoldl
-           , quickCheck "foldr" propFoldr
+           , quickCheck "foldl" ((A.sparseFoldl plus 0 baseArray) == 13)
+           , quickCheck "foldr" ((A.sparseFoldr plus 0 baseArray) == 13)
            , quickCheck "map" (A.sparseMap (\_ x -> x + 1) baseArray == (A.fromList [2,4,5,6]))
            , quickCheck "default" (A.default  (A.new [A.Size 10, A.Default 1]) == 1)
            ]
