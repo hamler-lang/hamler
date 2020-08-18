@@ -14,7 +14,7 @@
 -----------------------------------------------------------------------------
 module Data.Set where
 
-import Foreign (ffi0, ffi1, ffi2, ffi3)
+import Foreign (ffi0, ffi1, ffi2)
 import Test.QuickCheck (arbitrary, class Arbitrary)
 import Control.Monad((<$>))
 
@@ -100,5 +100,4 @@ filter :: forall a. (a -> Boolean) -> Set a -> Set a
 filter = ffi2 :sets :filter
 
 -- | Folds Function over every element in Set and returns the final value of the accumulator.
-fold :: forall a b. (a -> b -> b) -> b -> Set a -> b
-fold = ffi3 :sets :fold
+foreign import fold :: forall a b. (a -> b -> b) -> b -> Set a -> b
