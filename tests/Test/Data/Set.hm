@@ -13,8 +13,87 @@ propEq x = x == x
 propOrd :: S.Set Integer -> S.Set Integer -> Bool
 propOrd x y = (x < y) == (S.toList x < S.toList y)
 
+baseSet :: S.Set Integer
+baseSet = S.fromList [1,2,3,4,5]
+
+emptySet :: S.Set Integer
+emptySet = S.fromList []
+
+isEmpty :: Bool
+isEmpty = (S.isEmpty emptySet) && (not (S.isEmpty baseSet))
+
+single :: S.Set Integer
+single = S.fromList [1]
+
+insert :: Bool
+insert = (S.insert 6 baseSet == S.fromList [1,2,3,4,5,6])
+
+delete :: Bool
+delete = (S.delete 1 baseSet == S.fromList [2,3,4,5])
+        && (S.delete 1 emptySet == emptySet)
+
+member :: Bool
+member = (S.member 3 baseSet) && not (S.member 0 baseSet)
+
+size :: Bool
+size = (S.size baseSet == 5) && (S.size emptySet == 0) && (S.size single == 1)
+
+elems :: S.Set Integer->Bool
+elems set = S.elems set == S.toList set
+
+union :: Bool
+union = ((S.union baseSet baseSet) == baseSet) && ((S.union baseSet emptySet == baseSet))
+    && (S.union baseSet (S.fromList [4,5,6,7]) == S.fromList [1,2,3,4,5,6,7])
+
+
+unionProp :: S.Set Integer->S.Set Integer->Bool
+unionProp s1 s2 = (S.union s1 s2) == (S.union s2 s1)
+
+intersectionProp :: S.Set Integer->S.Set Integer->Bool
+intersectionProp s1 s2 = (S.intersection s1 s2) == (S.intersection s2 s1)
+
+intersection :: Bool
+intersection = (S.intersection baseSet (S.fromList [4,10,5,0,6])) == (S.fromList [4,5,6])
+
+difference :: Bool
+difference = ((S.difference baseSet (S.fromList [1,2,3])) == (S.fromList [4, 5]))
+           &&((S.difference baseSet (S.fromList [4,100])) == (S.fromList [1,2,3,5]))
+           &&((S.difference baseSet emptySet) == baseSet)
+
+fold :: [Int]->Bool
+fold xs = (foldl (\x-> \y-> x+y) 0 xs) == (S.fold (\x-> \y->x+y) 0 (S.fromList xs))
+
+filter :: Bool
+filter = ((S.filter (\x->x < 5) baseSet) == (S.fromList [1,2,3,4]))
+    && ((S.filter (\x->x < 5) emptySet) == emptySet)
+
+singleton :: Bool
+singleton = (S.singleton 0 == S.fromList [0])
+
+isSubsetOf :: Bool
+isSubsetOf = not (S.isSubsetOf (S.fromList [2,3]) baseSet) && (S.isSubsetOf (S.fromList [2, 3]) baseSet)
+
+isDisjoint :: Bool
+isDisjoint = (S.isDisjoint baseSet (S.fromList [10,20])) && not (S.isDisjoint baseSet baseSet) && (S.isDisjoint baseSet (S.fromList []))
+
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [ quickCheck "show" propShow
            , quickCheck "eq" propEq
            , quickCheck "ord" propOrd
+           , quickCheck "isEmpty" isEmpty
+           , quickCheck "single" singleton
+           , quickCheck "insert" insert
+           , quickCheck "delete" delete
+           , quickCheck "member" member
+           , quickCheck "size" size
+           , quickCheck "elems" elems
+           , quickCheck "union" union
+           , quickCheck "unionprop" unionProp
+           , quickCheck "intersectionProp" intersectionProp
+           , quickCheck "intersection" intersection
+           , quickCheck "difference" difference
+           , quickCheck "fold" fold
+           , quickCheck "filter" filter
+           , quickCheck "isSubsetOf" isSubsetOf
+           , quickCheck "isDisjoint" isDisjoint
            ]

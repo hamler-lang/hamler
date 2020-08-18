@@ -1,0 +1,46 @@
+module Test.Data.Function where
+
+import Data.Function as Func
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+
+f :: Int->[Int]
+f n = [n]
+
+g :: [Int]->String
+g x = show x
+
+f2 :: Int->String->String
+f2 n str = (show n) ++ str
+
+compose :: Int->Bool
+compose n = (Func.compose g f) n == (\x -> g (f x)) n
+
+composeFlipped :: Int->Bool
+composeFlipped n = ((Func.composeFlipped f g) n) == ((Func.compose g f) n)
+
+flip :: Int->String->Bool
+flip n str = ((Func.flip f2) str n) == f2 n str
+
+const :: Int -> Int -> Bool
+const a b = (Func.const a b) == a
+
+apply :: Int->Bool
+apply n = (Func.apply f n) == f n
+
+pipeline :: Int->Bool
+pipeline n = (Func.pipeline n f) == (f n)
+
+identity :: Int->Bool
+identity n = (Func.identity n == n)
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [
+    quickCheck "compose" compose
+  , quickCheck "composeFlipped" composeFlipped
+  , quickCheck "flip" flip
+  , quickCheck "const" const
+  , quickCheck "apply" apply
+  , quickCheck "pipeline" pipeline
+  , quickCheck "identity" identity
+]

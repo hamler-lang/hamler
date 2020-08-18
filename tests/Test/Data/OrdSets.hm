@@ -15,8 +15,66 @@ propEq lst = lst == lst
 propOrd :: OS.OrdSet Integer -> OS.OrdSet Integer -> Bool
 propOrd l1 l2 = (l1 < l2) == (OS.toList l1 < OS.toList l2)
 
+baseOS = OS.fromList [1,2,3,5]
+
+propAdd :: Bool
+propAdd = ((OS.toList $ (OS.add 4 baseOS)) == [1,2,3,4,5])
+       && ((OS.toList $ (OS.add 6 baseOS)) == [1,2,3,5,6])
+       && ((OS.toList $ (OS.add 0 baseOS)) == [0,1,2,3,4])
+
+propDel :: Bool
+propDel = ((OS.toList $ OS.del 1 baseOS) == [2,3,5])
+       && ((OS.toList $ OS.del 3 baseOS) == [1,2,5])
+       && ((OS.toList $ OS.del 5 baseOS) == [1,2,3])
+
+testFilter :: Bool
+testFilter = ( (OS.filter (\x-> x > 0) baseOS) == OS.fromList [1,2,3,5] )
+          && ( (OS.filter (\x -> x < 5) baseOS) == OS.fromList  [1,2,3])
+          && ( (OS.filter (\x -> x > 1) baseOS) == OS.fromList [2,3,5])
+
+foldTest :: Bool
+foldTest = ( (OS.fold (\x-> \y-> x + y) 0 baseOS) == 11)
+
+intersectionTest :: Bool
+intersectionTest = ( (OS.intersection baseOS (OS.fromList [100,2,3])) == (OS.fromList [2,3]) )
+                && ( (OS.intersection baseOS (OS.fromList [])) == (OS.fromList []) )
+               --&& ( (OS.intersectionFromList [100,2,3] baseOS ) == (OS.fromList [2,3]) )
+              -- && ( (OS.intersectionFromList [] baseOS ) == (OS.fromList []) )
+
+fromAndToListTest :: Bool
+fromAndToListTest = ((OS.toList $ OS.fromList [1,2,3,4,5]) == [1,2,3,4,5])
+                     && ((OS.toList $ OS.fromList [1,1,2,3,4,4]) == [1,2,3,4])
+
+sizeProp :: OS.OrdSet Int ->Bool
+sizeProp os = ((OS.size os) == (length $ OS.toList os))
+
+isSetTest :: Bool
+isSetTest = (OS.isSet baseOS) && not (OS.isSet [1,1,2]) && (OS.isSet [])
+
+subtractTest :: Bool
+subtractTest = ((OS.subtract baseOS (OS.fromList [1,2])) == (OS.fromList [3,5]))
+             && ((OS.subtract baseOS (OS.fromList [])) == (baseOS))
+
+unionTest :: Bool
+unionTest = ((OS.union baseOS (OS.fromList [1,2, 100,200])) == OS.fromList [1,2,3,5,100,200])
+
+unionProp :: [Int]->Bool
+unionProp os = ((OS.union (OS.fromList []) (OS.fromList os)) == OS.fromList os)
+            && ((OS.union (OS.fromList os) (OS.fromList [])) == OS.fromList os)
+
+
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [ quickCheck "show" propShow
            , quickCheck "eq" propEq
            , quickCheck "ord" propOrd
+           , quickCheck "unionProp" unionProp
+           , quickCheck "unionTest" unionTest
+           , quickCheck "subtractTest" subtractTest
+           , quickCheck "sizeProp" sizeProp
+           , quickCheck "fromAndToListTest" fromAndToListTest
+           , quickCheck "intersectionTest" intersectionTest
+           --, quickCheck "foldTest" foldTest
+           , quickCheck "testFilter" testFilter
+           , quickCheck "propDel" propDel
+           , quickCheck "propAdd" propAdd 
            ]
