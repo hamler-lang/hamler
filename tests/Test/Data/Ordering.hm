@@ -1,0 +1,26 @@
+module Test.Data.Ordering where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+import Data.Ordering (Ordering(..), invert)
+
+appendTest :: Bool
+appendTest = (LT <> GT == LT) && (LT <> LT == LT) && (GT <> LT == GT) && (GT <> GT == GT)
+            && (LT <> EQ == LT) && (GT <> EQ == GT) && (EQ <> LT == LT) && (EQ <> GT) == GT
+
+showTest :: Bool
+showTest = (show LT == "LT") && (show GT == "GT") && (show EQ == "EQ")
+
+invertTest :: Bool
+invertTest = (invert GT == LT) && (invert EQ == EQ) && (invert LT == GT)
+
+eqTest :: Bool
+eqTest = (LT == LT) && (GT == GT) && (EQ == EQ) && not (LT == GT) && not (LT == EQ) && not (GT == EQ)
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [
+    quickCheck "appendTest" appendTest
+  , quickCheck "showTest" showTest
+  , quickCheck "invert" invertTest
+  , quickCheck "eq" eqTest
+]

@@ -1,1 +1,32 @@
 module Test.Data.Ring where
+
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude hiding (filter)
+
+abs :: Float -> Float
+abs x = if x < 0.0 then 0.0-x else x + 0.0
+
+absInt :: Int -> Int
+absInt x = if x < 0 then -x else x
+
+propSubInt :: Int->Bool
+propSubInt x = (-x + x == 0)
+
+propSubFloat :: Float->Bool
+propSubFloat x = (-x + x - 0.0) < 0.0001
+
+propDivFloat :: Float->Float->Bool
+propDivFloat x y = if y == 0.0 then true else abs ((x/y) * y - x) < 0.0001
+
+divIntTest :: Bool
+divIntTest = (15 / 3 == 5) && (15 / 7 == 2) && (-15 / 7 == -2) && (-2 / 15 == 0)
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ 
+    quickCheck "propSubInt" propSubInt
+   ,quickCheck "propSubFloat" propSubFloat
+   ,quickCheck "propDivFloat" propDivFloat
+   ,quickCheck "divIntTest" divIntTest
+]
+
