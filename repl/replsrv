@@ -11,6 +11,7 @@
 -define(MOD, '$REPL').
 
 main([Pa, Pz, File]) ->
+    io:setopts([{encoding, unicode}]),
     Outdir = filename:dirname(File),
     true = code:add_path(Outdir),
     true = code:add_path(Pa),
