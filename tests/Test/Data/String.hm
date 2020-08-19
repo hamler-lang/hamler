@@ -118,22 +118,17 @@ propToLower =
   S.toLower "ABC" == "abc"
 
 propToTitle :: Bool
-propToTitle = -- a strang sample from erlang doc
-  --S.toTitle "ß is a SHARP s" == "Ss is a SHARP s"
-  S.toTitle "abc" == "Abc"
+propToTitle = S.toTitle "ß is a SHARP s" == "Ss is a SHARP s"
 
 propToUpper :: Bool
 propToUpper =
   S.toUpper "abc" == "ABC"
 
 propCaseFold :: Bool
-propCaseFold = -- another strang sample from erlang doc
-  --S.caseFold "Ω and ẞ SHARP S" == "ω and ss sharp s"
-  S.caseFold "ABC" == "abc"
+propCaseFold = S.caseFold "Ω and ẞ SHARP S" == "ω and ss sharp s"
 
 propPad :: Bool
-propPad = -- there is problem with UTF-8 support
-  -- S.pad "测试233" 8 == "测试233   " &&
+propPad = S.pad "测试233" 8 == "测试233   " &&
   S.pad "ab233" 8 == "ab233   "
 
 propPadLeft :: Bool

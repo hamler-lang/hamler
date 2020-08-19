@@ -220,7 +220,7 @@ buildTest = pure $ do
   let testpath = dir <> "/.test"
   _ <- SS.shelly $ do
     SS.setenv "ERL_LIBS" (T.pack testpath)
-    SS.run  "erl" ["-pa",T.pack (testpath), "-noshell","-eval" ,"('Test':main())()","-s","init","stop" ]
+    SS.run  "erl" ["-pa",T.pack (testpath), "-noshell","-eval" ,"io:setopts([{encoding, unicode}]), ('Test':main())()","-s","init","stop" ]
   return ()
   exitSuccess
 
@@ -233,7 +233,7 @@ runProject  =pure $ do
     if isExist
       then SS.setenv "ERL_LIBS" (T.pack hamlerFile)
       else SS.setenv "ERL_LIBS" (T.pack $ dir <> ".deps/hamler")
-    SS.run  "erl" ["-pa",T.pack (tpath), "-noshell","-eval" ,"('Main':main())()","-s","init","stop" ]
+    SS.run  "erl" ["-pa",T.pack (tpath), "-noshell","-eval" ,"io:setopts([{encoding, unicode}]), ('Main':main())()","-s","init","stop" ]
   return ()
 
 
