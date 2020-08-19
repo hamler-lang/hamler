@@ -3,9 +3,35 @@ module Test.Data.String where
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
 import Data.String as S
 import Prelude
+import Data.Atom as A
+
+propConcat :: String -> String -> Bool
+propConcat s1 s2 =
+  "" ++ "abc" == "abc" && 
+  "a" ++ "bc" == "abc" &&
+  S.length (s1 ++ s2) == (S.length s1) + (S.length s2) && 
+  S.startsWith (s1 ++ s2) s1 &&
+  S.endsWith (s1 ++ s2) s2
+
+propIsEmpty :: Bool
+propIsEmpty = 
+  S.isEmpty "" && 
+  S.isEmpty "not empty" == false
+
+propLength :: String -> Bool
+propLength s = 
+  S.length "" == 0 && 
+  S.length "a short string" == 14 &&
+  S.length s == foldr (\_ acc -> acc + 1) 0 s
 
 propReverse :: String -> Boolean
 propReverse s = (S.reverse $ S.reverse s) == s
+
+propEqual :: String -> Bool
+propEqual x = S.equal x x
+
+propEqualIgnoreCase :: Bool
+propEqualIgnoreCase = S.equalIgnoreCase "abc" "ABC"
 
 propHasPrefix :: String -> String -> Boolean
 propHasPrefix s1 s2 = S.startsWith (s1 <> s2) s1
@@ -17,10 +43,175 @@ propHasPreSu :: String  -> String -> Boolean
 propHasPreSu s1 s2 = let s3 = s1 <> s2
                      in S.startsWith s3 s1 && S.endsWith s3 s2
 
+propToAtom :: String -> Bool
+propToAtom s = A.toString (S.toAtom s) == s
+
+propToExistingAtom :: Atom -> Bool
+propToExistingAtom a = 
+  S.toExistingAtom (A.toString a) == a
+
+propToInteger :: Integer -> Bool
+propToInteger i = 
+  i == S.toInteger (show i)
+
+propToFloat :: Float -> Bool
+propToFloat f =
+  233.3 == S.toFloat "233.3"
+--  f == S.toFloat (show f)
+
+propIndexOf :: Bool
+propIndexOf =
+  S.indexOf 'a' "abac" == 1
+
+propLastIndexOf :: Bool
+propLastIndexOf =
+  S.lastIndexOf 'a' "abac" == 3
+
+propFind :: Bool
+propFind =
+  S.find "ababa" "aba" == Just "ababa"
+
+propFindLast :: Bool
+propFindLast =
+  S.findLast "ababa" "aba" == Just "aba"
+
+propReplace :: Bool
+propReplace =
+  S.join (S.replace "abacaba" "aba" "aca") "" == "acacaca"
+
+propReplaceFirst :: Bool 
+propReplaceFirst =
+  S.join (S.replaceFirst "abacaba" "aba" "aca") "" == "acacaba"
+
+propReplaceLast :: Bool
+propReplaceLast =
+  S.join (S.replaceLast "abacaba" "aba" "aca") "" == "abacaca"
+
+propReplicate :: Bool
+propReplicate =
+  S.replicate 3 "ab" == "ababab"
+
+propSplit :: Bool
+propSplit =
+  S.split "abcabca" "bc" == ["a", "a", "a"]
+
+propLines :: Bool
+propLines =
+  S.lines "a\nab\nabc" == ["a", "ab", "abc"]
+
+propWords :: Bool
+propWords =
+  S.words "a bc abc" == ["a", "bc", "abc"]
+
+propTake :: Bool
+propTake =
+  S.take 0 "abc" == "" &&
+  S.take 3 "abc" == "abc"
+
+propDrop :: Bool
+propDrop =
+  S.drop 0 "abc" == "abc" &&
+  S.drop 3 "abc" == ""
+
+propToLower :: Bool
+propToLower =
+  S.toLower "ABC" == "abc"
+
+propToTitle :: Bool
+propToTitle = -- a strang sample from erlang doc
+  --S.toTitle "ß is a SHARP s" == "Ss is a SHARP s"
+  S.toTitle "abc" == "Abc"
+
+propToUpper :: Bool
+propToUpper =
+  S.toUpper "abc" == "ABC"
+
+propCaseFold :: Bool
+propCaseFold = -- another strang sample from erlang doc
+  --S.caseFold "Ω and ẞ SHARP S" == "ω and ss sharp s"
+  S.caseFold "ABC" == "abc"
+
+propPad :: Bool
+propPad = -- there is problem with UTF-8 support
+  -- S.pad "测试233" 8 == "测试233   " &&
+  S.pad "ab233" 8 == "ab233   "
+
+propPadLeft :: Bool
+propPadLeft =
+  S.padLeft "ab233" 8 == "   ab233"
+
+propPadBoth :: Bool
+propPadBoth =
+  S.padBoth "ab233" 8 == " ab233  "
+
+propChomp :: Bool
+propChomp =
+  S.chomp "233\n" == "233"
+
+propTrim :: Bool
+propTrim =
+  S.trim "   233 233   " == "233 233"
+
+propTrimChars :: Bool
+propTrimChars =
+  S.trimChars "aabbcaa" "a" == "bbc"
+
+propTrimLeft :: Bool
+propTrimLeft =
+  S.trimLeft "   233 233   " == "233 233   "
+
+propTrimLeftChars :: Bool
+propTrimLeftChars =
+  S.trimLeftChars "ababaabb" "ab" == ""
+
+propTrimRight :: Bool
+propTrimRight =
+  S.trimRight "   233 233   \n" == "   233 233"
+
+propTrimRightChars :: Bool
+propTrimRightChars =
+  S.trimRightChars "abaaa" "a" == "ab"
+
 test :: TestGroup (Integer -> IO TestResult)
-test = Exe [ quickCheck "reverse_reverse" propReverse
+test = Exe [ quickCheck "concat" propConcat
+           , quickCheck "isEmpty" propIsEmpty
+           , quickCheck "length" propLength
+           , quickCheck "reverse_reverse" propReverse
+           , quickCheck "equal" propEqual
+           , quickCheck "equalIgnoreCase" propEqualIgnoreCase
            , quickCheck "startsWith" propHasPrefix
            , quickCheck "endsWith" propHasSuff
            , quickCheck "startsWith_endsWith" propHasPreSu
+           , quickCheck "toAtom" propToAtom
+           , quickCheck "toExistingAtom" propToExistingAtom
+           , quickCheck "toInteger" propToInteger
+           , quickCheck "toFloat" propToFloat
+           , quickCheck "indexOf" propIndexOf
+           , quickCheck "lastIndexOf" propLastIndexOf
+           , quickCheck "find" propFind
+           , quickCheck "findLast" propFindLast
+           , quickCheck "replace" propReplace
+           , quickCheck "replaceFirst" propReplaceFirst
+           , quickCheck "replaceLast" propReplaceLast
+           , quickCheck "replicate" propReplicate
+           , quickCheck "split" propSplit
+           , quickCheck "lines" propLines
+           , quickCheck "words" propWords
+           , quickCheck "take" propTake
+           , quickCheck "drop" propDrop
+           , quickCheck "toLower" propToLower
+           , quickCheck "toTitle" propToTitle
+           , quickCheck "toUpper" propToUpper
+           , quickCheck "caseFold" propCaseFold
+           , quickCheck "pad" propPad
+           , quickCheck "padLeft" propPadLeft
+           , quickCheck "padBoth" propPadBoth
+           , quickCheck "chomp" propChomp
+           , quickCheck "trim" propTrim
+           , quickCheck "trimChars" propTrimChars
+           , quickCheck "trimLeft" propTrimLeft
+           , quickCheck "trimLeftChars" propTrimLeftChars
+           , quickCheck "trimRight" propTrimRight
+           , quickCheck "trimRightChars" propTrimRightChars
            ]
 

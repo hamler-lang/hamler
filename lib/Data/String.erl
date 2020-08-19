@@ -34,8 +34,9 @@
         , lines/1
         , words/1
         , sliceTo/3
+        , pad/2
         , padLeft/2
-        , padRight/2
+        , padBoth/2
         , trimChars/2
         , trimLeft/1
         , trimLeftChars/2
@@ -125,13 +126,20 @@ words(String) -> string:tokens(String, ?Whitespace ++ ?LineFeed).
 sliceTo(String, Start, End) ->
   string:slice(String, Start, (End - Start)).
 
+flat(X) -> 
+  lists:flatten(X).
+
+-spec(pad(string(), pos_integer()) -> string()).
+pad(String, Len) ->
+  flat(string:pad(String, Len)).
+
 -spec(padLeft(string(), pos_integer()) -> string()).
 padLeft(String, Len) ->
-  string:pad(String, Len, leading).
+  flat(string:pad(String, Len, leading)).
 
--spec(padRight(string(), pos_integer()) -> string()).
-padRight(String, Len) ->
-  string:pad(String, Len, trailing).
+-spec(padBoth(string(), pos_integer()) -> string()).
+padBoth(String, Len) ->
+  flat(string:pad(String, Len, both)).
 
 -spec(trimChars(string(), string()) -> string()).
 trimChars(String, Chars) -> string:trim(String, both, Chars).

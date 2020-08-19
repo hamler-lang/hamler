@@ -16,7 +16,6 @@ module Data.String where
 
 import Data.Maybe (Maybe)
 import Data.Pid (Pid)
-import Data.Semiring ((+))
 import Foreign (ffi1, ffi2)
 
 type Prefix = String
@@ -83,19 +82,19 @@ toPid = ffi1 :erlang :list_to_pid
 -----------------------------------------------------------------------------
 -- | Index, Find and Replace
 
-foreign import indexOf :: String -> Char -> Integer
+foreign import indexOf :: Char -> String -> Integer
 
-foreign import lastIndexOf :: String -> Char -> Integer
+foreign import lastIndexOf :: Char -> String -> Integer
 
 foreign import find :: String -> Pattern -> Maybe String
 
 foreign import findLast :: String -> Pattern -> Maybe String
 
-foreign import replace :: String -> Pattern -> Replacement -> String
+foreign import replace :: String -> Pattern -> Replacement -> [String]
 
-foreign import replaceFirst :: String -> Pattern -> Replacement -> String
+foreign import replaceFirst :: String -> Pattern -> Replacement -> [String]
 
-foreign import replaceLast :: String -> Pattern -> Replacement -> String
+foreign import replaceLast :: String -> Pattern -> Replacement -> [String]
 
 -----------------------------------------------------------------------------
 -- | Replicate
@@ -124,11 +123,11 @@ foreign import words :: String -> [String]
 
 -- | Returns the first n characters of the string.
 take :: Integer -> String -> String
-take n s = sliceTo s 1 n
+take n s = sliceTo s 0 n
 
 -- | Returns the string without the first n characters.
 drop :: Integer -> String -> String
-drop n s = slice s (n+1)
+drop n s = slice s n
 
 slice :: String -> Integer -> String
 slice = ffi2 :string :slice
@@ -157,15 +156,14 @@ caseFold = ffi1 :string :casefold
 -----------------------------------------------------------------------------
 -- | Padding utf8 string
 
--- | Padding whitespace.
-pad :: String -> Integer -> String
-pad = ffi2 :string :pad
+-- | Padding whitespace in the trailing of the string.
+foreign import pad :: String -> Integer -> String
 
 -- | Padding whitespace in the leading of the string.
 foreign import padLeft :: String -> Integer -> String
 
--- | Padding whitespace in the trailing of the string.
-foreign import padRight :: String -> Integer -> String
+-- | Padding whitespace in the both sides of the string.
+foreign import padBoth :: String -> Integer -> String
 
 -----------------------------------------------------------------------------
 -- | Trimming utf8 string
@@ -178,6 +176,7 @@ chomp = ffi1 :string :chomp
 trim :: String -> String
 trim = ffi1 :string :trim
 
+-- | Trim any char in the second string.
 foreign import trimChars:: String -> String -> String
 
 foreign import trimLeft :: String -> String
