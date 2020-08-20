@@ -225,10 +225,10 @@ basePipe :: String
 basePipe = "|    "
 
 errorPipe :: String
-errorPipe = "xxxxx"
+errorPipe = "✖    "
 
 crashPipe :: String
-crashPipe = "....."
+crashPipe = "©    "
 
 check :: forall a. Testable a => String -> Integer -> a -> SpaceCounter -> IO TestResult
 check s 0 m n = (printf "%s✔ %s" (concat $ replicate (n/5) basePipe) s :: IO ()) >>= \_ -> return Successed
@@ -246,6 +246,16 @@ check s v m n = do
 
 quickCheck :: forall a. Testable a => String -> a -> SpaceCounter -> IO TestResult
 quickCheck s m n = check s 100 m n
+
+checkIO :: String -> IO Boolean -> (Integer -> IO TestResult)
+checkIO s action = \n -> do
+                     v <- catchException (map Just action) (\e -> return Nothing)
+                     case v of
+                       Just true -> (printf "%s✔ %s" (concat $ replicate (n/5) basePipe) s :: IO ()) >>= \_ -> return Successed
+                       Just false -> (printf "%s✖ %s "
+                                      (concat $ replicate (n/5) errorPipe) s :: IO ()) >>= \_ -> return $ Failed s "test failed"
+                       Nothing -> (printf "%s© %s ==> crash happened!!!"
+                                   (concat $ replicate (n/5) crashPipe) s "crash happened!!!" :: IO ()) >>= \_ -> return $ Crash s "crash happened!!!"
 
 data TestResult = Successed
                 | Failed String String

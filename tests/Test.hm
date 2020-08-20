@@ -26,38 +26,38 @@ import Test.Data.Ring as Ring
 import Test.Data.Timeout as Timeout
 import Test.Data.Ordering as Ordering
 import Test.Data.Functor as Functor
+import Test.Data.Term.Persistent as P
 
 main :: IO ()
-main = do 
-    runTest ( TxG "Data" [
-                   -- TxG "Binary" [B.test]
-                   TxG "Map"    [M.test]
-                 , TxG "String" [S.test]
-                 , TxG "Atom"   [A.test]
-                 , TxG "Array"  [A1.test]
-                 , TxG "Bool"   [TB.test]
-                 , TxG "List"   [L.test]
-                 , TxG "Bool"  [TB.test]
-                 , TxG "Either" [Ei.test]
-                 , TxG "Tuple" [Tu.test]
-                 , TxG "Maybe" [May.test]
-                 , TxG "OrdDict" [OD.test]
-                 , TxG "OrdSets" [OS.test]
-                 , TxG "Queue" [Q.test]
-                 , TxG "Result" [R.test]
-                 , TxG "Set"   [St.test]
-                 , TxG "Tuple" [Tu.test]
-                 , TxG "Show"  [Show.test]
-                 , TxG "Monoid" [Monoid.test]
-                 , TxG "Graph" [G.test]
-                 , TxG "Ord" [Ord.test]
+main = runTest
+   ( TxG "Data" [
+                   TxG "Map"      [M.test]
+                 , TxG "String"   [S.test]
+                 , TxG "Atom"     [A.test]
+                 , TxG "Array"    [A1.test]
+                 , TxG "Bool"     [TB.test]
+                 , TxG "List"     [L.test]
+                 , TxG "Bool"     [TB.test]
+                 , TxG "Either"   [Ei.test]
+                 , TxG "Tuple"    [Tu.test]
+                 , TxG "Maybe"    [May.test]
+                 , TxG "OrdDict"  [OD.test]
+                 , TxG "OrdSets"  [OS.test]
+                 , TxG "Queue"    [Q.test]
+                 , TxG "Result"   [R.test]
+                 , TxG "Set"      [St.test]
+                 , TxG "Tuple"    [Tu.test]
+                 , TxG "Show"     [Show.test]
+                 , TxG "Monoid"   [Monoid.test]
+                 , TxG "Graph"    [G.test]
+                 , TxG "Ord"      [Ord.test]
                  , TxG "Function" [Func.test]
                  , TxG "Semiring" [SR.test]
-                 , TxG "Ring" [Ring.test]
-                 , TxG "Timeout" [Timeout.test]
+                 , TxG "Ring"     [Ring.test]
+                 , TxG "Timeout"  [Timeout.test]
                  , TxG "Ordering" [Ordering.test]
-                 , TxG "Functor" [Functor.test]
+                 , TxG "Functor"  [Functor.test]
+                 , TxG "Term"     [TxG "Persistent" [P.test]]
                  ]
                )
-    
 
