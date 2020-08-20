@@ -1,0 +1,27 @@
+module Test.Data.Term.Persistent where
+
+import Test.QuickCheck (TestGroup(..), TestResult, checkIO)
+import Prelude (IO, bind, discard, return, ($), (==))
+import Data.Term.Persistent (erase, get, getWithDefault, put)
+
+putGet :: IO Boolean
+putGet = do
+  put 1 2
+  v <- get 1
+  return $ v == 2
+
+getWD :: IO Boolean
+getWD = do
+  v <- getWithDefault 1223 22
+  return $ v == 22
+
+putErase :: IO Boolean
+putErase = do
+  put 1 2
+  erase 1
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ checkIO "put_get" putGet
+           , checkIO "getWithDefault" getWD
+           , checkIO "put_erase" putErase
+           ]
