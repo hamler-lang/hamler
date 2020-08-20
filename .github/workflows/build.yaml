@@ -14,7 +14,7 @@ jobs:
         steps:
         - name: install erlang
           env:
-            OTP_VERSION: 22.3
+            OTP_VERSION: 23
           run: |
             curl -L -o /tmp/erlang-solutions_2.0_all.deb https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
             && sudo dpkg -i /tmp/erlang-solutions_2.0_all.deb \
@@ -75,7 +75,7 @@ jobs:
       steps:
       - name: install erlang
         env:
-          OTP_VERSION: 22.3
+          OTP_VERSION: 23
         run: |
           apt-get update && apt-get install -y wget git curl build-essential debhelper
           wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb
@@ -155,13 +155,14 @@ jobs:
       steps:
       - name: install erlang
         env:
-          OTP_VERSION: 22.3
+          OTP_VERSION: 23.0.3
         run: |
           yum groupinstall -y "Development Tools"
           yum install -y wget git curl which ncurses-devel openssl-devel https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
           wget https://packages.erlang-solutions.com/erlang-solutions-2.0-1.noarch.rpm
           rpm -Uvh erlang-solutions-2.0-1.noarch.rpm
           rpm --import https://packages.erlang-solutions.com/rpm/erlang_solutions.asc
+          yum list erlang --showduplicates | sort -r
           yum install -y erlang-${OTP_VERSION}
       - name: set env
         run: |
@@ -220,9 +221,9 @@ jobs:
       - name: prepare
         run: |
           /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-          brew install gnu-sed erlang@22 haskell-stack
+          brew install gnu-sed erlang@23 haskell-stack
           ln -s /usr/local/bin/gsed /usr/local/bin/sed
-          echo "::add-path::/usr/local/opt/erlang@22/bin"
+          echo "::add-path::/usr/local/opt/erlang@23/bin"
           echo "::add-path::/usr/local/lib/hamler/bin"
           echo "::add-path::/usr/local/bin"
       - uses: actions/checkout@v2

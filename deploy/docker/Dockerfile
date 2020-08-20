@@ -1,4 +1,4 @@
-FROM erlang:22.3
+FROM erlang:23
 
 RUN apt update && apt install -y locales \
     && echo "LC_ALL=en_US.UTF-8" >> /etc/environment \
