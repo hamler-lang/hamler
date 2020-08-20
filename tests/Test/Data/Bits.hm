@@ -1,29 +1,43 @@
 module Test.Data.Bits where
 
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
-import Data.Bits (band, bor, bxor, bnot, bsl, bsr)
+import Prelude
 
 andTest :: Bool
-andTest = ((1 band 1) == 1) && ( (1 band 0) == 0 ) && ((0 band 1) == 0)
-            && ((16 band 17) == 16) && ((-5 band 10) == 0)
+andTest = ((1 `band` 1) == 1) && ( (1 `band` 0) == 0 ) && ((0 `band` 1) == 0)
+            && ((16 `band` 17) == 16) -- && ((-5 `band` 10) == 0) -- in haskell this is true
 
 orTest :: Bool
-orTest = ((0 bor 0) == 0) && ((1 bor 0) == 1) && ((0 bor 1) == 1) && ((1 bor 1) == 1)
-        && ( (1244 bor 3711) == 3839 ) 
+orTest = ((0 `bor` 0) == 0) && ((1 `bor` 0) == 1) && ((0 `bor` 1) == 1) && ((1 `bor` 1) == 1)
+        && ( (1244 `bor` 3711) == 3839 ) 
 
 xorTest :: Bool
-xorTest = (( 1 bxor 0 ) == 1) && ( (0 bxor 1) == 1 ) && ( (1 bxor 1) == 0 )
-            && ( (7 `xor` 5) == 2 )
+xorTest = (( 1 `bxor` 0 ) == 1) && ( (0 `bxor` 1) == 1 ) && ( (1 `bxor` 1) == 0 )
+            && ( (7 `bxor` 5) == 2 )
 
 notTest :: Bool
-notTest = ( bnot 1 == 0 ) && (bnot 0 == 1)
+notTest = ( bnot 1 == -2 ) && (bnot 0 == -1)
 
 shiftLeftTest :: Bool
-shiftRightTest = (bsl 1 10) == 1024
+shiftLeftTest = (bsl 1 10) == 1024
 
-shiftLeftTest :: Bool 
-shiftLeftTest = (bsr 1024 10) == 1
+shiftRightTest :: Bool 
+shiftRightTest = (bsr 1024 10) == 1
 
+com :: Int->Int->Bool
+com x y = ((x `band` y) == (y `band` x)) && ((x `bor` y) == (y `bor` x)) && ((x `bxor` y) == (y `bor` x))
+
+assoc1 :: Int->Int->Int->Bool
+assoc1 x y z = ((x `band` y) `band` z ) == (x `band` (y `band` z) )
+
+assoc2 :: Int->Int->Int->Bool
+assoc2 x y z = ((x `bor` y) `bor` z ) == (x `bor` (y `bor` z) )
+
+assoc3 :: Int->Int->Int->Bool
+assoc3 x y z = ((x `bxor` y) `bxor` z ) == (x `bxor` (y `bxor` z) )
+
+notProp :: Int->Bool
+notProp x = x ==  (bnot $ bnot x)
 
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [ quickCheck "andTest" andTest
@@ -32,5 +46,10 @@ test = Exe [ quickCheck "andTest" andTest
             ,quickCheck "notTest" notTest
             ,quickCheck "shiftLeftTest" shiftLeftTest
             ,quickCheck "shiftRightTest" shiftRightTest
+            ,quickCheck "com" com
+            ,quickCheck "assoc1" assoc1
+            ,quickCheck "assoc2" assoc2
+            ,quickCheck "assoc3" assoc3
+            ,quickCheck "notProp" notProp
            ]
 

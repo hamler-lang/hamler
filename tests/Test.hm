@@ -29,6 +29,8 @@ import Test.Data.Functor as Functor
 import Test.Data.Term.Persistent as P
 import Test.Data.Regex as Re
 import Test.System.Dir as Dir
+import Test.Data.Bits as Bits
+import Test.Data.Char as Char 
 
 main :: IO ()
 main = runTest $ TxG "lib" 
@@ -61,6 +63,8 @@ main = runTest $ TxG "lib"
                  , TxG "Functor"  [Functor.test]
                  , TxG "Term"     [TxG "Persistent" [P.test]]
                  , TxG "Regex" [Re.test]
+                 , TxG "Bits"  [Bits.test]
+                 , TxG "Char"  [Char.test]
                  ],
      TxG "System" [ TxG "Dir"     [Dir.test]
                   ]
