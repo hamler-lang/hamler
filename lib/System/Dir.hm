@@ -55,6 +55,7 @@ foreign import listDir :: FilePath -> IO [FilePath]
 foreign import deleteDir :: FilePath -> IO ()
 
 -- | Delete directory recursively.
+-- | OTP 23.0
 foreign import deleteDirRecursively :: FilePath -> IO ()
 
 -- | Rename a directory.

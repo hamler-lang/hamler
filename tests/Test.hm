@@ -28,10 +28,11 @@ import Test.Data.Ordering as Ordering
 import Test.Data.Functor as Functor
 import Test.Data.Term.Persistent as P
 import Test.Data.Regex as Re
+import Test.System.Dir as Dir
 
 main :: IO ()
-main = runTest
-   ( TxG "Data" [
+main = runTest $ TxG "lib" 
+   [ TxG "Data" [
                    TxG "Map"      [M.test]
                  , TxG "String"   [S.test]
                  , TxG "Atom"     [A.test]
@@ -60,6 +61,8 @@ main = runTest
                  , TxG "Functor"  [Functor.test]
                  , TxG "Term"     [TxG "Persistent" [P.test]]
                  , TxG "Regex" [Re.test]
-                 ]
-               )
+                 ],
+     TxG "System" [ TxG "Dir"     [Dir.test]
+                  ]
+   ]
 
