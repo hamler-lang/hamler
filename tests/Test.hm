@@ -27,6 +27,7 @@ import Test.Data.Timeout as Timeout
 import Test.Data.Ordering as Ordering
 import Test.Data.Functor as Functor
 import Test.Data.Term.Persistent as P
+import Test.Data.Regex as Re
 
 main :: IO ()
 main = runTest
@@ -58,6 +59,7 @@ main = runTest
                  , TxG "Ordering" [Ordering.test]
                  , TxG "Functor"  [Functor.test]
                  , TxG "Term"     [TxG "Persistent" [P.test]]
+                 , TxG "Regex" [Re.test]
                  ]
                )
 
