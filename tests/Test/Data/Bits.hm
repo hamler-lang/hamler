@@ -25,7 +25,7 @@ shiftRightTest :: Bool
 shiftRightTest = (bsr 1024 10) == 1
 
 com :: Int->Int->Bool
-com x y = ((x `band` y) == (y `band` x)) && ((x `bor` y) == (y `bor` x)) && ((x `bxor` y) == (y `bor` x))
+com x y = ((x `band` y) == (y `band` x)) && ((x `bor` y) == (y `bor` x)) && ((x `bxor` y) == (y `bxor` x))
 
 assoc1 :: Int->Int->Int->Bool
 assoc1 x y z = ((x `band` y) `band` z ) == (x `band` (y `band` z) )
