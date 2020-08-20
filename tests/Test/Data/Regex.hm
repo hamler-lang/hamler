@@ -1,0 +1,43 @@
+module Test.Data.Regex where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+import Data.Regex as R
+import Data.Result (Result(..))
+
+propCompile :: Bool
+propCompile = checkResult $ R.compile "233.*[0-9a-z](ww|qaq)" [R.Unicode, R.Newline R.Any]
+  where checkResult (Ok _) = true
+        checkResult (Error _)  = false
+
+getOk :: forall a b. Result a b -> b
+getOk (Ok p) = p
+getOk (Error _) = error "Failed to get Ok"
+
+propInspect :: Bool
+propInspect = R.inspect p == [<<"A">>, <<"B">>, <<"C">>]
+  where p = getOk $ R.compile "(?<A>A)|(?<B>B)|(?<C>C)" []
+
+propReplace :: Bool
+propReplace = R.replace "abcd" p "[&]" [] == "a[bc]d"
+  where p = getOk $ R.compile ".c" []
+
+propRun :: Bool
+propRun =  (extractResult $ R.run "ABCabcdABC" p []) == [(0, 10), (3, 4)]
+  where p = getOk $ R.compile ".*(abcd).*" []
+        extractResult (R.Match m) = map extractData m
+        extractResult _ = error "Failed to extract Result"
+        extractData (R.DataIndex i) = i
+        extractData _ = error "Failed to extract Data"
+
+propSplit :: Bool
+propSplit = R.split "Erlang" p [] == ["Er", "a", "g"]
+  where p = getOk $ R.compile "[ln]" []
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ quickCheck "compile" propCompile
+           , quickCheck "inspect" propInspect
+           , quickCheck "replace" propReplace
+           , quickCheck "run" propRun
+           , quickCheck "split" propSplit
+           ]
