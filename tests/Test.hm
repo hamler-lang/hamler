@@ -21,9 +21,15 @@ import Test.Data.Monoid as Monoid
 import Test.Data.Digraph as G
 import Test.Data.Ord as Ord
 import Test.Data.Function as Func
+import Test.Data.Semiring as SR
+import Test.Data.Ring as Ring
+import Test.Data.Timeout as Timeout
+import Test.Data.Ordering as Ordering
+import Test.Data.Functor as Functor
 
 main :: IO ()
-main = runTest ( TxG "Data" [
+main = do 
+    runTest ( TxG "Data" [
                    -- TxG "Binary" [B.test]
                    TxG "Map"    [M.test]
                  , TxG "String" [S.test]
@@ -46,6 +52,12 @@ main = runTest ( TxG "Data" [
                  , TxG "Graph" [G.test]
                  , TxG "Ord" [Ord.test]
                  , TxG "Function" [Func.test]
+                 , TxG "Semiring" [SR.test]
+                 , TxG "Ring" [Ring.test]
+                 , TxG "Timeout" [Timeout.test]
+                 , TxG "Ordering" [Ordering.test]
+                 , TxG "Functor" [Functor.test]
                  ]
                )
+    
 

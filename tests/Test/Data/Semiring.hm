@@ -1,1 +1,51 @@
 module Test.Data.Semiring where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude hiding (filter)
+import Data.Semiring as SR
+
+abs :: Float -> Float
+abs x = if x < 0.0 then 0.0-x else x + 0.0
+
+addTest :: Bool
+addTest = (1 + 1 == 2) && (1.5 + 1.5 == 3.0)
+
+mulTest :: Bool
+mulTest = (33 * 44 == 1452) && (33.3 * 44.4 - 1478.52 < 0.0001)
+
+addprop :: Int->Int->Int->Bool
+addprop x y z = ((x + y) + z) == (x + (y + z))
+             && (x + SR.zero == x) && (SR.zero + x == x)
+
+addprop2 :: Float->Float->Float->Bool
+addprop2 x y z = (((x + y) + z) - (x + (y + z)) < 0.0001)
+             && (x + SR.zero == x) && (SR.zero + x == x)
+
+mulProp :: Int->Int->Int->Bool
+mulProp x y z = ((x * y) * z) == (x * (y * z))
+             && (x * SR.zero == SR.zero) && (SR.zero * x == SR.zero)
+             && (x * SR.one == x) && (SR.one * x == x)
+
+mulProp2 :: Float->Float->Float->Bool
+mulProp2 x y z = (abs(((x * y) * z) - (x * (y * z))) < 0.001)
+             && (abs(x * SR.zero - SR.zero )< 0.001 && abs(SR.zero * x - SR.zero) < 0.001)
+             && (abs(x * SR.one - x) < 0.001) && (abs(SR.one * x - x) < 0.001)
+
+propDistInt :: Int->Int->Int->Bool
+propDistInt x y z = (x * (y + z) == x * y + x * z)
+
+propDistFloat :: Float->Float->Float->Bool
+propDistFloat x y z = abs (x * (y + z) - (x * y + x * z)) < 0.0001
+
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [
+    quickCheck "addTest" addTest
+   ,quickCheck "mulTest" mulTest
+   ,quickCheck "addprop" addprop
+   ,quickCheck "addprop2" addprop2
+   ,quickCheck "mulProp" mulProp
+   --inaccuracy,quickCheck "mulProp2" mulProp2
+   ,quickCheck "propDistInt" propDistInt
+   --inaccuracy ,quickCheck "propDistFloat" propDistFloat
+]
