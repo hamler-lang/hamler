@@ -1,0 +1,92 @@
+module Test.System.Dir where
+
+import Test.QuickCheck (TestGroup(..), TestResult, checkIO)
+import Prelude (IO, bind, discard, not, return, ($), (&&), (==))
+import System.Dir ( copyFile, listDir
+                  , deleteDir, makeDir
+                  , deleteDirRecursively
+                  , deleteFile, deleteLink
+                  , getCwd, getFileSize
+                  , makeDirs, makeLink
+                  , makeSymLink, renameDir
+                  , renameFile, setCwd)
+import System.FilePath (isDir, isFile)
+import Data.List (member)
+import System.IO.Types (FilePath)
+
+tname :: FilePath
+tname = "testDir"
+
+tnames :: FilePath
+tnames = "aaa/bbb/testDir/"
+
+makeDirIs :: IO Boolean
+makeDirIs = do
+  makeDir tname
+  isDir tname
+
+makeDirsIs :: IO Boolean
+makeDirsIs = do
+  makeDirs tnames
+  v0 <- isDir tnames
+  deleteDirRecursively tnames -- need erlang23
+  v1 <- isDir tnames
+  return $ v0 && not v1
+
+listDir' :: IO Boolean
+listDir' = do
+  ls <- listDir "."
+  return $ tname `member` ls
+
+renameDir' :: IO Boolean
+renameDir' = do
+  renameDir tname "newtestDir"
+  v1 <- isDir tname
+  renameDir "newtestDir" tname
+  v2 <- isDir tname
+  return $ not v1 && v2
+
+gsCWD :: IO Boolean
+gsCWD = do
+  cwd <- getCwd
+  setCwd cwd
+  return true
+
+deleteDir' :: IO Boolean
+deleteDir' = do
+  deleteDir tname
+  v <- isDir tname
+  return $ not v
+
+fileOper :: IO Boolean
+fileOper = do
+  val0 <- getFileSize "LICENSE"
+  v1 <- isFile "LICENSE"                 -- true
+  copyFile "LICENSE" "LICENSETEST"
+  val1 <- getFileSize "LICENSETEST"
+  v2 <- isFile "LICENSETEST"             -- true
+  renameFile "LICENSETEST" "LICENSETEST1"
+  v3 <- isFile "LICENSETEST"             -- false
+  v4 <- isFile "LICENSETEST1"            -- true
+  deleteFile "LICENSETEST1"
+  v5 <- isFile "LICENSETEST1"            -- false
+  return $ v1 && v2 && not v3 && v4  && not v5 && (val0 == val1)
+
+linkOper :: IO Boolean
+linkOper = do
+  makeLink "LICENSE" "llll"
+  makeSymLink "LICENSE" "lllls"
+  deleteLink "llll"
+  deleteLink "lllls"
+  return true
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ checkIO "makeDir" makeDirIs
+           , checkIO "makeDirs" makeDirsIs
+           , checkIO "lsitDir" listDir'
+           , checkIO "renameDir" renameDir'
+           , checkIO "getCWD_setCWD" gsCWD
+           , checkIO "deleteDir" deleteDir'
+           , checkIO "file operations" fileOper
+           , checkIO "link operations" linkOper
+           ]

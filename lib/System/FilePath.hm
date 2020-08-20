@@ -29,7 +29,7 @@ module System.FilePath
   ) where
 
 import Control.Monad (IO)
-import Foreign (ffi1, ffi2)
+import Foreign (ffi1, ffi2, ffiIO1)
 import System.IO.Types (FilePath)
 
 infixr 5 combine as </>
@@ -57,10 +57,10 @@ foreign import isAbs :: FilePath -> Boolean
 foreign import isRel :: FilePath -> Boolean
 
 isDir :: FilePath -> IO Boolean
-isDir = ffi1 :filelib :is_dir
+isDir = ffiIO1 :filelib :is_dir
 
 isFile :: FilePath -> IO Boolean
-isFile = ffi1 :filelib :is_file
+isFile = ffiIO1 :filelib :is_file
 
 joinPath :: [FilePath] -> FilePath
 joinPath = ffi1 :filename :join
