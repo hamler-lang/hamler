@@ -53,27 +53,29 @@ match_runtime({X}) -> case X of
 end.
 
 compile(S, Opt) -> case re:compile(S, trans_compile(Opt)) of
-  {ok, X} -> {'Ok', {X}};
+  {ok, X} -> {'Ok', X};
   {error, X} -> {'Error', X}
 end.
 
 inspect(P) -> case re:inspect(P, namelist) of
-  {namelist, X} -> X
+  {namelist, X} -> X;
+  _ -> []
 end.
 
+trans_replace([]) -> [];
 trans_replace([{'ReplaceCompileOption', X} | Xs]) ->
   [match_compile(X) | trans_replace(Xs)];
 trans_replace([{'ReplaceRuntimeOption', X} | Xs]) ->
   [match_runtime(X) | trans_replace(Xs)].
 
 replace(Sub, RE, Rep, Opt) ->
-  re:replace(Sub, RE, Rep, trans_replace([{return, list} | Opt])).
+  re:replace(Sub, RE, Rep, [{return, list} | trans_replace(Opt)]).
 
 trans_value_list([]) -> [];
-trans_value_list([{_, {X}} | Xs]) ->
+trans_value_list([{_, X} | Xs]) ->
   [X | trans_value_list(Xs)].
 
-match_value_spec({'ValueList', {X}}) ->
+match_value_spec({'ValueList', X}) ->
   trans_value_list(X);
 match_value_spec({X}) -> case X of
   'All' -> all;
@@ -110,7 +112,7 @@ trans_captured([{X, Y} | Xs])
   when is_integer(X) and is_integer(Y) ->
     [{'DataIndex', {X, Y}} | trans_captured(Xs)];
 trans_captured([X | Xs]) when is_binary(X) ->
-  [{'DataBinary', {X}} | trans_captured(Xs)];
+  [{'DataBinary', X} | trans_captured(Xs)];
 trans_captured([[C | Cs] | Xs]) when is_integer(C) ->
   [{'DataString', {[C | Cs]}} | trans_captured(Xs)];
 trans_captured([X | Xs]) when is_list(X) ->
@@ -121,8 +123,8 @@ trans_captured([{incomplete, X, Y} | Xs]) ->
   [{'DataIncomplete', {X, Y}} | trans_captured(Xs)].
 
 run(Sub, RE, Opt) -> case re:run(Sub, RE, trans_run(Opt)) of
-    {match, X} -> {'Match', {trans_captured(X)}};
-    match -> {'Match', {[]}};
+    {match, X} -> {'Match', trans_captured(X)};
+    match -> {'Match', []};
     nomatch -> {'NoMatch'};
     {error, X} -> match_run_err(X)
 end.
@@ -133,10 +135,10 @@ trans_split([{'SplitCompileOption', X} | Xs]) ->
 trans_split([{'SplitRuntimeOption', X} | Xs]) ->
   [match_runtime(X) | trans_split(Xs)];
 trans_split([X | Xs]) -> [ case X of
-  {'Parts', {Y}} -> {parts, Y};
+  {'Parts', Y} -> {parts, Y};
   {'Group'} -> group;
   {'Trim'} -> trim
 end | trans_split(Xs)].
 
 split(Sub, RE, Opt) -> 
-  re:split(Sub, RE, trans_split([{return, list} | Opt])).
+  re:split(Sub, RE, [{return, list} | trans_split(Opt)]).
