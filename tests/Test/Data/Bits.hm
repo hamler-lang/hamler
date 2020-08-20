@@ -1,3 +1,36 @@
 module Test.Data.Bits where
 
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Data.Bits (band, bor, bxor, bnot, bsl, bsr)
+
+andTest :: Bool
+andTest = ((1 band 1) == 1) && ( (1 band 0) == 0 ) && ((0 band 1) == 0)
+            && ((16 band 17) == 16) && ((-5 band 10) == 0)
+
+orTest :: Bool
+orTest = ((0 bor 0) == 0) && ((1 bor 0) == 1) && ((0 bor 1) == 1) && ((1 bor 1) == 1)
+        && ( (1244 bor 3711) == 3839 ) 
+
+xorTest :: Bool
+xorTest = (( 1 bxor 0 ) == 1) && ( (0 bxor 1) == 1 ) && ( (1 bxor 1) == 0 )
+            && ( (7 `xor` 5) == 2 )
+
+notTest :: Bool
+notTest = ( bnot 1 == 0 ) && (bnot 0 == 1)
+
+shiftLeftTest :: Bool
+shiftRightTest = (bsl 1 10) == 1024
+
+shiftLeftTest :: Bool 
+shiftLeftTest = (bsr 1024 10) == 1
+
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ quickCheck "andTest" andTest
+            ,quickCheck "orTest" orTest
+            ,quickCheck "xorTest" xorTest
+            ,quickCheck "notTest" notTest
+            ,quickCheck "shiftLeftTest" shiftLeftTest
+            ,quickCheck "shiftRightTest" shiftRightTest
+           ]
 
