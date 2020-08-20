@@ -13,7 +13,7 @@
 %% The OrdSet FFI module.
 %%
 %%---------------------------------------------------------------------------
--module('OrdSet').
+-module('OrdSets').
 
 -type(ordset(T) :: [T]).
 
@@ -26,6 +26,4 @@
       Acc0 :: term(),
       Acc1 :: term()).
 fold(Fun, Acc0, Ordset) ->
-  ordsets:fold(fun(Element, AccIn) ->
-                 'Curry':apply(Fun, [Element, AccIn])
-               end, Acc0, Ordset).
+  ordsets:fold(fun(Element, AccIn) ->(Fun(Element))(AccIn) end, Acc0, Ordset).
