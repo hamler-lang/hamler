@@ -29,7 +29,7 @@ makeDirsIs :: IO Boolean
 makeDirsIs = do
   makeDirs tnames
   v0 <- isDir tnames
-  deleteDirRecursively tnames -- need erlang23
+  deleteDirRecursively "aaa" -- need erlang23
   v1 <- isDir tnames
   return $ v0 && not v1
 

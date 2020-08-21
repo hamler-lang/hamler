@@ -1,0 +1,48 @@
+module Test.Control.Process where
+
+import Test.QuickCheck (TestGroup(..), TestResult, checkIO)
+import Prelude (IO, Pid, Unit, bind, discard, getSelf, head, last, pure, range, return, send, seqio, spawn, zip, ($), (+), (==), (>>=))
+import Control.Process (isAlive)
+import Data.List as L
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ checkIO "getSelf isAlive" getSelf'
+           , checkIO "create 10 processes and send messages cyclically" (start 10)
+           , checkIO "create 100 processes and send messages cyclically" (start 100)
+           , checkIO "create 1000 processes and send messages cyclically" (start 1000)
+           ]
+
+getSelf' :: IO Boolean
+getSelf' = do
+  pid <- getSelf
+  isAlive pid
+
+start :: Integer ->  IO Boolean
+start all = do
+  pid0 <- getSelf
+  pids <- seqio [spawn $ loop (S pid0 pid0) | x <- [1..all]]
+  seqio [send j (N i) | (i,j) <- (zip pids [last pids|L.init pids]) ]
+  send (head pids) (T 0)
+  v <- recAll 0
+  return $ v == 500500
+
+recAll :: Integer -> IO Integer
+recAll a = receive
+             x -> recAll $ x + a
+           after 300 -> (return a :: IO Integer)
+
+data Message = N Pid
+             | T Integer
+
+data S = S Pid Pid
+
+handleMsg :: S ->  Message -> IO S
+handleMsg (S p0 pid) (N p) = return (S p0 p)
+handleMsg (S p0 pid) (T 1001) = return (S p0 pid)
+handleMsg (S p0 pid) (T i) =
+  do send pid (T (i+1))
+     send p0 i
+     return (S p0 pid)
+
+loop :: S -> IO ()
+loop s = receive v -> handleMsg s v >>= loop
