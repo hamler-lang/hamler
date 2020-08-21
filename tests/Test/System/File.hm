@@ -1,0 +1,19 @@
+module Test.System.File where
+
+import Test.QuickCheck
+import Prelude
+import System.File
+
+fileOper :: IO Boolean
+fileOper = do
+  i <- open ".test/tababab" ReadWriteMode
+  write i <<"bbaaaaa">>
+  v0 <- tell i                       --  7
+  seek i AbsoluteSeek 0
+  v1 <- read i 2                     -- <<"bb">>
+  close i
+  return $ v0 == 7 && v1 == <<"bb">>
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ checkIO "file open, write, seek, read, close" fileOper
+           ]

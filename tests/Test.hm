@@ -30,7 +30,9 @@ import Test.Data.Term.Persistent as P
 import Test.Data.Regex as Re
 import Test.System.Dir as Dir
 import Test.Data.Bits as Bits
-import Test.Data.Char as Char 
+import Test.Data.Char as Char
+import Test.System.Env as Env
+import Test.System.File as File
 
 main :: IO ()
 main = runTest $ TxG "lib" 
@@ -67,6 +69,8 @@ main = runTest $ TxG "lib"
                  , TxG "Char"  [Char.test]
                  ],
      TxG "System" [ TxG "Dir"     [Dir.test]
+                  , TxG "Env"     [Env.test]
+                  , TxG "File"    [File.test]
                   ]
    ]
 
