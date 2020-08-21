@@ -52,7 +52,7 @@ Get the installation package through [Github Release](https://github.com/hamler-
 **Linux**
 
 ```shell
-$ tar zxvf hamer-$version.tar.gz -C /usr/lib/hamler
+$ tar zxvf hamler-$version.tgz -C /usr/lib/hamler
 $ ln -s /usr/lib/hamler/bin/hamer /usr/bin/hamler
 ```
 
