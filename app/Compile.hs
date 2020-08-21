@@ -98,13 +98,13 @@ howBuild :: Opts.Parser Bool
 howBuild= Opts.switch $
      Opts.short 'l'
   <> Opts.long "libraries"
-  <> Opts.help "build the libraries to ebin"
+  <> Opts.help "build the libraries to ebin (only develop)"
 
 inline :: Opts.Parser Bool
 inline= Opts.switch $
      Opts.short 'i'
   <> Opts.long "inline"
-  <> Opts.help "Determine whether to inline functions when reading .core"
+  <> Opts.help "Determine whether to inline functions (no effect at this stage)"
 
 outputDirectory :: Opts.Parser FilePath
 outputDirectory = Opts.strOption $
@@ -115,9 +115,7 @@ outputDirectory = Opts.strOption $
   <> Opts.help "The output directory"
 
 command :: Opts.Parser (IO ())
-command = buildFun <$> inline
-                   <*> howBuild
-                   <*> outputDirectory
+command = Opts.helper <*> (buildFun <$> inline <*> howBuild <*> outputDirectory)
 
 buildFun ::Bool -> Bool -> FilePath -> IO ()
 buildFun isIn b fp = if b
