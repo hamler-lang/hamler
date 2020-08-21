@@ -1,6 +1,67 @@
 module Test.Data.Char where
 
--- import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
--- import Prelude
--- import Data.Char as Char
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+import Data.Char as Char
+import Data.List as L
 
+{-
+isLower :: Bool
+isLower = foldl (\x acc -> acc `and` x) true (map (\x->Char.isLower x) ['a'..'z'])
+
+isUpper :: Bool
+isUpper = foldl (\x acc -> acc `and` x) true (map (\x->Char.isUpper x) ['A'..'Z'])
+-}
+
+isXX :: (Char->Bool)->[Char]->Char->Bool
+isXX f xs c = (if (L.member c xs) then (f c) else true) && (if (f c) then (L.member c xs) else true)
+
+isLower ::Char -> Bool
+isLower = isXX Char.isLower ['a'..'z']
+
+isUpper ::Char -> Bool
+isUpper = isXX Char.isUpper ['A'..'Z']
+
+isAlpha :: Char->Bool
+isAlpha = isXX Char.isAlpha (['A'..'Z'] ++ ['a'..'z'])
+
+--isPrintable
+
+isDigit :: Char->Bool
+isDigit = isXX Char.isDigit ['0'..'9'] 
+
+isOct :: Char->Bool
+isOct = isXX Char.isOctDigit ['0'..'7']
+
+isHex :: Char->Bool
+isHex = isXX Char.isHexDigit (['0'..'9'] ++ ['a'..'f'] ++ ['A'..'F'])
+
+-- isASCII
+
+toUpper :: Bool
+toUpper = ((map Char.toUpper ['a'..'z']) == ['A'..'Z']) && (map Char.toUpper ['A' .. 'Z']) == ['A'..'Z']
+
+tolower :: Bool
+tolower = ((map Char.toLower ['A' .. 'Z']) == ['a'..'z']) && (map Char.toLower ['a'..'z']) == ['a'..'z']
+
+-- titleCase
+
+digitToInt :: Bool
+digitToInt = (map Char.digitToInt (['0'..'9'] ++ ['a'..'f'])) == [0..15]
+
+intToDigit :: Bool
+intToDigit = (map Char.intToDigit [0..15]) == (['0'..'9'] ++ ['a'..'f'])
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ 
+            quickCheck "isLower" isLower
+           , quickCheck "isUpper" isUpper
+           , quickCheck "isAlpha" isAlpha
+           , quickCheck "isDigit" isDigit
+           , quickCheck "isOct" isOct
+           , quickCheck "isHex" isHex
+           , quickCheck "tolower" tolower
+           , quickCheck "toUpper" toUpper
+           , quickCheck "digitToInt" digitToInt
+           , quickCheck "intToDigit" intToDigit
+           ]
