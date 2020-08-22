@@ -79,7 +79,7 @@ $ brew install hamler
 
 **Required**
 
-+ [Erlang/OTP](erlang.org) >= 22
++ [Erlang/OTP](erlang.org) >= 23
 + [Haskell Stack](haskellstack.org)
 
 **Building**
