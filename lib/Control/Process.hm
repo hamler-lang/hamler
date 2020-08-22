@@ -40,6 +40,7 @@ module Control.Process
   , resume
   , suspend
   , yield
+  , timerSleep
     -- * Process Dict
   , module Control.Process.Dict
     -- * Process Flags
@@ -179,3 +180,6 @@ foreign import resume :: Pid -> Process ()
 foreign import suspend :: Pid -> Process ()
 
 foreign import yield :: Process ()
+
+timerSleep :: Integer -> IO ()
+timerSleep = ffiIO1 :timer :sleep

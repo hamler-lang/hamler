@@ -100,13 +100,13 @@ matchWithLimit(Tid, Pattern, Limit) ->
       end).
 
 matchObjectContinuation(Continuation) ->
-  ?IO(case ets:match(Continuation) of
+  ?IO(case ets:match_object(Continuation) of
         '$end_of_table' -> ?Nothing;
         Key2 -> ?Just(Key2)
       end).
 
 matchObjectWithLimit(Tid, Pattern, Limit) ->
-  ?IO(case ets:match(Tid, Pattern, Limit) of
+  ?IO(case ets:match_object(Tid, Pattern, Limit) of
         '$end_of_table' -> ?Nothing;
         Key2 -> ?Just(Key2)
       end).
