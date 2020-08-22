@@ -131,7 +131,7 @@ getInfo = ffiIO2 :ets :info
 
 -- TODO: init_table/2
 
-insert :: forall v. TableId -> v -> IO ()
+insert :: forall v. TableId -> v -> IO Boolean
 insert = ffiIO2 :ets :insert
 
 insertObjects :: forall v. TableId -> [v] -> IO Boolean
