@@ -1,6 +1,6 @@
 module Test.Data.Digraph where
 
-import Test.QuickCheck (TestGroup(..), TestResult, checkIO)
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
 import Prelude
 import Data.Digraph as G
 
@@ -173,19 +173,19 @@ propModifyVertex = do
   return (sort vs == [Just 1, Just 3, Just 5])
 
 test :: TestGroup (Integer -> IO TestResult)
-test = Exe [ checkIO "noEdges"        propNoEdges
-           , checkIO "noVertices"     propNoVertices
-           , checkIO "allVertices"    propAllVertices
-           , checkIO "allEdges"       propAllEdges
-           , checkIO "inDegree"       propInDegree
-           , checkIO "outDegree"      propOutDegree
-           , checkIO "inEdges"        propInEdges
-           , checkIO "outEdges"       propOutEdges
-           , checkIO "inNeighbours"   propInNeighbours
-           , checkIO "outNeighbours"  propOutNeighbours
-           , checkIO "getCycle"       propGetCycle
-           , checkIO "getPath"        propGetPath
-           , checkIO "delVertex"      propDelVertex
-           , checkIO "delEdge"        propDelEdge
-           , checkIO "modifyVertex"   propModifyVertex
+test = Exe [ quickCheck1 "noEdges"        propNoEdges
+           , quickCheck1 "noVertices"     propNoVertices
+           , quickCheck1 "allVertices"    propAllVertices
+           , quickCheck1 "allEdges"       propAllEdges
+           , quickCheck1 "inDegree"       propInDegree
+           , quickCheck1 "outDegree"      propOutDegree
+           , quickCheck1 "inEdges"        propInEdges
+           , quickCheck1 "outEdges"       propOutEdges
+           , quickCheck1 "inNeighbours"   propInNeighbours
+           , quickCheck1 "outNeighbours"  propOutNeighbours
+           , quickCheck1 "getCycle"       propGetCycle
+           , quickCheck1 "getPath"        propGetPath
+           , quickCheck1 "delVertex"      propDelVertex
+           , quickCheck1 "delEdge"        propDelEdge
+           , quickCheck1 "modifyVertex"   propModifyVertex
            ]
