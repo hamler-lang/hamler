@@ -3,7 +3,7 @@ module Test.Data.Binary where
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
 import Prelude (IO, ($), (==))
 import Data.Binary.Base64 (decode, encode)
-import Data.Binary(toAtom)
+import Data.Binary(toAtom, toList, listToBin)
 import Data.Atom
 
 propBase64 :: Binary -> Boolean
@@ -15,9 +15,13 @@ propBA v = toBinary (toAtom v) == v
 propAB :: Atom -> Boolean
 propAB v = toAtom (toBinary v) == v
 
+propToList :: Binary -> Boolean
+propToList b = listToBin (toList b) == b
+
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [ quickCheck "decode_encode" propBase64
            , quickCheck "toBinary_toAtom " propBA
            , quickCheck "toAtom_toBinary " (\v -> toAtom (toBinary v) == v)
+           , quickCheck "toList_listToBin" propToList
            ]
 
