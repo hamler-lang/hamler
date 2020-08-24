@@ -1,6 +1,6 @@
 module Test.System.Dir where
 
-import Test.QuickCheck (TestGroup(..), TestResult, checkIO)
+import Test.QuickCheck (TestGroup(..), TestResult,  quickCheck1)
 import Prelude (IO, bind, discard, not, return, ($), (&&), (==))
 import System.Dir ( copyFile, listDir
                   , deleteDir, makeDir
@@ -81,12 +81,12 @@ linkOper = do
   return true
 
 test :: TestGroup (Integer -> IO TestResult)
-test = Exe [ checkIO "makeDir" makeDirIs
-           , checkIO "makeDirs" makeDirsIs
-           , checkIO "lsitDir" listDir'
-           , checkIO "renameDir" renameDir'
-           , checkIO "getCWD_setCWD" gsCWD
-           , checkIO "deleteDir" deleteDir'
-           , checkIO "file operations" fileOper
-           , checkIO "link operations" linkOper
+test = Exe [ quickCheck1 "makeDir" makeDirIs
+           , quickCheck1 "makeDirs" makeDirsIs
+           , quickCheck1 "lsitDir" listDir'
+           , quickCheck1 "renameDir" renameDir'
+           , quickCheck1 "getCWD_setCWD" gsCWD
+           , quickCheck1 "deleteDir" deleteDir'
+           , quickCheck1 "file operations" fileOper
+           , quickCheck1 "link operations" linkOper
            ]

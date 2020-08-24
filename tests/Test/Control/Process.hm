@@ -1,15 +1,15 @@
 module Test.Control.Process where
 
-import Test.QuickCheck (TestGroup(..), TestResult, checkIO)
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
 import Prelude (IO, Pid, Unit, bind, discard, getSelf, head, last, pure, range, return, send, seqio, spawn, zip, ($), (+), (==), (>>=))
 import Control.Process (isAlive)
 import Data.List as L
 
 test :: TestGroup (Integer -> IO TestResult)
-test = Exe [ checkIO "getSelf isAlive" getSelf'
-           , checkIO "create 10 processes and send messages cyclically" (start 10)
-           , checkIO "create 100 processes and send messages cyclically" (start 100)
-           , checkIO "create 1000 processes and send messages cyclically" (start 1000)
+test = Exe [ quickCheck1 "getSelf isAlive" getSelf'
+           , quickCheck1 "create 10 processes and send messages cyclically" (start 10)
+           , quickCheck1 "create 100 processes and send messages cyclically" (start 100)
+           , quickCheck1 "create 1000 processes and send messages cyclically" (start 1000)
            ]
 
 getSelf' :: IO Boolean

@@ -1,6 +1,6 @@
 module Test.System.File where
 
-import Test.QuickCheck (TestGroup(..), TestResult, checkIO)
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
 import Prelude (IO, bind, discard, return, ($), (&&), (==))
 import System.File (IOMode(..), SeekMode(..), close, open, read, seek, tell, write)
 
@@ -15,5 +15,5 @@ fileOper = do
   return $ v0 == 7 && v1 == <<"bb">>
 
 test :: TestGroup (Integer -> IO TestResult)
-test = Exe [ checkIO "file open, write, seek, read, close" fileOper
+test = Exe [ quickCheck1 "file open, write, seek, read, close" fileOper
            ]

@@ -1,6 +1,6 @@
 module Test.Data.Term.Persistent where
 
-import Test.QuickCheck (TestGroup(..), TestResult, checkIO)
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
 import Prelude (IO, bind, discard, return, ($), (==))
 import Data.Term.Persistent (erase, get, getWithDefault, put)
 
@@ -21,7 +21,7 @@ putErase = do
   erase 1
 
 test :: TestGroup (Integer -> IO TestResult)
-test = Exe [ checkIO "put_get" putGet
-           , checkIO "getWithDefault" getWD
-           , checkIO "put_erase" putErase
+test = Exe [ quickCheck1 "put_get" putGet
+           , quickCheck1 "getWithDefault" getWD
+           , quickCheck1 "put_erase" putErase
            ]

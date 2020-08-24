@@ -1,26 +1,26 @@
 module Test.Database.ETS where
 
-import Prelude (IO, Maybe(..), Unit, bind, discard, pure, range, return, seqio, spawn, ($), (&&), (*), (+), (==), (>), concat, foldl, (<>))
+import Prelude (IO, Maybe(..), Unit, bind, discard, pure, range, return, seqio, spawn, ($), (&&), (*), (+), (==), (>), concat, foldl, (<>), length, zip)
 import Database.ETS (all, file2tab, deleteTable, insert, insertObjects, lookup, member, new, options)
 import Database.ETS as E
-import Test.QuickCheck (TestGroup(..), TestResult, checkIO)
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck, quickCheck1)
 import Control.Process (timerSleep)
 import System.FilePath (isFile)
 import System.Dir (deleteFile)
 
 test :: TestGroup (Integer -> IO TestResult)
-test = Exe [ checkIO "new, deleteTable" new'
-           , checkIO "ets: new, insert, insertObjects, lookupElement, lookup, delete, member, last, match" new'
-           , checkIO "ets: spawn 40 process to insert tuple (k, 100)" spawn100Oper
-           , checkIO "table to file, file to table, first, last, next, prev, tab2list, rename, whereis, take " etsFile
-           , checkIO "table: foldl, foldr" efold
-           , checkIO "table: match, matchWithLimit, matchContinuation, matchDelete" ematch
-           , checkIO "table: matchObject, matchObjectContinuation, matchObjectWithLimit" ematchObj
-           , checkIO "table: updateElement, updateElementList, updateCounter... " updateFun
+test = Exe [ quickCheck1 "new, deleteTable" new'
+           , quickCheck1 "ets: new, insert, insertObjects, lookupElement, lookup, delete, member, last, match" new'
+           , quickCheck1 "ets: spawn 40 process to insert tuple (k, 100)" spawn100Oper
+           , quickCheck1 "table to file, file to table, first, last, next, prev, tab2list, rename, whereis, take " etsFile
+           , quickCheck1 "table: foldl, foldr" efold
+           , quickCheck  "table: match, matchWithLimit, matchContinuation, matchDelete" ematch
+           , quickCheck1 "table: matchObject, matchObjectContinuation, matchObjectWithLimit" ematchObj
+           , quickCheck1 "table: updateElement, updateElementList, updateCounter... " updateFun
            ]
 
-new' :: IO Boolean
-new' = do
+new' :: Integer -> Integer -> IO Boolean
+new' a b = do
   tab <- new :test1 E.options
   allTid <- all
   deleteTable tab
@@ -86,14 +86,16 @@ etsFile = do
              && v5 == Nothing && v6 == [(1,2)]
              && v7 == [(1,2)] && v8 == []
 
-efold :: IO Boolean
-efold = do
+efold :: [Integer] -> IO Boolean
+efold xs = do
   tab <- E.new :test3 E.options
-  E.insertObjects tab [(x,x) | x <- [1..100]]
+  let total = foldl (+) 0 xs
+      len = length xs
+  E.insertObjects tab $ zip [1..len] xs
   accl <- E.foldl (\(_, v) b -> v + b ) 0 tab
   accr <- E.foldr (\(_, v) b -> v + b ) 0 tab
   deleteTable tab
-  return $ accl == 5050 && accr == 5050
+  return $ accl == total && accr == total
 
 p :: Atom
 p = :"$1"
@@ -101,11 +103,13 @@ p = :"$1"
 p' :: (Atom, Atom)
 p' = (:_, :_)
 
-ematch :: IO Boolean
-ematch = do
-  tab <- E.new :test4 E.options
-  E.insertObjects tab [(x,x) | x <- [1..100]]
-  xs <- E.match tab (1, p)
+ematch :: [Integer] -> IO Boolean
+ematch [] = return true
+ematch xs = do
+  tab <- E.new :test41 E.options
+  let total = foldl (+) 0 xs
+      len = length xs
+  E.insertObjects tab $ zip [1..len] xs
   xs1 <- E.match tab (:_, p)
   let v1 = foldl (\x y -> x + y) 0 $ concat xs1
   v <- E.matchWithLimit tab (:_, p) 10
@@ -117,7 +121,7 @@ ematch = do
   b <- E.matchDelete tab p'
   (xs' :: [[Integer]]) <- E.match tab (1, p)
   deleteTable tab
-  return $ xs' == [] && xs == [[1]] && v1 == 5050 && (foldl (+) 0 (concat v')) == 5050 && b
+  return $ xs' == [] && v1 == total && (foldl (+) 0 (concat v')) == total && b
  where
    allVals con = do
      v <- E.matchContinuation con
