@@ -45,7 +45,7 @@ module Prelude
 
 import Control.Distributed.Node (Node)
 import Control.Monad (class Applicative, pure, (<*>), class Monad, return, bind, IO, discard, guardF, seqio, (>>=), unsafePerformIO, replApply)
-import Control.Process (Process, getSelf, spawn, send, (!), link, unlink, monitor, demonitor, exit, exitProc)
+import Control.Process (Process, getSelf, spawn, send, (!), link, unlink, monitor, demonitor, exit, exitProc, timerSleep)
 import Data.Atom (atom)
 import Data.Bits (band, bor, bxor, bnot, bsl, bsr)
 import Data.Bool (Bool, (&&), (||), and, or, not, otherwise)
