@@ -14,7 +14,6 @@
 -----------------------------------------------------------------------------
 module Data.Monoid (class Monoid, mempty) where
 
-import Data.Ordering (Ordering(..))
 import Data.Semigroup (class Semigroup)
 import Data.Unit (Unit, unit)
 
@@ -23,9 +22,6 @@ class Semigroup m => Monoid m where
 
 instance Monoid (List a) where
   mempty = []
-
-instance Monoid Ordering where
-  mempty = EQ
 
 instance Monoid Unit where
   mempty = unit

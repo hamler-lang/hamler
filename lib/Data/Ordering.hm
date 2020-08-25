@@ -20,6 +20,7 @@ module Data.Ordering
 import Data.Eq (class Eq)
 import Data.Semigroup (class Semigroup)
 import Data.Show (class Show)
+import Data.Monoid (class Monoid)
 
 -- | The `Ordering` data type represents the three possible outcomes of
 -- | comparing two values:
@@ -51,3 +52,6 @@ invert :: Ordering -> Ordering
 invert GT = LT
 invert EQ = EQ
 invert LT = GT
+
+instance Monoid Ordering where
+  mempty = EQ

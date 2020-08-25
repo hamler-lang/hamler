@@ -43,6 +43,11 @@ propSet = [1,0,3,4] == A.toList(A.set 1 0 baseArray)
 plus :: Int->Int->Int->Int
 plus _ a b = a + b
 
+propMonad :: Bool
+propMonad = 
+  (A.fromList [1, 3, 4, 5] >>= (\x -> A.fromList [x, x + 2])) == 
+  A.fromList [1, 3, 3, 5, 4, 6, 5, 7]
+
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [ quickCheck "fromList_toList "  propArrayFt
            , quickCheck "fromList"  (A.toList baseArray == [1,3,4,5])
@@ -60,4 +65,5 @@ test = Exe [ quickCheck "fromList_toList "  propArrayFt
            , quickCheck "foldr" ((A.sparseFoldr plus 0 baseArray) == 13)
            , quickCheck "map" (A.sparseMap (\_ x -> x + 1) baseArray == (A.fromList [2,4,5,6]))
            , quickCheck "default" (A.default  (A.new [A.Size 10, A.Default 1]) == 1)
+           , quickCheck "Monad"  propMonad
            ]
