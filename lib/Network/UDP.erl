@@ -27,16 +27,16 @@
         ]).
 
 open(Port) ->
-  ?IO(return(gen_udp:open(Port))).
+  ?IO(returnVal(gen_udp:open(Port))).
 
 openWith(Port, Options) ->
-  ?IO(return(gen_udp:open(Port, parseOpts(Options)))).
+  ?IO(returnVal(gen_udp:open(Port, parseOpts(Options)))).
 
 recv(Socket, Length) ->
-  ?IO(wrap(return(gen_udp:recv(Socket, Length)))).
+  ?IO(wrap(returnVal(gen_udp:recv(Socket, Length)))).
 
 recvTimeout(Socket, Length, Timeout) ->
-  ?IO(wrap(return(gen_udp:recv(Socket, Length, unwrap(Timeout))))).
+  ?IO(wrap(returnVal(gen_udp:recv(Socket, Length, unwrap(Timeout))))).
 
 send(Socket, Hostname, PortNumber, Packet) ->
   ?IO(return(gen_udp:send(Socket, Hostname, PortNumber, Packet))).
@@ -50,10 +50,13 @@ close(Socket) ->
 controllingProcess(Socket, Pid) ->
   ?IO(return(gen_udp:controlling_process(Socket, Pid))).
 
+returnVal({ok, Socket}) -> Socket;
+returnVal({error, Reason}) -> error(Reason).
+
 return(ok) -> ok;
 return({error, Reason}) -> error(Reason).
 
-parseOpts(Opts) -> parseOpts(Opts, []).
+parseOpts(Opts) -> parseOpts(Opts, [binary]).
 
 parseOpts([{'Active', B}|Opts], Acc) ->
   parseOpts(Opts, [{active, B}|Acc]);
