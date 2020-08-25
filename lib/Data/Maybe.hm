@@ -21,9 +21,12 @@ module Data.Maybe
   , fromJust
   ) where
 
-import Control.Monad (class Applicative, class Monad, pure)
+import Control.Monad (class Applicative, class Monad, pure, liftA1)
 import Data.Functor (class Functor, map)
 import Data.Function (const, error, identity)
+import Data.Monoid (mempty)
+import Data.Foldable (class Foldable)
+import Data.Traversable (class Traversable)
 import Data.Eq
 
 data Maybe a = Nothing | Just a
@@ -46,6 +49,20 @@ instance Monad Maybe where
   bind (Just x) fn = fn x
   bind Nothing  _  = Nothing
   return = pure
+
+instance Foldable Maybe where
+  foldl f init (Just x) = f init x
+  foldl _ init Nothing  = init
+  foldr f init (Just x) = f x init
+  foldr _ init Nothing  = init
+  foldMap f (Just x) = f x
+  foldMap _ Nothing  = mempty
+
+instance Traversable Maybe where
+  traverse f (Just a) = liftA1 Just (f a)
+  traverse f Nothing  = pure Nothing
+  sequence (Just a) = liftA1 Just a
+  sequence Nothing  = pure Nothing
 
 maybe :: forall a b. b -> (a -> b) -> Maybe a -> b
 maybe b _ Nothing = b
