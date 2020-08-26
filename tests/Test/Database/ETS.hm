@@ -13,7 +13,7 @@ test = Exe [ quickCheck1 "new, deleteTable" new'
            , quickCheck1 "ets: new, insert, insertObjects, lookupElement, lookup, delete, member, last, match" new'
            , quickCheck1 "ets: spawn 40 process to insert tuple (k, 100)" spawn100Oper
            , quickCheck1 "table to file, file to table, first, last, next, prev, tab2list, rename, whereis, take " etsFile
-           , quickCheck1 "table: foldl, foldr" efold
+           , quickCheck  "table: foldl, foldr" efold
            , quickCheck  "table: match, matchWithLimit, matchContinuation, matchDelete" ematch
            , quickCheck1 "table: matchObject, matchObjectContinuation, matchObjectWithLimit" ematchObj
            , quickCheck1 "table: updateElement, updateElementList, updateCounter... " updateFun
@@ -87,6 +87,7 @@ etsFile = do
              && v7 == [(1,2)] && v8 == []
 
 efold :: [Integer] -> IO Boolean
+efold [] = return true
 efold xs = do
   tab <- E.new :test3 E.options
   let total = foldl (+) 0 xs
