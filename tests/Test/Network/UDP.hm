@@ -5,6 +5,8 @@ import Network.UDP (Option(..), Socket, close, openWith, recv, recvTimeout, send
 import Network.UDP as U
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
 import Data.Timeout (Timeout(..))
+import Data.Binary.Base64 (encode, decode)
+
 
 serProcess :: Integer -> IO ()
 serProcess port = do
@@ -12,8 +14,11 @@ serProcess port = do
   recvLoop sock
  where
    recvLoop sock = do
-     v@(ip, pn, b) <- recv sock 10
-     sendTo sock ip pn <<1>>
+     (ip, pn, b) <- recv sock 10
+     let v = decode b == <<"message">>
+     if v
+        then  sendTo sock ip pn <<1>>
+        else  sendTo sock ip pn <<2>>
      recvLoop sock
 
 start :: IO ()
@@ -24,7 +29,7 @@ start = do
 client :: IO Boolean
 client = do
   sock <- openWith 0 [Active false]
-  vs <- seqio [seqio [action sock <<"message">> p | p <- [8000 .. 8030] ] | x <- [1..2]]
+  vs <- seqio [seqio [action sock (encode <<"message">>) p | p <- [8000 .. 8030] ] | x <- [1..2]]
   let vs' = foldl (+) 0 $ concat vs
   close sock
   return $ vs' == 124
