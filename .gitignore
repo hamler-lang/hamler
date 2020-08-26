@@ -34,3 +34,4 @@ bin/
 .test/
 ebin/
 erl_crash.dump
+Mnesia.nonode@nohost

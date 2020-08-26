@@ -37,6 +37,7 @@ import Test.System.FilePath as FilePath
 import Test.Control.Process as Proc
 import Test.Database.ETS as ETS
 import Test.Network.UDP as UDP
+import Test.Database.Mnesia as Mnesia
 
 main :: IO ()
 main = runTest $ TxG "lib" 
@@ -79,7 +80,8 @@ main = runTest $ TxG "lib"
                   ],
      TxG "Control" [ TxG "Process"   [Proc.test]
                    ],
-     TxG "Database" [ TxG "ETS"   [ETS.test]
+     TxG "Database" [ TxG "ETS"    [ETS.test]
+                    , TxG "Mnesia" [Mnesia.test]
                     ],
      TxG "Network"  [ TxG "UDP"   [UDP.test]
                     ]
