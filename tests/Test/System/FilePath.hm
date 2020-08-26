@@ -1,0 +1,55 @@
+module Test.System.FilePath where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
+import Prelude
+import System.FilePath as F
+
+propAbsPath :: IO Bool
+propAbsPath = do
+  p1 <- F.abspath "stack.yaml"
+  p2 <- F.abspath "package.yaml"
+  return $ F.dirname p1 == F.dirname p2
+
+propBaseName :: Bool
+propBaseName = F.basename "/usr/bin" == "bin"
+
+propCombine :: Bool
+propCombine = F.combine "/usr" "bin" == "/usr/bin"
+
+propDirName :: Bool
+propDirName = F.dirname "/usr/bin" == "/usr"
+
+propExtension :: Bool
+propExtension = F.extension "/usr/bin/shell.sh" == ".sh"
+
+propIsAbs :: Bool
+propIsAbs = F.isAbs "/usr/bin"
+
+propIsRel :: Bool
+propIsRel = F.isRel "bin"
+
+propIsDir :: IO Bool
+propIsDir = F.isDir "tests"
+
+propIsFile :: IO Bool
+propIsFile = F.isFile "stack.yaml"
+
+propJoinPath :: Bool
+propJoinPath = F.joinPath ["/usr", "bin", "shell.sh"] == "/usr/bin/shell.sh"
+
+propSplitPath :: Bool
+propSplitPath = F.splitPath "/usr/bin" == ["/", "usr", "bin"]
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ quickCheck1 "absPath" propAbsPath
+           , quickCheck1 "basename" propBaseName
+           , quickCheck1 "combine" propCombine
+           , quickCheck1 "dirname" propDirName
+           , quickCheck1 "extension" propExtension
+           , quickCheck1 "isAbs" propIsAbs
+           , quickCheck1 "isRel" propIsRel
+           , quickCheck1 "isDir" propIsDir
+           , quickCheck1 "isFile" propIsFile
+           , quickCheck1 "joinPath" propJoinPath
+           , quickCheck1 "splitPath" propSplitPath
+           ]

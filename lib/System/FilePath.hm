@@ -34,8 +34,8 @@ import System.IO.Types (FilePath)
 
 infixr 5 combine as </>
 
-abspath :: FilePath -> FilePath
-abspath = ffi1 :filename :absname
+abspath :: FilePath -> IO FilePath
+abspath = ffiIO1 :filename :absname
 
 basename :: FilePath -> String
 basename = ffi1 :filename :basename
