@@ -1,6 +1,6 @@
 module Test.Database.ETS where
 
-import Prelude (IO, Maybe(..), Unit, bind, discard, pure, range, return, seqio, spawn, ($), (&&), (*), (+), (==), (>), concat, foldl, (<>), length, zip)
+import Prelude (IO, Maybe(..), Unit, bind, discard, pure, range, return, seqio, spawn, ($), (&&), (*), (+), (==), concat, foldl, (<>), length, zip, unit)
 import Database.ETS (all, file2tab, deleteTable, insert, insertObjects, lookup, member, new, options)
 import Database.ETS as E
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck, quickCheck1)
@@ -48,17 +48,19 @@ etsOper = do
 insertRandomNumber :: Integer -> E.TableId -> IO ()
 insertRandomNumber i tab = do
   E.insert tab (i, 100)
-  insertRandomNumber (i+1) tab
+  return ()
+  -- timerSleep 30
+  -- insertRandomNumber (i+1) tab
 
 spawn100Oper :: IO Boolean
 spawn100Oper = do
   tab <- E.new :test1 E.options{access = E.Public, writeConcurrency = true}
-  seqio [spawn $ insertRandomNumber (x*10000000) tab | x <- [1..40]]
-  timerSleep 1000
+  seqio [spawn $ insertRandomNumber (x*10000000) tab | x <- [1..100]]
+  timerSleep 500
   v <- E.info tab
   case v of
     Just info -> do
-      return $ info.size > 500000
+      return $ info.size == 100
     Nothing -> return false
 
 etsFile :: IO Boolean
