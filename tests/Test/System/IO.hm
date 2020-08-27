@@ -1,0 +1,26 @@
+module Test.System.IO where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
+import Prelude
+import System.IO (writeFile, readFile, appendFile)
+
+filepath = "./test/test.txt"
+
+writeAndReadTest :: IO Bool
+writeAndReadTest = do
+    writeFile filepath <<"hello, world">>
+    rf <- readFile filepath
+    return (rf == <<"hello, world">>)
+
+appendTest :: Binary -> IO (Bool)
+appendTest = do
+    writeFile filepath <<"hello, world">>
+    appendFile filepath <<" Hamler, Haskell">>
+    rf <- readFile filepath
+    return (rf == <<"hello, world Hamler, Haskell">>)
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [
+    quickCheck1 "read and write " writeAndReadTest
+   ,quickCheck1 "append" appendTest
+]
