@@ -1,8 +1,8 @@
 module Test.Database.Mnesia where
 
-import Prelude (IO, bind, discard, length, map, pure, replicate, return, seqio, unit, zip, ($), (+), (-), (/), (==))
+import Prelude (IO, Unit, bind, discard, length, map, pure, replicate, println, showAny, return, seqio, unit, zip, ($), (+), (-), (/), (==), error, (<))
 import Database.ETS (TableType(..))
-import Database.Mnesia (createSchema, createTable, dirtyAllKeys, dirtyWrite, start)
+import Database.Mnesia (createSchema, createTable, dirtyRead, dirtyAllKeys, dirtyWrite, start)
 import Database.Mnesia as M
 import Test.QuickCheck (TestGroup(..), TestResult, pick, quickCheck, quickCheck1)
 import System.Dir (deleteDirRecursively)
@@ -17,12 +17,14 @@ test = Exe [ quickCheck1 "start " mstart
            , quickCheck1 "insert project" insertProject
            , quickCheck  "insert employee" insertEmployee
            , quickCheck1 "insert manager" insertManager
+           , quickCheck1  "raise all" raiseAll
+           , quickCheck1  "raise females" raiseFemales
            , quickCheck1 "stop" mstop
            ]
 
 employee :: M.TableOptions
 employee = { tableType = Set
-           , attributes = [:emp_no, :name, :age, :salary]
+           , attributes = [:emp_no, :name, :age, :salary, :sex]
            , ramCopies = []
            , recordName = :employee
            }
@@ -111,12 +113,20 @@ randomNL num max list = do
      then randomNL num max list
      else randomNL (num-1) max [v|list]
 
+sels :: Float -> IO Atom
+sels i = do
+  v <- randomRIO 0.0 1.0
+  if v < i
+     then return :females
+     else return :males
+
 insertEmployee :: [(String, (Integer, Integer))] -> IO Boolean
 insertEmployee xs = do
   seqio [ do
            v <- P.get :employee
            P.put :employee (v+1)
-           dirtyWrite :employee (:employee, v, n ,20 + a, 100 + s )
+           sv <- sels 0.01
+           dirtyWrite :employee (:employee, v, n ,20 + a, 100 + s, sv)
 
            allk <- dirtyAllKeys :project
            let len = length allk
@@ -145,12 +155,47 @@ insertManager = do
   seqio [dirtyWrite :manager (:manager, e, d) | (e,d) <- zip numList totalDept ]
   return true
 
+raiseAll :: IO Boolean
+raiseAll = do
+  allEmploy <- dirtyAllKeys :employee
+  -- showFemales
+  seqio [ do
+           xs <- dirtyRead :employee id
+           case xs of
+             [(a,b,c,d,e,f)] -> dirtyWrite :employee (a,b,c,d, e+1,f)
+             _ -> error "strange happened"
+        | id <- allEmploy ]
+  return true
+
+raiseFemales :: IO Boolean
+raiseFemales = M.transaction $ do
+  vs <- M.matchObject (:employee, :_, :_, :_, :_, :females )
+  seqio [ M.write (a,b,c,d,e+30,f)
+        | (a,b,c,d,e,f) <- vs ]
+  return true
 
 mstop :: IO Boolean
 mstop = do
+  -- M.info
   -- M.stop
+  -- showFemales
   v0 <- isDir "Mnesia.nonode@nohost"
   if v0
      then deleteDirRecursively "Mnesia.nonode@nohost"
      else return ()
   return true
+
+showAll :: Atom -> IO ()
+showAll name = do
+  v <- dirtyAllKeys name
+  seqio [ do
+          vv <- dirtyRead name pname
+          println $ showAny vv
+        | pname <- v]
+  return ()
+
+showFemales :: IO ()
+showFemales = do
+  vs <- M.transaction $ M.matchObject (:employee, :_, :_, :_, :_, :females )
+  println $ showAny vs
+
