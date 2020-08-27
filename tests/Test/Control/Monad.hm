@@ -2,7 +2,7 @@ module Test.Control.Monad where
 
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
 import Prelude (IO, Pid, Unit, bind, discard, getSelf, head, last, pure, range, return, send, seqio, spawn, zip, ($), (+), (==), (>>=))
-import Control.Monad (Functor, Applicative, Monad, pure, apply, liftA1, liftA2, liftA3, liftA4, bind, return, liftM1, liftM2, liftM3, liftM4, discard, guardF)
+import Control.Monad (pure, apply, liftA1, liftA2, liftA3, liftA4, bind, return, liftM1, liftM2, liftM3, liftM4, discard, guardF)
 
 
 
