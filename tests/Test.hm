@@ -34,6 +34,7 @@ import Test.Data.Char as Char
 import Test.System.Env as Env
 import Test.System.File as File
 import Test.System.FilePath as FilePath
+import Test.System.Error as Error
 import Test.Control.Process as Proc
 import Test.Database.ETS as ETS
 import Test.Network.UDP as UDP
@@ -84,7 +85,7 @@ main = runTest $ TxG "lib"
                   , TxG "File"    [File.test]
                   , TxG "FilePath" [FilePath.test]
                   , TxG "IO" [IO.test]
-                  
+                  , TxG "Error"   [Error.test]
                   ],
      TxG "Control" [ TxG "Process"   [Proc.test]
 
