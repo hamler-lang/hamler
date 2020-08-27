@@ -1,0 +1,13 @@
+module Test.Control.Monad where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+
+
+listPure :: Integer->Boolean
+listPure x = ((head $ pure x) == x)
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [
+    quickCheck "listPure" listPure
+]
