@@ -39,6 +39,7 @@ import Test.Database.ETS as ETS
 import Test.Network.UDP as UDP
 import Test.Database.Mnesia as Mnesia
 import Test.System.IO as IO
+import Test.Control.ReceiveSyntax as Rec
 
 
 main :: IO ()
@@ -82,6 +83,7 @@ main = runTest $ TxG "lib"
                   , TxG "IO" [IO.test]
                   ],
      TxG "Control" [ TxG "Process"   [Proc.test]
+                   , TxG "ReceiveSyntax" [Rec.test]
                    ],
      TxG "Database" [ TxG "ETS"    [ETS.test]
                     , TxG "Mnesia" [Mnesia.test]

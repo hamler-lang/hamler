@@ -26,13 +26,14 @@ module Control.Monad
   , guardF
   , seqio
   , seqio_
+  , void
   , module Data.Functor
   , unsafePerformIO
   , replApply
   ) where
 
 import Data.Functor (class Functor, map, (<$>))
-import Data.Unit (Unit)
+import Data.Unit (Unit, unit)
 
 -----------------------------------------------------------------------------
 -- | Applicative typeclass
@@ -147,3 +148,6 @@ foreign import seqio_ ::forall a. [IO a] -> IO ()
 foreign import unsafePerformIO :: forall a. IO a -> a
 
 foreign import replApply :: forall a. a -> a
+
+void :: forall a. IO a -> IO ()
+void f = f >>= \_ -> return ()
