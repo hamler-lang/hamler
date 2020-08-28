@@ -1,9 +1,8 @@
 module Test.Control.ReceiveSyntax where
 
 
-import Prelude
-import Test.QuickCheck
-import Control.Process
+import Prelude (IO, Process, Unit, bind, discard, getSelf, return, spawn, unit, void, (!), ($), (==))
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
 
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [ quickCheck1 "A Ping/Pong Example" go
