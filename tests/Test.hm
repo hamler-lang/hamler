@@ -39,6 +39,9 @@ import Test.Database.ETS as ETS
 import Test.Network.UDP as UDP
 import Test.Database.Mnesia as Mnesia
 import Test.System.IO as IO
+
+import Test.Control.Monad as Monad
+
 import Test.Control.ReceiveSyntax as Rec
 
 
@@ -81,9 +84,14 @@ main = runTest $ TxG "lib"
                   , TxG "File"    [File.test]
                   , TxG "FilePath" [FilePath.test]
                   , TxG "IO" [IO.test]
+                  
                   ],
      TxG "Control" [ TxG "Process"   [Proc.test]
+
+                   , TxG "Monad" [Monad.test]
+
                    , TxG "ReceiveSyntax" [Rec.test]
+
                    ],
      TxG "Database" [ TxG "ETS"    [ETS.test]
                     , TxG "Mnesia" [Mnesia.test]
