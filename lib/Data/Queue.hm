@@ -18,6 +18,8 @@ import Data.Maybe (Maybe)
 import Data.Show (class Show, show)
 import Data.Eq (class Eq, eq)
 import Data.Ord (class Ord, compare)
+import Data.Semigroup (class Semigroup)
+import Data.Monoid (class Monoid)
 import Foreign (ffi0, ffi1, ffi2)
 import Test.QuickCheck (arbitrary, class Arbitrary)
 import Control.Monad((<$>))
@@ -35,6 +37,12 @@ instance Ord a => Ord (Queue a) where
   
 instance Arbitrary v => Arbitrary (Queue v) where
   arbitrary = fromList <$> arbitrary
+
+instance Semigroup (Queue a) where
+  append = join
+
+instance Monoid (Queue a) where
+  mempty = new
 
 -- | Inserts Item at the head of queue Q1.
 cons :: forall e. e -> Queue e -> Queue e

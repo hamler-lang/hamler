@@ -23,6 +23,8 @@ import Control.Monad((<$>))
 import Data.Show (class Show, show)
 import Data.Eq (class Eq, eq)
 import Data.Ord (class Ord, compare)
+import Data.Semigroup (class Semigroup)
+import Data.Monoid (class Monoid)
 
 foreign import data OrdDict :: Type -> Type -> Type
 
@@ -37,6 +39,12 @@ instance (Ord a, Ord b) => Ord (OrdDict a b) where
   
 instance (Arbitrary k, Arbitrary v) => Arbitrary (OrdDict k v) where
   arbitrary = fromList <$> arbitrary
+
+instance Semigroup (OrdDict a b) where
+  append = merge \_ x _ -> x
+
+instance Monoid (OrdDict a b) where
+  mempty = new
 
 new :: forall a b. OrdDict a b
 new = ffi0 :orddict :new

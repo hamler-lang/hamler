@@ -30,6 +30,9 @@ instance Semigroup (List a) where
 instance Semigroup Unit where
   append _ _ = unit
 
+instance (Semigroup a, Semigroup b) => Semigroup (a, b) where
+  append (a1, b1) (a2, b2) = (a1 <> a2, b1 <> b2)
+
 -- | Append two Strings
 foreign import stringAppend :: String -> String -> String
 
