@@ -1,0 +1,70 @@
+module Test.Control.ReceiveSyntax where
+
+
+import Prelude
+import Test.QuickCheck
+import Control.Process
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ quickCheck1 "A Ping/Pong Example" go
+           , quickCheck1 "Send/Receive message" go1
+           , quickCheck1 "Selective Receive" go2
+           , quickCheck1 "Receive ... after" go3
+           ]
+
+go :: Process Boolean
+go = do
+  self <- getSelf
+  pid <- spawn loop
+  pid ! (self, :ping)
+  t <- receive :pong -> return true
+  pid ! :stop
+  return t
+ where
+  loop :: Process ()
+  loop =
+    receive
+      (from, :ping) -> do
+        from ! :pong
+        loop
+      :stop -> return ()
+
+go1 :: Process Boolean
+go1 = do
+  selfPid <- getSelf
+  pid <- spawn $ recv selfPid
+  pid ! :msg
+  t <- receive x -> return x
+  return $ t == :msgRecv
+ where
+  recv s = receive :msg -> void $ s ! :msgRecv
+
+go2 :: Process Boolean
+go2 = do
+  self <- getSelf
+  pid <- spawn $ selectiveRecv self
+  pid ! :bar
+  pid ! :foo
+  vs <- receive
+           x -> do
+             y <- receive v -> return v
+             return (x, y)
+  return $ vs == (:foo, :bar)
+ where
+   selectiveRecv s = do
+     receive :foo -> s ! :foo
+     receive :bar -> s ! :bar
+
+go3 :: Process Boolean
+go3 = do
+  self <- getSelf
+  pid <- spawn $ recvAfter self
+  pid ! :foo
+  v <- receive v -> return v
+  return $ v == :timeout
+ where
+   recvAfter s =
+     receive
+       :bar -> s ! :bar
+     after
+       100 -> s ! :timeout
