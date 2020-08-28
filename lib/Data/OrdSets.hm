@@ -22,6 +22,8 @@ import Control.Monad((<$>))
 import Data.Show (class Show, show)
 import Data.Eq (class Eq, eq)
 import Data.Ord (class Ord, compare)
+import Data.Semigroup (class Semigroup)
+import Data.Monoid (class Monoid)
 
 foreign import data OrdSet :: Type -> Type
 
@@ -36,6 +38,12 @@ instance Ord a => Ord (OrdSet a) where
 
 instance Arbitrary v => Arbitrary (OrdSet v) where
   arbitrary = fromList <$> arbitrary
+
+instance Semigroup (OrdSet a) where
+  append = union
+
+instance Monoid (OrdSet a) where
+  mempty = new
 
 new :: forall a. OrdSet a
 new = ffi0 :ordsets :new

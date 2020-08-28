@@ -21,6 +21,8 @@ import Test.QuickCheck (arbitrary, class Arbitrary)
 import Data.Eq (class Eq)
 import Data.Ord (class Ord, compare)
 import Data.Show (class Show, show)
+import Data.Semigroup (class Semigroup)
+import Data.Monoid (class Monoid)
 
 foreign import data Map :: Type -> Type -> Type
 
@@ -37,6 +39,12 @@ instance Eq (Map a b) where
   eq = eqMapImpl
 
 foreign import eqMapImpl :: forall a b. Map a b -> Map a b -> Boolean
+
+instance Semigroup (Map a b) where
+  append = merge
+
+instance Monoid (Map a b) where
+  mempty = empty
 
 -- | Returns a new empty map.
 empty :: forall k v. Map k v

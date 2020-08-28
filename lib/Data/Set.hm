@@ -21,6 +21,8 @@ import Control.Monad((<$>))
 import Data.Show (class Show, show)
 import Data.Eq (class Eq, eq)
 import Data.Ord (class Ord, compare)
+import Data.Semigroup (class Semigroup)
+import Data.Monoid (class Monoid)
 
 foreign import data Set :: Type -> Type
 
@@ -35,6 +37,12 @@ instance Ord a => Ord (Set a) where
 
 instance Arbitrary v => Arbitrary (Set v) where
   arbitrary = fromList <$> arbitrary
+
+instance Semigroup (Set a) where
+  append = union
+
+instance Monoid (Set a) where
+  mempty = empty
 
 -- | Returns a new empty set.
 empty :: forall a. Set a

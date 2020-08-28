@@ -24,7 +24,8 @@ module Data.Maybe
 import Control.Monad (class Applicative, class Monad, pure, liftA1)
 import Data.Functor (class Functor, map)
 import Data.Function (const, error, identity)
-import Data.Monoid (mempty)
+import Data.Semigroup (class Semigroup, (<>))
+import Data.Monoid (class Monoid, mempty)
 import Data.Foldable (class Foldable)
 import Data.Traversable (class Traversable)
 import Data.Eq
@@ -63,6 +64,14 @@ instance Traversable Maybe where
   traverse f Nothing  = pure Nothing
   sequence (Just a) = liftA1 Just a
   sequence Nothing  = pure Nothing
+
+instance Semigroup a => Semigroup (Maybe a) where
+  append Nothing x         = x
+  append x Nothing         = x
+  append (Just a) (Just b) = Just (a <> b)
+
+instance Semigroup a => Monoid (Maybe a) where
+  mempty = Nothing
 
 maybe :: forall a b. b -> (a -> b) -> Maybe a -> b
 maybe b _ Nothing = b

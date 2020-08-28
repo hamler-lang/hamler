@@ -28,6 +28,7 @@ import Data.Show (class Show, show)
 import Data.Eq (class Eq, eq)
 import Data.Ord (class Ord, compare)
 import Data.Ordering (Ordering(..))
+import Data.Semigroup (class Semigroup)
 
 data Result e a = Ok a | Error e
 
@@ -59,6 +60,10 @@ instance (Ord a, Ord e) => Ord (Result e a) where
   compare (Error x) (Error y) = compare x y
   compare (Ok _) (Error _) = GT
   compare (Error _) (Ok _) = LT
+
+instance Semigroup (Result a b) where
+  append (Ok a) _ = Ok a
+  append _      a = a
 
 isOk :: forall e a. Result e a -> Boolean
 isOk (Ok _) = true

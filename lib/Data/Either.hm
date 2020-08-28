@@ -32,6 +32,7 @@ import Data.List ((++))
 import Data.Eq (class Eq, eq)
 import Data.Ord (class Ord, compare)
 import Data.Ordering (Ordering(..))
+import Data.Semigroup (class Semigroup)
 
 data Either a b = Left a | Right b
 
@@ -63,6 +64,10 @@ instance (Ord a, Ord b) => Ord (Either a b) where
   compare (Right _) (Left _) = GT
   compare (Left x) (Left y) = compare x y
   compare (Right x) (Right y) = compare x y
+
+instance Semigroup (Either a b) where
+  append (Right x) _ = Right x
+  append _         x = x
 
 either :: forall a b c. (a -> c) -> (b -> c) -> Either a b -> c
 either f _ (Left a)  = f a

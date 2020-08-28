@@ -25,3 +25,6 @@ instance Monoid (List a) where
 
 instance Monoid Unit where
   mempty = unit
+
+instance (Monoid a, Monoid b) => Monoid (a, b) where
+  mempty = (mempty, mempty)
