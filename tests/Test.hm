@@ -11,6 +11,7 @@ import Test.Data.List as L
 import Test.Data.Either as Ei
 import Test.Data.Tuple as Tu
 import Test.Data.Maybe as May
+import Test.Data.Atomics as Atomics
 import Test.Data.OrdDict as OD
 import Test.Data.OrdSets as OS
 import Test.Data.Queue as Q
@@ -53,6 +54,7 @@ main = runTest $ TxG "lib"
                  , TxG "String"   [S.test]
                  , TxG "Atom"     [A.test]
                  , TxG "Array"    [A1.test]
+                 , TxG "Atomics"  [Atomics.test]
                  , TxG "Bool"     [TB.test]
                  , TxG "List"     [L.test]
                  , TxG "Bool"     [TB.test]
