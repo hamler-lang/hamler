@@ -1,2 +1,102 @@
 module Test.Data.Atomics where
 
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude (IO, bind, discard, foldl, getSelf, head, length, pure, range, return, send, seqio, spawn, timerSleep, zip, ($), (+), (-), (==))
+import Data.Atomics (get, new, put)
+import Data.Atomics as A
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ quickCheck "atomic operate" atomOper
+           , quickCheck "atomic add" atomAdd
+           , quickCheck "atomic addGet" atomAddGet
+           , quickCheck "atomic sub" atomSub
+           , quickCheck "atomic subGet" atomSubGet
+           , quickCheck "atomic exchange" atomExchange
+           ]
+
+atomOper :: [Integer] -> IO Boolean
+atomOper [] = return true
+atomOper xs = do
+  let v0 = foldl (+) 0 xs
+      len = length xs
+  ref <- new len true
+  seqio [spawn $ put ref k v | (k,v) <- zip [1..len] xs ]
+  timerSleep 10
+  vs <- seqio [get ref k | k <- [1..len]]
+  let v = foldl (+) 0 vs
+  return $ v0 == v
+
+atomAdd :: [Integer] -> IO Boolean
+atomAdd [] = return true
+atomAdd xs = do
+  ref <- new 1 true
+  put ref 1 0
+  seqio [spawn $ A.add ref 1 v | v <- xs]
+  timerSleep 10
+  v <- get ref 1
+  return $ v == foldl (+) 0 xs
+
+atomAddGet :: [Integer] -> IO Boolean
+atomAddGet [] = return true
+atomAddGet xs = do
+  pid <- getSelf
+  ref <- new 1 true
+  put ref 1 0
+  seqio [do
+           oldV <- A.addGet ref 1 v
+           send pid oldV
+        | v <- xs]
+  vs <- revFun []
+  let l = head vs
+  return $ l == foldl (+) 0 xs
+ where
+  revFun :: [Integer] -> IO [Integer]
+  revFun ys = do
+    receive
+        y -> revFun [y|ys]
+    after 100 -> (return ys :: IO [Integer])
+
+
+atomSub :: [Integer] -> IO Boolean
+atomSub [] = return true
+atomSub xs = do
+  ref <- new 1 true
+  put ref 1 0
+  seqio [spawn $ A.sub ref 1 v | v <- xs]
+  timerSleep 10
+  v <- get ref 1
+  return $ v == foldl (\y x -> y - x) 0 xs
+
+atomSubGet :: [Integer] -> IO Boolean
+atomSubGet [] = return true
+atomSubGet xs = do
+  pid <- getSelf
+  ref <- new 1 true
+  put ref 1 0
+  seqio [do
+           oldV <- A.subGet ref 1 v
+           send pid oldV
+        | v <- xs]
+  vs <- revFun []
+  let l = head vs
+  return $ l == foldl (-) 0 xs
+ where
+  revFun :: [Integer] -> IO [Integer]
+  revFun ys = do
+    receive
+        y -> revFun [y|ys]
+    after 100 -> (return ys :: IO [Integer])
+
+atomExchange :: [Integer] -> IO Boolean
+atomExchange [] = return true
+atomExchange xs = do
+  pid <- getSelf
+  let len = length xs
+  ref <- new len true
+  seqio [spawn $ A.put ref k v | (k,v) <- zip [1..len] [1..len]]
+  seqio [spawn $ A.exchange ref k v | (k,v) <- zip [1..len] xs]
+  seqio [spawn $ A.exchange ref k v | (k,v) <- zip [1..len] xs]
+  timerSleep 10
+  vs <- seqio [A.get ref k | k <- [1..len]]
+  return $ foldl (+) 0 vs == foldl (+) 0 xs
