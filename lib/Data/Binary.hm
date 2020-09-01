@@ -50,6 +50,9 @@ toInt = ffi1 :erlang :binary_to_integer
 toList :: Binary -> List Integer
 toList = ffi1 :erlang :binary_to_list
 
+toStr :: Binary -> String
+toStr = ffi1 :erlang :binary_to_list
+
 toTerm :: Binary -> Term
 toTerm = ffi1 :erlang :binary_to_term
 
@@ -76,7 +79,7 @@ first = ffi1 :binary :first
 last :: Binary -> Integer
 last = ffi1 :binary :last
 
-listToBin :: [Integer] -> Binary
+listToBin :: forall a. [a] -> Binary
 listToBin = ffi1 :binary :list_to_bin
 
 {- TODO:
