@@ -23,7 +23,7 @@
         , find/2
         , fold/3
         , take/2
-        , map/2
+        , mapWithKey/2
         , merge/3
         ]).
 
@@ -77,11 +77,11 @@ take(Key, Orddict) ->
   end.
 
 %% map :: forall a b. (a -> b -> b) -> OrdDict a b -> OrdDict a b
--spec(map(Fun, Orddict1) -> Orddict2 when
+-spec(mapWithKey(Fun, Orddict1) -> Orddict2 when
       Fun :: fun((Key, Value1) -> Value2),
       Orddict1 :: orddict(Key, Value1),
       Orddict2 :: orddict(Key, Value2)).
-map(Fun, Orddict1) ->
+mapWithKey(Fun, Orddict1) ->
   orddict:map(fun(Key, Value1) ->
                   apply(Fun, [Key, Value1])
               end, Orddict1).

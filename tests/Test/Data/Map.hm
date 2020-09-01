@@ -30,7 +30,7 @@ propMapMap :: M.Map Integer Integer -> (Integer -> Integer) -> Boolean
 propMapMap m1 f = let l1 = M.toList m1
                       lf = \(k,v) -> (k, f v)
                       lf1 = \(k,v) -> f v
-                  in M.fromList (map lf l1) == M.map lf1 m1
+                  in M.fromList (map lf l1) == M.mapWithKey lf1 m1
 
 propInsert :: M.Map Integer Integer -> Integer -> Integer -> Boolean
 propInsert m k v = M.insert k v m == M.insert k v (M.insert k v m)
@@ -53,7 +53,7 @@ test = Exe [ quickCheck "put_get "     propMapPutGet
            , quickCheck "get"       (M.get 1 baseMap == 2)
            , quickCheck "lookup_Just"    (M.lookup 1 baseMap == Just 2)
            , quickCheck "lookup_Nothing"    (M.lookup 10 baseMap == Nothing)
-           , quickCheck "map"          (M.map (\(k,v) -> v+1) baseMap == M.fromList [(1,3),(2,4),(3,5)])
+           , quickCheck "map"          (M.mapWithKey (\(k,v) -> v+1) baseMap == M.fromList [(1,3),(2,4),(3,5)])
            , quickCheck "member_true"  (M.member 1 baseMap == true)
            , quickCheck "member_false"  (M.member 10 baseMap == false)
            , quickCheck "not_member"  (M.notMember 10 baseMap == true)

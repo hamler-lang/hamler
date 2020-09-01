@@ -18,14 +18,17 @@ module Data.OrdDict where
 import Data.Maybe (Maybe)
 import Foreign (ffi0, ffi1, ffi2, ffi3, ffi4)
 import Test.QuickCheck (arbitrary, class Arbitrary)
-import Control.Monad((<$>))
+import Control.Monad ((<$>), liftA1)
 
 import Data.Show (class Show, show)
 import Data.Read (class Read, read)
 import Data.Eq (class Eq, eq)
 import Data.Ord (class Ord, compare)
-import Data.Semigroup (class Semigroup)
-import Data.Monoid (class Monoid)
+import Data.Semigroup (class Semigroup, (<>))
+import Data.Monoid (class Monoid, mempty)
+import Data.Functor (class Functor, map)
+import Data.Foldable (class Foldable, foldl, foldr)
+import Data.Traversable (class Traversable, sequence)
 
 foreign import data OrdDict :: Type -> Type -> Type
 
@@ -49,6 +52,19 @@ instance Semigroup (OrdDict a b) where
 
 instance Monoid (OrdDict a b) where
   mempty = new
+
+instance Functor (OrdDict k) where
+  map f x = fromList (map (\(k, v) -> (k, f v)) (toList x))
+
+instance Foldable (OrdDict k) where
+  foldl f init x = foldl (\acc (k, v) -> f acc v) init (toList x)
+  foldr f init x = foldr (\(k, v) acc -> f v acc) init (toList x)
+  foldMap f =  foldr (\x acc -> f x <> acc) mempty
+
+instance Traversable (OrdDict k) where
+  traverse f ta = sequence (f <$> ta)
+  sequence x = liftA1 fromList (sequence (map lifting (toList x)))
+    where lifting (k, v) = liftA1 (\a -> (k, a)) v
 
 new :: forall a b. OrdDict a b
 new = ffi0 :orddict :new
@@ -83,7 +99,7 @@ isEmpty = ffi1 :orddict :is_empty
 isKey :: forall a b. a -> OrdDict a b -> Boolean
 isKey = ffi2 :orddict :is_key
 
-foreign import map :: forall a b. (a -> b -> b) -> OrdDict a b -> OrdDict a b
+foreign import mapWithKey :: forall a b. (a -> b -> b) -> OrdDict a b -> OrdDict a b
 
 foreign import merge :: forall a b. (a -> b -> b -> b) -> OrdDict a b -> OrdDict a b -> OrdDict a b
 

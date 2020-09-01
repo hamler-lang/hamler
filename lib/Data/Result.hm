@@ -20,7 +20,8 @@ module Data.Result
   , fromError
   ) where
 
-import Control.Monad (class Applicative, class Monad)
+import Control.Monad (class Applicative, class Monad, pure, liftA1)
+import Data.Monoid (mempty)
 import Data.Functor (class Functor, map)
 import Data.Function (error)
 import Data.List ((++))
@@ -30,6 +31,8 @@ import Data.Eq (class Eq, eq)
 import Data.Ord (class Ord, compare)
 import Data.Ordering (Ordering(..))
 import Data.Semigroup (class Semigroup)
+import Data.Foldable (class Foldable)
+import Data.Traversable (class Traversable)
 
 data Result e a = Ok a | Error e
 
@@ -69,6 +72,20 @@ instance (Ord a, Ord e) => Ord (Result e a) where
 instance Semigroup (Result a b) where
   append (Ok a) _ = Ok a
   append _      a = a
+
+instance Foldable (Result a) where
+  foldl f init (Ok    x) = f init x
+  foldl _ init (Error _) = init
+  foldr f init (Ok    x) = f x init
+  foldr _ init (Error _) = init
+  foldMap f (Ok    x) = f x
+  foldMap _ (Error _) = mempty
+
+instance Traversable (Result a) where
+  traverse f (Ok    x) = liftA1 Ok (f x)
+  traverse _ (Error x) = pure (Error x)
+  sequence (Ok    x) = liftA1 Ok x
+  sequence (Error x) = pure (Error x)
 
 isOk :: forall e a. Result e a -> Boolean
 isOk (Ok _) = true

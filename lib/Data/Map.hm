@@ -15,15 +15,18 @@
 module Data.Map where
 
 import Data.Maybe (Maybe)
-import Control.Monad((<$>))
+import Control.Monad ((<$>), liftA1)
 import Foreign (ffi0, ffi1, ffi2, ffi3, ffi4)
 import Test.QuickCheck (arbitrary, class Arbitrary)
 import Data.Eq (class Eq)
 import Data.Ord (class Ord, compare)
 import Data.Show (class Show, show)
 import Data.Read (class Read, read)
-import Data.Semigroup (class Semigroup)
-import Data.Monoid (class Monoid)
+import Data.Semigroup (class Semigroup, (<>))
+import Data.Monoid (class Monoid, mempty)
+import Data.Functor (class Functor, map)
+import Data.Foldable (class Foldable, foldl, foldr)
+import Data.Traversable (class Traversable, sequence)
 
 foreign import data Map :: Type -> Type -> Type
 
@@ -41,6 +44,19 @@ instance (Arbitrary k, Arbitrary v) => Arbitrary (Map k v) where
 
 instance Eq (Map a b) where
   eq = eqMapImpl
+
+instance Functor (Map k) where
+  map f x = fromList (map (\(k, v) -> (k, f v)) (toList x))
+
+instance Foldable (Map k) where
+  foldl f init x = foldl (\acc (k, v) -> f acc v) init (toList x)
+  foldr f init x = foldr (\(k, v) acc -> f v acc) init (toList x)
+  foldMap f =  foldr (\x acc -> f x <> acc) mempty
+
+instance Traversable (Map k) where
+  traverse f ta = sequence (f <$> ta)
+  sequence x = liftA1 fromList (sequence (map lifting (toList x)))
+    where lifting (k, v) = liftA1 (\a -> (k, a)) v
 
 foreign import eqMapImpl :: forall a b. Map a b -> Map a b -> Boolean
 
@@ -80,7 +96,7 @@ get = ffi2 :maps :get
 foreign import lookup :: forall k v. k -> Map k v -> Maybe v
 
 -- | TODO: docs later...
-foreign import map :: forall k v. ((k, v) -> v) -> Map k v -> Map k v
+foreign import mapWithKey :: forall k v. ((k, v) -> v) -> Map k v -> Map k v
 -- map = ffi2 :maps :map
 
 -- | Test if a key is a member of a Map.

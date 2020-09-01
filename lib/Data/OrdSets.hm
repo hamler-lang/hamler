@@ -17,14 +17,17 @@ module Data.OrdSets where
 
 import Foreign (ffi0, ffi1, ffi2)
 import Test.QuickCheck (arbitrary, class Arbitrary)
-import Control.Monad((<$>))
+import Control.Monad ((<$>), liftA1)
 
 import Data.Show (class Show, show)
 import Data.Read (class Read, read)
 import Data.Eq (class Eq, eq)
 import Data.Ord (class Ord, compare)
-import Data.Semigroup (class Semigroup)
-import Data.Monoid (class Monoid)
+import Data.Semigroup (class Semigroup, (<>))
+import Data.Monoid (class Monoid, mempty)
+import Data.Functor (class Functor, map)
+import Data.Foldable (class Foldable, foldl, foldr)
+import Data.Traversable (class Traversable, sequence)
 
 foreign import data OrdSet :: Type -> Type
 
@@ -48,6 +51,18 @@ instance Semigroup (OrdSet a) where
 
 instance Monoid (OrdSet a) where
   mempty = new
+
+instance Functor OrdSet where
+  map f x = fromList (map f (toList x))
+
+instance Foldable OrdSet where
+  foldl f init x = foldl f init (toList x)
+  foldr f init x = foldr f init (toList x)
+  foldMap f = foldr (\x acc -> f x <> acc) mempty
+
+instance Traversable OrdSet where
+  traverse f ta = sequence (f <$> ta)
+  sequence x = liftA1 fromList (sequence (toList x))
 
 new :: forall a. OrdSet a
 new = ffi0 :ordsets :new

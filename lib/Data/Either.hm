@@ -23,8 +23,11 @@ module Data.Either
   , hush
   ) where
 
-import Control.Monad (class Applicative, class Monad)
+import Control.Monad (class Applicative, class Monad, pure, liftA1)
+import Data.Monoid (mempty)
 import Data.Functor (class Functor, map)
+import Data.Foldable (class Foldable)
+import Data.Traversable (class Traversable)
 import Data.Function (error, const)
 import Data.Maybe (Maybe(..), maybe)
 import Data.Show (class Show, show)
@@ -73,6 +76,20 @@ instance (Ord a, Ord b) => Ord (Either a b) where
 instance Semigroup (Either a b) where
   append (Right x) _ = Right x
   append _         x = x
+
+instance Foldable (Either a) where
+  foldl f init (Right x) = f init x
+  foldl _ init (Left  _) = init
+  foldr f init (Right x) = f x init
+  foldr _ init (Left  _) = init
+  foldMap f (Right x) = f x
+  foldMap _ (Left  _) = mempty
+
+instance Traversable (Either a) where
+  traverse f (Right x) = liftA1 Right (f x)
+  traverse _ (Left  x) = pure (Left x)
+  sequence (Right x) = liftA1 Right x
+  sequence (Left  x) = pure (Left x)
 
 either :: forall a b c. (a -> c) -> (b -> c) -> Either a b -> c
 either f _ (Left a)  = f a
