@@ -21,6 +21,7 @@ import Test.Data.Show as Show
 import Test.Data.Monoid as Monoid
 import Test.Data.Digraph as G
 import Test.Data.Ord as Ord
+import Test.Data.Enum as Enum
 import Test.Data.Function as Func
 import Test.Data.Semiring as SR
 import Test.Data.Ring as Ring
@@ -72,6 +73,7 @@ main = runTest $ TxG "lib"
                  , TxG "Monoid"   [Monoid.test]
                  , TxG "Graph"    [G.test]
                  , TxG "Ord"      [Ord.test]
+                 , TxG "Enum"     [Enum.test]
                  , TxG "Function" [Func.test]
                  , TxG "Semiring" [SR.test]
                  , TxG "Ring"     [Ring.test]

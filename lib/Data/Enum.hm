@@ -14,24 +14,62 @@
 -----------------------------------------------------------------------------
 module Data.Enum
   ( class Enum
+  , succ
+  , pred
   , range
   , rangeStep
   ) where
 
+import Data.Function (error)
+import Data.Eq ((==))
+
 class Enum a where
+  succ      :: a -> a
+  pred      :: a -> a
   range     :: a -> a -> [a]
   rangeStep :: a -> a -> a -> [a]
 
 instance Enum Char where
+  succ = enumCharSucc
+  pred = enumCharPred
   range = enumCharRange
   rangeStep = enumCharRangeStep
 
+foreign import enumCharSucc :: Char -> Char
+foreign import enumCharPred :: Char -> Char
 foreign import enumCharRange :: Char -> Char -> [Char]
 foreign import enumCharRangeStep :: Char -> Char -> Char -> [Char]
 
 instance Enum Integer where
+  succ = enumIntegerSucc
+  pred = enumIntegerPred
   range = enumIntegerRange
   rangeStep = enumIntegerRangeStep
 
+foreign import enumIntegerSucc :: Integer -> Integer
+foreign import enumIntegerPred :: Integer -> Integer
 foreign import enumIntegerRange :: Integer -> Integer -> [Integer]
 foreign import enumIntegerRangeStep :: Integer -> Integer -> Integer -> [Integer]
+
+instance Enum Boolean where
+  succ false = true
+  succ true  = error "bad argument"
+  pred false = error "bad argument"
+  pred true  = false
+  range x y | x == y = [x]
+  range true false = []
+  range x y = [x, y]
+  rangeStep x y _ | x == y = error "bad argument"
+  rangeStep x _ y | x == y = [x]
+  rangeStep x _ y = [x, y]
+
+instance Enum Float where
+  succ = enumFloatSucc
+  pred = enumFloatPred
+  range = enumFloatRange
+  rangeStep = enumFloatRangeStep
+
+foreign import enumFloatSucc :: Float -> Float
+foreign import enumFloatPred :: Float -> Float
+foreign import enumFloatRange :: Float -> Float -> [Float]
+foreign import enumFloatRangeStep :: Float -> Float -> Float -> [Float]
