@@ -1,0 +1,11 @@
+module Test.Data.Enum where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
+import Prelude
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [
+    quickCheck1 "int" ([1 .. 4] == [1, 2, 3, 4]),
+    quickCheck1 "bool" ([false .. true] == [false, true]),
+    quickCheck1 "float" ([1.1 .. 4.0] == [1.1, 2.1, 3.1])
+]
