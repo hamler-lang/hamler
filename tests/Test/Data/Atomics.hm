@@ -1,18 +1,18 @@
 module Test.Data.Atomics where
 
 
-import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
 import Prelude (IO, bind, discard, foldl, getSelf, head, length, pure, range, return, send, seqio, spawn, timerSleep, zip, ($), (+), (-), (==))
 import Data.Atomics (get, new, put)
 import Data.Atomics as A
 
 test :: TestGroup (Integer -> IO TestResult)
-test = Exe [ quickCheck "atomic operate" atomOper
-           , quickCheck "atomic add" atomAdd
-           , quickCheck "atomic addGet" atomAddGet
-           , quickCheck "atomic sub" atomSub
-           , quickCheck "atomic subGet" atomSubGet
-           , quickCheck "atomic exchange" atomExchange
+test = Exe [ quickCheck1 "atomic operate" atomOper
+           , quickCheck1 "atomic add" atomAdd
+           , quickCheck1 "atomic addGet" atomAddGet
+           , quickCheck1 "atomic sub" atomSub
+           , quickCheck1 "atomic subGet" atomSubGet
+           , quickCheck1 "atomic exchange" atomExchange
            ]
 
 atomOper :: [Integer] -> IO Boolean
