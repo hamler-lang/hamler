@@ -45,6 +45,7 @@ import Test.System.IO as IO
 import Test.Control.Monad as Monad
 
 import Test.Control.ReceiveSyntax as Rec
+import Test.System.Timer as Timer
 
 
 main :: IO ()
@@ -88,6 +89,7 @@ main = runTest $ TxG "lib"
                   , TxG "FilePath" [FilePath.test]
                   , TxG "IO" [IO.test]
                   , TxG "Error"   [Error.test]
+                  , TxG "Timer"   [Timer.test]
                   ],
      TxG "Control" [ TxG "Process"   [Proc.test]
 

@@ -1,0 +1,49 @@
+module Test.System.Timer where
+
+import System.Timer (cancelTimer, readTimer, sendAfter, startTimer)
+import Prelude (IO, Maybe(..), bind, discard, getSelf, return, timerSleep, ($), (<))
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ quickCheck1 "startTimer" startTimerFun
+           , quickCheck1 "cancelTimer" cancelTimerFun
+           , quickCheck1 "sendAfter" sendAfterFun
+           , quickCheck1 "readTimer" readTimerFun
+           ]
+
+startTimerFun :: IO Boolean
+startTimerFun = do
+  pid <- getSelf
+  startTimer 100 pid "timeout"
+  receive
+    (:timeout, _, _) -> return true
+  after 1000 -> (return false :: IO Boolean)
+
+cancelTimerFun :: IO Boolean
+cancelTimerFun = do
+  pid <- getSelf
+  tref <- startTimer 100 pid "timeout"
+  cancelTimer tref
+  receive
+    (:timeout, _, _) -> return false
+  after 150 -> (return true :: IO Boolean)
+
+sendAfterFun :: IO Boolean
+sendAfterFun = do
+  pid <- getSelf
+  sendAfter 100 pid :timeout
+  receive
+    :timeout -> return true
+  after 1000 -> (return false :: IO Boolean)
+
+readTimerFun :: IO Boolean
+readTimerFun = do
+  pid <- getSelf
+  tref <- sendAfter 100 pid :timeout
+  timerSleep 20
+  v <- readTimer tref
+  receive
+     x -> return x
+  case v of
+    Nothing -> return false
+    Just val -> return $ val < 80
