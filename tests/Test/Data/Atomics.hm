@@ -51,11 +51,10 @@ atomAddGet xs = do
   let l = head vs
   return $ l == foldl (+) 0 xs
  where
-  revFun :: [Integer] -> IO [Integer]
   revFun ys = do
     receive
         y -> revFun [y|ys]
-    after 100 -> (return ys :: IO [Integer])
+    after 100 -> return ys
 
 
 atomSub :: [Integer] -> IO Boolean
@@ -82,11 +81,10 @@ atomSubGet xs = do
   let l = head vs
   return $ l == foldl (-) 0 xs
  where
-  revFun :: [Integer] -> IO [Integer]
   revFun ys = do
     receive
         y -> revFun [y|ys]
-    after 100 -> (return ys :: IO [Integer])
+    after 100 -> return ys
 
 atomExchange :: [Integer] -> IO Boolean
 atomExchange [] = return true
