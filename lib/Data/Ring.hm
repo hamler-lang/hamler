@@ -14,7 +14,8 @@
 -----------------------------------------------------------------------------
 module Data.Ring where
 
-import Data.Semiring
+import Data.Semiring (class Semiring, zero)
+import Data.Ord (class Ord, (>=))
 
 class Semiring a => Ring a where
   sub :: a -> a -> a
@@ -42,6 +43,9 @@ rem :: Integer -> Integer -> Integer
 rem = intRem
 
 infixl 7 rem as %
+
+abs :: forall a. Ord a => Ring a => a -> a
+abs x = if x >= zero then x else negate x
 
 foreign import intSub :: Integer -> Integer -> Integer
 foreign import floatSub :: Float -> Float -> Float
