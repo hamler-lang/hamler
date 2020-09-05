@@ -1,0 +1,49 @@
+module Data.Functor.Identity where
+
+import Data.List ((++))
+import Data.Eq (class Eq, eq)
+import Data.Show (class Show, show)
+import Data.Ord (class Ord, compare)
+import Data.Monoid (class Monoid, mempty)
+import Data.Semigroup (class Semigroup, append)
+import Data.Functor (class Functor)
+import Data.Foldable (class Foldable)
+import Data.Traversable (class Traversable)
+import Control.Monad (class Applicative, class Monad, liftA1)
+
+data Identity a = Identity a --{ runIdentity :: a }
+
+instance Functor Identity where
+  map f (Identity x) = Identity (f x)
+
+instance Applicative Identity where
+  pure = Identity
+  apply (Identity f) (Identity a) = Identity (f a)
+
+instance Monad Identity where
+  return = Identity
+  bind (Identity x) f = f x
+
+instance Foldable Identity where
+  foldl f init (Identity x) = f init x
+  foldr f init (Identity x) = f x init
+  foldMap f (Identity x) = f x
+
+instance Traversable Identity where
+  traverse f (Identity x) = liftA1 Identity (f x)
+  sequence (Identity x) = liftA1 Identity x
+
+instance Eq a => Eq (Identity a) where
+  eq (Identity x) (Identity y) = eq x y
+
+instance Semigroup a => Semigroup (Identity a) where
+  append (Identity x) (Identity y) = Identity (append x y)
+
+instance Monoid a => Monoid (Identity a) where
+  mempty = Identity mempty
+
+instance Ord a => Ord (Identity a) where
+  compare (Identity x) (Identity y) = compare x y
+
+instance Show a => Show (Identity a) where
+  show (Identity a) = "Identity " ++ show a
