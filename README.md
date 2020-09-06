@@ -52,8 +52,8 @@ Get the installation package through [Github Release](https://github.com/hamler-
 **Linux**
 
 ```shell
-$ tar zxvf hamler-$version.tgz -C /usr/lib/hamler
-$ ln -s /usr/lib/hamler/bin/hamer /usr/bin/hamler
+$ tar zxvf hamler-$version.tgz -C /usr/lib/
+$ ln -s /usr/lib/hamler/bin/hamler /usr/bin/hamler
 ```
 
 **Centos 7**
