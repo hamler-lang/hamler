@@ -21,6 +21,7 @@ import Test.QuickCheck (arbitrary, class Arbitrary)
 import Data.Eq (class Eq)
 import Data.Ord (class Ord, compare)
 import Data.Show (class Show, show)
+import Data.Read (class Read, read)
 import Data.Semigroup (class Semigroup)
 import Data.Monoid (class Monoid)
 
@@ -28,6 +29,9 @@ foreign import data Map :: Type -> Type -> Type
 
 instance (Show a, Show b) => Show (Map a b) where
   show x = show (toList x)
+
+instance (Read a, Read b) => Read (Map a b) where
+  read x = fromList (read x)
 
 instance (Ord a, Ord b) => Ord (Map a b) where
   compare x y = compare (toList x) (toList y)

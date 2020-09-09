@@ -40,7 +40,10 @@ instance Show Float where
 instance Show Char where
   show c = showCharImpl c
 
-instance Show a => Show [a] where
+instance Show [Char] where
+  show x = "\"" ++ x ++ "\""
+
+else instance Show a => Show [a] where
   show x = "[" ++ showListImpl x ++ "]"
 
 instance Show Unit where

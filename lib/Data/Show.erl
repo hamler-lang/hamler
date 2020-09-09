@@ -44,7 +44,7 @@ showNumImpl(N) when is_float(N) ->
 
 %% showChar :: Char -> String
 -spec(showCharImpl(char()) -> string()).
-showCharImpl(C) -> [C].
+showCharImpl(C) -> [$', C, $'].
 
 precision(A, P) ->
   case A == trunc(A) of
