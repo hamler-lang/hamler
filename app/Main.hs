@@ -73,6 +73,10 @@ main =  do
             (Opts.info R.commandSrc
               (Opts.progDesc "run hamler repl"))
 
+        ,  Opts.command "testDev"
+            (Opts.info Compile.buildTestDev
+              (Opts.progDesc "run lib develope test"))
+
         ,  Opts.command "test"
             (Opts.info Compile.buildTest
               (Opts.progDesc "run hamler test"))
