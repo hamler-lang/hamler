@@ -44,10 +44,15 @@ import Prelude ()
 import System.IO (Handle, hPutStrLn)
 import Control.Concurrent
 import Version (hamlerEnv)
+import System.Environment (lookupEnv)
+import System.IO.Unsafe (unsafePerformIO)
 
 
 hamlerFile :: FilePath
-hamlerFile = $hamlerEnv
+hamlerFile = let vp = unsafePerformIO $ lookupEnv "HAMLER_HOME"
+             in case vp of
+                  Nothing -> $hamlerEnv
+                  Just v  -> v
 
 -- | Pretty-print errors
 printErrors :: MonadIO m => P.MultipleErrors -> m ()

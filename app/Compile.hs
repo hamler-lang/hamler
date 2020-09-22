@@ -27,6 +27,9 @@ import qualified Data.List as LL
 import           Control.Concurrent.Async.Lifted
 import Prelude
 import Version (hamlerEnv)
+import System.FilePath.Posix((</>))
+import System.Environment (lookupEnv)
+import System.IO.Unsafe (unsafePerformIO)
 
 data PSCMakeOptions = PSCMakeOptions
   { pscmInput        :: [(FilePath, Bool)]
@@ -128,7 +131,7 @@ buildSrc bl fpath = do
   isExist <- doesDirectoryExist hamlerlib
   fps1 <- if isExist
           then gethmFiles hamlerlib
-          else gethmFiles (dir <> "/.deps/hamler/lib")
+          else error "No hamler lib folder found!!!"
   fps2 <- gethmFiles (dir <> "/src")
   let fps = fmap (\v -> (v, True)) fps1 <> fmap (\v -> (v, False)) fps2
       fps2' = fmap hmToCore fps2
@@ -229,7 +232,7 @@ buildTest = pure $ do
   isExist <- doesDirectoryExist hamlerlib
   fps1 <- if isExist
           then gethmFiles hamlerlib
-          else gethmFiles (dir <> "/.deps/hamler/lib")
+          else error "No hamler lib folder found!!!"
   fps2 <- gethmFiles (dir <> "/test")
   fps3 <- gethmFiles (dir <> "/src")
   let fps = fmap (\v -> (v, True)) fps1 <> fmap (\v -> (v, False)) fps2 <> fmap (\v -> (v, False)) fps3
@@ -269,7 +272,7 @@ runProject  =pure $ do
   _ <- SS.shelly $ do
     if isExist
       then SS.setenv "ERL_LIBS" (T.pack hamlerFile)
-      else SS.setenv "ERL_LIBS" (T.pack $ dir <> ".deps/hamler")
+      else error "No hamler lib folder found!!!"
     SS.run  "erl" ["-pa",T.pack (tpath), "-noshell","-eval" ,"io:setopts([{encoding, unicode}]), ('Main':main())()","-s","init","stop" ]
   return ()
 
@@ -325,14 +328,18 @@ makeFile = concat [ ".PHONY : build run test repl\n\n"
                   , "repl:\n"
                   , "\t@hamler repl\n"
                   ]
-liblink :: T.Text
-liblink = "https://github.com/hamler-lang/hamler.git"
 
 hamlerlib :: String
-hamlerlib = $hamlerEnv <> "/lib"
+hamlerlib = let vp = unsafePerformIO $ lookupEnv "HAMLER_HOME"
+            in case vp of
+                 Nothing -> $hamlerEnv </> "lib"
+                 Just v  -> v </> "lib"
 
 hamlerFile :: String
-hamlerFile = $hamlerEnv
+hamlerFile = let vp = unsafePerformIO $ lookupEnv "HAMLER_HOME"
+             in case vp of
+                  Nothing -> $hamlerEnv
+                  Just v  -> v
 
 initProject :: Opts.Parser (IO ())
 initProject = pure $ do
@@ -350,7 +357,7 @@ initProject = pure $ do
     then do
        return ()
     else do
-       SS.shelly $ SS.run_ "git" ["clone",liblink,".deps/hamler"]
+       error "No hamler lib folder found!!!"
 
 ishmFile :: String -> Bool
 ishmFile fname = (== "mh.") $ take 3 $ reverse $ fname

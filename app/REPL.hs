@@ -36,13 +36,20 @@ import qualified Data.Text as T
 import qualified Control.Exception as CE
 import Version (hamlerEnv)
 import System.FilePath.Posix ((</>))
-
+import System.Environment (lookupEnv)
+import System.IO.Unsafe (unsafePerformIO)
 
 hamlerlib :: String
-hamlerlib =  $hamlerEnv <> "/lib"
+hamlerlib = let vp = unsafePerformIO $ lookupEnv "HAMLER_HOME"
+            in case vp of
+                 Nothing -> $hamlerEnv </> "lib"
+                 Just v  -> v </> "lib"
 
 hamlerFile :: String
-hamlerFile = $hamlerEnv
+hamlerFile = let vp = unsafePerformIO $ lookupEnv "HAMLER_HOME"
+             in case vp of
+                  Nothing -> $hamlerEnv
+                  Just v  -> v
 
 
 data PSCiOptions
