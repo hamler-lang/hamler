@@ -30,10 +30,10 @@ import Data.FileEmbed (strToExp)
 versionString :: String
 versionString = showVersion Paths.version
 
-hamlerEnv :: Q Exp 
-hamlerEnv = do 
+hamlerEnv :: Q Exp
+hamlerEnv = do
   r <- runIO $ lookupEnv "HAMLER_HOME"
-  case r of 
+  case r of
     Nothing -> error "There is no HAMLER_HOME env var "
     Just x -> strToExp x
 

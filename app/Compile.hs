@@ -1,7 +1,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Compile (command, initProject, runProject, buildTest) where
+module Compile (command, initProject, runProject, buildTestDev, buildTest) where
 
 import           Control.Monad
 import qualified Data.Aeson as A
@@ -188,8 +188,8 @@ buildlib bl = do
 
   exitSuccess
 
-buildTest :: Opts.Parser (IO ())
-buildTest = pure $ do
+buildTestDev :: Opts.Parser (IO ())
+buildTestDev = pure $ do
   dir <- getCurrentDirectory
   fps1 <- gethmFiles (dir <> "/lib")
   fps2 <- gethmFiles (dir <> "/tests")
@@ -218,6 +218,45 @@ buildTest = pure $ do
   let testpath = dir <> "/.test"
   _ <- SS.shelly $ do
     SS.setenv "ERL_LIBS" (T.pack testpath)
+    SS.run  "erl" ["-pa",T.pack (testpath), "-noshell","-eval" ,"io:setopts([{encoding, unicode}]), ('Test':main())()","-s","init","stop" ]
+  return ()
+  exitSuccess
+
+
+buildTest :: Opts.Parser (IO ())
+buildTest = pure $ do
+  dir <- getCurrentDirectory
+  isExist <- doesDirectoryExist hamlerlib
+  fps1 <- if isExist
+          then gethmFiles hamlerlib
+          else gethmFiles (dir <> "/.deps/hamler/lib")
+  fps2 <- gethmFiles (dir <> "/test")
+  fps3 <- gethmFiles (dir <> "/src")
+  let fps = fmap (\v -> (v, True)) fps1 <> fmap (\v -> (v, False)) fps2 <> fmap (\v -> (v, False)) fps3
+      tpath = dir <> "/.test"
+
+  r <- doesDirectoryExist tpath
+  if r
+    then return ()
+    else createDirectory tpath
+
+
+  compile (PSCMakeOptions { pscmInput      = fps
+                          , pscmOutputDir  = dir <>  "/.test"
+                          , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
+                          , pscmUsePrefix  = False
+                          , pscmJSONErrors = False
+                          , isInline       = False
+                          }
+          )
+  cfs <- findFile1 ".core" tpath
+  SS.shelly $ SS.command_ "erlc" ["-o" ,T.pack tpath] (fmap (\fp -> T.pack $ tpath <> "/" <> fp) cfs)
+  forM_ cfs $ \fp -> do
+    SS.shelly $ SS.run_ "rm" [T.pack $ tpath <> "/" <> fp]
+
+  let testpath = dir <> "/.test"
+  _ <- SS.shelly $ do
+    SS.setenv "ERL_LIBS" (T.pack hamlerFile)
     SS.run  "erl" ["-pa",T.pack (testpath), "-noshell","-eval" ,"io:setopts([{encoding, unicode}]), ('Test':main())()","-s","init","stop" ]
   return ()
   exitSuccess
@@ -262,19 +301,35 @@ helloHamler = concat [
         , "\"Let there be Hamler, running on Erlang VM!\"\n"
         ]
 
+testHamler :: String
+testHamler = concat [
+          "module Test where\n"
+        , "\n"
+        , "import Prelude\n"
+        , "\n"
+        , "main :: IO ()\n"
+        , "main = print "
+        , "\"test hamler!\"\n"
+        ]
+
+
 makeFile :: String
-makeFile = concat [ ".PHONY : build run\n\n"
+makeFile = concat [ ".PHONY : build run test repl\n\n"
                   , "all: build\n\n"
                   , "build:\n"
                   , "\t@hamler build\n\n"
                   , "run:\n"
                   , "\t@hamler run\n"
+                  , "test:\n"
+                  , "\t@hamler test\n"
+                  , "repl:\n"
+                  , "\t@hamler repl\n"
                   ]
 liblink :: T.Text
 liblink = "https://github.com/hamler-lang/hamler.git"
 
 hamlerlib :: String
-hamlerlib =  $hamlerEnv <> "/lib"
+hamlerlib = $hamlerEnv <> "/lib"
 
 hamlerFile :: String
 hamlerFile = $hamlerEnv
@@ -286,6 +341,8 @@ initProject = pure $ do
   mapM_  createDirectory dictlist'
   putStrLn "Generating src/Main.hm..."
   writeFile "src/Main.hm" helloHamler
+  putStrLn "Generating test/Test.hm..."
+  writeFile "test/Test.hm" testHamler
   putStrLn "Generating Makefile..."
   writeFile "Makefile" makeFile
   isExist <- doesDirectoryExist hamlerlib
