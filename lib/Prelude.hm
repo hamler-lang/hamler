@@ -24,6 +24,7 @@ module Prelude
   , module Data.Function
   , module Data.Int
   , module Data.List
+  , module Data.Map
   , module Data.Maybe
   , module Data.Ord
   , module Data.Pid
@@ -58,6 +59,7 @@ import Data.List (cons, head, splitAt, last, reverse, concat, filter, (++), take
 import Data.Float (Double)
 import Data.Functor (class Functor, map, (<$>))
 import Data.Function (($), apply, const, flip, identity, error, (>>>), (<<<))
+import Data.Map (fromList)
 import Data.Maybe (Maybe(..))
 import Data.Ord (class Ord, max, min, (<), (<=), (>), (>=), between, compare, comparing, greaterThan, greaterThanOrEq, lessThan, lessThanOrEq)
 import Data.Ref (Ref, Reference, makeRef)
