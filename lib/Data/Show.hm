@@ -20,6 +20,7 @@ import Data.Maybe (Maybe(..))
 import Data.Unit (Unit)
 import Data.List ((++))
 import Data.Binary as B
+import Data.Ordering (Ordering(..))
 
 class Show a where
   show :: a -> String
@@ -52,6 +53,11 @@ instance Show a => Show (Maybe a) where
 
 instance Show Binary where
   show x = show (B.toList x)
+
+instance Show Ordering where
+  show LT = "LT"
+  show GT = "GT"
+  show EQ = "EQ"
 
 foreign import showAtomImpl :: Atom -> String
 foreign import showIntImpl :: Integer -> String

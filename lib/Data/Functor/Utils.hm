@@ -1,0 +1,33 @@
+module Data.Functor.Utils where
+
+import Data.Monoid
+import Data.Semigroup
+import Data.Ord
+import Data.Maybe
+
+newtype Max a = Max (Maybe a)
+newtype Min a = Min (Maybe a)
+
+getMax :: forall a. Max a -> Maybe a
+getMax (Max a) = a
+
+getMin :: forall a. Min a -> Maybe a
+getMin (Min a) = a
+
+instance Ord a => Semigroup (Max a) where
+  append (Max Nothing) x = x
+  append x (Max Nothing) = x
+  append (Max (Just x)) (Max (Just y)) = 
+    Max (Just (max x y))
+
+instance Ord a => Monoid (Max a) where
+  mempty = Max Nothing
+
+instance Ord a => Semigroup (Min a) where
+  append (Min Nothing) x = x
+  append x (Min Nothing) = x
+  append (Min (Just x)) (Min (Just y)) =
+    Min (Just (min x y))
+
+instance Ord a => Monoid (Min a) where
+  mempty = Min Nothing
