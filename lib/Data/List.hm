@@ -14,8 +14,15 @@
 -----------------------------------------------------------------------------
 module Data.List where
 
-import Data.Maybe (Maybe)
+import Data.Maybe (Maybe(..))
 import Foreign (ffi1, ffi2, ffi3)
+import Data.Ord (class Ord, (>), max, min)
+import Data.Eq (class Eq, (==))
+import Data.Function (error)
+import Data.Semiring (class Semiring, (+), (*), zero, one)
+import Data.Bool ((&&), (||), not, otherwise)
+--import Data.Functor.Utils (Max(..), Min(..), getMax, getMin)
+import Data.List.Utils (genLabels, removeLabels)
 
 -----------------------------------------------------------------------------
 -- Basic functions
@@ -43,6 +50,15 @@ foreign import tail :: forall a. [a] -> [a]
 
 foreign import init :: forall a. [a] -> [a]
 
+tails :: forall a. [a] -> [[a]]
+tails [] = [[]]
+tails z  = [z|tails (tail z)]
+
+inits :: forall a. [a] -> [[a]]
+inits x = reverse (inits' x)
+  where inits' [] = [[]]
+        inits' z  = [z|inits' (init z)]
+
 -- | Decompose a list into its head and tail.
 foreign import uncons :: forall a. [a] -> Maybe (a, [a])
 
@@ -68,6 +84,11 @@ replicate = ffi2 :lists :duplicate
 -- Build lists
 -----------------------------------------------------------------------------
 
+unfoldr :: forall a b. (b -> Maybe (a, b)) -> b -> [a]
+unfoldr f ini = unfold (f ini)
+  where unfold Nothing = []
+        unfold (Just (a, b)) = [a|unfoldr f b]
+
 -- foreign import scanl :: forall a b. (b -> a -> b) -> b -> [a] -> [b]
 
 -- foreign import scanr :: forall a b. (a -> b -> b) -> b -> [a] -> [b]
@@ -90,6 +111,9 @@ foreign import slice :: forall a. Integer -> Integer -> [a] -> [a]
 span :: forall a. (a -> Boolean) -> [a] -> ([a], [a])
 span = splitWith
 
+break :: forall a. (a -> Boolean) -> [a] -> ([a], [a])
+break f = span (\x -> not (f x)) 
+
 -- | Split List into two lists according to Pred.
 splitWith :: forall a. (a -> Boolean) -> [a] -> ([a], [a])
 splitWith = ffi2 :lists :splitwith
@@ -99,6 +123,31 @@ splitAt = ffi2 :lists :split
 
 dropWhile :: forall a. (a -> Boolean) -> [a] -> [a]
 dropWhile = ffi2 :lists :dropWhile
+
+partition :: forall a. (a -> Boolean) -> [a] -> ([a], [a])
+partition f x = part x
+  where part [] = ([], [])
+        part [x|xs] = if f x then put1 res else put2 res
+          where res = part xs
+                put1 (a, b) = ([x|a], b)
+                put2 (a, b) = (a, [x|b])
+
+group :: forall a. Eq a => [a] -> [[a]]
+group = groupImpl []
+  where groupImpl acc [] = reverse acc
+        groupImpl [] [h|hs] = groupImpl [[h]] hs
+        groupImpl [[]|ys] [h|hs] = groupImpl [[h]|ys] hs -- chant compiler
+        groupImpl [[y|ys]|xs] [h|hs] 
+          | y == h    = groupImpl [[h|[y|ys]]|xs] hs
+          | otherwise = groupImpl [[h]|[[y|ys]|xs]] hs
+
+find :: forall a. (a -> Boolean) -> [a] -> Maybe a
+find _ [] = Nothing
+find f [x|xs] = if f x then Just x else find f xs
+
+finds :: forall a. (a -> Boolean) -> [a] -> [a]
+finds _ [] = []
+finds f [x|xs] = if f x then [x|finds f xs] else finds f xs
 
 -----------------------------------------------------------------------------
 -- Sort lists
@@ -136,5 +185,148 @@ unzip = ffi1 :lists :unzip
 unzip3 :: forall a b c. [(a, b, c)] -> ([a], [b], [c])
 unzip3 = ffi1 :lists :unzip3
 
+-----------------------------------------------------------------------------
+
 member :: forall a. a -> [a] -> Boolean
 member = ffi2 :lists :member
+
+elem :: forall a. a -> [a] -> Boolean
+elem = member
+
+notElem :: forall a. a -> [a] -> Boolean
+notElem x lst = not (elem x lst)
+
+lookup :: forall a b. Eq a => a -> [(a, b)] -> Maybe b
+lookup _ [] = Nothing
+lookup p [(x, y)|xs]
+  | p == x    = Just y
+  | otherwise = lookup p xs
+
+maximum :: forall a. Ord a => [a] -> a
+maximum [] = error "maximum: empty list"
+maximum [x] = x
+maximum [x|xs] = max x (maximum xs)
+--  fromJust (getMax (foldMap (\x -> (Max (Just x))) lst))
+
+minimum :: forall a. Ord a => [a] -> a
+minimum [] = error "minimum: empty list"
+minimum [x] = x
+minimum [x|xs] = min x (minimum xs)
+--  fromJust (getMin (foldMap (\x -> (Min (Just x))) lst))
+
+intersperse :: forall a. a -> [a] -> [a]
+intersperse _ [] = []
+intersperse _ [x] = [x]
+intersperse a [x|xs] = [x|[a|intersperse a xs]]
+
+intercalate :: forall a. [a] -> [[a]] -> [a]
+intercalate a x = concat (intersperse a x)
+
+transpose :: forall a. [[a]] -> [[a]]
+transpose [] = []
+transpose [[]|xss] = transpose xss
+transpose [[x|xs]|xss] = [[x|selectHead xss]|transpose [xs|selectTail xss]]
+  where selectHead [] = []
+        selectHead [[]|xs] = selectHead xs
+        selectHead [[x|_]|xs] = [x|selectHead xs]
+        selectTail [] = []
+        selectTail [[]|xs] = selectTail xs
+        selectTail [[_|x]|xs] = [x|selectTail xs]
+
+sum :: forall a. Semiring a => [a] -> a
+sum [] = zero
+sum [x|xs] = x + sum xs
+
+product :: forall a. Semiring a => [a] -> a
+product [] = one
+product [x|xs] = x * product xs
+
+and :: [Boolean] -> Boolean
+and [] = true
+and [x|xs] = x && and xs
+
+or :: [Boolean] -> Boolean
+or [] = false
+or [x|xs] = x || or xs
+
+all :: forall a. (a -> Boolean) -> [a] -> Boolean
+all _ [] = true
+all f [x|xs] = f x && all f xs
+
+any :: forall a. (a -> Boolean) -> [a] -> Boolean
+any _ [] = false
+any f [x|xs] = f x || any f xs
+
+subsequences :: forall a. [a] -> [[a]]
+subsequences a = revall (subs a)
+  where subs [] = [[]]
+        subs x = sub ++ ins (last x) sub
+          where sub = subs (init x)
+        ins _ [] = []
+        ins z [x|xs] = [[z|x]|ins z xs]
+        revall [] = []
+        revall [x|xs] = [reverse x|revall xs]
+
+-- example: 
+--   124653 -(rev)-> 356421 -(split1)-> (356, 421) -(down)->
+--   ((346, 5), 21) -(con1)-> (5346, 21) -(rev)-> 125346
+nextPermutation :: forall a. Ord a => [a] -> Maybe [a]
+nextPermutation lst = solve (split1 (reverse lst))
+  where split1 [] = ([], [])
+        split1 [x] = ([x], []) -- get increasing segment
+        split1 [x|[y|xs]] = if y > x then put1 x (split1 [y|xs]) else ([x], [y|xs])
+        put1 p (a, b) = ([p|a], b)
+        solve (_, []) = Nothing
+        solve (x, [y|ys]) = Just (reverse ys ++ con1 (down y x))
+        down _ [] = error ""
+        down o [x|xs] -- swap with the larger one
+          | o > x     = push1 x (down o xs)
+          | otherwise = ([o|xs], x)
+        push1 x (xs, a) = ([x|xs], a)
+        con1 (xs, x) = [x|xs]
+
+permutations :: forall a. [a] -> [[a]]
+permutations lst = [lst|unfoldr f (genLabels lst)]
+  where f x = g (nextPermutation x)
+        g Nothing = Nothing
+        g (Just x) = Just (removeLabels x, x)
+
+isPrefixOf :: forall a. Eq a => [a] -> [a] -> Boolean
+isPrefixOf [] _ = true
+isPrefixOf _ [] = false
+isPrefixOf [x|xs] [y|ys]
+  | x == y    = isPrefixOf xs ys
+  | otherwise = false
+
+isSuffixOf :: forall a. Eq a => [a] -> [a] -> Boolean
+isSuffixOf x y = isPrefixOf (reverse x) (reverse y)
+
+isInfixOf :: forall a. Eq a => [a] -> [a] -> Boolean
+isInfixOf x [] = false
+isInfixOf x y  = isPrefixOf x y || isInfixOf x (tail y)
+
+infix 9 at' as !!
+
+at' :: forall a. [a] -> Integer -> a
+at' lst n = ffi2 :lists :nth (n + 1) lst
+
+elemIndex :: forall a. Eq a => [a] -> a -> Maybe Integer
+elemIndex = elemIndex' 0
+  where elemIndex' _ [] _ = Nothing
+        elemIndex' n [x|xs] a
+          | x == a    = Just n
+          | otherwise = elemIndex' (n + 1) xs a
+
+elemIndices :: forall a. Eq a => [a] -> a -> [Integer]
+elemIndices = elemIndices' 0
+  where elemIndices' _ [] _ = []
+        elemIndices' n [x|xs] a
+          | x == a    = [n|elemIndices' (n + 1) xs a]
+          | otherwise = elemIndices' (n + 1) xs a
+
+nub :: forall a. [a] -> [a]
+nub = nub' []
+  where nub' _ [] = []
+        nub' ex [x|xs]
+          | elem x ex = nub' ex xs
+          | otherwise = [x|nub' [x|ex] xs]

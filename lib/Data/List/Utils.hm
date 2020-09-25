@@ -1,0 +1,25 @@
+module Data.List.Utils where
+
+import Data.Semiring ((+))
+import Data.Ord (class Ord, compare)
+import Data.Eq (class Eq, eq)
+
+data Label a b = Label a b
+
+genLabels :: forall a. [a] -> [Label a Integer]
+genLabels = genLabels' 0
+  where genLabels' _ []     = []
+        genLabels' n [x|xs] = [Label x n|genLabels' (n + 1) xs]
+
+removeLabel :: forall a b. Label a b -> a
+removeLabel (Label a _) = a
+
+removeLabels :: forall a b. [Label a b] -> [a]
+removeLabels [] = []
+removeLabels [x|xs] = [removeLabel x|removeLabels xs]
+
+instance Eq b => Eq (Label a b) where
+  eq (Label _ a) (Label _ b) = eq a b
+
+instance Ord b => Ord (Label a b) where
+  compare (Label _ a) (Label _ b) = compare a b
