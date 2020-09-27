@@ -74,6 +74,52 @@ $ dpkg -i hamler_$version_amd64.deb
 $ brew tap hamler-lang/hamler
 $ brew install hamler
 ```
+## Project Layout
+
+```shell
+
+├── .github/workflows
+├── app                   # hamler commands
+├── deploy
+├── doc                   # hamler document
+├── lib                   # hamler libraries
+∣   ├── Control           # common control structures and concurrent functions. Modules: Monad Process Benhaviour Distributed ... 
+∣   ├── Data              # commonly used data structures and operating functions for them
+∣   ├── Database          # common databases in erlang. Modules: DETS ETS Mnesia
+∣   ├── Foreign           
+∣   ├── Network           # hamler network libraries.
+∣   ├── System            # System operate. Modules: Dir File FilePath IO Random Timer VM Env OS ...
+∣   ├── Test              # hamler quickcheck test framework
+∣   ├── Foreign.hm        # hamler ffi functions
+∣   └── Prelude.hm        # functions exported by default
+├── repl
+∣   └── replsrv           # hamler repl backend
+├── src/Language          # hamler compiler source directory
+∣   ├── Hamler
+∣   ∣   ├── CodeGen.hs    # hamler core convert implement 
+∣   ∣   ├── Make
+∣   ∣   ├── Make.hs
+∣   ∣   └── Util.hs
+∣   └── Hamler.hs
+├── tests                 
+∣   ├── Test              # test functions for all modules
+∣   ∣   ├── Control
+∣   ∣   ├── Data          
+∣   ∣   ├── Database
+∣   ∣   ├── Network
+∣   ∣   └── System 
+∣   ├── Test.hm           # entrance to execute test function
+∣   └── Main.hs
+├── .gitignore
+├── LICENSE
+├── Makefile
+├── README.md
+├── Setup.hs
+├── hamler.cabal
+├── package.yaml         
+└── stack.yaml
+
+```
 
 ## Build from source code
 
