@@ -78,37 +78,37 @@ $ brew install hamler
 
 ```shell
 
-├── .github/workflows
-├── app                   # hamler commands
+├── .github/workflows     # ci
+├── app                   # hamler commands, such as `compile`, `repl`, ...
 ├── deploy
-├── doc                   # hamler document
-├── lib                   # hamler libraries
-∣   ├── Control           # common control structures and concurrent functions. Modules: Monad Process Benhaviour Distributed ... 
-∣   ├── Data              # commonly used data structures and operating functions for them
-∣   ├── Database          # common databases in erlang. Modules: DETS ETS Mnesia
+├── doc                   # link to hamler documents
+├── lib                   # hamler standard libraries
+∣   ├── Control           # common control structures, concurrent Process, and OTP behaviours. 
+∣   ├── Data              # commonly used data structures and functions
+∣   ├── Database          # common databases in erlang, such as ETS, DETS, and Mnesia
 ∣   ├── Foreign           
 ∣   ├── Network           # hamler network libraries.
-∣   ├── System            # System operate. Modules: Dir File FilePath IO Random Timer VM Env OS ...
-∣   ├── Test              # hamler quickcheck test framework
-∣   ├── Foreign.hm        # hamler ffi functions
+∣   ├── System            # system libraries including IO, VM, OS, Env, File, Random, Timer, and Logger. 
+∣   ├── Test              # hamler QuickCheck test framework
+∣   ├── Foreign.hm        # hamler FFI functions
 ∣   └── Prelude.hm        # functions exported by default
 ├── repl
-∣   └── replsrv           # hamler repl backend
-├── src/Language          # hamler compiler source directory
+∣   └── replsrv           # hamler REPL server
+├── src/Language          # hamler compiler source
 ∣   ├── Hamler
-∣   ∣   ├── CodeGen.hs    # hamler core convert implement 
+∣   ∣   ├── CodeGen.hs    # convert CoreFn to CoreErlang
 ∣   ∣   ├── Make
 ∣   ∣   ├── Make.hs
 ∣   ∣   └── Util.hs
 ∣   └── Hamler.hs
 ├── tests                 
-∣   ├── Test              # test functions for all modules
+∣   ├── Test              # test cases for hamler libraries
 ∣   ∣   ├── Control
 ∣   ∣   ├── Data          
 ∣   ∣   ├── Database
 ∣   ∣   ├── Network
 ∣   ∣   └── System 
-∣   ├── Test.hm           # entrance to execute test function
+∣   ├── Test.hm           # entrance to execute test cases
 ∣   └── Main.hs
 ├── .gitignore
 ├── LICENSE
