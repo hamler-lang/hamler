@@ -1,6 +1,6 @@
 module Test.Data.List where
 
-import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck, quickCheck1)
 import Prelude
 import Data.List as L 
 
@@ -107,4 +107,30 @@ test = Exe [ quickCheck "append1" propAppend1
            , quickCheck "propUnzip" propUnZip
            --, quickCheck "zip3" zip3Test
            --, quickCheck "prop zip3" propZip3
+           , quickCheck1 "inits" (L.inits "abc" == ["", "a", "ab", "abc"])
+           , quickCheck1 "tails" (L.tails "abc" == ["abc", "bc", "c", ""])
+           , quickCheck1 "unfoldr" (L.unfoldr (\x -> if x == 3 then Nothing else Just (x, x + 1)) 0 == [0, 1, 2])
+           , quickCheck1 "group" (L.group "c++/c" == ["c", "++", "/", "c"])
+           , quickCheck1 "lookup" (L.lookup 2 [(1, "kotlin"), (2, "haskell"), (3, "c++")] == Just "haskell")
+           , quickCheck1 "maximum" (L.maximum [2, 4, 1, 3] == 4)
+           , quickCheck1 "minimum" (L.minimum [2, 4, 1, 3] == 1)
+           , quickCheck1 "intersperse" (L.intersperse '.' "list" == "l.i.s.t")
+           , quickCheck1 "intercalate" (L.intercalate ", " ["a", "b", "cd"] == "a, b, cd")
+           , quickCheck1 "transpose" (L.transpose [[10,11],[20],[],[30,31,32]] == [[10,20,30],[11,31],[32]])
+           , quickCheck1 "sum" (L.sum [1, 2, 4] == 7)
+           , quickCheck1 "product" (L.product [1, 2, 4] == 8)
+           , quickCheck1 "and" (L.and [true, false] == false)
+           , quickCheck1 "or" (L.or [true, false] == true)
+           , quickCheck1 "all" (L.all (\x -> x == 0) [0, 2] == false)
+           , quickCheck1 "any" (L.any (\x -> x == 0) [0, 2] == true)
+           , quickCheck1 "subsequences" (L.subsequences "abc" == ["","a","b","ab","c","ac","bc","abc"])
+           , quickCheck1 "nextPermutation" (L.nextPermutation "abc" == Just "acb")
+           , quickCheck1 "permutations" (L.permutations "abc" == ["abc","acb","bac","bca","cab","cba"])
+           , quickCheck1 "isPrefixOf" (L.isPrefixOf "abc" "abcde")
+           , quickCheck1 "isSuffixOf" (L.isSuffixOf "cde" "abcde")
+           , quickCheck1 "isInfixOf" (L.isInfixOf "bcd" "abcde")
+           , quickCheck1 "!!" (L.at' "abc" 1 == 'b')
+           , quickCheck1 "elemIndex" (L.elemIndex "abc" 'c' == Just 2)
+           , quickCheck1 "elemIndices" (L.elemIndices "abcc" 'c' == [2, 3])
+           , quickCheck1 "nub" (L.nub "acbc" == "acb")
            ]
