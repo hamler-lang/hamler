@@ -109,6 +109,12 @@ inline= Opts.switch $
   <> Opts.long "inline"
   <> Opts.help "Determine whether to inline functions (no effect at this stage)"
 
+keepCore :: Opts.Parser Bool
+keepCore = Opts.switch $
+     Opts.short 'k'
+  <> Opts.long "keepcore"
+  <> Opts.help "Don't delete the generated CoreErlang source file"
+
 outputDirectory :: Opts.Parser FilePath
 outputDirectory = Opts.strOption $
      Opts.short 'o'
@@ -118,15 +124,15 @@ outputDirectory = Opts.strOption $
   <> Opts.help "The output directory"
 
 command :: Opts.Parser (IO ())
-command = Opts.helper <*> (buildFun <$> inline <*> howBuild <*> outputDirectory)
+command = Opts.helper <*> (buildFun <$> inline <*> howBuild <*> keepCore <*> outputDirectory)
 
-buildFun ::Bool -> Bool -> FilePath -> IO ()
-buildFun isIn b fp = if b
+buildFun :: Bool -> Bool -> Bool -> FilePath -> IO ()
+buildFun isIn b k fp = if b
                   then buildlib isIn
-                  else buildSrc isIn fp
+                  else buildSrc isIn k fp
 
-buildSrc :: Bool -> FilePath -> IO ()
-buildSrc bl fpath = do
+buildSrc :: Bool -> Bool -> FilePath -> IO ()
+buildSrc bl keepcore fpath = do
   dir <- getCurrentDirectory
   isExist <- doesDirectoryExist hamlerlib
   fps1 <- if isExist
@@ -149,7 +155,9 @@ buildSrc bl fpath = do
   cfs <- findFile1 ".core" tpath
   forM_ (filter (`elem` fps2') cfs) $ \fp -> do
     SS.shelly $ SS.command_ "erlc" ["-o" ,T.pack tpath] [T.pack $ tpath <> "/" <> fp]
-    SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
+    if keepcore
+      then return ""
+      else SS.shelly $ SS.run "rm" [T.pack $ tpath <> "/" <> fp]
 
   exitSuccess
 
