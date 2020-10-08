@@ -125,8 +125,8 @@ $ brew install hamler
 
 **Required**
 
-+ [Erlang/OTP](erlang.org) >= 23
-+ [Haskell Stack](haskellstack.org)
++ [Erlang/OTP](https://www.erlang.org) >= 23
++ [Haskell Stack](https://haskellstack.org)
 
 **Building**
 
