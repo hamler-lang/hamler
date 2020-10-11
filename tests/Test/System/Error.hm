@@ -13,7 +13,7 @@ errorFun1 :: [Integer] -> IO String
 errorFun1 f = return $ show $ map (\x -> x / 0) f
 
 propCatchE2 :: [Integer] -> IO Bool
-propCatchE2 f = do
+propCatchE2 f = if f == [] then return true else do
   r <- E.catchException (errorFun1 f) (\x -> return $ showAny x)
   return $ r == "badarith"
 
