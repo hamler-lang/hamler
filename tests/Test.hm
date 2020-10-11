@@ -18,6 +18,7 @@ import Test.Data.Queue as Q
 import Test.Data.Result as R
 import Test.Data.Set as St
 import Test.Data.Show as Show
+import Test.Data.Read as Read
 import Test.Data.Monoid as Monoid
 import Test.Data.Digraph as G
 import Test.Data.Ord as Ord
@@ -70,6 +71,7 @@ main = runTest $ TxG "lib"
                  , TxG "Set"      [St.test]
                  , TxG "Tuple"    [Tu.test]
                  , TxG "Show"     [Show.test]
+                 , TxG "Read"     [Read.test]
                  , TxG "Monoid"   [Monoid.test]
                  , TxG "Graph"    [G.test]
                  , TxG "Ord"      [Ord.test]

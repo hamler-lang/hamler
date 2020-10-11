@@ -32,7 +32,7 @@ import Data.Tuple (fst)
 import Data.Foldable (foldl)
 import Data.Traversable (sequence)
 import Data.Unit (Unit,unit)
-import Control.Monad (unsafePerformIO, liftM2, class Applicative, pure, class Monad, return, bind, IO, discard, seqio, (>>=))
+import Control.Monad (unsafePerformIO, liftM1, liftM2, class Applicative, pure, class Monad, return, bind, IO, discard, seqio, (>>=))
 import System.IO (printf, println)
 import System.Random(randomRIO)
 import Data.Binary (listToBin)
@@ -167,6 +167,9 @@ instance Arbitrary a => Arbitrary [a] where
 
 instance (Coarbitrary a, Arbitrary b) => Arbitrary (a -> b) where
   arbitrary = promote (\x -> x `coarbitrary` arbitrary)
+
+instance Arbitrary v => Arbitrary (Maybe v) where
+  arbitrary = liftM1 Just arbitrary
 
 -----------------------------------------------------------------------------
 

@@ -1,0 +1,52 @@
+module Test.Data.Read where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+import Prelude
+
+check :: forall a. Eq a => Read a => Show a => a -> Bool
+check x = x == read (show x)
+
+propBool :: Bool -> Bool
+propBool = check
+
+propInt :: Integer -> Bool
+propInt = check
+
+propDouble :: Double -> Bool
+propDouble = check
+
+propList :: [Integer] -> Bool
+propList = check
+
+propMaybe :: Maybe Integer -> Bool
+propMaybe = check
+
+propTuple :: (Integer, Bool) -> Bool
+propTuple = check
+
+propString :: String -> Bool
+propString = check
+
+propListString :: [String] -> Bool
+propListString = check
+
+propMaybeMaybe :: Maybe (Maybe Integer) -> Bool
+propMaybeMaybe = check
+
+propListMaybeString :: [Maybe String] -> Bool
+propListMaybeString = check
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [
+    quickCheck "Bool" propBool,
+    quickCheck "Int" propInt,
+    -- 精度误差
+    -- quickCheck "Double" propDouble,
+    quickCheck "List" propList,
+    quickCheck "Maybe" propMaybe,
+    quickCheck "Tuple" propTuple,
+    quickCheck "String" propString,
+    quickCheck "ListString" propListString,
+    quickCheck "MaybeMaybe" propMaybeMaybe,
+    quickCheck "ListMaybeString" propListMaybeString
+]
