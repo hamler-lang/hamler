@@ -25,6 +25,7 @@ import Data.Functor (class Functor, map)
 import Data.Function (error)
 import Data.List ((++))
 import Data.Show (class Show, show)
+import Data.Read (class Read, read)
 import Data.Eq (class Eq, eq)
 import Data.Ord (class Ord, compare)
 import Data.Ordering (Ordering(..))
@@ -49,6 +50,11 @@ instance Monad (Result e) where
 instance (Show a, Show e) => Show (Result e a) where
   show (Ok x) = "Ok " ++ show x
   show (Error x) = "Error " ++ show x
+
+instance (Read a, Read e) => Read (Result e a) where
+  read ['O'|['k'|[' '|xs]]] = Ok (read xs)
+  read ['E'|['r'|['r'|['o'|['r'|[' '|xs]]]]]] = Error (read xs)
+  read _ = error "not a Result"
 
 instance (Eq a, Eq e) => Eq (Result e a) where
   eq (Ok x) (Ok y) = eq x y

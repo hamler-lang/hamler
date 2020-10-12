@@ -16,6 +16,7 @@ module Data.Queue where
 
 import Data.Maybe (Maybe)
 import Data.Show (class Show, show)
+import Data.Read (class Read, read)
 import Data.Eq (class Eq, eq)
 import Data.Ord (class Ord, compare)
 import Data.Semigroup (class Semigroup)
@@ -28,6 +29,9 @@ foreign import data Queue :: Type -> Type
 
 instance Show a => Show (Queue a) where
   show x = show (toList x)
+
+instance Read a => Read (Queue a) where
+  read x = fromList (read x)
 
 instance Eq a => Eq (Queue a) where
   eq x y = eq (toList x) (toList y)

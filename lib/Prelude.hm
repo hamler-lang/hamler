@@ -33,6 +33,7 @@ module Prelude
   , module Data.Semigroup
   , module Data.Semiring
   , module Data.Show
+  , module Data.Read
   , module Data.Tuple
   , module Data.Foldable
   , module Data.Traversable
@@ -67,6 +68,7 @@ import Data.Ring (class Ring, (-), (%), (/), negate)
 import Data.Semigroup (class Semigroup, append, (<>))
 import Data.Semiring (class Semiring, add, mul, one, zero, (*), (+))
 import Data.Show (class Show, show, showAny)
+import Data.Read (class Read, read)
 import Data.Tuple (fst, snd)
 import Data.Foldable(class Foldable, foldl, foldr, foldMap)
 import Data.Traversable(class Traversable, traverse, sequence)

@@ -1,0 +1,85 @@
+module Data.Read (class Read, read) where
+
+import Data.List (head, tail, last, init, reverse)
+import Data.Semiring ((+))
+import Data.Ring ((-))
+import Data.Functor (map)
+import Data.Function (error)
+import Data.Eq ((==))
+import Data.Bool ((||))
+import Data.String (trim)
+import Data.Binary as B
+import Data.Pid (Pid)
+import Data.Ordering (Ordering(..))
+import Data.Maybe (Maybe(..))
+
+class Read a where
+  read :: String -> a
+
+instance Read Integer where
+  read = readIntImpl
+
+instance Read Float where
+  read = readFloatImpl
+
+instance Read Char where
+  read = readCharImpl
+
+instance Read Atom where
+  read = readAtomImpl
+
+instance Read Pid where
+  read = readPidImpl
+
+instance Read Boolean where
+  read "true" = true
+  read "false" = false
+  read _ = error "not a Boolean"
+
+instance Read Binary where
+  read x = B.listToBin (read x :: [Integer])
+
+instance Read Ordering where
+  read "LT" = LT
+  read "GT" = GT
+  read "EQ" = EQ
+  read _ = error "not a Ordering"
+
+instance Read a => Read (Maybe a) where
+  read "Nothing" = Nothing
+  read ['J'|['u'|['s'|['t'|[' '|xs]]]]] = Just (read xs)
+  read _ = error "not Maybe"
+
+foreign import readIntImpl :: String -> Integer
+foreign import readFloatImpl :: String -> Float
+foreign import readCharImpl :: String -> Char
+foreign import readAtomImpl :: String -> Atom
+foreign import readPidImpl :: String -> Pid
+
+--                     0/1/2
+--          bra lvl    is str     cache     origin
+splitTop :: Integer -> Integer -> String -> String -> [String]
+splitTop 0 0 "" []        = []
+splitTop 0 0 s  []        = [reverse (trim s)]
+splitTop _ _ _  []        = error "brackets missmatched"
+splitTop 0 0 s  [','|xs]  = [reverse (trim s) | splitTop 0 0 "" xs]
+splitTop n 0 s  ['\''|xs] = splitTop n 1 ['\''|s] xs
+splitTop n 1 s  ['\''|xs] = splitTop n 0 ['\''|s] xs
+splitTop n 0 s  ['"'|xs]  = splitTop n 2 ['"'|s] xs
+splitTop n 2 s  ['"'|xs]  = splitTop n 0 ['"'|s] xs
+splitTop n 0 s  [x|xs]
+  | x == '[' || x == '{' || x == '(' = splitTop (n + 1) 0 [x|s] xs
+  | x == ']' || x == '}' || x == ')' = splitTop (n - 1) 0 [x|s] xs
+splitTop n z s  [x|xs]    = splitTop n z [x|s] xs
+
+instance Read [Char] where
+  read x = tail (init x)
+
+else instance Read a => Read [a] where
+  read ['[' | x] | last x == ']' = map read (splitTop 0 0 "" (init x))
+  read _ = error "not a list"
+
+instance (Read a, Read b) => Read (a, b) where
+  read ['(' | x] | last x == ')' = (read (head lst), read (last lst))
+    where lst = splitTop 0 0 "" (init x)
+  read _ = error "not a tuple"

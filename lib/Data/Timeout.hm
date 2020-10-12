@@ -18,6 +18,8 @@ import Data.Eq (class Eq, (==))
 import Data.Ord (class Ord, compare)
 import Data.Ordering (Ordering(..))
 import Data.Show (class Show, show)
+import Data.Read (class Read, read)
+import Data.Function (error)
 import Data.List ((++))
 
 -- | The Erlang Timeout.
@@ -26,6 +28,11 @@ data Timeout = Infinity | Timeout Integer
 instance Show Timeout where
   show Infinity = "Infinity"
   show (Timeout x) = "Timeout " ++ show x
+
+instance Read Timeout where
+  read "Infinity" = Infinity
+  read ['T'|['i'|['m'|['e'|['o'|['u'|['t'|[' '|xs]]]]]]]] = Timeout (read xs)
+  read _ = error "not a Timeout"
 
 instance Eq Timeout where
   eq Infinity Infinity = true

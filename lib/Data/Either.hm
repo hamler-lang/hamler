@@ -28,6 +28,7 @@ import Data.Functor (class Functor, map)
 import Data.Function (error, const)
 import Data.Maybe (Maybe(..), maybe)
 import Data.Show (class Show, show)
+import Data.Read (class Read, read)
 import Data.List ((++))
 import Data.Eq (class Eq, eq)
 import Data.Ord (class Ord, compare)
@@ -53,6 +54,11 @@ instance Monad (Either e) where
 instance (Show a, Show b) => Show (Either a b) where
   show (Left x) = "Left " ++ show x
   show (Right x) = "Right " ++ show x
+
+instance (Read a, Read b) => Read (Either a b) where
+  read ['L'|['e'|['f'|['t'|[' '|xs]]]]] = Left (read xs)
+  read ['R'|['i'|['g'|['h'|['t'|[' '|xs]]]]]] = Right (read xs)
+  read _ = error "not a Either"
 
 instance (Eq a, Eq b) => Eq (Either a b) where
   eq (Left x) (Left y) = eq x y

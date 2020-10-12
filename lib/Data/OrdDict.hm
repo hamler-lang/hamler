@@ -21,6 +21,7 @@ import Test.QuickCheck (arbitrary, class Arbitrary)
 import Control.Monad((<$>))
 
 import Data.Show (class Show, show)
+import Data.Read (class Read, read)
 import Data.Eq (class Eq, eq)
 import Data.Ord (class Ord, compare)
 import Data.Semigroup (class Semigroup)
@@ -30,6 +31,9 @@ foreign import data OrdDict :: Type -> Type -> Type
 
 instance (Show a, Show b) => Show (OrdDict a b) where
   show x = show (toList x)
+
+instance (Read a, Read b) => Read (OrdDict a b) where
+  read x = fromList (read x)
 
 instance (Eq a, Eq b) => Eq (OrdDict a b) where
   eq x y = eq (toList x) (toList y)

@@ -18,6 +18,7 @@ module Data.Array where
 import Data.Eq (class Eq, (==))
 import Data.Ord (class Ord, compare)
 import Data.Show (class Show, show)
+import Data.Read (class Read, read)
 import Data.Functor (class Functor, (<$>))
 import Data.Foldable (class Foldable, foldr)
 import Data.Traversable (class Traversable, sequence)
@@ -40,9 +41,11 @@ instance Eq t => Eq (Array t) where
 instance Ord t => Ord (Array t) where
   compare a b = compare (toList a) (toList b)
 
--- TODO: Show List
 instance Show t => Show (Array t) where
   show a = show (toList a)
+
+instance Read t => Read (Array t) where
+  read a = fromList (read a)
 
 instance Functor Array where
   map = ffi2 :array :map
