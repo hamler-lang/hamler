@@ -1,9 +1,9 @@
 module Data.Functor.Utils where
 
-import Data.Monoid
-import Data.Semigroup
-import Data.Ord
-import Data.Maybe
+import Data.Monoid (class Monoid)
+import Data.Semigroup (class Semigroup)
+import Data.Ord (class Ord, max, min)
+import Data.Maybe (Maybe(..))
 
 newtype Max a = Max (Maybe a)
 newtype Min a = Min (Maybe a)

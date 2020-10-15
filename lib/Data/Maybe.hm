@@ -21,7 +21,7 @@ module Data.Maybe
   , fromJust
   ) where
 
-import Control.Monad (class Applicative, class Monad, pure, liftA1)
+import Control.Monad (class Applicative, class Alternative, class Monad, class MonadPlus, pure, liftA1)
 import Data.Functor (class Functor, map)
 import Data.Function (const, error, identity)
 import Data.Semigroup (class Semigroup, (<>))
@@ -46,10 +46,20 @@ instance Applicative Maybe where
   apply Nothing   _ = Nothing
   pure = Just
 
+instance Alternative Maybe where
+  empty = Nothing
+  append Nothing  x = x
+  append (Just x) _ = Just x
+
 instance Monad Maybe where
   bind (Just x) fn = fn x
   bind Nothing  _  = Nothing
   return = pure
+
+instance MonadPlus Maybe where
+  mzero = Nothing
+  mplus Nothing  x = x
+  mplus (Just x) _ = Just x
 
 instance Foldable Maybe where
   foldl f init (Just x) = f init x

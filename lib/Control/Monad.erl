@@ -15,6 +15,7 @@
 -module('Monad').
 
 -export([ applyListImpl/2
+        , listAppend/2
         , bindImpl/2
         , bindListImpl/2
         , pureImpl/1
@@ -29,6 +30,9 @@
 -spec(applyListImpl(list(mapFun()), list(any())) -> list(any())).
 applyListImpl(Funs, L) ->
   [F(X) || X <- L, F <- Funs].
+
+-spec(listAppend(list(A :: any()), list(A :: any())) -> list(A :: any())).
+listAppend(A, B) -> lists:append(A, B).
 
 -spec(bindImpl(any(), fun((A :: term()) -> B :: term())) -> any()).
 bindImpl(X, F) -> fun() -> (F(X()))() end.

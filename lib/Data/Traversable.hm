@@ -14,11 +14,11 @@
 -----------------------------------------------------------------------------
 module Data.Traversable
   ( class Traversable
-  , traverse, sequence
+  , traverse, sequence, mapM
   ) where
 
 import Data.Foldable (class Foldable)
-import Control.Monad (class Applicative, class Functor, pure, liftA2)
+import Control.Monad (class Applicative, class Functor, class Monad, map, pure, liftA2)
 import Data.Functor ((<$>))
 
 class (Functor t, Foldable t) => Traversable t where
@@ -28,6 +28,9 @@ class (Functor t, Foldable t) => Traversable t where
 instance Traversable List where
   traverse = traverseDefault
   sequence = sequencListImpl
+
+mapM :: forall a b m t. Monad m => Traversable t => (a -> m b) -> t a -> m (t b) 
+mapM f l = sequence (map f l)
 
 sequencListImpl :: forall a m. Applicative m => List (m a) -> m (List a)
 sequencListImpl [] = pure []
