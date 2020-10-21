@@ -15,7 +15,7 @@
 module Control.Monad
   ( class Applicative, pure, apply, (<*>)
     -- ^ Applicative
-  , class Alternative, empty, append
+  , class Alternative, empty, append, (<|>)
   , liftA1, liftA2, liftA3, liftA4
     -- ^ liftA
   , class Monad, bind, bind', (>>=), (=<<), return

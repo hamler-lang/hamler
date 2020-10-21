@@ -1,0 +1,190 @@
+module Text.Parsec where
+
+import Data.Either (Either(..), either)
+import Data.Functor (class Functor, map)
+import Control.Monad (class Applicative, class Alternative, (<|>), class Monad, return, bind, (>>=))
+import Data.Tuple (snd)
+import Data.Semiring ((+), (*))
+import Data.Ring ((-))
+import Data.Show (class Show, show)
+import Data.List ((++), elem)
+import Data.Eq ((==))
+import Data.Char (isDigit, digitToInt, isSpace, isAlpha, isAlphaNum)
+import Data.Foldable (foldl)
+import Data.Unit (Unit, unit)
+import Data.Semigroup (class Semigroup, (<>))
+import Data.Monoid (class Monoid, mempty)
+
+--                           src    row     column
+data ParseState = ParseState String Integer Integer
+stateSrc :: ParseState -> String
+stateSrc (ParseState s _ _) = s
+stateRow :: ParseState -> Integer
+stateRow (ParseState _ r _) = r
+stateCol :: ParseState -> Integer
+stateCol (ParseState _ _ c) = c
+
+instance Show ParseState where
+  show (ParseState _ r c) = "(Line " ++ show r ++ ", Column " ++ show c ++ ")"
+
+type ParserF r = ParseState -> Either [String] (ParseState, r)
+-- use newtype instead data will cause badarity error (unParsec (Parsec p))
+data Parsec r = Parsec (ParserF r)
+unParsec :: forall r. Parsec r -> ParserF r
+unParsec (Parsec p) = p
+
+parse :: forall r. Parsec r -> String -> Either [String] r
+parse p s = map snd (unParsec p (ParseState s 1 1))
+
+instance Functor Parsec where
+  map f p = Parsec (\x -> map (\(s, r) -> (s, f r)) (unParsec p x))
+
+instance Applicative Parsec where
+  pure x = Parsec (\s -> Right (s, x))
+  apply f p = Parsec (\x -> do
+    (s1, r1) <- unParsec p x
+    (s2, r2) <- unParsec f s1
+    return (s2, r2 r1))
+
+instance Alternative Parsec where
+  empty = fail []
+  append = or
+
+instance Monad Parsec where
+  return x = Parsec (\s -> Right (s, x))
+  bind k f = Parsec (\x -> do
+    (s1, r1) <- unParsec k x
+    unParsec (f r1) s1)
+-- TODO: add to class Monad
+fail :: forall a. [String] -> Parsec a
+fail s = Parsec (\_ -> Left s)
+
+instance (Semigroup a) => Semigroup (Parsec a) where
+  append pa pb = do
+    a <- pa
+    b <- pb
+    return (a <> b)
+
+instance (Monoid a) => Monoid (Parsec a) where
+  mempty = return mempty
+
+combine :: forall a b c. (a -> b -> Either [String] c) -> Parsec a -> Parsec b -> Parsec c
+combine f pa pb = do
+  a <- pa
+  b <- pb
+  either fail return (f a b)
+
+combine' :: forall a b. Parsec a -> Parsec b -> Parsec (a, b)
+combine' = combine (\a b -> Right (a, b))
+
+combinel :: forall a b. Parsec a -> Parsec b -> Parsec a
+combinel = combine (\a _ -> Right a)
+
+combiner :: forall a b. Parsec a -> Parsec b -> Parsec b
+combiner = combine (\_ b -> Right b)
+
+mapValue :: forall a b. Parsec a -> b -> Parsec b
+mapValue p a = p >>= (\_ -> return a)
+
+infixl 4 combine' as .>>.
+infixl 4 combinel as .>>
+infixl 4 combiner as >>.
+infixl 4 mapValue as >>%
+
+or :: forall a. Parsec a -> Parsec a -> Parsec a
+or p1 p2 = Parsec (\x -> 
+  either (\_ -> unParsec p2 x) Right (unParsec p1 x))
+
+orValue :: forall a. Parsec a -> a -> Parsec a
+orValue p a = or p (return a)
+
+infixl 3 orValue as <|>%
+
+trans :: forall a b. Parsec a -> (a -> b) -> Parsec b
+trans p f = map f p
+
+infixl 4 trans as |>>
+
+between :: forall a b c. Parsec a -> Parsec b -> Parsec c -> Parsec c
+between pl pr p = pl >>. p .>> pr
+
+ifFail :: forall a. Parsec a -> String -> Parsec a
+ifFail p s = Parsec (\x -> 
+  either (\xs -> Left [s|xs]) Right (unParsec p x))
+
+withPos :: forall a. Parsec a -> Parsec a
+withPos p = Parsec (\x ->
+  either (\xs -> Left [show x|xs]) Right (unParsec p x))
+
+infixl 4 ifFail as <?>
+
+times :: forall a. Integer -> Parsec a -> Parsec [a]
+times 0 _ = return []
+times n p = do
+  x <- p
+  xs <- times (n - 1) p
+  return [x|xs]
+
+many :: forall a. Parsec a -> Parsec [a]
+many p = (p >>= \x -> many p |>> \xs -> [x|xs]) <|>% []
+
+some :: forall a. Parsec a -> Parsec [a]
+some p = do
+  x <- p <?> "Expect more than one"
+  xs <- many p
+  return [x|xs]
+
+idP :: Parsec Char
+idP = withPos (Parsec nextChar)
+  where nextChar (ParseState ['\n'|xs] r c) = Right (ParseState xs (r + 1) 1, '\n')
+        nextChar (ParseState [x   |xs] r c) = Right (ParseState xs r (c + 1), x   )
+        nextChar (ParseState []        _ _) = Left ["Expect a Char but meet end of file"]
+
+predP :: (Char -> Boolean) -> Parsec Char
+predP f = do
+  c <- idP
+  if f c then return c
+  else withPos (fail ["Char mismatched, found: " ++ [c]])
+
+charP :: Char -> Parsec Char
+charP c = predP (\x -> x == c)
+
+oneOf :: String -> Parsec Char
+oneOf s = predP (\c -> c `elem` s)
+
+stringP :: String -> Parsec String
+stringP [] = return ""
+stringP [x|xs] = do
+  c <- charP x
+  cs <- stringP xs
+  return [c|cs]
+
+digitP :: Parsec Integer
+digitP = predP isDigit |>> digitToInt <?> "Expect a digit"
+
+intP :: Parsec Integer
+intP = (charP '-' >>. posP |>> (\x -> 0 - x)) <|> posP
+  where posP = some digitP |>> foldl (\acc x -> acc * 10 + x) 0
+
+spaceP :: Parsec Char
+spaceP = predP isSpace <?> "Expect a space Char"
+
+spacesP :: Parsec String
+spacesP = many spaceP
+
+alphaP :: Parsec Char
+alphaP = predP isAlpha <?> "Expect a alphabet Char"
+
+alphasP :: Parsec String
+alphasP = some alphaP
+
+alphaNumP :: Parsec Char
+alphaNumP = predP isAlphaNum <?> "Expect a alphabet Char or a digit"
+
+alphaNumsP :: Parsec String
+alphaNumsP = some alphaNumP
+
+eofP :: Parsec Unit
+eofP = withPos (Parsec isEof)
+  where isEof (ParseState [] r c) = Right (ParseState [] r c, ())
+        isEof (ParseState _  _ _) = Left ["Expect end of file"]
