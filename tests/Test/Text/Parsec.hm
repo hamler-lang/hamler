@@ -1,0 +1,18 @@
+module Test.Text.Parsec where
+
+import Prelude
+import Text.Parsec
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
+
+emailP :: Parsec (String, String)
+emailP = (alphaNumsP .>> charP '@') .>>. (alphaNumsP <> stringP "." <> alphaNumsP)
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [
+    quickCheck1 "intP" (parse intP "123" == Right 123),
+    quickCheck1 "intP N" (parse intP "-123" == Right (0-123)),
+    quickCheck1 "stringP" (parse (stringP "233") "233" == Right "233"),
+    quickCheck1 "stringP E1" (parse (stringP "233") "23" == Left ["(Line 1, Column 3)", "Expect a Char but meet end of file"]),
+    quickCheck1 "stringP E2" (parse (stringP "233") "234" == Left ["(Line 1, Column 4)","Char mismatched, found: 4"]),
+    quickCheck1 "emailP" (parse emailP "noreply@emqx.io" == Right ("noreply", "emqx.io"))
+]

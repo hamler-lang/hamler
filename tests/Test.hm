@@ -49,6 +49,7 @@ import Test.Control.Monad as Monad
 import Test.Control.ReceiveSyntax as Rec
 import Test.System.Timer as Timer
 
+import Test.Text.Parsec as Parsec
 
 main :: IO ()
 main = runTest $ TxG "lib" 
@@ -106,6 +107,8 @@ main = runTest $ TxG "lib"
                     , TxG "Mnesia" [Mnesia.test]
                     ],
      TxG "Network"  [ TxG "UDP"   [UDP.test]
+                    ],
+     TxG "Text"     [ TxG "Parsec" [Parsec.test]
                     ]
    ]
 
