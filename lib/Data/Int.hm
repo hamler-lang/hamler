@@ -36,3 +36,5 @@ toBinary = ffi1 :erlang :integer_to_binary
 
 toString :: Integer -> String
 toString = ffi1 :erlang :integer_to_list
+
+foreign import toFloat :: Integer -> Float

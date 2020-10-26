@@ -14,6 +14,7 @@ import Data.Foldable (foldl)
 import Data.Unit (Unit, unit)
 import Data.Semigroup (class Semigroup, (<>))
 import Data.Monoid (class Monoid, mempty)
+import Data.Int (toFloat)
 
 --                           src    row     column
 data ParseState = ParseState String Integer Integer
@@ -134,6 +135,9 @@ some p = do
   xs <- many p
   return [x|xs]
 
+fixP :: forall a. (Parsec a -> Parsec a) -> Parsec a
+fixP f = let p = Parsec (\x -> unParsec (f p) x) in p
+
 idP :: Parsec Char
 idP = withPos (Parsec nextChar)
   where nextChar (ParseState ['\n'|xs] r c) = Right (ParseState xs (r + 1) 1, '\n')
@@ -147,7 +151,7 @@ predP f = do
   else withPos (fail ["Char mismatched, found: " ++ [c]])
 
 charP :: Char -> Parsec Char
-charP c = predP (\x -> x == c)
+charP c = predP (\x -> x == c) <?> ("Expect: " ++ [c])
 
 oneOf :: String -> Parsec Char
 oneOf s = predP (\c -> c `elem` s)
@@ -166,11 +170,19 @@ intP :: Parsec Integer
 intP = (charP '-' >>. posP |>> (\x -> 0 - x)) <|> posP
   where posP = some digitP |>> foldl (\acc x -> acc * 10 + x) 0
 
+floatP :: Parsec Float
+floatP = combine (\a b -> Right (a + b)) (intP |>> toFloat) (charP '.' >>. some digitP |>> 
+  (\z -> snd (foldl (\(lvl, acc) x -> (lvl * 0.1, lvl * x + acc)) (0.1, 0.0) (map toFloat z)))) <|> 
+  (intP |>> toFloat)
+
 spaceP :: Parsec Char
 spaceP = predP isSpace <?> "Expect a space Char"
 
 spacesP :: Parsec String
 spacesP = many spaceP
+
+trimP :: forall a. Parsec a -> Parsec a
+trimP = between spacesP spacesP
 
 alphaP :: Parsec Char
 alphaP = predP isAlpha <?> "Expect a alphabet Char"

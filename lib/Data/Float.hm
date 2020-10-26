@@ -103,5 +103,5 @@ tan = ffi1 :math :tan
 tanh :: Float -> Float
 tanh = ffi1 :math :tanh
 
-trunc :: Float -> Float
+trunc :: Float -> Integer
 trunc = ffi1 :erlang :trunc
