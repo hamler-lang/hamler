@@ -1,0 +1,69 @@
+module Text.Json where
+
+import Data.Either (Either(..))
+import Data.Eq (class Eq, (==), (/=))
+import Control.Monad ((<|>))
+import Text.Parsec (Parsec, parse, combine, many, fixP, between, trimP, spacesP, idP, charP, 
+  predP, stringP, floatP, withPos, (.>>), (>>.), (.>>.), (|>>), (>>%), (<?>))
+
+data JsonValue = JsonNull
+               | JsonString String
+               | JsonNum    Float
+               | JsonBool   Boolean
+               | JsonList   [JsonValue]
+               | JsonObject [(String, JsonValue)]
+
+instance Eq JsonValue where
+  eq  JsonNull       JsonNull      = true
+  eq (JsonString x) (JsonString y) = x == y
+  eq (JsonNum    x) (JsonNum    y) = x == y
+  eq (JsonBool   x) (JsonBool   y) = x == y
+  eq (JsonList   x) (JsonList   y) = x == y
+  eq (JsonObject x) (JsonObject y) = x == y
+  eq  _              _             = false
+
+jsonNullP :: Parsec JsonValue
+jsonNullP = trimP (stringP "null" >>% JsonNull) <?> "Expect null"
+
+escapeP :: Parsec Char
+escapeP = stringP "\\n" >>% '\n' <|>
+          stringP "\\t" >>% '\t' <|>
+          --stringP "\\b" >>% '\b' <|>
+          --stringP "\\v" >>% '\v' <|>
+          --stringP "\\f" >>% '\f' <|>
+          stringP "\\r" >>% '\r' <|>
+          --stringP "\\e" >>% '\e' <|>
+          charP '\\' >>. idP
+
+jsonStringP' :: Parsec String
+jsonStringP' = withPos (trimP (charP '\'' >>. many jsonCharP1 .>> (charP '\'' <?> "Unclosed '" ) <|>
+                               charP '"'  >>. many jsonCharP2 .>> (charP '"'  <?> "Unclosed \"")))
+  where jsonCharP1 = escapeP <|> predP (\c -> c /= '\'') -- '
+        jsonCharP2 = escapeP <|> predP (\c -> c /= '"' ) -- "
+
+jsonStringP :: Parsec JsonValue
+jsonStringP = jsonStringP' |>> JsonString
+
+jsonNumP :: Parsec JsonValue
+jsonNumP = trimP (floatP |>> JsonNum)
+
+jsonBoolP :: Parsec JsonValue
+jsonBoolP = trimP (stringP "true"  >>% JsonBool true <|>
+                   stringP "false" >>% JsonBool false) <?> "Expect true/false"
+
+jsonListP :: Parsec JsonValue -> Parsec JsonValue
+jsonListP p = trimP (between (charP '[') (charP ']' <?> "Unclosed []") sepP) |>> JsonList
+  where sepP = (combine (\a b -> Right [a|b]) p (many (charP ',' >>. p))) <|>
+               (spacesP >>% [])
+
+jsonObjectP :: Parsec JsonValue -> Parsec JsonValue
+jsonObjectP p = trimP (between (charP '{') (charP '}' <?> "Unclosed {}") sepP) |>> JsonObject
+  where kvP = (jsonStringP' .>> charP ':') .>>. p
+        sepP = (combine (\a b -> Right [a|b]) kvP (many (charP ',' >>. kvP))) <|>
+               (spacesP >>% [])
+
+jsonValueP :: Parsec JsonValue
+jsonValueP = fixP (\p -> jsonNullP <|> jsonStringP <|> jsonBoolP <|> jsonNumP <|> jsonListP p <|> jsonObjectP p)
+
+parseJson :: String -> Either [String] JsonValue
+parseJson s = parse jsonValueP s

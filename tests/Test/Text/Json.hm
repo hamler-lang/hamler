@@ -1,0 +1,13 @@
+module Test.Text.Json where
+
+import Prelude
+import Text.Json (JsonValue(..), parseJson)
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [
+    quickCheck1 "string" (parseJson "'1\\t2\\'3'" == Right (JsonString "1\t2'3")),
+    quickCheck1 "list" (parseJson "[233, '123']" == Right (JsonList [JsonNum 233.0, JsonString "123"])),
+    quickCheck1 "object" (parseJson "{'emqx': true, 'ms': null}" == 
+      Right (JsonObject [("emqx", JsonBool true), ("ms", JsonNull)]))
+]
