@@ -23,7 +23,7 @@ module Data.Either
   , hush
   ) where
 
-import Control.Monad (class Applicative, class Monad, pure)
+import Control.Monad (class Applicative, class Monad)
 import Data.Functor (class Functor, map)
 import Data.Function (error, const)
 import Data.Maybe (Maybe(..), maybe)
@@ -49,7 +49,6 @@ instance Applicative (Either e) where
 instance Monad (Either e) where
   bind (Right x) k = k x
   bind (Left e)  _ = Left e
-  return = pure
 
 instance (Show a, Show b) => Show (Either a b) where
   show (Left x) = "Left " ++ show x

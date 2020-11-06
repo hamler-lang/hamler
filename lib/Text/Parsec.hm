@@ -2,7 +2,7 @@ module Text.Parsec where
 
 import Data.Either (Either(..), either)
 import Data.Functor (class Functor, map)
-import Control.Monad (class Applicative, class Alternative, (<|>), class Monad, return, bind, (>>=))
+import Control.Monad (class Applicative, class Alternative, (<|>), class Monad, pure, bind, (>>=))
 import Data.Tuple (snd)
 import Data.Semiring ((+), (*))
 import Data.Ring ((-))
@@ -45,14 +45,13 @@ instance Applicative Parsec where
   apply f p = Parsec (\x -> do
     (s1, r1) <- unParsec p x
     (s2, r2) <- unParsec f s1
-    return (s2, r2 r1))
+    pure (s2, r2 r1))
 
 instance Alternative Parsec where
   empty = fail []
   append = or
 
 instance Monad Parsec where
-  return x = Parsec (\s -> Right (s, x))
   bind k f = Parsec (\x -> do
     (s1, r1) <- unParsec k x
     unParsec (f r1) s1)
@@ -64,16 +63,16 @@ instance (Semigroup a) => Semigroup (Parsec a) where
   append pa pb = do
     a <- pa
     b <- pb
-    return (a <> b)
+    pure (a <> b)
 
 instance (Monoid a) => Monoid (Parsec a) where
-  mempty = return mempty
+  mempty = pure mempty
 
 combine :: forall a b c. (a -> b -> Either [String] c) -> Parsec a -> Parsec b -> Parsec c
 combine f pa pb = do
   a <- pa
   b <- pb
-  either fail return (f a b)
+  either fail pure (f a b)
 
 combine' :: forall a b. Parsec a -> Parsec b -> Parsec (a, b)
 combine' = combine (\a b -> Right (a, b))
@@ -85,7 +84,7 @@ combiner :: forall a b. Parsec a -> Parsec b -> Parsec b
 combiner = combine (\_ b -> Right b)
 
 mapValue :: forall a b. Parsec a -> b -> Parsec b
-mapValue p a = p >>= (\_ -> return a)
+mapValue p a = p >>= (\_ -> pure a)
 
 infixl 4 combine' as .>>.
 infixl 4 combinel as .>>
@@ -97,7 +96,7 @@ or p1 p2 = Parsec (\x ->
   either (\_ -> unParsec p2 x) Right (unParsec p1 x))
 
 orValue :: forall a. Parsec a -> a -> Parsec a
-orValue p a = or p (return a)
+orValue p a = or p (pure a)
 
 infixl 3 orValue as <|>%
 
@@ -120,11 +119,11 @@ withPos p = Parsec (\x ->
 infixl 4 ifFail as <?>
 
 times :: forall a. Integer -> Parsec a -> Parsec [a]
-times 0 _ = return []
+times 0 _ = pure []
 times n p = do
   x <- p
   xs <- times (n - 1) p
-  return [x|xs]
+  pure [x|xs]
 
 many :: forall a. Parsec a -> Parsec [a]
 many p = (p >>= \x -> many p |>> \xs -> [x|xs]) <|>% []
@@ -133,7 +132,7 @@ some :: forall a. Parsec a -> Parsec [a]
 some p = do
   x <- p <?> "Expect more than one"
   xs <- many p
-  return [x|xs]
+  pure [x|xs]
 
 fixP :: forall a. (Parsec a -> Parsec a) -> Parsec a
 fixP f = let p = Parsec (\x -> unParsec (f p) x) in p
@@ -147,7 +146,7 @@ idP = withPos (Parsec nextChar)
 predP :: (Char -> Boolean) -> Parsec Char
 predP f = do
   c <- idP
-  if f c then return c
+  if f c then pure c
   else withPos (fail ["Char mismatched, found: " ++ [c]])
 
 charP :: Char -> Parsec Char
@@ -157,11 +156,11 @@ oneOf :: String -> Parsec Char
 oneOf s = predP (\c -> c `elem` s)
 
 stringP :: String -> Parsec String
-stringP [] = return ""
+stringP [] = pure ""
 stringP [x|xs] = do
   c <- charP x
   cs <- stringP xs
-  return [c|cs]
+  pure [c|cs]
 
 digitP :: Parsec Integer
 digitP = predP isDigit |>> digitToInt <?> "Expect a digit"

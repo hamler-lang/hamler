@@ -20,7 +20,7 @@ module Data.Result
   , fromError
   ) where
 
-import Control.Monad (class Applicative, class Monad, pure)
+import Control.Monad (class Applicative, class Monad)
 import Data.Functor (class Functor, map)
 import Data.Function (error)
 import Data.List ((++))
@@ -45,7 +45,6 @@ instance Applicative (Result e) where
 instance Monad (Result e) where
   bind (Ok a) k    = k a
   bind (Error e) _ = Error e
-  return = pure
 
 instance (Show a, Show e) => Show (Result e a) where
   show (Ok x) = "Ok " ++ show x

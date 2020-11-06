@@ -61,7 +61,7 @@ module Control.Behaviour.GenServer
 
 import Control.Behaviour.GenServer.Types
 import Control.Distributed.Node (Node)
-import Control.Monad (return)
+import Control.Monad (pure)
 import Control.Process (Process, ExitReason(..))
 import Data.Function (($), (<<<))
 import Data.Maybe (Maybe(..))
@@ -176,32 +176,32 @@ foreign import waitResponse
   :: forall rep. RequestId -> Timeout -> Process rep
 
 initOk :: forall req st. st -> Process (InitResult req st)
-initOk st = return $ InitOk st Nothing
+initOk st = pure $ InitOk st Nothing
 
 initOkWith :: forall req st. st -> Action req -> Process (InitResult req st)
-initOkWith st action = return $ InitOk st (Just action)
+initOkWith st action = pure $ InitOk st (Just action)
 
 initIgnore :: forall req st. Process (InitResult req st)
-initIgnore = return InitIgnore
+initIgnore = pure InitIgnore
 
 initStop :: forall req st. ExitReason -> Process (InitResult req st)
-initStop = return <<< InitStop
+initStop = pure <<< InitStop
 
 -- | Send a reply to the caller explicitly.
 replyTo :: forall rep. From -> rep -> Process ()
 replyTo = ffiIO2 :gen_server :reply
 
 reply :: forall req rep st. rep -> st -> Process (Reply req rep st)
-reply rep st = return $ Reply rep st Nothing
+reply rep st = pure $ Reply rep st Nothing
 
 replyWith :: forall req rep st. rep -> st -> Action req -> Process (Reply req rep st)
-replyWith rep st action = return $ Reply rep st (Just action)
+replyWith rep st action = pure $ Reply rep st (Just action)
 
 noReply :: forall req rep st. st -> Process (Reply req rep st)
-noReply st = return $ NoReply st Nothing
+noReply st = pure $ NoReply st Nothing
 
 noReplyWith :: forall req rep st. st -> Action req -> Process (Reply req rep st)
-noReplyWith st action = return $ NoReply st (Just action)
+noReplyWith st action = pure $ NoReply st (Just action)
 
 shutdown :: forall req rep st. Atom -> st -> Process (Reply req rep st)
-shutdown r = return <<< Shutdown (ExitReason r)
+shutdown r = pure <<< Shutdown (ExitReason r)

@@ -18,7 +18,7 @@ module Control.Monad
   , class Alternative, empty, append, (<|>)
   , liftA1, liftA2, liftA3, liftA4
     -- ^ liftA
-  , class Monad, bind, bind', (>>=), (=<<), return
+  , class Monad, bind, bind', (>>=), (=<<)
     -- ^ Monad
   , kCompose, kCompose', (>=>), (<=<)
   , class MonadPlus, mplus, mzero
@@ -97,7 +97,6 @@ liftA4 f a b c d = pure f <*> a <*> b <*> c <*> d
 
 class Applicative m => Monad m where
   bind :: forall a b. m a -> (a -> m b) -> m b
-  return :: forall a. a -> m a
 
 bind' :: forall m a b. Monad m => (a -> m b) -> m a -> m b
 bind' f m = bind m f
@@ -111,7 +110,7 @@ instance MonadPlus List where
   mplus = listAppend
 
 guard :: forall m. MonadPlus m => Boolean -> m ()
-guard true  = return ()
+guard true  = pure ()
 guard false = mzero
 
 msum :: forall m a. MonadPlus m => [m a] -> m a
@@ -121,7 +120,7 @@ msum [x|xs] = mplus x (msum xs)
 mfilter :: forall m a. MonadPlus m => (a -> Boolean) -> m a -> m a
 mfilter f ma = do
   a <- ma
-  if f a then return a else mzero
+  if f a then pure a else mzero
 
 infixl 1 bind  as >>=
 infixr 1 bind' as =<<
@@ -139,7 +138,6 @@ infixr 1 kCompose' as <=<
 
 instance Monad List where
   bind a f = bindListImpl a f
-  return = pure
 
 foreign import bindListImpl :: forall a b. [a] -> (a -> [b]) -> [b]
 
@@ -157,7 +155,6 @@ instance Applicative IO where
 
 instance Monad IO where
   bind = bindImpl
-  return = pure
 
 foreign import bindImpl :: forall a b. IO a -> (a -> IO b) -> IO b
 foreign import pureImpl :: forall a. a -> IO a
@@ -170,25 +167,25 @@ ap :: forall a b m. Monad m => m (a -> b) -> m a -> m b
 ap mf ma = do
   f <- mf
   a <- ma
-  return (f a)
+  pure (f a)
 
 liftM1 :: forall a b m. Monad m => (a -> b) -> m a -> m b
 liftM1 f ma = do
   a <- ma
-  return (f a)
+  pure (f a)
 
 liftM2 :: forall a b c m. Monad m => (a -> b -> c) -> m a -> m b -> m c
 liftM2 f ma mb = do
   a <- ma
   b <- mb
-  return (f a b)
+  pure (f a b)
 
 liftM3 :: forall a b c d m. Monad m => (a -> b -> c -> d) -> m a -> m b -> m c -> m d
 liftM3 f ma mb mc = do
   a <- ma
   b <- mb
   c <- mc
-  return (f a b c)
+  pure (f a b c)
 
 liftM4 :: forall a b c d e m. Monad m => (a -> b -> c -> d -> e) -> m a -> m b -> m c -> m d -> m e
 liftM4 f ma mb mc md = do
@@ -196,7 +193,7 @@ liftM4 f ma mb mc md = do
   b <- mb
   c <- mc
   d <- md
-  return (f a b c d)
+  pure (f a b c d)
 
 -- TODO:...
 discard :: forall f a b. Monad f => f a -> (a -> f b) -> f b
@@ -215,13 +212,13 @@ foreign import unsafePerformIO :: forall a. IO a -> a
 foreign import replApply :: forall a. a -> a
 
 void :: forall a m. Monad m => m a -> m ()
-void f = f >>= \_ -> return ()
+void f = f >>= \_ -> pure ()
 
 when :: forall m. Monad m => Boolean -> m () -> m ()
-when b m = if b then m else return ()
+when b m = if b then m else pure ()
 
 unless :: forall m. Monad m => Boolean -> m () -> m ()
-unless b m = if b then return () else m
+unless b m = if b then pure () else m
 
 join :: forall m a. Monad m => m (m a) -> m a
 join mma = do
@@ -229,14 +226,14 @@ join mma = do
   ma
 
 filterM :: forall m a. Monad m => (a -> m Boolean) -> [a] -> m [a]
-filterM f [] = return []
+filterM f [] = pure []
 filterM f [x|xs] = do
   b <- f x
   ys <- filterM f xs
-  return (if b then [x|ys] else ys)
+  pure (if b then [x|ys] else ys)
 
 foldM :: forall m a b. Monad m => (a -> b -> m a) -> a -> [b] -> m a
-foldM _ i [] = return i
+foldM _ i [] = pure i
 foldM f i [x|xs] = do
   r <- f i x
   foldM f r xs

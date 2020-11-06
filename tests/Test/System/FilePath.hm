@@ -8,7 +8,7 @@ propAbsPath :: IO Bool
 propAbsPath = do
   p1 <- F.abspath "stack.yaml"
   p2 <- F.abspath "package.yaml"
-  return $ F.dirname p1 == F.dirname p2
+  pure $ F.dirname p1 == F.dirname p2
 
 propBaseName :: Bool
 propBaseName = F.basename "/usr/bin" == "bin"

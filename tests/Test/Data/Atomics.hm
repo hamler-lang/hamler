@@ -2,7 +2,7 @@ module Test.Data.Atomics where
 
 
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
-import Prelude (IO, bind, discard, foldl, getSelf, head, length, pure, range, return, send, seqio, spawn, timerSleep, zip, ($), (+), (-), (==))
+import Prelude (IO, bind, discard, foldl, getSelf, head, length, pure, range, send, seqio, spawn, timerSleep, zip, ($), (+), (-), (==))
 import Data.Atomics (get, new, put)
 import Data.Atomics as A
 
@@ -16,7 +16,7 @@ test = Exe [ quickCheck1 "atomic operate" atomOper
            ]
 
 atomOper :: [Integer] -> IO Boolean
-atomOper [] = return true
+atomOper [] = pure true
 atomOper xs = do
   let v0 = foldl (+) 0 xs
       len = length xs
@@ -25,20 +25,20 @@ atomOper xs = do
   timerSleep 10
   vs <- seqio [get ref k | k <- [1..len]]
   let v = foldl (+) 0 vs
-  return $ v0 == v
+  pure $ v0 == v
 
 atomAdd :: [Integer] -> IO Boolean
-atomAdd [] = return true
+atomAdd [] = pure true
 atomAdd xs = do
   ref <- new 1 true
   put ref 1 0
   seqio [spawn $ A.add ref 1 v | v <- xs]
   timerSleep 10
   v <- get ref 1
-  return $ v == foldl (+) 0 xs
+  pure $ v == foldl (+) 0 xs
 
 atomAddGet :: [Integer] -> IO Boolean
-atomAddGet [] = return true
+atomAddGet [] = pure true
 atomAddGet xs = do
   pid <- getSelf
   ref <- new 1 true
@@ -49,26 +49,26 @@ atomAddGet xs = do
         | v <- xs]
   vs <- revFun []
   let l = head vs
-  return $ l == foldl (+) 0 xs
+  pure $ l == foldl (+) 0 xs
  where
   revFun ys = do
     receive
         y -> revFun [y|ys]
-    after 100 -> return ys
+    after 100 -> pure ys
 
 
 atomSub :: [Integer] -> IO Boolean
-atomSub [] = return true
+atomSub [] = pure true
 atomSub xs = do
   ref <- new 1 true
   put ref 1 0
   seqio [spawn $ A.sub ref 1 v | v <- xs]
   timerSleep 10
   v <- get ref 1
-  return $ v == foldl (\y x -> y - x) 0 xs
+  pure $ v == foldl (\y x -> y - x) 0 xs
 
 atomSubGet :: [Integer] -> IO Boolean
-atomSubGet [] = return true
+atomSubGet [] = pure true
 atomSubGet xs = do
   pid <- getSelf
   ref <- new 1 true
@@ -79,15 +79,15 @@ atomSubGet xs = do
         | v <- xs]
   vs <- revFun []
   let l = head vs
-  return $ l == foldl (-) 0 xs
+  pure $ l == foldl (-) 0 xs
  where
   revFun ys = do
     receive
         y -> revFun [y|ys]
-    after 100 -> return ys
+    after 100 -> pure ys
 
 atomExchange :: [Integer] -> IO Boolean
-atomExchange [] = return true
+atomExchange [] = pure true
 atomExchange xs = do
   pid <- getSelf
   let len = length xs
@@ -97,4 +97,4 @@ atomExchange xs = do
   seqio [spawn $ A.exchange ref k v | (k,v) <- zip [1..len] xs]
   timerSleep 10
   vs <- seqio [A.get ref k | k <- [1..len]]
-  return $ foldl (+) 0 vs == foldl (+) 0 xs
+  pure $ foldl (+) 0 vs == foldl (+) 0 xs

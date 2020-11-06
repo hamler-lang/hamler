@@ -1,7 +1,7 @@
 module Test.System.Timer where
 
 import System.Timer (cancelTimer, readTimer, sendAfter, startTimer)
-import Prelude (IO, Maybe(..), bind, discard, getSelf, return, timerSleep, ($), (<))
+import Prelude (IO, Maybe(..), bind, discard, getSelf, pure, timerSleep, ($), (<))
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
 
 test :: TestGroup (Integer -> IO TestResult)
@@ -16,8 +16,8 @@ startTimerFun = do
   pid <- getSelf
   startTimer 100 pid "timeout"
   receive
-    (:timeout, _, _) -> return true
-  after 1000 -> (return false :: IO Boolean)
+    (:timeout, _, _) -> pure true
+  after 1000 -> (pure false :: IO Boolean)
 
 cancelTimerFun :: IO Boolean
 cancelTimerFun = do
@@ -25,16 +25,16 @@ cancelTimerFun = do
   tref <- startTimer 100 pid "timeout"
   cancelTimer tref
   receive
-    (:timeout, _, _) -> return false
-  after 150 -> (return true :: IO Boolean)
+    (:timeout, _, _) -> pure false
+  after 150 -> (pure true :: IO Boolean)
 
 sendAfterFun :: IO Boolean
 sendAfterFun = do
   pid <- getSelf
   sendAfter 100 pid :timeout
   receive
-    :timeout -> return true
-  after 1000 -> (return false :: IO Boolean)
+    :timeout -> pure true
+  after 1000 -> (pure false :: IO Boolean)
 
 readTimerFun :: IO Boolean
 readTimerFun = do
@@ -43,7 +43,7 @@ readTimerFun = do
   timerSleep 20
   v <- readTimer tref
   receive
-     x -> return x
+     x -> pure x
   case v of
-    Nothing -> return false
-    Just val -> return $ val < 80
+    Nothing -> pure false
+    Just val -> pure $ val < 80

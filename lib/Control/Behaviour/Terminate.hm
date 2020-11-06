@@ -19,7 +19,7 @@ module Control.Behaviour.Terminate
   ) where
 
 import Control.Process (ExitReason, Process)
-import Control.Monad (return)
+import Control.Monad (pure)
 
 -- | The Terminate typeclass
 class Terminate st where
@@ -27,4 +27,4 @@ class Terminate st where
 
 -- | The default terminate function.
 terminateOk :: forall st. ExitReason -> st -> Process st
-terminateOk _ st = return st
+terminateOk _ st = pure st

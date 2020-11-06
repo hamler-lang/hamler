@@ -32,7 +32,7 @@ import Data.Tuple (fst)
 import Data.Foldable (foldl)
 import Data.Traversable (sequence)
 import Data.Unit (Unit,unit)
-import Control.Monad (unsafePerformIO, liftM1, liftM2, class Applicative, pure, class Monad, return, bind, IO, discard, seqio, (>>=))
+import Control.Monad (unsafePerformIO, liftM1, liftM2, class Applicative, pure, class Monad, bind, IO, discard, seqio, (>>=))
 import System.IO (printf, println)
 import System.Random(randomRIO)
 import Data.Binary (listToBin)
@@ -99,7 +99,6 @@ instance Applicative Gen where
   pure a = Gen $ \n r -> a
 
 instance Monad Gen where
-  return = pure
   bind (Gen m1) k = Gen $ \n r0 ->
     let (r1, r2) = split r0
         Gen m2 = k (m1 n r1)
@@ -116,7 +115,7 @@ elements :: forall a. [a] -> Gen a
 elements xs = map (\v -> index v xs) $ choose (0, length xs -1)
 
 vector :: forall a. Arbitrary a => Integer -> Gen [a]
-vector 0 = return []
+vector 0 = pure []
 vector n = sequence [ arbitrary | i <- [1..n]]
 
 oneof :: forall a. [Gen a] -> Gen a
@@ -196,7 +195,7 @@ nothing :: forall a. {ok :: Maybe a, stamp :: [String], arguments :: [String]}
 nothing =  {ok = Nothing, stamp =[], arguments = []}
 
 result :: Result -> Property
-result res = Prop (return res)
+result res = Prop (pure res)
 
 class Testable a where
   property :: a -> Property
@@ -219,11 +218,11 @@ evaluate a = gen where Prop gen = property a
 forAll :: forall a b. Testable b => Gen a -> (a -> b) -> Property
 forAll gen body = Prop $
       do a <- gen
-         Result res <- unsafePerformIO $ catchException (return $ evaluate (body a)) handleExcept
-         return $ Result (arg a res)
+         Result res <- unsafePerformIO $ catchException (pure $ evaluate (body a)) handleExcept
+         pure $ Result (arg a res)
     where
       arg a res = res{arguments = [showAny a | res.arguments ]}
-      handleExcept e = return $ Gen $ \i r -> Result {arguments = [ showAny e], stamp = [], ok = Nothing }
+      handleExcept e = pure $ Gen $ \i r -> Result {arguments = [ showAny e], stamp = [], ok = Nothing }
 
 type SpaceCounter = Integer
 
@@ -237,7 +236,7 @@ crashPipe :: String
 crashPipe = "●    "
 
 check :: forall a. Testable a => String -> Integer -> a -> SpaceCounter -> IO TestResult
-check s 0 m n = (printf "%s✔ %s" (concat $ replicate (n/5) basePipe) s :: IO ()) >>= \_ -> return Successed
+check s 0 m n = (printf "%s✔ %s" (concat $ replicate (n/5) basePipe) s :: IO ()) >>= \_ -> pure Successed
 check s v m n = do
   i <- randomRIO 1332292274972041455 7304856964418773083
   let Gen fun = evaluate m
@@ -245,9 +244,9 @@ check s v m n = do
   case r.ok of
     Just true -> check s (v-1) m n
     Just false -> (printf "%s✖ %s -----> %s"
-                    (concat $ replicate (n/5) errorPipe) s (showAny r.arguments) :: IO ()) >>= \_ -> return $ Failed s (showAny r.arguments)
+                    (concat $ replicate (n/5) errorPipe) s (showAny r.arguments) :: IO ()) >>= \_ -> pure $ Failed s (showAny r.arguments)
     Nothing -> (printf "%s● %s ==> crash happened!!!  %s"
-                    (concat $ replicate (n/5) crashPipe) s (showAny r.arguments) :: IO ()) >>= \_ -> return $ Crash s (showAny r.arguments)
+                    (concat $ replicate (n/5) crashPipe) s (showAny r.arguments) :: IO ()) >>= \_ -> pure $ Crash s (showAny r.arguments)
 
 
 quickCheck :: forall a. Testable a => String -> a -> SpaceCounter -> IO TestResult
@@ -277,10 +276,10 @@ runTestGroup n (TxG s xs) =
                    renderCrash 0 = ""
                    renderCrash i = "(crashed " <> show i <> ")"
                printf "%s----> ◯ %d, ✔ %d, ✖ %d%s." (concat $ replicate (n/5) basePipe)  total succ fail (renderCrash crash)
-               return res
+               pure res
 
 runTest :: TestGroup (Integer -> IO TestResult) -> IO ()
-runTest g = runTestGroup 0 g >>= \_ -> return ()
+runTest g = runTestGroup 0 g >>= \_ -> pure ()
 
 tcount :: (Integer, Integer, Integer, Integer) -> [TestResult] -> (Integer, Integer, Integer, Integer)
 tcount (a,b,c,d) [] = (a,b,c,d)

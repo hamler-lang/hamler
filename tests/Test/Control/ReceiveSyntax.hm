@@ -1,7 +1,7 @@
 module Test.Control.ReceiveSyntax where
 
 
-import Prelude (IO, Process, Unit, bind, discard, getSelf, return, spawn, unit, void, (!), ($), (==))
+import Prelude (IO, Process, Unit, pure, bind, discard, getSelf, spawn, unit, void, (!), ($), (==))
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
 
 test :: TestGroup (Integer -> IO TestResult)
@@ -16,9 +16,9 @@ go = do
   self <- getSelf
   pid <- spawn loop
   pid ! (self, :ping)
-  t <- receive :pong -> return true
+  t <- receive :pong -> pure true
   pid ! :stop
-  return t
+  pure t
  where
   loop :: Process ()
   loop =
@@ -26,15 +26,15 @@ go = do
       (from, :ping) -> do
         from ! :pong
         loop
-      :stop -> return ()
+      :stop -> pure ()
 
 go1 :: Process Boolean
 go1 = do
   selfPid <- getSelf
   pid <- spawn $ recv selfPid
   pid ! :msg
-  t <- receive x -> return x
-  return $ t == :msgRecv
+  t <- receive x -> pure x
+  pure $ t == :msgRecv
  where
   recv s = receive :msg -> void $ s ! :msgRecv
 
@@ -46,9 +46,9 @@ go2 = do
   pid ! :foo
   vs <- receive
            x -> do
-             y <- receive v -> return v
-             return (x, y)
-  return $ vs == (:foo, :bar)
+             y <- receive v -> pure v
+             pure (x, y)
+  pure $ vs == (:foo, :bar)
  where
    selectiveRecv s = do
      receive :foo -> s ! :foo
@@ -59,8 +59,8 @@ go3 = do
   self <- getSelf
   pid <- spawn $ recvAfter self
   pid ! :foo
-  v <- receive v -> return v
-  return $ v == :timeout
+  v <- receive v -> pure v
+  pure $ v == :timeout
  where
    recvAfter s =
      receive

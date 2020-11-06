@@ -1,19 +1,19 @@
 module Test.Data.Term.Persistent where
 
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
-import Prelude (IO, bind, discard, return, ($), (==))
+import Prelude (IO, pure, bind, discard, ($), (==))
 import Data.Term.Persistent (erase, get, getWithDefault, put)
 
 putGet :: IO Boolean
 putGet = do
   put 1 2
   v <- get 1
-  return $ v == 2
+  pure $ v == 2
 
 getWD :: IO Boolean
 getWD = do
   v <- getWithDefault 1223 22
-  return $ v == 22
+  pure $ v == 22
 
 putErase :: IO Boolean
 putErase = do

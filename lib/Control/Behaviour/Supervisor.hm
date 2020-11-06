@@ -37,7 +37,7 @@ module Control.Behaviour.Supervisor
   ) where
 
 import Control.Behaviour.Supervisor.Types
-import Control.Monad (return)
+import Control.Monad (pure)
 import Control.Process (Process)
 import Data.Pid (Pid)
 import Data.Maybe (Maybe)
@@ -112,7 +112,7 @@ supChildSpec childId startFun =
 -----------------------------------------------------------------------------
 
 initOk :: SupFlags -> [ChildSpec] -> Process InitResult
-initOk flags specs = return (InitOk flags specs)
+initOk flags specs = pure (InitOk flags specs)
 
 initIgnore :: Process InitResult
-initIgnore = return InitIgnore
+initIgnore = pure InitIgnore

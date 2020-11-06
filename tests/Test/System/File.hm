@@ -1,7 +1,7 @@
 module Test.System.File where
 
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
-import Prelude (IO, bind, discard, return, ($), (&&), (==), (-))
+import Prelude (IO, bind, discard, pure, ($), (&&), (==), (-))
 import System.File (IOMode(..), SeekMode(..), close, open, openRaw, read, readLine, seek, tell, write, sync)
 
 fileOper :: IO Boolean
@@ -12,7 +12,7 @@ fileOper = do
   seek i AbsoluteSeek 0
   v1 <- read i 2                     -- <<"bb">>
   close i
-  return $ v0 == 7 && v1 == <<"bb">>
+  pure $ v0 == 7 && v1 == <<"bb">>
 
 propReadLine :: IO Boolean
 propReadLine = do
@@ -22,7 +22,7 @@ propReadLine = do
   seek i RelativeSeek (0 - 5)
   v0 <- readLine i
   close i
-  return $ v0 == <<"aa\n">>
+  pure $ v0 == <<"aa\n">>
 
 propOpenRaw :: IO Boolean
 propOpenRaw = do
@@ -31,7 +31,7 @@ propOpenRaw = do
   seek i AbsoluteSeek 0
   v0 <- read i 2
   close i
-  return $ v0 == <<"bb">>
+  pure $ v0 == <<"bb">>
 
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [ quickCheck1 "file open, write, seek, read, close" fileOper
