@@ -2,22 +2,22 @@
 
 **Hamler** - Haskell-style functional programming language running on Erlang VM.
 
-**Hamler** is a strongly-typed language with compile-time typechecking and built-in support for concurrency and distribution.
+**Hamler** is a strongly-typed language with compile-time type-checking and built-in support for concurrency and distribution.
 
-**Hamler** empowers industries to build the next generation of scalable, reliable, realtime applications, especially for 5G, IoT and edge computing.
+**Hamler** empowers industries to build the next generation of scalable, reliable, real-time applications, especially for 5G, IoT, and edge computing.
 
-## Why Hamler ?
+## Why Hamler?
 
-For almost a decade, we have been developing software systems based on Erlang/OTP, especially our main product [EMQ X](https://github.com/emqx/emqx) - the scalable open-source MQTT broker. So, we have always believed that Erlang is a masterpiece of engineering. With amazing concurrency, distribution and fault tolerance, it is one of the few general-purpose language platforms able to properly handle concurrency and soft realtime.
+For almost a decade, we have been developing software systems based on Erlang/OTP, especially our main product [EMQ X](https://github.com/emqx/emqx) - the scalable open-source MQTT broker. So, we have always believed that Erlang is a masterpiece of engineering. With amazing concurrency, distribution, and fault tolerance, it is one of the few general-purpose language platforms able to properly handle concurrency and soft realtime.
 
-However, from all the experience writing Erlang, we believe that the following features can help Erlang programmer better adapt to the coming wave of 5G, IoT and edge-programming and attract more people for using BEAM.
+However, from all the experience writing Erlang, we believe that the following features can help Erlang programmers better adapt to the coming wave of 5G, IoT, and edge-programming and attract more people to using BEAM.
 
 - Compile-time type checking and type reference
 - ADTs, Function Composition, Type Classes
 - More friendly syntax for prosperous communities
-- Functor, Applicative and Monad...:)
+- Functor, Applicative, and Monad...:)
 
-Now all the features are avaliable in the Hamler programming language.
+Now all the features are available in the Hamler programming language.
 
 ## Features
 
@@ -202,7 +202,7 @@ $ brew install hamler
 - [Guides](https://github.com/hamler-lang/documentation/tree/master/guides/)
 - [FAQ](https://github.com/hamler-lang/documentation/blob/master/FAQ.md)
 
-## Community, discussion and supports
+## Community, discussion, and supports
 
 You can reach the **Hamler** community and core team via the following channels:
 
@@ -218,7 +218,7 @@ To contribute to **Hamler** project:
 - Report issues : submit any bugs, issues to [hamler/issues][hamler-issues]
 - Contribute code: Reference [**roadmap**](https://github.com/hamler-lang/hamler/milestones) as a guidance for new features.
                    Fork the project, and submit feature requests to [hamler-lang/hamler][hamler-project]
-- Submit a proposal: Fork the [hamler-wiki][hamler-wiki] project and submit pull request
+- Submit a proposal: Fork the [hamler-wiki][hamler-wiki] project and submit a pull request
 
 [hamler-issues]: https://github.com/hamler-lang/hamler/issues
 [hamler-project]: https://github.com/hamler-lang/hamler
@@ -251,4 +251,4 @@ The hamler language project is licensed under BSD3, see [LICENSE](./LICENSE).
 
 ## About EMQ
 
-[**EMQ**](https://emqx.io/) is an open-source software company providing highly-scalable, real-time messaging and streaming platform for IoT applications in 5G Era.
+[**EMQ**](https://emqx.io/) is an open-source software company providing highly-scalable, real-time messaging and streaming platforms for IoT applications in the 5G Era.
