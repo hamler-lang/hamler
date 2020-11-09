@@ -1,6 +1,6 @@
 module Test.Network.UDP where
 
-import Prelude (Either(..), IO, Unit, bind, concat, discard, error, foldl, pure, range, return, seqio, spawn, try, unit, ($), (+), (==), (>>=))
+import Prelude (Either(..), IO, Unit, bind, concat, discard, error, foldl, pure, range, seqio, spawn, try, unit, ($), (+), (==), (>>=))
 import Network.UDP (Option(..), Socket, close, openWith, recv, recvTimeout, sendTo)
 import Network.UDP as U
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
@@ -23,8 +23,8 @@ serProcess port = do
 
 start :: IO ()
 start = do
-  seqio [(spawn $ serProcess p) >>= \_ -> return p  | p <- [8000 .. 8030]]
-  return ()
+  seqio [(spawn $ serProcess p) >>= \_ -> pure p  | p <- [8000 .. 8030]]
+  pure ()
 
 client :: IO Boolean
 client = do
@@ -32,17 +32,17 @@ client = do
   vs <- seqio [seqio [action sock (encode <<"message">>) p | p <- [8000 .. 8030] ] | x <- [1..2]]
   let vs' = foldl (+) 0 $ concat vs
   close sock
-  return $ vs' == 124
+  pure $ vs' == 124
 
 action :: Socket -> Binary -> Integer -> IO Integer
 action sock b port = do
   U.send sock "localhost" port b
   v <- try (recvTimeout sock 10 (Timeout 2000))
   case v of
-    Left _ -> return $ error "timeout happened"
+    Left _ -> pure $ error "timeout happened"
     Right (_,_,x) -> case x of
-                       <<v>> -> return $ v + 1
-                       _     -> return $ error "some strange happened"
+                       <<v>> -> pure $ v + 1
+                       _     -> pure $ error "some strange happened"
 
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [ quickCheck1 "UDP: create 30 process to receive UDP connect" (start >>= \_ -> client)

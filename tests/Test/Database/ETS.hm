@@ -1,6 +1,6 @@
 module Test.Database.ETS where
 
-import Prelude (IO, Maybe(..), Unit, bind, discard, pure, range, return, seqio, spawn, ($), (&&), (*), (+), (==), concat, foldl, (<>), length, zip, unit)
+import Prelude (IO, Maybe(..), Unit, bind, discard, pure, range, seqio, spawn, ($), (&&), (*), (+), (==), concat, foldl, (<>), length, zip, unit)
 import Database.ETS (all, file2tab, deleteTable, insert, insertObjects, lookup, member, new, options)
 import Database.ETS as E
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck, quickCheck1)
@@ -24,7 +24,7 @@ new' a b = do
   tab <- new :test1 E.options
   allTid <- all
   deleteTable tab
-  return true
+  pure true
 
 etsOper :: IO Boolean
 etsOper = do
@@ -40,7 +40,7 @@ etsOper = do
   mv <- E.match tab (1, :"$1")
   mv1 <- E.match tab (:_, :"$1")
   deleteTable tab
-  return $ ib && iob && b && v == [(10, 10)] && v0 == 10
+  pure $ ib && iob && b && v == [(10, 10)] && v0 == 10
               && v1 == ([] :: [(Integer,Integer)])
               && l == Just 10 && mv == [[1]]
               && mv1 == [[x] | x <- [1..10] ]
@@ -48,7 +48,7 @@ etsOper = do
 insertRandomNumber :: Integer -> E.TableId -> IO ()
 insertRandomNumber i tab = do
   E.insert tab (i, 100)
-  return ()
+  pure ()
   -- timerSleep 30
   -- insertRandomNumber (i+1) tab
 
@@ -60,8 +60,8 @@ spawn100Oper = do
   v <- E.info tab
   case v of
     Just info -> do
-      return $ info.size == 100
-    Nothing -> return false
+      pure $ info.size == 100
+    Nothing -> pure false
 
 etsFile :: IO Boolean
 etsFile = do
@@ -83,13 +83,13 @@ etsFile = do
   (v8 :: [(Integer, Integer)]) <- E.lookup tab2 1
   deleteTable tab2
   deleteFile "testETS"
-  return $ v && v1 == [(1,2)] && v2 == Just 1
+  pure $ v && v1 == [(1,2)] && v2 == Just 1
              && v3 == Just 1 && v4 == Nothing
              && v5 == Nothing && v6 == [(1,2)]
              && v7 == [(1,2)] && v8 == []
 
 efold :: [Integer] -> IO Boolean
-efold [] = return true
+efold [] = pure true
 efold xs = do
   tab <- E.new :test3 E.options
   let total = foldl (+) 0 xs
@@ -98,7 +98,7 @@ efold xs = do
   accl <- E.foldl (\(_, v) b -> v + b ) 0 tab
   accr <- E.foldr (\(_, v) b -> v + b ) 0 tab
   deleteTable tab
-  return $ accl == total && accr == total
+  pure $ accl == total && accr == total
 
 p :: Atom
 p = :"$1"
@@ -107,7 +107,7 @@ p' :: (Atom, Atom)
 p' = (:_, :_)
 
 ematch :: [Integer] -> IO Boolean
-ematch [] = return true
+ematch [] = pure true
 ematch xs = do
   tab <- E.new :test41 E.options
   let total = foldl (+) 0 xs
@@ -117,22 +117,22 @@ ematch xs = do
   let v1 = foldl (\x y -> x + y) 0 $ concat xs1
   v <- E.matchWithLimit tab (:_, p) 10
   v' <- case v of
-    Nothing -> return []
+    Nothing -> pure []
     Just (ss, conval) -> do
       ss' <-  allVals conval
-      return $ ss <> ss'
+      pure $ ss <> ss'
   b <- E.matchDelete tab p'
   (xs' :: [[Integer]]) <- E.match tab (1, p)
   deleteTable tab
-  return $ xs' == [] && v1 == total && (foldl (+) 0 (concat v')) == total && b
+  pure $ xs' == [] && v1 == total && (foldl (+) 0 (concat v')) == total && b
  where
    allVals con = do
      v <- E.matchContinuation con
      case v of
-       Nothing -> return []
+       Nothing -> pure []
        Just (vs, contin) -> do
          vs' <- allVals contin
-         return $ vs <> vs'
+         pure $ vs <> vs'
 
 ematchObj :: IO Boolean
 ematchObj = do
@@ -141,21 +141,21 @@ ematchObj = do
   xs <- E.matchObject tab (1, :_)
   v <- E.matchObjectWithLimit tab (:_, :_) 10
   v' <- case v of
-    Nothing -> return []
+    Nothing -> pure []
     Just (ss, conval) -> do
       ss' <- allObjs conval
-      return $ ss <> ss'
+      pure $ ss <> ss'
   deleteTable tab
   let vend = foldl (\acc (_, val) -> val + acc) 0 v'
-  return $ xs == [(1,1)]  && vend == 5050
+  pure $ xs == [(1,1)]  && vend == 5050
  where
    allObjs con = do
      v <- E.matchObjectContinuation con
      case v of
-       Nothing -> return []
+       Nothing -> pure []
        Just (vs, contin) -> do
          vs' <- allObjs contin
-         return $ vs <> vs'
+         pure $ vs <> vs'
 
 updateFun :: IO Boolean
 updateFun = do
@@ -192,7 +192,7 @@ updateFun = do
   b10 <- E.updateCounterIncrWithDefault tab 1001 2 (1, 100)
   v10 <- E.lookup tab 1001
 
-  return $ v0 == [(1,1)]
+  pure $ v0 == [(1,1)]
          && b1 && v1 == [(1,2)]
          && b2 && v2 == [(1,4)]
          && b3 ==7 && v3 == [(1,7)]

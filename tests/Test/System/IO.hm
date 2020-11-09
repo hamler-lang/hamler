@@ -13,7 +13,7 @@ writeAndReadTest = do
     writeFile filepath <<"hello, world">>
     rf <- readFile filepath
     deleteFile filepath
-    return (rf == <<"hello, world">>)
+    pure $ rf == <<"hello, world">>
 
 appendTest :: IO (Bool)
 appendTest = do
@@ -21,7 +21,7 @@ appendTest = do
     appendFile filepath <<" Hamler, Haskell">>
     rf <- readFile filepath
     deleteFile filepath
-    return (rf == <<"hello, world Hamler, Haskell">>)
+    pure $ rf == <<"hello, world Hamler, Haskell">>
 
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [

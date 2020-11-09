@@ -54,7 +54,6 @@ instance Alternative Maybe where
 instance Monad Maybe where
   bind (Just x) fn = fn x
   bind Nothing  _  = Nothing
-  return = pure
 
 instance MonadPlus Maybe where
   mzero = Nothing

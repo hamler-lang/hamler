@@ -1,25 +1,22 @@
 module Test.Control.Monad where
 
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck, quickCheck1)
-import Prelude (Bool, IO, Int, bind, guardF, head, pure, range, return, seqio, unsafePerformIO, ($), (&&), (+), (==), (>>=), unit, (%))
+import Prelude (Bool, IO, Int, bind, guardF, head, pure, range, seqio, unsafePerformIO, ($), (&&), (+), (==), (>>=), unit, (%))
 import Control.Monad
 
 baseList :: [Int]
 baseList = [1..5]
 
 ioInt :: IO Int
-ioInt = return 0
+ioInt = pure 0
 
 pureProp :: Integer->Boolean
 pureProp x = (head $ pure x) == x
 
-returnProp :: Integer->Boolean
-returnProp x = (head $ return x) == x
-
 ioProp :: Integer->IO Bool
 ioProp x = do
-    y <- return x
-    return (y == x)
+    y <- pure x
+    pure (y == x)
 
 bindTest :: Boolean
 bindTest = ([1..5] >>= (\x->[x, x])) == [1,1,2,2,3,3,4,4,5,5]
@@ -77,13 +74,12 @@ unsafePerformIOTest = (unsafePerformIO ioInt) == 0
 
 seqioTest :: IO Bool
 seqioTest = do
-    xs <- seqio (liftM1 return baseList)
-    return (xs == baseList) 
+    xs <- seqio (liftM1 pure baseList)
+    pure (xs == baseList) 
 
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [
     quickCheck "pureProp" pureProp
-   ,quickCheck "returnProp" returnProp
    ,quickCheck1 "ioProp" ioProp
    ,quickCheck "bindTest" bindTest
    ,quickCheck1 "bind'Test" bind'Test

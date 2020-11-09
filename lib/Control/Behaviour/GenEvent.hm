@@ -40,7 +40,7 @@ module Control.Behaviour.GenEvent
   ) where
 
 import Control.Behaviour.GenEvent.Types
-import Control.Monad (return)
+import Control.Monad (pure)
 import Control.Process (ExitReason, Process)
 import Data.Function ((<<<))
 import Data.Pid (Pid)
@@ -107,10 +107,10 @@ foreign import syncNotifyRef
 -----------------------------------------------------------------------------
 
 initOk :: forall st. st -> Process (InitResult st)
-initOk = return <<< InitOk
+initOk = pure <<< InitOk
 
 initOkHib :: forall st. st -> Process (InitResult st)
-initOkHib = return <<< InitOkHib
+initOkHib = pure <<< InitOkHib
 
 initError :: forall st. ExitReason -> Process (InitResult st)
-initError = return <<< InitError
+initError = pure <<< InitError

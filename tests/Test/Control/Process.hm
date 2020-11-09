@@ -1,7 +1,7 @@
 module Test.Control.Process where
 
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
-import Prelude (IO, Pid, Unit, bind, discard, getSelf, head, last, pure, range, return, send, seqio, spawn, zip, ($), (+), (==), (>>=))
+import Prelude (IO, Pid, Unit, bind, discard, getSelf, head, last, pure, range, send, seqio, spawn, zip, ($), (+), (==), (>>=))
 import Control.Process (isAlive)
 import Data.List as L
 
@@ -24,12 +24,12 @@ start all = do
   seqio [send j (N i) | (i,j) <- (zip pids [last pids|L.init pids]) ]
   send (head pids) (T 0)
   v <- recAll 0
-  return $ v == 500500
+  pure $ v == 500500
 
 recAll :: Integer -> IO Integer
 recAll a = receive
              x -> recAll $ x + a
-           after 300 -> (return a :: IO Integer)
+           after 300 -> (pure a :: IO Integer)
 
 data Message = N Pid
              | T Integer
@@ -37,12 +37,12 @@ data Message = N Pid
 data S = S Pid Pid
 
 handleMsg :: S ->  Message -> IO S
-handleMsg (S p0 pid) (N p) = return (S p0 p)
-handleMsg (S p0 pid) (T 1001) = return (S p0 pid)
+handleMsg (S p0 pid) (N p) = pure (S p0 p)
+handleMsg (S p0 pid) (T 1001) = pure (S p0 pid)
 handleMsg (S p0 pid) (T i) =
   do send pid (T (i+1))
      send p0 i
-     return (S p0 pid)
+     pure (S p0 pid)
 
 loop :: S -> IO ()
 loop s = receive v -> handleMsg s v >>= loop

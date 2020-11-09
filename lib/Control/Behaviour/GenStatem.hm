@@ -58,7 +58,7 @@ module Control.Behaviour.GenStatem
   , module Control.Behaviour.GenStatem.Types
   ) where
 
-import Control.Monad (return)
+import Control.Monad (pure)
 import Control.Process (Process, ExitReason(..))
 import Data.Function (($), (<<<))
 import Data.Map as M
@@ -161,38 +161,38 @@ foreign import unhandled :: forall e s d. HandleEvent e s d
 -----------------------------------------------------------------------------
 
 initOk :: forall e s d. s -> d -> Process (InitResult e s d)
-initOk s d = return $ InitOk s d []
+initOk s d = pure $ InitOk s d []
 
 initOkWith :: forall e s d. s -> d -> [Action e] -> Process (InitResult e s d)
-initOkWith s d = return <<< InitOk s d
+initOkWith s d = pure <<< InitOk s d
 
 initIgnore :: forall e s d. Process (InitResult e s d)
-initIgnore = return InitIgnore
+initIgnore = pure InitIgnore
 
 initStop :: forall e s d. ExitReason -> Process (InitResult e s d)
-initStop = return <<< InitStop
+initStop = pure <<< InitStop
 
 -----------------------------------------------------------------------------
 -- | State Transition
 -----------------------------------------------------------------------------
 
 keep :: forall e s d. d -> Process (Transition e s d)
-keep d = return $ Keep d []
+keep d = pure $ Keep d []
 
 keepWith :: forall e s d. d -> [Action e] -> Process (Transition e s d)
-keepWith d = return <<< Keep d
+keepWith d = pure <<< Keep d
 
 next :: forall e s d. s -> d -> Process (Transition e s d)
-next s d = return $ Next s d []
+next s d = pure $ Next s d []
 
 nextWith :: forall e s d. s -> d -> [Action e] -> Process (Transition e s d)
-nextWith s d = return <<< Next s d
+nextWith s d = pure <<< Next s d
 
 repeat :: forall e s d. d -> Process (Transition e s d)
-repeat d = return $ Repeat d []
+repeat d = pure $ Repeat d []
 
 repeatWith :: forall e s d. d -> [Action e] -> Process (Transition e s d)
-repeatWith d = return <<< Repeat d
+repeatWith d = pure <<< Repeat d
 
 shutdown :: forall e s d. Atom -> d -> Process (Transition e s d)
-shutdown r = return <<< Shutdown (ExitReason r)
+shutdown r = pure <<< Shutdown (ExitReason r)
