@@ -1,0 +1,42 @@
+module Control.Monad.State where
+
+import Data.Functor (class Functor)
+import Control.Monad (class Applicative, class Monad)
+import Data.Unit (Unit, unit)
+
+data State s a = State (s -> (a, s))
+
+runState :: forall s a. State s a -> s -> (a, s)
+runState (State f) = f
+
+evalState :: forall s a. State s a -> s -> a
+evalState (State f) s = let (a, _) = f s in a
+
+execState :: forall s a. State s a -> s -> s
+execState (State f) s = let (_, x) = f s in x
+
+instance Functor (State s) where
+  map f (State st) = State (\s -> 
+    let (a, x) = st s in (f a, x))
+
+instance Applicative (State s) where
+  pure x = State (\s -> (x, s))
+  apply (State ft) (State st) = State (\s ->
+    let (f, x) = ft s in
+    let (a, y) = st x in (f a, y))
+
+instance Monad (State s) where
+  bind (State st) f = State (\s ->
+    let (a, x) = st s in runState (f a) x)
+
+get :: forall s. State s s
+get = State (\s -> (s, s))
+
+gets :: forall s a. (s -> a) -> State s a
+gets f = State (\s -> (f s, s))
+
+put :: forall s. s -> State s ()
+put s = State (\_ -> ((), s))
+
+modify :: forall s. (s -> s) -> State s ()
+modify f = State (\s -> ((), f s))
