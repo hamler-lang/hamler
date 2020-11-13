@@ -1,0 +1,25 @@
+module Control.Monad.Reader where
+
+import Data.Functor (class Functor)
+import Control.Monad (class Applicative, class Monad)
+
+data Reader e a = Reader (e -> a)
+
+runReader :: forall e a. Reader e a -> e -> a
+runReader (Reader r) = r
+
+instance Functor (Reader e) where
+  map f (Reader r) = Reader (\e -> f (r e))
+
+instance Applicative (Reader e) where
+  pure a = Reader (\_ -> a)
+  apply (Reader f) (Reader r) = Reader (\e -> (f e) (r e))
+
+instance Monad (Reader e) where
+  bind (Reader r) f = Reader (\e -> runReader (f (r e)) e)
+
+ask :: forall e. Reader e e
+ask = Reader (\e -> e)
+
+local :: forall e a. (e -> a) -> Reader e a
+local f = Reader (\e -> f e)

@@ -45,6 +45,7 @@ import Test.Database.Mnesia as Mnesia
 import Test.System.IO as IO
 
 import Test.Control.Monad as Monad
+import Test.Control.Monad.Reader as Reader
 
 import Test.Control.ReceiveSyntax as Rec
 import Test.System.Timer as Timer
@@ -100,6 +101,8 @@ main = runTest $ TxG "lib"
      TxG "Control" [ TxG "Process"   [Proc.test]
 
                    , TxG "Monad" [Monad.test]
+                   , TxG "Monads" [ TxG "Reader" [Reader.test]
+                                  ]
 
                    , TxG "ReceiveSyntax" [Rec.test]
 

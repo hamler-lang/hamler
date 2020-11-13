@@ -1,0 +1,11 @@
+module Test.Control.Monad.Reader where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
+import Prelude (IO, (==), (+))
+import Control.Monad.Reader (runReader, ask, local)
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [
+  quickCheck1 "ask" (runReader ask 1 == 1),
+  quickCheck1 "local" (runReader (local (\x -> x + x)) 2 == 4)
+]
