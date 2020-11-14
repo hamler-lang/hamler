@@ -190,7 +190,7 @@ $ brew install hamler
   > -- get, put
   > Map.get "foo" m -- a = "bar"
   > Map.get "bar" m -- b = "foo"
-  > m1 = Map.put "key" "val"
+  > m1 = Map.put "key" "val" m
   > -- keys, values
   > keys = Map.keys m
   > values = Map.values m
