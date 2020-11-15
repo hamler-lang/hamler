@@ -46,6 +46,7 @@ import Test.System.IO as IO
 
 import Test.Control.Monad as Monad
 import Test.Control.Monad.Reader as Reader
+import Test.Control.Monad.State as StateM
 
 import Test.Control.ReceiveSyntax as Rec
 import Test.System.Timer as Timer
@@ -102,6 +103,7 @@ main = runTest $ TxG "lib"
 
                    , TxG "Monad" [Monad.test]
                    , TxG "Monads" [ TxG "Reader" [Reader.test]
+                                  , TxG "State" [StateM.test]
                                   ]
 
                    , TxG "ReceiveSyntax" [Rec.test]
