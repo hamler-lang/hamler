@@ -23,7 +23,7 @@
         , take/2
         , filter/2
         , eqMapImpl/2
-        , map/2
+        , mapWithKey/2
         ]).
 
 %% forall k v. k -> v -> Map k v
@@ -57,5 +57,5 @@ filter(Fun, Map) ->
 eqMapImpl(Map1, Map2) ->
      Map1 == Map2.
 
-map(Fun, Map) ->
+mapWithKey(Fun, Map) ->
     maps:map(fun(K, V) -> Fun({K,V}) end, Map).

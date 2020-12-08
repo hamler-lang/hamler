@@ -50,7 +50,7 @@ take = (OD.take 'a' baseOD == Just ([1], OD.fromList [('b',[2]),('c',[3]),('d',[
     && (OD.take 'x' baseOD == Nothing)
 
 map :: Bool
-map = (OD.map (\c-> \b->[1]) baseOD) == OD.fromList [('a', [1]),('b', [1]), ('c', [1]),('d', [1])]
+map = (OD.mapWithKey (\c-> \b->[1]) baseOD) == OD.fromList [('a', [1]),('b', [1]), ('c', [1]),('d', [1])]
 
 merge :: Bool
 merge = (OD.merge (\a-> \x-> \y -> [head x + head y]) baseOD baseOD) == (OD.fromList [('a', [2]),('b', [4]), ('c', [6]),('d', [8])])

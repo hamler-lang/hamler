@@ -16,14 +16,17 @@ module Data.Set where
 
 import Foreign (ffi0, ffi1, ffi2)
 import Test.QuickCheck (arbitrary, class Arbitrary)
-import Control.Monad((<$>))
+import Control.Monad ((<$>), liftA1)
 
 import Data.Show (class Show, show)
 import Data.Read (class Read, read)
 import Data.Eq (class Eq, eq)
 import Data.Ord (class Ord, compare)
-import Data.Semigroup (class Semigroup)
-import Data.Monoid (class Monoid)
+import Data.Semigroup (class Semigroup, (<>))
+import Data.Monoid (class Monoid, mempty)
+import Data.Functor (class Functor, map)
+import Data.Foldable (class Foldable, foldl, foldr)
+import Data.Traversable (class Traversable, sequence)
 
 foreign import data Set :: Type -> Type
 
@@ -47,6 +50,18 @@ instance Semigroup (Set a) where
 
 instance Monoid (Set a) where
   mempty = empty
+
+instance Functor Set where
+  map f x = fromList (map f (toList x))
+
+instance Foldable Set where
+  foldl f init x = foldl f init (toList x)
+  foldr f init x = foldr f init (toList x)
+  foldMap f = foldr (\x acc -> f x <> acc) mempty
+
+instance Traversable Set where
+  traverse f ta = sequence (f <$> ta)
+  sequence x = liftA1 fromList (sequence (toList x))
 
 -- | Returns a new empty set.
 empty :: forall a. Set a
