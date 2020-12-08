@@ -27,7 +27,7 @@ jobs:
           run: |
             sudo apt update && sudo apt install -y locales
             sudo locale-gen en_US.UTF-8
-            echo "::set-env name=LC_ALL::en_US.UTF-8"
+            echo "LC_ALL=en_US.UTF-8" >> $GITHUB_ENV
         - name: install library
           run: |
             sudo apt update && sudo apt install -y libtinfo-dev ghc
@@ -92,8 +92,8 @@ jobs:
           echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
           echo "LANG=en_US.UTF-8" > /etc/locale.conf
           locale-gen en_US.UTF-8
-          echo "::set-env name=LC_ALL::en_US.UTF-8"
-          echo "::set-env name=STACK_ROOT::$(pwd)"
+          echo "LC_ALL=en_US.UTF-8" >> $GITHUB_ENV
+          echo "STACK_ROOT=$(pwd)" >> $GITHUB_ENV
           echo "::add-path::~/.local/bin"
       - name: install library
         run: |
@@ -166,8 +166,8 @@ jobs:
           yum install -y erlang-${OTP_VERSION}
       - name: set env
         run: |
-          echo "::set-env name=LC_ALL::en_US.UTF-8"
-          echo "::set-env name=STACK_ROOT::$(pwd)"
+          echo "LC_ALL=en_US.UTF-8" >> $GITHUB_ENV
+          echo "STACK_ROOT=$(pwd)" >> $GITHUB_ENV
           echo "::add-path::~/.local/bin"
       - name: install library
         run: |
