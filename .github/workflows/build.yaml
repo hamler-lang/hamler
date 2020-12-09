@@ -27,11 +27,11 @@ jobs:
           run: |
             sudo apt update && sudo apt install -y locales
             sudo locale-gen en_US.UTF-8
-            echo "::set-env name=LC_ALL::en_US.UTF-8"
+            echo "LC_ALL=en_US.UTF-8" >> $GITHUB_ENV
         - name: install library
           run: |
             sudo apt update && sudo apt install -y libtinfo-dev ghc
-            echo "::add-path::~/.local/bin"
+            echo "~/.local/bin" >> $GITHUB_PATH
             curl -sSL https://get.haskellstack.org/ | sh -s - -f
         - uses: actions/checkout@v2
         - name: make
@@ -92,9 +92,9 @@ jobs:
           echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
           echo "LANG=en_US.UTF-8" > /etc/locale.conf
           locale-gen en_US.UTF-8
-          echo "::set-env name=LC_ALL::en_US.UTF-8"
-          echo "::set-env name=STACK_ROOT::$(pwd)"
-          echo "::add-path::~/.local/bin"
+          echo "LC_ALL=en_US.UTF-8" >> $GITHUB_ENV
+          echo "STACK_ROOT=$(pwd)" >> $GITHUB_ENV
+          echo "~/.local/bin" >> $GITHUB_PATH
       - name: install library
         run: |
           apt update && apt install -y libtinfo-dev ghc
@@ -166,9 +166,9 @@ jobs:
           yum install -y erlang-${OTP_VERSION}
       - name: set env
         run: |
-          echo "::set-env name=LC_ALL::en_US.UTF-8"
-          echo "::set-env name=STACK_ROOT::$(pwd)"
-          echo "::add-path::~/.local/bin"
+          echo "LC_ALL=en_US.UTF-8" >> $GITHUB_ENV
+          echo "STACK_ROOT=$(pwd)" >> $GITHUB_ENV
+          echo "~/.local/bin" >> $GITHUB_PATH
       - name: install library
         run: |
           yum install -y ghc
@@ -223,9 +223,9 @@ jobs:
           /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
           brew install gnu-sed erlang@23 haskell-stack
           ln -s /usr/local/bin/gsed /usr/local/bin/sed
-          echo "::add-path::/usr/local/opt/erlang@23/bin"
-          echo "::add-path::/usr/local/lib/hamler/bin"
-          echo "::add-path::/usr/local/bin"
+          echo "/usr/local/opt/erlang@23/bin" >> $GITHUB_PATH
+          echo "/usr/local/lib/hamler/bin" >> $GITHUB_PATH
+          echo "/usr/local/bin" >> $GITHUB_PATH
       - uses: actions/checkout@v2
       - name: make
         run: |
