@@ -57,6 +57,12 @@ getBaseGraph4 = do
   where getEdge (Right e) = e
         getEdge (Left _) = error "failed to create edge"
 
+propVertexID :: IO Bool
+propVertexID = do
+  g <- getBaseGraph1
+  r <- G.vertex g (G.vertexOf 1)
+  pure (r == Just 2)
+
 propNoEdges :: IO Bool
 propNoEdges = do
   g <- getBaseGraph1
@@ -169,7 +175,8 @@ propModifyVertex = do
   pure (sort vs == [Just 1, Just 3, Just 5])
 
 test :: TestGroup (Integer -> IO TestResult)
-test = Exe [ quickCheck1 "noEdges"        propNoEdges
+test = Exe [ quickCheck1 "VertexID"       propVertexID
+           , quickCheck1 "noEdges"        propNoEdges
            , quickCheck1 "noVertices"     propNoVertices
            , quickCheck1 "allVertices"    propAllVertices
            , quickCheck1 "allEdges"       propAllEdges

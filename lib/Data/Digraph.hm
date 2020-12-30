@@ -26,11 +26,16 @@ foreign import data Graph :: Type -> Type -> Type
 --                           ^-----  ^---
 --               Label Type: Vertex  Edge
 
--- notice that Edge in Erlang is ['$e' | id] and 
--- Vertex is ['$v' | id], maybe constructor for
--- them could be added to lib
 foreign import data Edge :: Type -> Type
 foreign import data Vertex :: Type -> Type
+
+-- Constructor for Edge & Vertex
+foreign import edgeOf :: forall b. Integer -> Edge b
+foreign import vertexOf :: forall a. Integer -> Vertex a
+
+-- Extractor for Edge & Vertex
+foreign import edgeID :: forall b. Edge b -> Integer
+foreign import vertexID :: forall a. Vertex a -> Integer
 
 foreign import eqImpl :: forall a b. Graph a b -> Graph a b -> Bool
 

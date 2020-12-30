@@ -17,7 +17,11 @@
 -include("../Foreign.hrl").
 
 %% FFI
--export([ new/1
+-export([ edgeOf/1
+        , vertexOf/1
+        , edgeID/1
+        , vertexID/1
+        , new/1
         , addEdge/4
         , modifyEdge/5
         , addVertex/2
@@ -33,6 +37,11 @@
 
 -define(Left(V), {'Left', V}).
 -define(Right(V), {'Right', V}).
+
+edgeOf(ID) -> ['$e' | ID].
+vertexOf(ID) -> ['$v' | ID].
+edgeID(['$e' | ID]) -> ID.
+vertexID(['$v' | ID]) -> ID.
 
 eqImpl(X, Y) -> X =:= Y.
 
