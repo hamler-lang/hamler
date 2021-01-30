@@ -19,6 +19,8 @@ import Foreign (ffi1, ffi2, ffi3)
 
 type BitString = Binary
 
+foreign import data Pattern :: Type
+
 -- | Returns the size in bits of Bitstring.
 bitSize :: BitString -> Integer
 bitSize = ffi1 :erlang :bit_size
@@ -27,9 +29,13 @@ bitSize = ffi1 :erlang :bit_size
 byteSize :: BitString -> Integer
 byteSize = ffi1 :erlang :bit_size
 
+data SplitOption = SplitGlobal 
+                 | SplitTrim 
+                 | SplitTrimAll 
+                 | SplitScope Integer Integer
+
 -- | Split a binary into a list binaries.
-split :: Binary -> Binary -> [Binary]
-split = ffi2 :binary :split
+foreign import split :: Binary -> Pattern -> [SplitOption] -> [Binary]
 
 -- | Binary to Atom.
 toAtom :: Binary -> Atom
@@ -82,24 +88,37 @@ last = ffi1 :binary :last
 listToBin :: forall a. [a] -> Binary
 listToBin = ffi1 :binary :list_to_bin
 
-{- TODO:
-binary_to_atom(Binary, Encoding) -> atom()
-compile_pattern/1                                            Need Pattern
-decode_unsigned/1                                            Need Unsigned
-decode_unsigned/2
-encode_unsigned/1
-encode_unsigned/2
-longest_common_prefix/1
-longest_common_suffix/1
-match/2
-match/3
-matches/2
-matches/3
-part/2
-part/3
-referenced_byte_size/1
-replace/3
-replace/4
-split/2
-split/3
--}
+compile_pattern :: [Binary] -> Pattern
+compile_pattern = ffi1 :binary :compile_pattern
+
+data ReplaceOption = ReplaceGlobal
+                   | ReplaceScope Integer Integer
+                   | InsertReplaced [Integer]
+
+foreign import replace :: Binary -> Pattern -> Binary -> [ReplaceOption] -> Binary
+
+part :: Binary -> Integer -> Integer -> Binary
+part = ffi3 :binary :part
+
+referencedByteSize :: Binary -> Integer
+referencedByteSize = ffi1 :binary :referenced_byte_size
+
+foreign import matches :: Binary -> Pattern -> [(Integer, Integer)] -> [(Integer, Integer)]
+
+longestCommonPrefix :: [Binary] -> Integer
+longestCommonPrefix = ffi1 :binary :longest_common_prefix
+
+longestCommonSuffix :: [Binary] -> Integer
+longestCommonSuffix = ffi1 :binary :longest_common_suffix
+
+decodeUnsigned :: Binary -> Integer
+decodeUnsigned = ffi1 :binary :decode_unsigned
+
+decodeUnsignedLittle :: Binary -> Integer
+decodeUnsignedLittle bin = ffi2 :binary :decode_unsigned bin :little
+
+encodeUnsigned :: Integer -> Binary
+encodeUnsigned = ffi1 :binary :encode_unsigned
+
+encodeUnsignedLittle :: Integer -> Binary
+encodeUnsignedLittle bin = ffi2 :binary :encode_unsigned bin :little
