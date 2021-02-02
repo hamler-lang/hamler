@@ -46,7 +46,8 @@ startSupWith(Name, Init) ->
 
 checkChildSpecs(ChildSpecs) ->
   ?IO(resultWith(fun childSpecError/1,
-                 ?SUP:check_childspecs([translate(Spec) || Spec <- ChildSpecs]))).
+                 try ?SUP:check_childspecs([translate(Spec) || Spec <- ChildSpecs]) 
+                 catch throw:X -> {error, X} end)).
 
 countChildren(SupRef) ->
   ?IO(maps:from_list(?SUP:count_children(ref(SupRef)))).
@@ -122,13 +123,20 @@ construct(Time) when is_integer(Time) -> {'Shutdown', Time};
 construct(worker) -> {'Worker'};
 construct(supervisor) -> {'Supervisor'}.
 
-childError(already_present) -> 'ChildAlreadyPresent';
-childError(already_started) -> 'ChildAlreadyStarted';
-childError(running) -> 'ChildIsRunning';
-childError(restarting) -> 'ChildIsRestarting';
-childError(not_found) -> 'ChildNotFound';
-childError(simple_one_for_one) -> 'ChildSimpleOneForOne';
-childError(_Reason) -> 'ChildError'.
+childError(already_present) -> {'ChildAlreadyPresent'};
+childError(already_started) -> {'ChildAlreadyStarted'};
+childError(running) -> {'ChildIsRunning'};
+childError(restarting) -> {'ChildIsRestarting'};
+childError(not_found) -> {'ChildNotFound'};
+childError(simple_one_for_one) -> {'ChildSimpleOneForOne'};
+childError(_Reason) -> {'ChildError'}.
 
-%% TODO:...
-childSpecError(_Reason) -> 'ChildSpecError'.
+childSpecError({duplicate_child_name, ID}) -> {'DuplicateChildName', ID};
+childSpecError({invalid_child_spec, ChildSpec}) -> {'InvalidChildSpec', ChildSpec};
+childSpecError({invalid_child_type, _What}) -> {'InvalidChildType'};
+childSpecError({invalid_restart_type, _What}) -> {'InvalidRestartType'};
+childSpecError({invalid_shotdown, _What}) -> {'InvalidShutdown'};
+childSpecError({invalid_module, _What}) -> {'InvalidModules'};
+childSpecError(missing_id) -> {'ChildSpecMissingId'};
+childSpecError(missing_start) -> {'ChildSpecMissingStart'};
+childSpecError(_Reason) -> {'ChildSpecError'}.
