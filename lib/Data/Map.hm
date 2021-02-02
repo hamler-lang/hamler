@@ -106,11 +106,8 @@ member = ffi2 :maps :is_key
 -- | Test if a key is not a member of a Map.
 foreign import notMember :: forall k v. k -> Map k v -> Boolean
 
-{-
--- | TODO:
-fold :: forall k v acc. ((k, v, acc) -> acc) -> acc -> Map k v -> Map k v
-fold = ffi3 "maps" "fold"
--}
+fold :: forall k v acc. ((k, v, acc) -> acc) -> acc -> Map k v -> acc
+fold = ffi3 :maps :fold
 
 -- | Update an existed key-value pair.
 update :: forall k v. k -> v -> Map k v -> Map k v
