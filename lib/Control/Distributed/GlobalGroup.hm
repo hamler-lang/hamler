@@ -1,0 +1,36 @@
+module Control.Distributed.GlobalGroup where
+
+import Control.Distributed.Node (Node)
+import Control.Process (Process)
+import Data.Maybe (Maybe)
+import Data.Pid (Pid)
+import Data.Unit (Unit)
+
+-- TODO: http://erlang.org/doc/man/global_group.html
+-- | send
+
+data SyncState = NoConf | Synced
+
+data PublishType = PublishNormal | PublishHidden
+
+type GroupName = Atom
+
+data InfoItem = State SyncState
+              | OwnGroupName GroupName
+              | OwnGroupNodes [Node]
+              | SyncedNodes [Node]
+              | SyncError [Node]
+              | NoContact [Node]
+              | OtherGroups [(GroupName, PublishType, [Node])]
+              | Monitoring [Pid]
+
+data Location = NodeLocation Node
+              | GroupLocation GroupName
+
+foreign import globalGroups :: Process (Maybe (GroupName, [GroupName]))
+foreign import info :: Process [InfoItem]
+foreign import monitorNodes :: Boolean -> Process ()
+foreign import ownNodes :: Process [Node]
+foreign import registeredNames :: Location -> Process [Atom]
+foreign import whereisName :: Atom -> Process (Maybe Pid)
+foreign import whereis :: Location -> Atom -> Process (Maybe Pid)
