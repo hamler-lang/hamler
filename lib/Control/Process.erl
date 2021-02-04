@@ -82,4 +82,4 @@ suspend(Pid) ->
 yield() -> ?IO(ok(erlang:yield())).
 
 -compile({inline, [ok/1]}).
-ok(_) -> ok.
+ok(_) -> {ok}.

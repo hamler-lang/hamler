@@ -16,4 +16,4 @@
 
 -export([unit/0]).
 
-unit() -> {'ok'}.
+unit() -> {ok}.

@@ -80,7 +80,7 @@ setLockAt(Id, Nodes) ->
 setLockRetriesAt(Id, Nodes, Retries) ->
    ?IO(global:set_lock(Id, Nodes, Retries)).
 
-sync() -> ?IO(global:sync()).
+sync() -> ?IO(ok(global:sync())).
 
 trans(Id, Fun) ->
   ?IO(maybeAbort(global:trans(Id, Fun))).
@@ -104,9 +104,7 @@ maybeAbort(aborted) ->
   error(aborted);
 maybeAbort(Res) -> Res.
 
-ok(true) -> ok;
-ok(none) -> ok;
-ok(_) -> ok.
+ok(_) -> {ok}.
 
 bool(yes) -> true;
 bool(no) -> false.

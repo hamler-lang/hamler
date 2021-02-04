@@ -56,7 +56,7 @@ foreign import modifyEdge :: forall a b. Graph a b -> Edge b -> Vertex a -> Vert
 
 modifyVertex :: forall a b. Graph a b -> Vertex a -> a -> IO (Vertex a)
 modifyVertex = ffiIO3 :digraph :add_vertex
-
+-- TODO: Unit is not Void
 delEdge :: forall a b. Graph a b -> Edge b -> IO ()
 delEdge = ffiIO2 :digraph :del_edge
 
