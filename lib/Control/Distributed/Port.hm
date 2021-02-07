@@ -41,6 +41,7 @@ import Data.Show (class Show)
 import Data.Unit (Unit)
 import Foreign (ffi1, ffiIO0, ffiIO1, ffiIO3)
 import System.IO (FilePath)
+import Data.Eq (class Eq)
 
 -- | Erlang Port
 foreign import data Port :: Type
@@ -132,6 +133,11 @@ instance Show Port where
 
 showPortImpl :: Port -> String
 showPortImpl = ffi1 :erlang :port_to_list
+
+instance Eq Port where
+  eq = eqPortImpl
+
+foreign import eqPortImpl :: Port -> Port -> Boolean
 
 -- https://erlang.org/doc/reference_manual/ports.html
 -- port_command(Port, Data, OptionList) -> boolean()

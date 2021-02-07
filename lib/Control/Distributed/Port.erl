@@ -27,6 +27,7 @@
         , info/1
         , linkPort/1
         , unlinkPort/1
+        , eqPortImpl/2
         ]).
 
 open(Command, Settings) ->
@@ -152,5 +153,7 @@ linkPort(Port) ->
 
 unlinkPort(Port) ->
   ?IO(ok(erlang:unlink(Port))).
+
+eqPortImpl(P1, P2) -> P1 == P2.
 
 ok(true) -> ok.
