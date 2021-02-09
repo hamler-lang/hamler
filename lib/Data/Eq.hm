@@ -58,6 +58,9 @@ instance (Eq a, Eq b) => Eq (a, b) where
 instance Eq Unit where
   eq _ _ = true
 
+instance Eq (a -> b) where
+  eq = eqFunImpl
+
 foreign import eqAtomImpl :: Atom -> Atom -> Boolean
 foreign import eqBoolImpl :: Boolean -> Boolean -> Boolean
 foreign import eqBinImpl :: Binary -> Binary -> Boolean
@@ -66,3 +69,4 @@ foreign import eqIntImpl :: Integer -> Integer -> Boolean
 foreign import eqFloatImpl :: Float -> Float -> Boolean
 foreign import eqStringImpl :: String -> String -> Boolean
 foreign import eqListImpl :: forall a. List a -> List a -> Boolean
+foreign import eqFunImpl :: forall a b. (a -> b) -> (a -> b) -> Boolean

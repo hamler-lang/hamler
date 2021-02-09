@@ -1,0 +1,34 @@
+module Data.EVal where
+
+import Data.Pid (Pid)
+import Data.Ref (Ref)
+import Control.Distributed.Port(Port)
+import Data.Eq (class Eq, eq)
+
+data EVal = EInt Integer
+          | EBool Boolean
+          | EFloat Float
+          | EAtom Atom
+          | EBin Binary
+          | EPid Pid
+          | EPort Port
+          | ERef Ref
+          | EList [EVal]
+          | EFun (EVal -> EVal)
+          | ETuple [EVal]
+
+foreign import toEVal :: forall a. a -> EVal
+
+instance Eq EVal where
+    eq (EInt x)   (EInt y)   = eq x y
+    eq (EBool x)  (EBool y)  = eq x y
+    eq (EFloat x) (EFloat y) = eq x y
+    eq (EAtom x)  (EAtom y)  = eq x y
+    eq (EBin x)   (EBin y)   = eq x y
+    eq (EPid x)   (EPid y)   = eq x y
+    eq (EPort x)  (EPort y)  = eq x y
+    eq (ERef x)   (ERef y)   = eq x y
+    eq (EList x)  (EList y)  = eq x y 
+    eq (EFun x)   (EFun y)   = eq x y 
+    eq (ETuple x) (ETuple y) = eq x y
+    eq _          _          = false
