@@ -18,6 +18,7 @@ import Control.Monad (IO, pure)
 import Data.Functor (map)
 import Data.Either (Either(..))
 import Data.Show (class Show)
+import Data.Void (Void)
 
 -- IO Exception
 foreign import data Error :: Type
@@ -29,7 +30,7 @@ foreign import showErrorImpl :: Error -> String
 
 -- erlang:raise(Class, Reason, Stacktrace) -> no_return()
 
-throw :: forall a e. e -> IO a
+throw :: forall e. e -> IO Void
 throw s = throwException s
 
 try :: forall a e. IO a -> IO (Either e a)
@@ -45,6 +46,6 @@ foreign import message :: Error -> String
 foreign import name :: Error -> String
 -}
 
-foreign import throwException :: forall a e. e -> IO a
+foreign import throwException :: forall e. e -> IO Void
 
 foreign import catchException :: forall a e. IO a -> (e -> IO a) -> IO a

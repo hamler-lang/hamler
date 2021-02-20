@@ -17,12 +17,12 @@ propCatchE2 f = if f == [] then pure true else do
   r <- E.catchException (errorFun1 f) (\x -> pure $ showAny x)
   pure $ r == "badarith"
 
-errorFun2 :: IO String
+errorFun2 :: IO Void
 errorFun2 = E.throw 2
 
 propTryThrow :: IO Bool
 propTryThrow = do
-  r <- (E.try errorFun2 :: IO (Either Integer String))
+  r <- (E.try errorFun2 :: IO (Either Integer Void))
   pure $ r == Left 2
 
 test :: TestGroup (Integer -> IO TestResult)
