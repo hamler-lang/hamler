@@ -56,21 +56,31 @@ foreign import modifyEdge :: forall a b. Graph a b -> Edge b -> Vertex a -> Vert
 
 modifyVertex :: forall a b. Graph a b -> Vertex a -> a -> IO (Vertex a)
 modifyVertex = ffiIO3 :digraph :add_vertex
--- TODO: Unit is not Void
+
 delEdge :: forall a b. Graph a b -> Edge b -> IO ()
-delEdge = ffiIO2 :digraph :del_edge
+delEdge = do
+  ffiIO2 :digraph :del_edge
+  pure ()
 
 delEdges :: forall a b. Graph a b -> [Edge b] -> IO ()
-delEdges = ffiIO2 :digraph :del_edges
+delEdges = do
+  ffiIO2 :digraph :del_edges
+  pure ()
 
 delPath :: forall a b. Graph a b -> Vertex a -> Vertex a -> IO ()
-delPath = ffiIO3 :digraph :del_path
+delPath = do 
+  ffiIO3 :digraph :del_path
+  pure ()
 
 delVertex :: forall a b. Graph a b -> Vertex a -> IO ()
-delVertex = ffiIO2 :digraph :del_vertex
+delVertex = do
+  ffiIO2 :digraph :del_vertex
+  pure ()
 
 delVertices :: forall a b. Graph a b -> [Vertex a] -> IO ()
-delVertices = ffiIO2 :digraph :del_vertices
+delVertices = do
+  ffiIO2 :digraph :del_vertices
+  pure ()
 
 -- | use graph after delete is a undefined behaviour
 delete :: forall a b. Graph a b -> IO ()
