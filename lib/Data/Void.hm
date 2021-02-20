@@ -14,16 +14,9 @@
 -----------------------------------------------------------------------------
 module Data.Void (Void) where
 
--- import Data.Show (class Show)
+import Data.Eq (class Eq)
 
-newtype Void = Void Void
+foreign import data Void :: Type
 
-{-
-instance Show Void where
-  show = absurd
-
-absurd :: forall a. Void -> a
-absurd a = spin a
-  where
-  spin (Void b) = spin b
--}
+instance Eq Void where
+  eq _ _ = false

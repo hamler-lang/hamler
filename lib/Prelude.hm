@@ -38,6 +38,7 @@ module Prelude
   , module Data.Foldable
   , module Data.Traversable
   , module Data.Unit
+  , module Data.Void
   , module Control.Distributed.Node
   , module Control.Monad
   , module Control.Process
@@ -73,5 +74,6 @@ import Data.Tuple (fst, snd)
 import Data.Foldable(class Foldable, foldl, foldr, foldMap)
 import Data.Traversable(class Traversable, traverse, sequence)
 import Data.Unit (Unit, unit)
+import Data.Void (Void)
 import System.Error (throw, try, catch, catchException)
 import System.IO (print, printf, println, readFile, writeFile, appendFile)
