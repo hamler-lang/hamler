@@ -58,7 +58,6 @@ modifyVertex :: forall a b. Graph a b -> Vertex a -> a -> IO (Vertex a)
 modifyVertex = ffiIO3 :digraph :add_vertex
 
 delEdge :: forall a b. Graph a b -> Edge b -> IO ()
-<<<<<<< HEAD
 delEdge g e = do
   ffiIO2 :digraph :del_edge g e
   pure ()
@@ -81,30 +80,6 @@ delVertex g v = do
 delVertices :: forall a b. Graph a b -> [Vertex a] -> IO ()
 delVertices g vs = do
   ffiIO2 :digraph :del_vertices g vs
-=======
-delEdge = do
-  ffiIO2 :digraph :del_edge
-  pure ()
-
-delEdges :: forall a b. Graph a b -> [Edge b] -> IO ()
-delEdges = do
-  ffiIO2 :digraph :del_edges
-  pure ()
-
-delPath :: forall a b. Graph a b -> Vertex a -> Vertex a -> IO ()
-delPath = do 
-  ffiIO3 :digraph :del_path
-  pure ()
-
-delVertex :: forall a b. Graph a b -> Vertex a -> IO ()
-delVertex = do
-  ffiIO2 :digraph :del_vertex
-  pure ()
-
-delVertices :: forall a b. Graph a b -> [Vertex a] -> IO ()
-delVertices = do
-  ffiIO2 :digraph :del_vertices
->>>>>>> 1626eb47b61045503de67ac0e22b1396b5179052
   pure ()
 
 -- | use graph after delete is a undefined behaviour
