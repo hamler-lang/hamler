@@ -34,3 +34,7 @@ foreign import ownNodes :: Process [Node]
 foreign import registeredNames :: Location -> Process [Atom]
 foreign import whereisName :: Atom -> Process (Maybe Pid)
 foreign import whereis :: Location -> Atom -> Process (Maybe Pid)
+
+-- None stand for badarg
+foreign import send :: forall m. Location -> Atom -> m -> Process (Maybe Pid)
+foreign import sendInGlobal :: forall m. Atom -> m -> Process (Maybe Pid)

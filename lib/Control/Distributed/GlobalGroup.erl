@@ -9,7 +9,9 @@
     ownNodes/0,
     registeredNames/1,
     whereisName/1,
-    whereis/2]).
+    whereis/2,
+    send/2,
+    sendInGlobal/3]).
 
 globalGroups() ->
     ?IO(case global_group:global_groups() of
@@ -61,4 +63,14 @@ whereisName(Name) ->
 whereis(Location, Name) ->
     ?IO(case global_group:whereis_name(location(Location), Name) of
         undefined -> {'Nothing'};
+        Pid -> {'Just', Pid} end).
+
+send(Name, Msg) -> 
+    ?IO(case global_group:send(Name, Msg) of
+        {badarg, _} -> {'Nothing'};
+        Pid -> {'Just', Pid} end).
+
+sendInGlobal(Location, Name, Msg) ->
+    ?IO(case global_group:send(location(Location), Name, Msg) of
+        {badarg, _} -> {'Nothing'};
         Pid -> {'Just', Pid} end).
