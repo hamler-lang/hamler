@@ -30,6 +30,8 @@
         , version/0
         ]).
 
+-include("../Data/Time.hrl").
+
 findExe(Name) ->
   ?IO(case os:find_executable(Name) of
         false -> ?Nothing;
@@ -60,13 +62,13 @@ systemTime() ->
   ?IO(os:system_time()).
 
 systemTimeIn(Unit) ->
-  ?IO(os:system_time(unwrap(Unit))).
+  ?IO(os:system_time(time_unit(Unit))).
 
 perfCounter() ->
   ?IO(os:perf_counter()).
 
 perfCounterIn(Unit) ->
-  ?IO(os:perf_counter(unwrap(Unit))).
+  ?IO(os:perf_counter(time_unit(Unit))).
 
 -spec(version() -> string()).
 version() ->
@@ -75,13 +77,6 @@ version() ->
           string:join([integer_to_list(I) || I <- [Major, Minor, Release]], ".");
         VersionString -> VersionString
       end).
-
-unwrap({'Second'}) -> second;
-unwrap({'Millisecond'}) -> millisecond;
-unwrap({'Microsecond'}) -> microsecond;
-unwrap({'Nanosecond'}) -> nanosecond;
-unwrap({'Native'}) -> native;
-unwrap({'PerfCounter'}) -> perf_counter;
 
 unwrap({'Sighup'})  -> sighup;
 unwrap({'Sigquit'}) -> sigquit;
