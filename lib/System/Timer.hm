@@ -24,19 +24,18 @@ import Control.Monad (IO)
 import Data.Maybe (Maybe)
 import Data.Pid (Pid)
 import Data.Ref (Reference)
-import Data.Time (Time)
 import Data.Unit (Unit)
 import Foreign (ffiIO1, ffiIO3)
 
 type TimerRef = Reference
 
-startTimer :: forall m. Time -> Pid -> m -> IO TimerRef
+startTimer :: forall m. Integer -> Pid -> m -> IO TimerRef
 startTimer = ffiIO3 :erlang :start_timer
 
 cancelTimer :: TimerRef -> IO ()
 cancelTimer = ffiIO1 :erlang :cancel_timer
 
-sendAfter :: forall m. Time -> Pid -> m -> IO TimerRef
+sendAfter :: forall m. Integer -> Pid -> m -> IO TimerRef
 sendAfter = ffiIO3 :erlang :send_after
 
-foreign import readTimer :: TimerRef -> IO (Maybe Time)
+foreign import readTimer :: TimerRef -> IO (Maybe Integer)

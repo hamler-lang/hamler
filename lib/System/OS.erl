@@ -25,6 +25,7 @@
         , setSignal/2
         , systemTime/0
         , systemTimeIn/1
+        , timestamp/0
         , perfCounter/0
         , perfCounterIn/1
         , version/0
@@ -63,6 +64,9 @@ systemTime() ->
 
 systemTimeIn(Unit) ->
   ?IO(os:system_time(time_unit(Unit))).
+
+timestamp() ->
+  ?IO(os:timestamp()).
 
 perfCounter() ->
   ?IO(os:perf_counter()).

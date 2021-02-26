@@ -33,7 +33,7 @@ module System.OS
 
 import Control.Monad (IO)
 import Data.Maybe (Maybe)
-import Data.Time (TimeUnit)
+import Data.Time (TimeUnit, UTCTime)
 import Data.Unit (Unit)
 import System.FilePath (FilePath)
 
@@ -64,6 +64,8 @@ foreign import setSignal :: Signal -> SigHandler -> IO ()
 foreign import systemTime :: IO Integer
 
 foreign import systemTimeIn :: TimeUnit -> IO Integer
+
+foreign import timestamp :: IO UTCTime
 
 foreign import perfCounter :: IO Integer
 

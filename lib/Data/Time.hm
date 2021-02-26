@@ -15,8 +15,12 @@
 module Data.Time where
 
 import Control.Monad
+import Foreign (ffi1, ffi2)
 
-type Time = Integer
+type Time = (Integer, Integer, Integer)
+type Date = (Integer, Integer, Integer)
+type DateTime = (Date, Time)
+type YearWeek = (Integer, Integer)
 
 data TimeUnit
   = Second
@@ -26,7 +30,73 @@ data TimeUnit
   | Native
   | PerfCounter
 
--- TODO:...
-foreign import data UTCTime :: Type
+type UTCTime = (Integer, Integer, Integer)
 
 foreign import getCurrentTime :: IO UTCTime
+foreign import getLocalTime :: IO DateTime
+foreign import getIsoWeekNumber :: IO Integer
+foreign import getUniversalTime :: IO DateTime
+
+dateToGregorianDays :: Date -> Integer
+dateToGregorianDays = ffi1 :calendar :date_to_gregorian_days
+
+datetimeToGregorianSeconds :: DateTime -> Integer
+datetimeToGregorianSeconds = ffi1 :calendar :datetime_to_gregorian_seconds
+
+dayOfTheWeek :: Date -> Integer
+dayOfTheWeek = ffi1 :calendar :day_of_the_week
+
+gregorianDaysToDate :: Integer -> Date
+gregorianDaysToDate = ffi1 :calendar :gregorian_days_to_date
+
+gregorianSecondsToDateTime :: Integer -> DateTime
+gregorianSecondsToDateTime = ffi1 :calendar :gregorian_seconds_to_datetime
+
+isLeapYear :: Integer -> Boolean
+isLeapYear = ffi1 :calendar :is_leap_year
+
+isoWeekNumber :: Date -> YearWeek
+isoWeekNumber = ffi1 :calendar :iso_week_number
+
+lastDayOfTheMonth :: Integer -> Integer -> Integer
+lastDayOfTheMonth = ffi2 :calendar :last_day_of_the_month
+
+localTimeToUniversalTime :: DateTime -> [DateTime]
+localTimeToUniversalTime = ffi1 :calendar :local_time_to_universal_time_dst
+
+nowToDateTime :: UTCTime -> DateTime
+nowToDateTime = ffi1 :calendar :now_to_datetime
+
+nowToLocalTime :: UTCTime -> DateTime
+nowToLocalTime = ffi1 :calendar :now_to_local_time
+
+nowToUniversalTime :: UTCTime -> DateTime
+nowToUniversalTime = ffi1 :calendar :now_to_universal_time
+
+foreign import rfc3339ToSeconds :: String -> Integer
+foreign import rfc3339ToNanoseconds :: String -> Integer
+foreign import rfc3339ToMilliseconds :: String -> Integer
+foreign import rfc3339ToMicroseconds :: String -> Integer
+
+secondsToDaysTime :: Integer -> (Integer, Time)
+secondsToDaysTime = ffi1 :calendar :seconds_to_daystime
+
+secondsToTime :: Integer -> Time
+secondsToTime = ffi1 :calendar :seconds_to_time
+
+foreign import systemTimeToLocalTime :: Integer -> TimeUnit -> DateTime
+foreign import systemTimeToUniversalTime :: Integer -> TimeUnit -> DateTime
+
+foreign import secondsToRfc3339 :: Integer -> String
+foreign import nanosecondsToRfc3339 :: Integer -> String
+foreign import millisecondsToRfc3339 :: Integer -> String
+foreign import microsecondsToRfc3339 :: Integer -> String
+
+timeToSeconds :: Time -> Integer
+timeToSeconds = ffi1 :calendar :time_to_seconds
+
+universalTimeToLocalTime :: DateTime -> DateTime
+universalTimeToLocalTime = ffi1 :calendar :universal_time_to_local_time
+
+isValidDate :: Date -> Boolean
+isValidDate = ffi1 :calendar :valid_date

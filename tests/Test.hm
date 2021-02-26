@@ -26,6 +26,7 @@ import Test.Data.Enum as Enum
 import Test.Data.Function as Func
 import Test.Data.Semiring as SR
 import Test.Data.Ring as Ring
+import Test.Data.Time as Time
 import Test.Data.Timeout as Timeout
 import Test.Data.Ordering as Ordering
 import Test.Data.Functor as Functor
@@ -84,6 +85,7 @@ main = runTest $ TxG "lib"
                  , TxG "Function" [Func.test]
                  , TxG "Semiring" [SR.test]
                  , TxG "Ring"     [Ring.test]
+                 , TxG "Time"     [Time.test]
                  , TxG "Timeout"  [Timeout.test]
                  , TxG "Ordering" [Ordering.test]
                  , TxG "Functor"  [Functor.test]

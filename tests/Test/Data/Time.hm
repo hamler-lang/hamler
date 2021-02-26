@@ -1,1 +1,23 @@
 module Test.Data.Time where
+
+import Control.Monad (IO)
+import Data.Eq ((==))
+import Data.Ring (abs)
+import Data.Time
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck)
+
+testGreg :: Integer -> Boolean
+testGreg s = abs s == dateToGregorianDays (gregorianDaysToDate (abs s))
+
+testTime :: Integer -> Boolean
+testTime s = abs s == timeToSeconds (secondsToTime (abs s))
+
+testRfc :: Integer -> Boolean
+testRfc s = abs s == rfc3339ToSeconds (secondsToRfc3339 (abs s))
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ 
+    quickCheck "Greg" testGreg,
+    quickCheck "Time" testTime,
+    quickCheck "Rfc" testRfc
+]
