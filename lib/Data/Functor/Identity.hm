@@ -21,7 +21,6 @@ instance Applicative Identity where
   apply (Identity f) (Identity a) = Identity (f a)
 
 instance Monad Identity where
-  return = Identity
   bind (Identity x) f = f x
 
 instance Foldable Identity where
