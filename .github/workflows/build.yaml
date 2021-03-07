@@ -272,8 +272,8 @@ jobs:
           git clone https://github.com/hamler-lang/homebrew-hamler homebrew-hamler
           version=$(echo ${{ github.ref }} | sed -r  "s .*/.*/(.*) \1 g")
           pkg=hamler-${version}.tgz
-          aws s3 cp _packages/$pkg s3://packages.emqx.io/hamler/homebrew/
-          download="https://s3-us-west-2.amazonaws.com/packages.emqx.io/hamler/homebrew/$pkg"
+          aws s3 cp _packages/$pkg s3://packages.emqx/hamler/homebrew/
+          download="https://s3-us-west-2.amazonaws.com/packages.emqx/hamler/homebrew/$pkg"
           sha256=$(openssl dgst -sha256 _packages/$pkg | awk '{print $2}')
           cd homebrew-hamler
           gsed -i "/url/c\  url \"$download\"" ./Formula/hamler.rb
