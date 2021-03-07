@@ -44,6 +44,7 @@ module Control.Monad
   , replApply
   ) where
 
+import Data.Function (identity)
 import Data.Functor (class Functor, map, (<$>))
 import Data.Unit (Unit, unit)
 
@@ -221,9 +222,7 @@ unless :: forall m. Monad m => Boolean -> m () -> m ()
 unless b m = if b then pure () else m
 
 join :: forall m a. Monad m => m (m a) -> m a
-join mma = do
-  ma <- mma
-  ma
+join x = x >>= identity
 
 filterM :: forall m a. Monad m => (a -> m Boolean) -> [a] -> m [a]
 filterM f [] = pure []
@@ -237,5 +236,3 @@ foldM _ i [] = pure i
 foldM f i [x|xs] = do
   r <- f i x
   foldM f r xs
-
-

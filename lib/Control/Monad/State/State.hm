@@ -1,0 +1,87 @@
+module Control.Monad.State.State where
+
+import Prelude (class Applicative, class Functor, class Monad, bind, flip, fst, map, pure, snd, ($))
+import Control.Monad.Identity (Identity(..), runIdentity)
+import Control.Monad.Trans (class MonadTrans, lift)
+import Control.Monad (class Alternative, empty, (<|>))
+
+newtype StateT s m a = ST (s -> m (s, a))
+unStateT :: forall s m a.
+  StateT s m a -> s -> m (s, a)
+unStateT (ST s) = s
+
+runStateT :: forall s m a.
+  s -> StateT s m a -> m (s, a)
+runStateT = flip unStateT
+
+evalStateT :: forall s f a. Functor f =>
+  s -> StateT s f a -> f a
+evalStateT s xs = map snd (runStateT s xs)
+
+execStateT :: forall s f a. Functor f =>
+  s -> StateT s f a -> f s
+execStateT s xs = map fst (runStateT s xs)
+
+mapStateT :: forall s m n a b.
+  (m (s, a) -> n (s, b)) -> StateT s m a -> StateT s n b
+mapStateT f (ST x) = ST \s ->
+  let xs = x s
+  in f xs
+
+withStateT :: forall s m a.
+  (s -> s) -> StateT s m a -> StateT s m a
+withStateT f (ST x) = ST \s -> x (f s)
+
+type State s a = StateT s Identity a
+runState :: forall s a. s -> State s a -> (s, a)
+runState s act = runIdentity (runStateT s act)
+
+evalState :: forall s a. s -> State s a -> a
+evalState s xs = snd (runState s xs)
+
+execState :: forall s a. s -> State s a -> s
+execState s xs = fst (runState s xs)
+
+mapState :: forall s a b.
+  ((s, a) -> (s, b)) -> State s a -> State s b
+mapState f = mapStateT \(Id x) -> Id (f x)
+
+
+--| TODO: give instance to simpl.
+instance Functor f => Functor (StateT s f) where
+  map f (ST x) = ST \s ->
+    let xs = x s
+    in map (mapT_ f) xs where
+        mapT_ :: forall s_ a b.
+          (a -> b) -> (s_, a) -> (s_, b)
+        mapT_ f_ x_ = (fst x_, f_ (snd x_))
+
+--| TODO: use @ap@ to refactor @applicativeStateTsm@.
+-- ap_ :: forall m a b.
+--   Monad m => m (a -> b) -> m a -> m b
+-- ap_ f a = do
+--   f' <- f
+--   a' <- a
+--   pure (f' a')
+
+instance Monad m => Applicative (StateT s m) where
+  pure x = ST $ \s -> pure (s, x)
+  apply (ST f) (ST x) = ST $ \s -> do
+    (t, g) <- f s
+    (u, b) <- x t
+    pure (u, g b)
+
+instance Monad m => Monad (StateT s m) where
+  bind (ST a) f = ST $ \s -> do
+    (s', v) <- a s
+    let ST fv = f v
+    fv s'
+
+instance MonadTrans (StateT s) where
+  lift x = ST $ \s -> do
+    r <- x
+    pure (s, r)
+
+instance (Monad m, Alternative m) => Alternative (StateT s m) where
+  empty = lift empty
+  append (ST f) (ST g) = ST $ \s -> f s <|> g s

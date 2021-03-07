@@ -1,0 +1,23 @@
+module Control.Monad.Writer.Classes where
+
+import Control.Monad (class Monad, map)
+import Data.Monoid (class Monoid)
+import Data.Unit (Unit, unit)
+import Data.Bifunctor (mapSnd)
+import Data.Function (($))
+
+class (Monoid w, Monad m) => MonadWriter w m | m -> w where
+  writer :: forall a. (a, w) -> m a
+  listen :: forall a. m a -> m (a, w)
+  pass :: forall a. m (a, w -> w) -> m a
+
+tell :: forall w m. MonadWriter w m => w -> m ()
+tell w = writer ((), w)
+
+listens :: forall w m a b. MonadWriter w m =>
+  (w -> b) -> m a -> m (a, b)
+listens f x = map (mapSnd f) (listen x)
+
+censor :: forall w m a. MonadWriter w m =>
+  (w -> w) -> m a -> m a
+censor f x = pass $ map (\a -> (a, f)) x

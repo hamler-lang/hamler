@@ -1,0 +1,47 @@
+module Control.Monad.Reader.Reader where
+
+import Data.Function (flip, ($))
+import Control.Monad.Identity (Identity, runIdentity)
+import Control.Monad.Trans (class MonadTrans, lift)
+import Data.Functor (class Functor, map)
+import Control.Monad (class Alternative, class Applicative, class Monad, bind, empty, pure, (<*>), (<|>))
+
+newtype ReaderT s m a = ReaderT (s -> m a)
+unReaderT :: forall s m a.
+  ReaderT s m a -> s -> m a
+unReaderT (ReaderT x) = x
+
+runReaderT :: forall s m a. s -> ReaderT s m a -> m a
+runReaderT = flip unReaderT
+
+mapReaderT :: forall s m n a b.
+  (m a -> n b) -> ReaderT s m a -> ReaderT s n b
+mapReaderT f x = ReaderT \s -> f (runReaderT s x)
+
+type Reader s a = ReaderT s Identity a
+runReader :: forall s a.
+  s -> Reader s a -> a
+runReader s act = runIdentity (runReaderT s act)
+
+instance Functor f => Functor (ReaderT s f) where
+  map f (ReaderT g) = ReaderT $ \s -> map f (g s)
+
+instance Applicative f => Applicative (ReaderT s f) where
+  pure x = ReaderT $ \s -> pure x
+  apply (ReaderT f) (ReaderT x) = ReaderT $ \s ->
+    let fs = f s
+        xs = x s
+    in fs <*> xs
+
+instance Monad m => Monad (ReaderT s m) where
+  bind (ReaderT a) f = ReaderT $ \s -> do
+    v <- a s
+    let ReaderT fv = f v
+    fv s
+
+instance MonadTrans (ReaderT s) where
+  lift x = ReaderT $ \_ -> x
+
+instance (Monad f, Alternative f) => Alternative (ReaderT s f) where
+  empty = lift empty
+  append (ReaderT f) (ReaderT g) = ReaderT $ \s -> f s <|> g s

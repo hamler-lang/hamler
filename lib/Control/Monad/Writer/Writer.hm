@@ -1,0 +1,67 @@
+module Control.Monad.Writer.Writer where
+
+import Control.Monad.Identity (Identity(..), runIdentity)
+import Control.Monad.Trans (class MonadTrans)
+import Data.Semigroup (class Semigroup, (<>))
+import Data.Functor (class Functor, map, (<$>))
+import Data.Function (($))
+import Data.Bifunctor (mapFst, mapSnd)
+import Data.Monoid (class Monoid, mempty)
+import Control.Monad (class Alternative, class Applicative, class Monad, bind, empty, pure, (<|>))
+import Data.Tuple (snd)
+
+newtype WriterT w m a = WriterT (w -> m (a, w))
+unWriterT :: forall w m a.
+  WriterT w m a -> w -> m (a, w)
+unWriterT (WriterT x) = x
+
+writerT :: forall f w a. Functor f => Semigroup w =>
+  f (a, w) -> WriterT w f a
+writerT f = WriterT $ \w -> mapSnd ((<>) w) <$> f
+
+runWriterT :: forall w m a. Monoid w => WriterT w m a -> m (a, w)
+runWriterT m = unWriterT m mempty
+
+execWriterT :: forall m w a. Functor m => Monoid w =>
+  WriterT w m a -> m w
+execWriterT xs = map snd (runWriterT xs)
+
+mapWriterT :: forall m n w w' a b. Functor n => Monoid w => Semigroup w' =>
+  (m (a, w) -> n (b, w')) -> WriterT w m a -> WriterT w' n b
+mapWriterT f m = WriterT $ \w ->
+  mapSnd ((<>) w) <$> f (runWriterT m)
+
+type Writer w = WriterT w Identity
+runWriter :: forall w a. Monoid w =>
+  Writer w a -> (a, w)
+runWriter xs = runIdentity (runWriterT xs)
+
+execWriter :: forall w a. Monoid w =>
+  Writer w a -> w
+execWriter xs = runIdentity (execWriterT xs)
+
+mapWriter :: forall w w' a b. Monoid w => Semigroup w' =>
+  ((a, w) -> (b, w')) -> Writer w a -> Writer w' b
+mapWriter f = mapWriterT \(Id p) -> Id (f p)
+
+instance Functor f => Functor (WriterT w f) where
+  map f x = WriterT (\w -> (mapFst f) <$> unWriterT x w)
+
+instance Monad m => Applicative (WriterT w m) where
+  pure x = WriterT $ \w -> pure (x, w)
+  apply (WriterT f) (WriterT x) = WriterT $ \w -> do
+    (g, t) <- f w
+    (u, b) <- x t
+    pure (g u, b)
+
+instance (Monad m, Alternative m) => Alternative (WriterT w m) where
+  empty = WriterT $ \_ -> empty
+  append (WriterT x) (WriterT y) = WriterT $ \w -> x w <|> y w
+
+instance Monad m => Monad (WriterT w m) where
+  bind ma k = WriterT $ \w -> do
+    (a, w') <- unWriterT ma w
+    unWriterT (k a) w'
+
+instance MonadTrans (WriterT w) where
+  lift m = WriterT $ \w -> map (\a -> (a, w)) m

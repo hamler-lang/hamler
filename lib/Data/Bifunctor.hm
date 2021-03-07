@@ -1,0 +1,21 @@
+module Data.Bifunctor where
+
+import Data.Function (identity)
+import Data.Either
+
+class Bifunctor f where
+  bimap :: forall a b c d.
+    (a -> b) -> (c -> d) -> f a c -> f b d
+
+mapFst :: forall f a b c. Bifunctor f => (a -> b) -> f a c -> f b c
+mapFst f = bimap f identity
+
+mapSnd :: forall f a b c. Bifunctor f => (b -> c) -> f a b -> f a c
+mapSnd = bimap identity
+
+instance Bifunctor Tuple2 where
+  bimap f g (x, y) = (f x, g y)
+
+instance Bifunctor Either where
+  bimap f _ (Left  x) = Left  (f x)
+  bimap _ g (Right y) = Right (g y)

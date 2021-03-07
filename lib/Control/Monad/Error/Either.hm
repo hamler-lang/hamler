@@ -1,0 +1,16 @@
+module Either where
+
+import Data.Either (Either, either)
+import Control.Monad (class Monad, (>>=))
+
+data EitherT e m a = EitherT (m (Either e a))
+runEitherT :: forall e m a. EitherT e m a -> m (Either e a)
+runEitherT (EitherT x) = x
+
+eitherT :: forall m a b c. Monad m =>
+  (a -> m c) -> (b -> m c) -> EitherT a m b -> m c
+eitherT f g x = runEitherT x >>= either f g
+
+mapEitherT :: forall m n e e' a b.
+  (m (Either e a) -> n (Either e' b)) -> EitherT e m a -> EitherT e' n b
+mapEitherT f x = EitherT (f (runEitherT x))
