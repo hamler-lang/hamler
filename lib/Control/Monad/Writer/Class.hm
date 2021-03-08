@@ -1,9 +1,9 @@
-module Control.Monad.Writer.Classes where
+module Control.Monad.Writer.Class where
 
 import Control.Monad (class Monad, map)
 import Data.Monoid (class Monoid)
 import Data.Unit (Unit, unit)
-import Data.Bifunctor (mapSnd)
+import Data.Functor (mapSnd)
 import Data.Function (($))
 
 class (Monoid w, Monad m) => MonadWriter w m | m -> w where

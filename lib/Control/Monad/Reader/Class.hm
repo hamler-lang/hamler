@@ -1,4 +1,4 @@
-module Control.Monad.Reader.Classes where
+module Control.Monad.Reader.Class where
 
 import Control.Monad (class Monad, bind, map, pure)
 import Control.Monad.Trans (lift)

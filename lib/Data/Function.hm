@@ -52,3 +52,15 @@ identity :: forall a. a -> a
 identity x = x
 
 foreign import error :: forall a. String -> a
+
+dup :: forall a. a -> (a, a)
+dup x = (x, x)
+
+blackbird :: forall a b c d. (c -> d) -> (a -> b -> c) -> a -> b -> d
+blackbird = compose `compose` compose
+
+infixr 9 blackbird as .:
+
+on :: forall a b c. (b -> b -> c) -> (a -> b) -> a -> a -> c
+on f g x y = g x `f` g y
+infixl 0 on as <+>
