@@ -1,4 +1,4 @@
-module Control.State.Class where
+module Control.Monad.State.Class where
 
 import Control.Monad (class Monad, bind, discard, pure)
 import Data.Unit (Unit, unit)
