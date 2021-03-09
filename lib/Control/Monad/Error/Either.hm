@@ -1,7 +1,10 @@
-module Either where
+module Control.Monad.Error.Either where
 
-import Data.Either (Either, either)
-import Control.Monad (class Monad, (>>=))
+import Data.Function (($))
+import Data.Either (Either(..), either)
+import Control.Monad (class Applicative, class Monad, bind, pure, (<*>), (>>=))
+import Data.Functor (class Functor, map, (<$>))
+import Control.Monad.Trans (class MonadTrans)
 
 data EitherT e m a = EitherT (m (Either e a))
 runEitherT :: forall e m a. EitherT e m a -> m (Either e a)
@@ -14,3 +17,16 @@ eitherT f g x = runEitherT x >>= either f g
 mapEitherT :: forall m n e e' a b.
   (m (Either e a) -> n (Either e' b)) -> EitherT e m a -> EitherT e' n b
 mapEitherT f x = EitherT (f (runEitherT x))
+
+instance Functor f => Functor (EitherT e f) where
+  map f e = EitherT $ map f <$> runEitherT e
+
+instance Applicative f => Applicative (EitherT e f) where
+  pure x = EitherT $ pure $ Right x
+  apply f x = EitherT $ pure (<*>) <*> (runEitherT f) <*> (runEitherT x)
+
+instance Monad m => Monad (EitherT e m) where
+  bind x k = EitherT $ bind (runEitherT x) (either (\l -> pure (Left l)) (\v -> runEitherT (k v)))
+
+instance MonadTrans (EitherT e) where
+  lift x = EitherT (map Right x)

@@ -2,7 +2,11 @@ module Control.State.Class where
 
 import Control.Monad (class Monad, bind, discard, pure)
 import Data.Unit (Unit, unit)
+import Control.Monad.Trans (lift)
 import Control.Monad.State.State (StateT(..))
+import Control.Monad.Error.Either (EitherT)
+import Control.Monad.Writer.Writer (WriterT)
+import Control.Monad.Reader.Reader (ReaderT)
 
 class Monad m => MonadState s m | m -> s where
   get :: m s
@@ -27,3 +31,15 @@ gets f = do s <- get
 instance Monad m => MonadState s (StateT s m) where
   get = ST (\x -> pure (x, x))
   put x = ST (\y -> pure (x, ()))
+
+instance MonadState s m => MonadState s (EitherT e m) where
+  get = lift get
+  put x = lift (put x)
+
+instance MonadState s m => MonadState s (ReaderT r m) where
+  get = lift get
+  put x = lift (put x)
+
+instance MonadState s m => MonadState s (WriterT w m) where
+  get = lift get
+  put x = lift (put x)

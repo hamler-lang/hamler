@@ -5,6 +5,8 @@ import Control.Monad.Trans (lift)
 import Data.Function (flip, ($))
 import Control.Monad.Reader.Reader (ReaderT(..))
 import Control.Monad.State.State (StateT, mapStateT)
+import Control.Monad.Error.Either (EitherT, mapEitherT)
+import Control.Monad.Writer.Writer (WriterT(..))
 
 class Monad m => MonadReader s m | m -> s where
   ask :: m s
@@ -27,3 +29,11 @@ instance Monad m => MonadReader s (ReaderT s m) where
 instance MonadReader r m => MonadReader r (StateT s m) where
   ask = lift ask
   local f = mapStateT (local f)
+
+instance MonadReader r m => MonadReader r (EitherT e m) where
+  ask = lift ask
+  local x = mapEitherT (local x)
+
+instance MonadReader r m => MonadReader r (WriterT w m) where
+  ask = lift ask
+  local f (WriterT x) = WriterT \w -> local f (x w)

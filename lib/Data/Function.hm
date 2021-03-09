@@ -20,6 +20,8 @@ module Data.Function
   , pipeline, (|>)
   , identity
   , error
+  , on
+  , (<+>)
   ) where
 
 compose :: forall a b c. (b -> c) -> (a -> b) -> (a -> c)
