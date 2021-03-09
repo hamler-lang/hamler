@@ -4,7 +4,7 @@ import Data.Function (flip, ($))
 import Control.Monad.Identity (Identity, runIdentity)
 import Control.Monad.Trans (class MonadTrans, lift)
 import Data.Functor (class Functor, map)
-import Control.Monad (class Alternative, class Applicative, class Monad, bind, empty, pure, (<*>), (<|>))
+import Control.Monad (class Alternative, class Applicative, class Monad, bind, empty, pure, (<*>), (<|>), class MonadPlus, mzero, mplus)
 
 newtype ReaderT s m a = ReaderT (s -> m a)
 unReaderT :: forall s m a.
@@ -45,3 +45,7 @@ instance MonadTrans (ReaderT s) where
 instance (Monad f, Alternative f) => Alternative (ReaderT s f) where
   empty = lift empty
   append (ReaderT f) (ReaderT g) = ReaderT $ \s -> f s <|> g s
+
+instance MonadPlus m => MonadPlus (ReaderT r m) where
+  mzero = lift mzero
+  mplus m n = ReaderT $ \r -> unReaderT m r `mplus` unReaderT n r

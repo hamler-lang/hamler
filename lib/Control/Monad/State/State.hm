@@ -3,7 +3,7 @@ module Control.Monad.State.State where
 import Prelude (class Applicative, class Functor, class Monad, bind, flip, fst, map, pure, snd, ($))
 import Control.Monad.Identity (Identity(..), runIdentity)
 import Control.Monad.Trans (class MonadTrans, lift)
-import Control.Monad (class Alternative, empty, (<|>))
+import Control.Monad (class Alternative, empty, (<|>), class MonadPlus, mzero, mplus)
 
 newtype StateT s m a = ST (s -> m (s, a))
 unStateT :: forall s m a.
@@ -85,3 +85,7 @@ instance MonadTrans (StateT s) where
 instance (Monad m, Alternative m) => Alternative (StateT s m) where
   empty = lift empty
   append (ST f) (ST g) = ST $ \s -> f s <|> g s
+
+instance MonadPlus m => MonadPlus (StateT s m) where
+  mzero = ST $ \_ -> mzero
+  mplus (ST m) (ST n) = ST $ \s -> m s `mplus` n s
