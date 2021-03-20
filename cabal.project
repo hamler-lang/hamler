@@ -1,0 +1,12 @@
+packages: .
+
+source-repository-package
+  type: git
+  location: https://github.com/hamler-lang/CoreErlang.git
+  tag: 765eb45afbba61df35dbb72da4630fbfee6bc8d7
+
+source-repository-package
+  type: git
+  location: https://github.com/hamler-lang/purescript.git
+  tag: dbc46627e6c15aa57ebc9c69c6abe3c6d77edf3a
+

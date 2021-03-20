@@ -38,6 +38,8 @@ import Version (hamlerEnv)
 import System.FilePath.Posix ((</>))
 import System.Environment (lookupEnv)
 import System.IO.Unsafe (unsafePerformIO)
+import Control.Monad.IO.Class
+import Control.Monad.Catch
 
 hamlerlib :: String
 hamlerlib = let vp = unsafePerformIO $ lookupEnv "HAMLER_HOME"
@@ -89,26 +91,27 @@ nodeBackend = Backend setup eval reload shutdown
     shutdown :: () -> IO ()
     shutdown _ = return ()
 
+
 -- | Parses the input and returns either a command, or an error as a 'String'.
-getCommand :: forall m. MonadException m => String -> InputT m (Either String [Command])
+getCommand :: forall m. (MonadMask m, MonadIO m) => String -> InputT m (Either String [Command])
 getCommand s = handleInterrupt (return (Right [])) $ do
   line <- withInterrupt $ getInputLine $ addSpace s
   case line of
     Nothing -> return (Right [QuitPSCi]) -- Ctrl-D when input is empty
     Just "" -> return (Right [])
-    Just sv -> return (parseCommand sv)
+    Just s  -> return (parseCommand s)
 
 addSpace :: String -> String
 addSpace w = case words w of
               [r] -> r++" "
               _ -> w
 
-pasteMode :: forall m. MonadException m => InputT m (Either String [Command])
+pasteMode :: forall m. (MonadMask m, MonadIO m) => InputT m (Either String [Command])
 pasteMode =
-  parseCommand <$> go []
+    parseCommand <$> go []
   where
     go :: [String] -> InputT m String
-    go ls = maybe (return . unlines $ reverse ls) (go . (: ls)) =<< getInputLine "… "
+    go ls = maybe (return . unlines $ reverse ls) (go . (:ls)) =<< getInputLine "… "
 
 ishmFile :: String -> Bool
 ishmFile fname = (== "mh.") $ take 3 $ reverse $ fname
