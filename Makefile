@@ -23,9 +23,10 @@ run:
 
 install:
 ifeq ($(shell uname -s),Linux)
-	cabal install --bindir=/usr/bin --overwrite-policy=always
+	cabal install --installdir=/usr/bin --overwrite-policy=always
 endif
-	cabal install --bindir=$(HAMLER_HOME)/bin --overwrite-policy=always
+	@mkdir -p $(HAMLER_HOME)
+	cabal install --installdir=$(HAMLER_HOME)/bin --overwrite-policy=always
 	@cp repl/replsrv $(HAMLER_HOME)/bin/replsrv
 	@cp -r ebin  $(HAMLER_HOME)
 	@cp -r lib  $(HAMLER_HOME)
