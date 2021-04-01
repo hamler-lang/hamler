@@ -1,13 +1,13 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6b02a62ea7fa3ad7502b0ada1b33fd450382cac504cda03a0444bfaecf2409fb
+-- hash: edb34f6d886d52dfc0c568cb6df41d2eb5ba33b1599f32cf132cf1aa02c0aa47
 
 name:           hamler
-version:        0.2.2
+version:        0.3
 synopsis:       The Hamler Programming Language
 description:    Hamler is a functional programming language inspired by Haskell and Standard ML, that compiles to CoreErlang.
 category:       Language, Compiler
@@ -45,14 +45,35 @@ library
       Paths_hamler
   hs-source-dirs:
       src
-  default-extensions: ConstraintKinds DataKinds DeriveFunctor DeriveFoldable DeriveTraversable DeriveGeneric DerivingStrategies EmptyDataDecls FlexibleContexts KindSignatures LambdaCase MultiParamTypeClasses NoImplicitPrelude PatternGuards PatternSynonyms RankNTypes RecordWildCards OverloadedStrings ScopedTypeVariables TupleSections ViewPatterns
+  default-extensions:
+      ConstraintKinds
+      DataKinds
+      DeriveFunctor
+      DeriveFoldable
+      DeriveTraversable
+      DeriveGeneric
+      DerivingStrategies
+      EmptyDataDecls
+      FlexibleContexts
+      KindSignatures
+      LambdaCase
+      MultiParamTypeClasses
+      NoImplicitPrelude
+      PatternGuards
+      PatternSynonyms
+      RankNTypes
+      RecordWildCards
+      OverloadedStrings
+      ScopedTypeVariables
+      TupleSections
+      ViewPatterns
   ghc-options: -Wall -O2
   build-tools:
       happy ==1.19.9
   build-depends:
       Cabal >=2.2 && <3.0
     , CoreErlang
-    , Glob >=0.9 && <0.10
+    , Glob ==0.9.*
     , aeson >=1.0 && <1.5
     , aeson-better-errors >=0.8
     , aeson-pretty
@@ -69,7 +90,7 @@ library
     , language-javascript
     , lens
     , lifted-async >=0.10.0.3 && <0.10.1
-    , lifted-base >=0.2.3 && <0.2.4
+    , lifted-base ==0.2.3.*
     , monad-control >=1.0.0.0 && <1.1
     , mtl >=2.1.0 && <2.3.0
     , parsec >=3.1.10
@@ -90,7 +111,7 @@ library
     , transformers >=0.3.0 && <0.6
     , transformers-base >=0.4.0 && <0.5
     , transformers-compat >=0.3.0
-    , utf8-string >=1 && <2
+    , utf8-string ==1.*
   default-language: Haskell2010
 
 executable hamler
@@ -109,7 +130,7 @@ executable hamler
   build-depends:
       Cabal >=2.2 && <3.0
     , CoreErlang
-    , Glob >=0.9 && <0.10
+    , Glob ==0.9.*
     , aeson >=1.0 && <1.5
     , aeson-better-errors >=0.8
     , aeson-pretty
@@ -128,7 +149,7 @@ executable hamler
     , language-javascript
     , lens
     , lifted-async >=0.10.0.3 && <0.10.1
-    , lifted-base >=0.2.3 && <0.2.4
+    , lifted-base ==0.2.3.*
     , monad-control >=1.0.0.0 && <1.1
     , mtl >=2.1.0 && <2.3.0
     , optparse-applicative >=0.13.0
@@ -150,7 +171,7 @@ executable hamler
     , transformers >=0.3.0 && <0.6
     , transformers-base >=0.4.0 && <0.5
     , transformers-compat >=0.3.0
-    , utf8-string >=1 && <2
+    , utf8-string ==1.*
   if flag(release)
     cpp-options: -DRELEASE
   else
@@ -165,14 +186,17 @@ test-suite tests
       Paths_hamler
   hs-source-dirs:
       tests
-  default-extensions: NoImplicitPrelude LambdaCase OverloadedStrings
+  default-extensions:
+      NoImplicitPrelude
+      LambdaCase
+      OverloadedStrings
   ghc-options: -Wall
   build-tools:
       happy ==1.19.9
   build-depends:
       Cabal >=2.2 && <3.0
     , CoreErlang
-    , Glob >=0.9 && <0.10
+    , Glob ==0.9.*
     , HUnit
     , aeson
     , aeson-better-errors >=0.8
@@ -193,7 +217,7 @@ test-suite tests
     , language-javascript
     , lens
     , lifted-async >=0.10.0.3 && <0.10.1
-    , lifted-base >=0.2.3 && <0.2.4
+    , lifted-base ==0.2.3.*
     , monad-control >=1.0.0.0 && <1.1
     , mtl >=2.1.0 && <2.3.0
     , optparse-applicative
@@ -219,5 +243,5 @@ test-suite tests
     , transformers >=0.3.0 && <0.6
     , transformers-base >=0.4.0 && <0.5
     , transformers-compat >=0.3.0
-    , utf8-string >=1 && <2
+    , utf8-string ==1.*
   default-language: Haskell2010
