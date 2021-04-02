@@ -24,19 +24,7 @@
         , applyIO/2
         ]).
 
-curryIO(Fun) -> ?IO(curry(Fun)).
-
-%% Curry a function
-curry(Fun) -> curry(Fun, arity(Fun)).
-
-curry(Fun, 0) -> Fun; %% ignore
-curry(Fun, 1) -> Fun; %% ignore
-curry(Fun, N) -> curry(Fun, [], N).
-
-curry(Fun, Args, 0) ->
-  erlang:apply(Fun, lists:reverse(Args));
-curry(Fun, Args, N) ->
-  fun(X) -> curry(Fun, [X|Args], N-1) end.
+-include("./Curry.hrl").
 
 applyIO(Fun, Args) ->
   apply(?RunIO(Fun), Args).
@@ -44,6 +32,3 @@ applyIO(Fun, Args) ->
 %% Apply a curried function
 apply(Fun, [A|Args]) -> apply(Fun(A), Args);
 apply(Ret, []) -> Ret.
-
-arity(Fun) ->
-  element(2, erlang:fun_info(Fun, arity)).

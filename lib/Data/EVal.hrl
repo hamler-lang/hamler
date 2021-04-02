@@ -1,41 +1,7 @@
 -ifndef(E_VAL_HRL).
 -define(E_VAL_HRL, true).
 
-curry(AnonymousFun) ->
-    {arity, Arity} =
-        erlang:fun_info(AnonymousFun, arity),
-
-    do_curry(AnonymousFun, Arity, [[], [], []]).
-
-do_curry(Fun, 0, [_Fronts, _Middle, _Ends] = X) ->
-    % Fronts ++ Middle ++ ")" ++ Ends;
-    [F, M, E] =
-        lists:map(fun(L) -> string:join(L, "") end, X),
-    Fstring =
-        F ++ "Run(" ++ string:trim(M, trailing, ",") ++ ")" ++ E,
-
-    {ok, Tokens, _} =
-        erl_scan:string(Fstring ++ "."),
-    {ok, Parsed} =
-        erl_parse:parse_exprs(Tokens),
-
-    FunBinding =
-        erl_eval:add_binding(
-          'Run',
-          Fun,
-          erl_eval:new_bindings()
-        ),
-    {value ,CurriedFun, _} =
-        erl_eval:exprs(Parsed, FunBinding),
-
-    CurriedFun;
-
-do_curry(Fun, Arity, [Fronts, Middle, Ends]) ->
-    VarName = [64 + Arity],
-    NewFronts = ["fun(" ++ VarName ++ ") -> " | Fronts] ,
-    NewMiddle = [VarName ++ ","|Middle],
-    NewEnds = [" end"|Ends],
-    do_curry(Fun, Arity-1, [NewFronts, NewMiddle, NewEnds]).
+-include("../Foreign/Curry.hrl").
 
 toEVal(X) -> if
     is_integer(X) -> {'EInt', X};

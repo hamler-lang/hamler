@@ -1,4 +1,9 @@
 # The Hamler Programming Language
+[![GitHub Release](https://img.shields.io/github/release/hamler-lang/hamler?include_prereleases&color=brightgreen)](https://github.com/hamler-lang/hamler/releases)
+[![Docker Pulls](https://img.shields.io/docker/pulls/hamlerlang/hamler)](https://hub.docker.com/r/hamlerlang/hamler)
+[![Slack Invite](<https://hamler-invite.emqx.io/badge.svg>)](https://hamler-invite.emqx.io/)
+[![Twitter](https://img.shields.io/badge/Follow-Hamler%20Lang-1DA1F2?logo=twitter)](https://twitter.com/HamlerLang)
+[![Community](https://img.shields.io/badge/Community-Hamler-yellow?logo=github)](https://github.com/hamler-lang/hamler/discussions)
 
 **Hamler** - Haskell-style functional programming language running on Erlang VM.
 
@@ -206,7 +211,7 @@ $ brew install hamler
 
 You can reach the **Hamler** community and core team via the following channels:
 
-- [Slack - emqx/hamler-lang](https://slack-invite.emqx.io/)
+- [Slack - Hamler](https://hamler-invite.emqx.io/)
 - [Twitter - @hamlerlang](https://twitter.com/hamlerlang)
 - [Reddit - /r/HamlerLang](https://www.reddit.com/r/HamlerLang/)
 - [Medium - @hamlerlang](https://medium.com/@hamlerlang)
