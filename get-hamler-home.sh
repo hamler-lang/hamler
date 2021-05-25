@@ -17,6 +17,8 @@ else
     HAMLER_HOME="$HOME/.hamler"
 fi
 
-rc_file="$HOME/.$(basename $(echo $SHELL))rc"
-echo "export PATH=$HAMLER_HOME:\$PATH" >> $rc_file
+if [ -z "$(echo $PATH |grep -o $HAMLER_HOME)" ]; then
+    rc_file="$HOME/.$(basename $(echo $SHELL))rc"
+    echo "export PATH=$HAMLER_HOME:\$PATH" >> $rc_file
+fi
 echo $HAMLER_HOME
