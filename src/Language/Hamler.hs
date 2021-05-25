@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Language.Hamler
--- Copyright   :  (c) Feng Lee 2020
+-- Copyright   :  (c) Feng Lee 2020-2021
 -- License     :  BSD-style (see the LICENSE file)
 --
 -- Maintainer  :  Feng Lee, feng@emqx.io

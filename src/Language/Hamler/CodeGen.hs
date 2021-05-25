@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- Module      :  Language.Hamler.CodeGen
--- Copyright   :  (c) 2020 EMQ Technologies Co., Ltd.
+-- Copyright   :  (c) 2020-2021 EMQ Technologies Co., Ltd.
 -- License     :  BSD-style (see the LICENSE file)
 --
 -- Maintainer  :  Feng Lee, feng@emqx.io
