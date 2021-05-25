@@ -23,7 +23,6 @@ install:
 	@cp repl/replsrv $(HAMLER_HOME)/bin/replsrv
 	@cp -r ebin  $(HAMLER_HOME)
 	@cp -r lib  $(HAMLER_HOME)
-	@echo "export PATH=$(HAMLER_HOME)/bin:$$PATH" >> ~/.profile
 
 test:
 	cabal run hamler testDev
@@ -34,7 +33,7 @@ repl:
 docker:
 	docker build -t hamlerlang/hamler:$$(git describe --tags --always) -f deploy/docker/Dockerfile .
 
-pkg:build test install
+pkg: build test install
 	make -C deploy/packages
 
 .PHONY : build clean run install test repl  docker pkg
