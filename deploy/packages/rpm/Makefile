@@ -19,7 +19,7 @@ ifeq ($(ARCH),mips64)
 	ARCH:=mips64el
 endif
 
-HAMLER_HOME ?= /usr/lib/hamler
+HAMLER_HOME = /usr/lib/hamler
 
 .PHONY: all
 all: | $(BUILT)

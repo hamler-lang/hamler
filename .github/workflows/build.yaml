@@ -11,7 +11,13 @@ jobs:
     build:
         runs-on: ubuntu-latest
 
+        strategy:
+          matrix:
+            ghc: ['8.10.4']
+            cabal: ['3.4.0.0']
+
         steps:
+        - uses: actions/checkout@v1
         - name: install erlang
           env:
             OTP_VERSION: 23
@@ -29,19 +35,51 @@ jobs:
             sudo locale-gen en_US.UTF-8
             echo "LC_ALL=en_US.UTF-8" >> $GITHUB_ENV
         - name: install library
+          run: sudo apt update && sudo apt install -y libtinfo-dev
+        - uses: actions/cache@v2
+          with:
+            path: |
+              ~/.stack
+              ~/.cabal/packages
+              ~/.cabal/store
+              dist-newstyle
+            key: ${{ runner.os }}-${{ matrix.ghc }}-${{ matrix.cabal }}-v1-${{ hashFiles('**/*.cabal') }}-${{ hashFiles('**/cabal.project') }}
+            restore-keys: |
+              ${{ runner.os }}-${{ matrix.ghc }}-${{ matrix.cabal }}-v1-
+        - name: Setup PATH
           run: |
-            sudo apt update && sudo apt install -y libtinfo-dev ghc
-            echo "~/.local/bin" >> $GITHUB_PATH
+            echo "$HOME/.ghcup/bin" >> $GITHUB_PATH
+            echo "$HOME/.cabal/bin" >> $GITHUB_PATH
+            echo "$HOME/.local/bin" >> $GITHUB_PATH
+        - name: Setup Haskell
+          uses: haskell/actions/setup@v1
+          with:
+            ghc-version: ${{ matrix.ghc }}
+            cabal-version: ${{ matrix.cabal }}
+        - name: install alex
+          run: |
+            cabal update
+            cabal install alex
+        - name: install happy
+          run: |
             curl -sSL https://get.haskellstack.org/ | sh -s - -f
-        - uses: actions/checkout@v2
-        - name: make
+            stack install happy-1.19.9 --resolver lts-13.26 --allow-different-user
+        - name: make hamler
+          env:
+            HAMLER_HOME: /usr/lib/hamler
           run: |
-            make
-            make test
-            sudo make install
+            sudo mkdir -p $HAMLER_HOME/bin
+            cabal run hamler build -- -l -e
+            cabal install --overwrite-policy=always
+            sudo cp ~/.cabal/bin/hamler /usr/bin/
+            sudo cp ~/.cabal/bin/hamler $HAMLER_HOME/bin
+            sudo cp repl/replsrv $HAMLER_HOME/bin/replsrv
+            sudo cp -r ebin  $HAMLER_HOME
+            sudo cp -r lib  $HAMLER_HOME
+            rm -rf ~/.cabal/bin/hamler
         - name: tests
           run: |
-            mkdir test
+            mkdir -p test
             cd test
             hamler init
             hamler build
@@ -49,7 +87,7 @@ jobs:
             echo ":q" | hamler repl
         - name: create tgz file
           run: |
-            version=$(echo ${{ github.ref }} | sed -r  "s .*/.*/(.*) \1 g")
+            version=$(git describe --tags --always)
             cd /usr/lib && sudo tar cvf hamler-${version}.tgz hamler && cd -
             mkdir -p _packages
             sudo mv /usr/lib/hamler-${version}.tgz _packages
@@ -61,7 +99,7 @@ jobs:
         - name: update github release
           if: github.event_name == 'release'
           run: |
-            version=$(echo ${{ github.ref }} | sed -r  "s .*/.*/(.*) \1 g")
+            version=$(git describe --tags --always)
             for var in $(ls _packages) ; do
               .github/workflows/script/upload_github_release_asset.sh owner=hamler-lang repo=hamler tag=$version filename=_packages/$var github_api_token=$(echo ${{ secrets.AccessToken }})
             done
@@ -69,10 +107,16 @@ jobs:
     build_deb:
       runs-on: ubuntu-latest
 
+      strategy:
+        matrix:
+          ghc: ['8.10.4']
+          cabal: ['3.4.0.0']
+
       container:
         image: debian:9
 
       steps:
+      - uses: actions/checkout@v1
       - name: install erlang
         env:
           OTP_VERSION: 23
@@ -94,12 +138,40 @@ jobs:
           locale-gen en_US.UTF-8
           echo "LC_ALL=en_US.UTF-8" >> $GITHUB_ENV
           echo "STACK_ROOT=$(pwd)" >> $GITHUB_ENV
-          echo "~/.local/bin" >> $GITHUB_PATH
       - name: install library
+        run: apt update && apt install -y libtinfo-dev build-essential curl libffi-dev libffi6 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.stack
+            ~/.cabal/packages
+            ~/.cabal/store
+            dist-newstyle
+          key: debian9-${{ matrix.ghc }}-${{ matrix.cabal }}-v1-${{ hashFiles('**/*.cabal') }}-${{ hashFiles('**/cabal.project') }}
+          restore-keys: |
+            debian9-${{ matrix.ghc }}-${{ matrix.cabal }}-v1-
+      - name: Setup PATH
         run: |
-          apt update && apt install -y libtinfo-dev ghc
+          echo "$HOME/.ghcup/bin" >> $GITHUB_PATH
+          echo "$HOME/.cabal/bin" >> $GITHUB_PATH
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Setup Haskell
+        env:
+          BOOTSTRAP_HASKELL_NONINTERACTIVE: 1
+          BOOTSTRAP_HASKELL_GHC_VERSION: ${{ matrix.ghc }}
+          BOOTSTRAP_HASKELL_CABAL_VERSION: ${{ matrix.cabal }}
+        run: |
+          wget -nv --no-check-certificate https://get-ghcup.haskell.org -O ghcup.sh
+          chmod +x ghcup.sh
+          ./ghcup.sh
+      - name: install alex
+        run: |
+          cabal update
+          cabal install alex
+      - name: install happy
+        run: |
           curl -sSL https://get.haskellstack.org/ | sh -s - -f
-      - uses: actions/checkout@v1
+          stack install happy-1.19.9 --resolver lts-13.26 --allow-different-user
       - name: make
         run: |
           make pkg
@@ -108,6 +180,7 @@ jobs:
           rm -rf /usr/bin/hamler
       - name: install pkg
         run: |
+          set -x
           dpkg -i deploy/packages/deb/_packages/*.deb
           if [ $(dpkg -l |grep hamler |awk '{print $1}') != "ii" ]; then
               echo "package install error"
@@ -124,11 +197,14 @@ jobs:
       - name: uninstall pkg
         shell: bash
         run: |
+          set -x
+          dpkg -r hamler-dbgsym
           dpkg -r hamler
           if [ $(dpkg -l |grep hamler |awk '{print $1}') != "rc" ]; then
               echo "package remove error"
               exit 1
           fi
+          dpkg -P hamler-dbgsym
           dpkg -P hamler
           if [ ! -z "$(dpkg -l |grep hamler)" ]; then
               echo "package uninstall error"
@@ -141,7 +217,7 @@ jobs:
       - name: update github release
         if: github.event_name == 'release'
         run: |
-          version=$(echo ${{ github.ref }} | sed -r  "s .*/.*/(.*) \1 g")
+          version=$(git describe --tags --always)
           for var in $(ls deploy/packages/deb/_packages) ; do
             .github/workflows/script/upload_github_release_asset.sh owner=hamler-lang repo=hamler tag=$version filename=deploy/packages/deb/_packages/$var github_api_token=$(echo ${{ secrets.AccessToken }})
           done
@@ -149,10 +225,16 @@ jobs:
     build_rpm:
       runs-on: ubuntu-latest
 
+      strategy:
+        matrix:
+          ghc: ['8.10.4']
+          cabal: ['3.4.0.0']
+
       container:
         image: centos:7
 
       steps:
+      - uses: actions/checkout@v1
       - name: install erlang
         env:
           OTP_VERSION: 23.0.3
@@ -171,11 +253,48 @@ jobs:
           echo "~/.local/bin" >> $GITHUB_PATH
       - name: install library
         run: |
-          yum install -y ghc
+          yum install -y gmp gmp-devel make ncurses xz perl
+          yum install -y centos-release-scl-rh
+          yum install -y devtoolset-8-gcc devtoolset-8-gcc-c++
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.stack
+            ~/.cabal/packages
+            ~/.cabal/store
+            dist-newstyle
+          key: centos7-${{ matrix.ghc }}-${{ matrix.cabal }}-v1-${{ hashFiles('**/*.cabal') }}-${{ hashFiles('**/cabal.project') }}
+          restore-keys: |
+            centos7-${{ matrix.ghc }}-${{ matrix.cabal }}-v1-
+      - name: Setup PATH
+        run: |
+          echo "$HOME/.ghcup/bin" >> $GITHUB_PATH
+          echo "$HOME/.cabal/bin" >> $GITHUB_PATH
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Setup Haskell
+        env:
+          BOOTSTRAP_HASKELL_NONINTERACTIVE: 1
+          BOOTSTRAP_HASKELL_GHC_VERSION: ${{ matrix.ghc }}
+          BOOTSTRAP_HASKELL_CABAL_VERSION: ${{ matrix.cabal }}
+        run: |
+          wget -nv --no-check-certificate https://get-ghcup.haskell.org -O ghcup.sh
+          chmod +x ghcup.sh
+          ./ghcup.sh
+      - name: install alex
+        run: |
+          . /opt/rh/devtoolset-8/enable
+          gcc -v
+          cabal update
+          cabal install alex
+          cabal install --lib cryptonite -f -use_target_attributes
+      - name: install happy
+        run: |
           curl -sSL https://get.haskellstack.org/ | sh -s - -f
-      - uses: actions/checkout@v1
+          stack install happy-1.19.9 --resolver lts-13.26 --allow-different-user
       - name: make
         run: |
+          . /opt/rh/devtoolset-8/enable
+          gcc -v
           make pkg
           cd deploy/packages/rpm/_packages && for var in $(ls *.rpm); do bash -c "echo $(sha256sum $var | awk '{print $1}') > $var.sha256"; done && cd -
           rm -rf /usr/lib/hamler
@@ -209,7 +328,7 @@ jobs:
       - name: update github release
         if: github.event_name == 'release'
         run: |
-          version=$(echo ${{ github.ref }} | sed -r  "s .*/.*/(.*) \1 g")
+          version=$(git describe --tags --always)
           for var in $(ls deploy/packages/rpm/_packages) ; do
             .github/workflows/script/upload_github_release_asset.sh owner=hamler-lang repo=hamler tag=$version filename=deploy/packages/rpm/_packages/$var github_api_token=$(echo ${{ secrets.AccessToken }})
           done
@@ -217,21 +336,65 @@ jobs:
     build_mac:
       runs-on: macos-latest
 
+      strategy:
+        matrix:
+          ghc: ['8.10.4']
+          cabal: ['3.4.0.0']
+
       steps:
+      - uses: actions/checkout@v1
       - name: prepare
         run: |
-          /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-          brew install gnu-sed erlang@23 haskell-stack
+          brew install gnu-sed erlang@23
           ln -s /usr/local/bin/gsed /usr/local/bin/sed
           echo "/usr/local/opt/erlang@23/bin" >> $GITHUB_PATH
           echo "/usr/local/lib/hamler/bin" >> $GITHUB_PATH
           echo "/usr/local/bin" >> $GITHUB_PATH
-      - uses: actions/checkout@v2
-      - name: make
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.stack
+            ~/.cabal/packages
+            ~/.cabal/store
+            dist-newstyle
+          key: ${{ runner.os }}-${{ matrix.ghc }}-${{ matrix.cabal }}-v1-${{ hashFiles('**/*.cabal') }}-${{ hashFiles('**/cabal.project') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.ghc }}-${{ matrix.cabal }}-v1-
+      - name: Setup PATH
         run: |
-          make
-          make test
-          sudo make install
+          echo "$HOME/.ghcup/bin" >> $GITHUB_PATH
+          echo "$HOME/.cabal/bin" >> $GITHUB_PATH
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Setup Haskell
+        env:
+          BOOTSTRAP_HASKELL_NONINTERACTIVE: 1
+          BOOTSTRAP_HASKELL_GHC_VERSION: ${{ matrix.ghc }}
+          BOOTSTRAP_HASKELL_CABAL_VERSION: ${{ matrix.cabal }}
+        run: |
+          wget -nv --no-check-certificate https://get-ghcup.haskell.org -O ghcup.sh
+          chmod +x ghcup.sh
+          ./ghcup.sh
+      - name: install alex
+        run: |
+          cabal update
+          cabal install alex
+      - name: install happy
+        run: |
+          curl -sSL https://get.haskellstack.org/ | sh -s - -f
+          stack install happy-1.19.9 --resolver lts-13.26 --allow-different-user
+      - name: make hamler
+        env:
+          HAMLER_HOME: /usr/local/lib/hamler
+        run: |
+          sudo mkdir -p $HAMLER_HOME/bin
+          cabal run hamler build -- -l -e
+          cabal install --overwrite-policy=always
+          sudo cp ~/.cabal/bin/hamler /usr/local/bin
+          sudo cp ~/.cabal/bin/hamler $HAMLER_HOME/bin
+          sudo cp repl/replsrv $HAMLER_HOME/bin/replsrv
+          sudo cp -r ebin  $HAMLER_HOME
+          sudo cp -r lib  $HAMLER_HOME
+          rm -rf ~/.cabal/bin/hamler
       - name: tests
         run: |
           mkdir test
@@ -242,7 +405,7 @@ jobs:
           echo ":q" | hamler repl
       - name: create tgz file
         run: |
-          version=$(echo ${{ github.ref }} | gsed -r  "s .*/.*/(.*) \1 g")
+          version=$(git describe --tags --always)
           cd /usr/local/lib && sudo tar cvf hamler-${version}.tgz hamler && cd -
           mkdir -p _packages
           sudo mv /usr/local/lib/hamler-${version}.tgz _packages
@@ -253,9 +416,6 @@ jobs:
       - name: set aws cli
         if: github.event_name == 'release'
         run: |
-          curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
-          sudo installer -pkg AWSCLIV2.pkg -target /
-          aws --version
           aws configure set aws_access_key_id ${{ secrets.AwsAccessKeyId }}
           aws configure set aws_secret_access_key ${{ secrets.AwsSecretAccessKey }}
           aws configure set default.region us-west-2
@@ -270,7 +430,7 @@ jobs:
         if: github.event_name == 'release'
         run: |
           git clone https://github.com/hamler-lang/homebrew-hamler homebrew-hamler
-          version=$(echo ${{ github.ref }} | sed -r  "s .*/.*/(.*) \1 g")
+          version=$(git describe --tags --always)
           pkg=hamler-${version}.tgz
           aws s3 cp _packages/$pkg s3://packages.emqx/hamler/homebrew/
           download="https://s3-us-west-2.amazonaws.com/packages.emqx/hamler/homebrew/$pkg"
@@ -293,12 +453,12 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@v1
         - name: make docker image
           run: make docker
         - name: push docker image
           if: github.event_name == 'release'
           run: |
             echo ${{ secrets.DockerHubPassword }} | docker login -u ${{ secrets.DockerHubUser }} --password-stdin
-            version=$(echo ${{ github.ref }} | sed -r  "s .*/.*/(.*) \1 g")
+            version=$(git describe --tags --always)
             docker push hamlerlang/hamler:$version

@@ -33,7 +33,14 @@ repl:
 docker:
 	docker build -t hamlerlang/hamler:$$(git describe --tags --always) -f deploy/docker/Dockerfile .
 
-pkg: build test install
+pkg:
+	mkdir -p /usr/lib/hamler/bin
+	HAMLER_HOME="/usr/lib/hamler" cabal run hamler build -- -l -e
+	cabal install --overwrite-policy=always
+	cp ~/.cabal/bin/hamler /usr/lib/hamler/bin
+	cp repl/replsrv /usr/lib/hamler/bin/replsrv
+	cp -r ebin /usr/lib/hamler
+	cp -r lib /usr/lib/hamler
 	make -C deploy/packages
 
 .PHONY : build clean run install test repl  docker pkg
