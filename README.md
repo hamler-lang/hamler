@@ -131,42 +131,37 @@ $ brew install hamler
 **Required**
 
 + [Erlang/OTP](https://www.erlang.org) >= 23
-+ [Haskell Stack](https://haskellstack.org)
 + [Cabal](https://www.haskell.org/cabal)
++ happy-1.19.9
 
 **Building**
-1. Install happy-1.19.9
 
-   ```shell
-   $ stack install happy-1.19.9 --resolver lts-13.26
-   ```
-
-2. Clone hamler from the git repo
+1. Clone hamler from the git repo
 
    ```shell
    $ git clone https://github.com/hamler-lang/hamler.git
    $ cd hamler
    ```
 
-3. Configuring
+2. Configuring
 
    ```shell
    $ export LC_ALL=en_US.UTF-8
    ```
 
-4. Building
+3. Building
 
    ```shell
    $ make
    ```
 
-5. Testing
+4. Testing
 
    ```shell
    $ make test
    ```
 
-6. Install hamler
+5. Install hamler
 
    ```shell
    $ sudo make install
