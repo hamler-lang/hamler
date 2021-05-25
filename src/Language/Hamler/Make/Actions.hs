@@ -1,4 +1,5 @@
 -- The module is copied from purescript compiler.
+{-# LANGUAGE TypeApplications #-}
 module Language.Hamler.Make.Actions
   ( MakeActions (..),
     RebuildPolicy (..),
@@ -39,6 +40,14 @@ import Language.PureScript.Options hiding (codegenTargets)
 import System.FilePath ((</>))
 import Prelude
 import qualified Language.PureScript.Bundle as B
+import qualified Language.Hamler.Erlang.CodeGen as E
+import qualified Language.Hamler.Erlang.TranslateSimpleType as E
+import  Utils as E
+import qualified Erlang.Type as E
+import qualified Erlang.B as E
+import Text.DocLayout (render)
+import Control.Carrier.Reader (run, runReader)
+
 
 -- | Determines when to rebuild a module
 renderProgressMessage :: ProgressMessage -> String
@@ -58,7 +67,7 @@ buildMakeActions ::
   -- | Generate a prefix comment?
   Bool ->
   MakeActions Make
-buildMakeActions libfp isInline outputDir filePathMap foreigns _ =
+buildMakeActions libfp isBuildErlSource outputDir filePathMap foreigns _ =
   MakeActions getInputTimestampsAndHashes getOutputTimestamp readExterns codegen ffiCodegen progress readCacheDb writeCacheDb outputPrimDocs
   where
     getInputTimestampsAndHashes ::
@@ -117,6 +126,12 @@ buildMakeActions libfp isInline outputDir filePathMap foreigns _ =
       let list = read (unpack con) :: [(String, Integer)]
       return $ (mn', M.fromList $ fmap (\(a, b) -> (pack (unpack mn' <> "." <> a), b)) list)
 
+    readModuleInfo' :: HasCallStack => ModuleName -> SupplyT Make [(Qualified Ident, Bool)]
+    readModuleInfo' mn = do
+      let path = getFilePath ".infoErl" mn filePathMap
+      con <- lift $ makeIO "read module infor" $ readFile path
+      return $ E.toQis con
+
     codegen :: HasCallStack => CF.Module CF.Ann -> Docs.Module -> ExternsFile -> SupplyT Make ()
     codegen m _ exts = do
       let mn = CF.moduleName m
@@ -133,7 +148,7 @@ buildMakeActions libfp isInline outputDir filePathMap foreigns _ =
       let mods = filter (/= mn) $ filter (/= ModuleName [ProperName "Prim"]) $ fmap snd $ CF.moduleImports m
       modInfoList <- mapM readModuleInfo mods
       let modInfoMap = M.fromList modInfoList
-          ((erl, _), _) = runTranslate isInline modInfoMap (ffiModule, mn) $ moduleToErl m 
+          ((erl, _), _) = runTranslate modInfoMap (ffiModule, mn) $ moduleToErl m 
       case erl of
         Left e -> throwError e
         Right e@(CE.Module _ exports _ _ _) -> do
@@ -148,6 +163,47 @@ buildMakeActions libfp isInline outputDir filePathMap foreigns _ =
               TIO.writeFile
                 (outputDir </> (unpack mn' <> ".info"))
                 (pack $ show $ fmap (\(CE.FunName (CE.Atom s1 _) i _) -> (s1, i)) exports)
+
+      when isBuildErlSource $ do
+          mforms <- case M.lookup mn foreigns of
+            Nothing -> do return Nothing
+            Just fp -> do
+              con <- lift $ makeIO ".core -> .P" $ readFile (Prelude.reverse $ 'P' : drop 4 (Prelude.reverse fp))
+              case E.runCalc con of
+                E.Failed r -> error r
+                E.OK fs -> return $ Just fs
+
+          let getFFiDecArgs :: Maybe E.Forms -> [(Qualified Ident, Int)]
+              getFFiDecArgs Nothing = []
+              getFFiDecArgs (Just fs) =
+                let ls = E.formsToList fs
+                    getDec :: E.Form -> [(String, Integer)]
+                    getDec (E.ExportList l) = E.dec l
+                    getDec _ = []
+                 in map (\(s, i) -> (Qualified (Just mn) (Ident (pack s)), fromIntegral i)) $ concatMap getDec ls
+              ffiM = M.fromList $ getFFiDecArgs mforms
+
+          let mods = filter (/= mn) $ filter (/= ModuleName [ProperName "Prim"]) $ fmap snd $ CF.moduleImports m
+
+          modInfoList <- concat <$> mapM readModuleInfo' mods
+          let otherM = M.fromList modInfoList
+
+              forms = run $ runReader (E.createTenv m otherM ffiM) (E.rModule m)
+              exports = run $ runReader (E.createTenv m otherM ffiM) (E.rExport m)
+
+          lift $
+            makeIO "write module information " $
+              writeFile
+                (outputDir </> (unpack (runModuleName mn) <> ".infoErl"))
+                (E.toStrings exports)
+
+          lift $
+            makeIO "Write core erlang file" $ do
+              writeFile
+                (outputDir </> (unpack (runModuleName mn ) <> ".erl"))
+                (render @String Nothing $ pretty forms)
+
+
 
     ffiCodegen :: CF.Module CF.Ann -> Make ()
     ffiCodegen _ = return ()

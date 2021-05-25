@@ -40,6 +40,10 @@ library
       Language.Hamler.Make
       Language.Hamler.Make.Actions
       Language.Hamler.Util
+      Language.Hamler.Erlang.SimpleType
+      Language.Hamler.Erlang.PrettySimpleType
+      Language.Hamler.Erlang.TranslateSimpleType
+      Language.Hamler.Erlang.CodeGen
   other-modules:
       Paths_hamler
   hs-source-dirs:
@@ -71,6 +75,14 @@ library
   --     happy ==1.19.9
   build-depends:
       Cabal >=2.2 && <3.3
+
+    , doclayout
+    , fused-effects
+    , fused-effects-optics
+    , optics
+    , Erlang
+    , recursion-schemes
+
     , exceptions
     , CoreErlang
     , Glob >=0.9 && <0.10

@@ -30,6 +30,7 @@ import Version (hamlerEnv)
 import System.FilePath.Posix((</>))
 import System.Environment (lookupEnv)
 import System.IO.Unsafe (unsafePerformIO)
+import System.FilePath.Posix
 
 data PSCMakeOptions = PSCMakeOptions
   { pscmInput        :: [(FilePath, Bool)]
@@ -37,7 +38,7 @@ data PSCMakeOptions = PSCMakeOptions
   , pscmOpts         :: P.Options
   , pscmUsePrefix    :: Bool
   , pscmJSONErrors   :: Bool
-  , isInline         :: Bool
+  , isErlSource      :: Bool
   }
 
 -- | Arguments: verbose, use JSON, warnings, errors
@@ -72,7 +73,7 @@ compile PSCMakeOptions{..} = do
     ms <- CST.parseModulesFromFiles id moduleFiles
     let filePathMap = M.fromList $ map (\(fp, pm) -> (P.getModuleName $ CST.resPartial pm, inpRebPol fp pscmInput) ) ms
     foreigns <- inferForeignModules filePathMap
-    let makeActions = buildMakeActions hamlerFile isInline pscmOutputDir filePathMap foreigns pscmUsePrefix
+    let makeActions = buildMakeActions hamlerFile isErlSource pscmOutputDir filePathMap foreigns pscmUsePrefix
     -- P.make makeActions (map snd ms)
     make makeActions (map snd ms)
   printWarningsAndErrors (P.optionsVerboseErrors pscmOpts) pscmJSONErrors makeWarnings makeErrors
@@ -103,11 +104,11 @@ howBuild= Opts.switch $
   <> Opts.long "libraries"
   <> Opts.help "build the libraries to ebin (only develop)"
 
-inline :: Opts.Parser Bool
-inline= Opts.switch $
-     Opts.short 'i'
-  <> Opts.long "inline"
-  <> Opts.help "Determine whether to inline functions (no effect at this stage)"
+buildErlangSource :: Opts.Parser Bool
+buildErlangSource = Opts.switch $
+     Opts.short 'e'
+  <> Opts.long "erl"
+  <> Opts.help "build erlang source"
 
 keepCore :: Opts.Parser Bool
 keepCore = Opts.switch $
@@ -124,12 +125,12 @@ outputDirectory = Opts.strOption $
   <> Opts.help "The output directory"
 
 command :: Opts.Parser (IO ())
-command = Opts.helper <*> (buildFun <$> inline <*> howBuild <*> keepCore <*> outputDirectory)
+command = Opts.helper <*> (buildFun <$> buildErlangSource <*> howBuild <*> keepCore <*> outputDirectory)
 
 buildFun :: Bool -> Bool -> Bool -> FilePath -> IO ()
-buildFun isIn b k fp = if b
-                  then buildlib isIn
-                  else buildSrc isIn k fp
+buildFun isES b k fp = if b
+                  then buildlib isES
+                  else buildSrc isES k fp
 
 buildSrc :: Bool -> Bool -> FilePath -> IO ()
 buildSrc bl keepcore fpath = do
@@ -149,7 +150,7 @@ buildSrc bl keepcore fpath = do
                           , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
                           , pscmUsePrefix  = False
                           , pscmJSONErrors = False
-                          , isInline       = bl
+                          , isErlSource    = bl
                           }
           )
   cfs <- findFile1 ".core" tpath
@@ -187,10 +188,12 @@ buildlib bl = do
                           , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
                           , pscmUsePrefix  = False
                           , pscmJSONErrors = False
-                          , isInline       = bl
+                          , isErlSource    = bl
                           }
           )
   cfs <- findFile1 ".core" tpath
+
+  recRemoveP (dir <> "/lib")
 
   SS.shelly $ SS.command_ "erlc" ["-o" ,T.pack tpath] (fmap (\fp -> T.pack $ tpath <> "/" <> fp) cfs)
 
@@ -218,10 +221,13 @@ buildTestDev = pure $ do
                           , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
                           , pscmUsePrefix  = False
                           , pscmJSONErrors = False
-                          , isInline       = False
+                          , isErlSource    = False
                           }
           )
   cfs <- findFile1 ".core" tpath
+
+  recRemoveP (dir <> "/lib")
+
   SS.shelly $ SS.command_ "erlc" ["-o" ,T.pack tpath] (fmap (\fp -> T.pack $ tpath <> "/" <> fp) cfs)
   forM_ cfs $ \fp -> do
     SS.shelly $ SS.run_ "rm" [T.pack $ tpath <> "/" <> fp]
@@ -257,7 +263,7 @@ buildTest = pure $ do
                           , pscmOpts       = (P.Options False False (S.fromList [P.CoreFn]))
                           , pscmUsePrefix  = False
                           , pscmJSONErrors = False
-                          , isInline       = False
+                          , isErlSource    = False
                           }
           )
   cfs <- findFile1 ".core" tpath
@@ -401,4 +407,19 @@ recErlc fp = do
   ls <- listDirectory fp
   (coreFiles,dires) <- foldM myt ([],[]) $ fmap (\t -> fp ++ "/" ++ t) ls
   SS.shelly $ SS.command_ "erlc" ["-o" ,T.pack fp,"+to_core" ] (fmap T.pack coreFiles)
+  SS.shelly $ SS.command_ "erlc" ["-o" ,T.pack fp,"-P" ] (fmap T.pack coreFiles)
   mapConcurrently_ recErlc dires
+
+recRemoveP = recRemove ".P"
+
+recRemove :: String -> FilePath -> IO ()
+recRemove ext basePath = do
+  ls <- listDirectory basePath
+  forM_ ls $ \fp -> do
+    let fp' = basePath </> fp
+    isE <- doesDirectoryExist fp'
+    if isE
+      then recRemove ext fp'
+      else do
+        let ex = takeExtension fp
+        when (ex == ext) $ removeFile (basePath </> fp)

@@ -10,7 +10,7 @@ endif
 all: build foreign
 
 build:
-	cabal run hamler build -- -l
+	cabal run hamler build -- -l -e
 
 foreign:
 	@erlc -o ebin lib/Foreign/*.erl
