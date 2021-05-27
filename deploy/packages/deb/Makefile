@@ -3,7 +3,7 @@ TOPDIR := /tmp/hamler
 SRCDIR := $(TOPDIR)/$(PKG_VSN)
 BUILT := $(SRCDIR)/BUILT
 
-HAMLER_HOME ?= /usr/lib/hamler
+HAMLER_HOME = /usr/lib/hamler
 
 .PHONY: all
 all: | $(BUILT)

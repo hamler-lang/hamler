@@ -63,12 +63,11 @@ instance MonadFail Translate where
   fail s = error s
 
 runTranslate ::
-  Bool ->
   (M.Map Text (M.Map Text Integer)) ->
   (Maybe (E.Module Text), ModuleName) ->
   Translate a ->
   (((Either P.MultipleErrors a), VarState), Text)
-runTranslate _ moduleInfo (ffiModule, mn) (Translate translate) =
+runTranslate moduleInfo (ffiModule, mn) (Translate translate) =
   runWriter $ runReaderT (runStateT (runExceptT translate) (VarState 0 M.empty)) (ffiModule, M.fromList $ moduleToFuns mn ffiModule, moduleInfo, mn)
 
 instance MonadVarState Translate where

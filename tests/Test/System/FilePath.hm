@@ -32,7 +32,7 @@ propIsDir :: IO Bool
 propIsDir = F.isDir "tests"
 
 propIsFile :: IO Bool
-propIsFile = F.isFile "stack.yaml"
+propIsFile = F.isFile "LICENSE"
 
 propJoinPath :: Bool
 propJoinPath = F.joinPath ["/usr", "bin", "shell.sh"] == "/usr/bin/shell.sh"

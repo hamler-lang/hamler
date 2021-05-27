@@ -131,7 +131,8 @@ $ brew install hamler
 **Required**
 
 + [Erlang/OTP](https://www.erlang.org) >= 23
-+ [Haskell Stack](https://haskellstack.org)
++ [Cabal](https://www.haskell.org/cabal)
++ happy-1.19.9
 
 **Building**
 

@@ -1,47 +1,46 @@
 package = hamler
 exe_target = hamler
-stack_yaml = STACK_YAML="stack.yaml"
-stack = $(stack_yaml) stack
 
-ifeq ($(shell uname -s),Darwin)
-export HAMLER_HOME ?= /usr/local/lib/hamler
-else
-export HAMLER_HOME ?= /usr/lib/hamler
-endif
+export HAMLER_HOME ?= $(shell $(CURDIR)/get-hamler-home.sh)
 
 all: build foreign
 
 build:
-	$(stack) run build -- -l
+	cabal run hamler build -- -l -e
 
 foreign:
 	@erlc -o ebin lib/Foreign/*.erl
 
 clean:
-	$(stack) clean
+	cabal clean
 
 run:
-	$(stack) build --fast && $(stack) exec -- $(exe_target)
+	cabal build  && cabal run $(exe_target)
 
 install:
-ifeq ($(shell uname -s),Linux)
-	$(stack) install --local-bin-path /usr/bin --allow-different-user
-endif
-	$(stack) install --local-bin-path $(HAMLER_HOME)/bin --allow-different-user
+	@mkdir -p $(HAMLER_HOME)
+	cabal install --installdir=$(HAMLER_HOME)/bin --overwrite-policy=always
 	@cp repl/replsrv $(HAMLER_HOME)/bin/replsrv
 	@cp -r ebin  $(HAMLER_HOME)
 	@cp -r lib  $(HAMLER_HOME)
 
 test:
-	$(stack) run testDev
+	cabal run hamler testDev
 
 repl:
-	$(stack) run repldev
+	cabal run hamler repldev
 
 docker:
 	docker build -t hamlerlang/hamler:$$(git describe --tags --always) -f deploy/docker/Dockerfile .
 
-pkg:build test install
+pkg:
+	mkdir -p /usr/lib/hamler/bin
+	HAMLER_HOME="/usr/lib/hamler" cabal run hamler build -- -l -e
+	cabal install --overwrite-policy=always
+	cp ~/.cabal/bin/hamler /usr/lib/hamler/bin
+	cp repl/replsrv /usr/lib/hamler/bin/replsrv
+	cp -r ebin /usr/lib/hamler
+	cp -r lib /usr/lib/hamler
 	make -C deploy/packages
 
 .PHONY : build clean run install test repl  docker pkg

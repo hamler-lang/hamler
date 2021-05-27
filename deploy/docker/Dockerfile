@@ -1,4 +1,4 @@
-FROM erlang:23
+FROM erlang:23 as erlang
 
 RUN apt update && apt install -y locales \
     && echo "LC_ALL=en_US.UTF-8" >> /etc/environment \
@@ -6,13 +6,24 @@ RUN apt update && apt install -y locales \
     && echo "LANG=en_US.UTF-8" > /etc/locale.conf \
     && locale-gen en_US.UTF-8
 
+RUN apt update && \
+    apt install -y libtinfo-dev build-essential curl libffi-dev libffi6 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5 && \
+    rm -rf /var/lib/apt/lists/*
+
 ENV LC_ALL=en_US.UTF-8
 
-RUN apt update && apt install -y libtinfo-dev ghc
+ENV PATH=/root/.ghcup/bin:/root/.cabal/bin:/root/.local/bin:$PATH
 
-RUN wget -qO- https://get.haskellstack.org/ | sh
+RUN wget -nv --no-check-certificate https://get-ghcup.haskell.org -O ghcup.sh && \
+    chmod +x ghcup.sh && \
+    BOOTSTRAP_HASKELL_NONINTERACTIVE=1 ./ghcup.sh
 
-ENV PATH=/root/.local/bin:$PATH
+RUN cabal update && cabal install alex
+
+RUN curl -sSL https://get.haskellstack.org/ | sh -s - -f && \
+    stack install happy-1.19.9 --resolver lts-13.26 --allow-different-user
+
+ENV PATH=/usr/lib/hamler/bin:$PATH
 
 COPY . hamler
 RUN make -C hamler \
@@ -21,7 +32,7 @@ RUN make -C hamler \
 
 WORKDIR /tmp/tests
 
-RUN hamler init \ 
+RUN hamler init \
     && hamler build \
     && hamler run \
     && echo ":q" | hamler repl
