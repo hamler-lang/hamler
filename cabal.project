@@ -13,5 +13,4 @@ source-repository-package
 source-repository-package
   type: git
   location: https://github.com/hamler-lang/purescript.git
-  tag: dbc46627e6c15aa57ebc9c69c6abe3c6d77edf3a
-
+  tag: 6abdbe4c1c0a180870ba1f433e4de80c2cee73e4
