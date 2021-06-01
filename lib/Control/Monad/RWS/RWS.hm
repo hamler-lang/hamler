@@ -1,0 +1,42 @@
+module Control.Monad.RWS.RWS where
+
+import Data.Function
+import Data.Tuple
+import Control.Monad.Identity
+import Control.Monad.Trans
+import Data.Monoid
+import Data.Functor
+import Data.Semigroup
+
+newtype RWST r w s m a = RWST (r -> s -> w -> m (a, s, w))
+unRWST :: forall r w s m a. RWST r w s m a -> r -> s -> w -> m (a, s, w)
+unRWST (RWST x) = x
+
+runRWST :: forall r w s m a. Monoid w =>
+  RWST r w s m a -> r -> s -> m (a, s, w)
+runRWST m r s = unRWST m r s mempty
+
+rwsT :: forall r w s m a. Functor m => Semigroup w =>
+  (r -> s -> m (a, s, w)) -> RWST r w s m a
+rwsT f = RWST \r s w -> (\(a, s', w') -> (a, s', w <> w')) <$> f r s
+
+evalRWST :: forall r w s f a. Functor f => Monoid w =>
+  RWST r w s f a -> r -> s -> f (a, w)
+evalRWST f r s = (\(a, _, w) -> (a, w)) <$> runRWST f r s
+
+execRWST :: forall r w s f a. Functor f => Monoid w =>
+  RWST r w s f a -> r -> s -> f (s, w)
+execRWST f r s = (\(_, s', w) -> (s', w)) <$> runRWST f r s
+
+mapRWST :: forall r w w' s m f a b. Functor f => Monoid w => Semigroup w' =>
+  (m (a, s, w) -> f (b, s, w')) -> RWST r w s m a -> RWST r w' s f b
+mapRWST f m = RWST \r s w -> (\(a, s',w') -> (a, s', w <> w')) <$> f (runRWST m r s)
+
+withRWST :: forall r r' w s m a. (r' -> s -> (r, s)) -> RWST r w s m a -> RWST r' w s m a
+withRWST f m = RWST \r s -> uncurry (unRWST m) (f r s)
+
+type RWS r w s = RWST r w s Identity
+
+runRWS :: forall r w s a. Monoid w =>
+  RWS r w s a -> r -> s -> (a, s, w)
+runRWS m r s = runIdentity (runRWST m r s)

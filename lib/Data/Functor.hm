@@ -12,7 +12,22 @@
 -- The Functor typeclass.
 --
 -----------------------------------------------------------------------------
-module Data.Functor (class Functor, map, (<$>)) where
+module Data.Functor (class Functor
+                    , map
+                    , (<$>)
+                    , class Bifunctor
+                    , mapEffL
+                    , mapEffR
+                    , ($>)
+                    , (<$)
+                    , ignore
+                    , bimap
+                    , (<<$>>)
+                    , mapFst
+                    , mapSnd) where
+
+import Data.Function (const, identity)
+import Data.Unit (Unit, unit)
 
 class Functor f where
   map :: forall a b. (a -> b) -> f a -> f b
@@ -23,3 +38,37 @@ instance Functor List where
   map = mapListImpl
 
 foreign import mapListImpl :: forall a b. (a -> b) -> List a -> List b
+
+mapEffR :: forall f a b. Functor f =>
+  f a -> b -> f b
+mapEffR fa b = map (const b) fa
+
+infixl 4 mapEffR as $>
+
+mapEffL :: forall f a b. Functor f =>
+  b -> f a -> f b
+mapEffL b = map (const b)
+
+infixl 4 mapEffL as <$
+
+ignore :: forall f a. Functor f =>
+  f a -> f ()
+ignore = map (const ())
+
+class Bifunctor f where
+  bimap :: forall a b c d.
+    (a -> b) -> (c -> d) -> f a c -> f b d
+
+infixl 4 bimap as <<$>>
+
+mapFst :: forall f a b c. Bifunctor f => (a -> b) -> f a c -> f b c
+mapFst f = bimap f identity
+
+mapSnd :: forall f a b c. Bifunctor f => (b -> c) -> f a b -> f a c
+mapSnd = bimap identity
+
+instance Bifunctor Tuple2 where
+  bimap f g (x, y) = (f x, g y)
+
+mapHom :: forall f a b. Bifunctor f => (a -> b) -> f a a -> f b b
+mapHom f = f <<$>> f

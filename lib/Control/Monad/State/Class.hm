@@ -1,0 +1,45 @@
+module Control.Monad.State.Class where
+
+import Control.Monad (class Monad, bind, discard, pure)
+import Data.Unit (Unit, unit)
+import Control.Monad.Trans (lift)
+import Control.Monad.State.State (StateT(..))
+import Control.Monad.Error.Either (EitherT)
+import Control.Monad.Writer.Writer (WriterT)
+import Control.Monad.Reader.Reader (ReaderT)
+
+class Monad m => MonadState s m | m -> s where
+  get :: m s
+  put :: s -> m ()
+
+set :: forall s m a. Monad m => MonadState s m =>
+  (s -> (s, a)) -> m a
+set f = do s <- get
+           let (s', a) = f s
+           put s'
+           pure a
+
+modify :: forall s m. MonadState s m => (s -> s) -> m ()
+modify f = do s <- get
+              put (f s)
+
+gets :: forall s m a. MonadState s m =>
+  (s -> a) -> m a
+gets f = do s <- get
+            pure (f s)
+
+instance Monad m => MonadState s (StateT s m) where
+  get = ST (\x -> pure (x, x))
+  put x = ST (\y -> pure (x, ()))
+
+instance MonadState s m => MonadState s (EitherT e m) where
+  get = lift get
+  put x = lift (put x)
+
+instance MonadState s m => MonadState s (ReaderT r m) where
+  get = lift get
+  put x = lift (put x)
+
+instance MonadState s m => MonadState s (WriterT w m) where
+  get = lift get
+  put x = lift (put x)

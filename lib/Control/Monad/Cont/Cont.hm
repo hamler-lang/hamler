@@ -1,0 +1,17 @@
+module Control.Monad.Cont.Cont where
+
+import Data.Function
+import Control.Monad.Identity
+
+newtype ContT r m a = ContT ((a -> m r) -> m r)
+unCont :: forall r m a.
+  ContT r m a -> ((a -> m r) -> m r)
+unCont (ContT x) = x
+
+runConT :: forall r m a.
+  ContT r m a -> (a -> m r) -> m r
+runConT (ContT x) k = x k
+
+
+
+type Cont r a = ContT r Identity a

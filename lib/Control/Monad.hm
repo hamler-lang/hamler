@@ -42,10 +42,19 @@ module Control.Monad
   , module Data.Functor
   , unsafePerformIO
   , replApply
+  , class Biapplicative
+  , bipure
+  , biapply
+  , (<<*>>)
+  , class Bimonad
+  , bibind
+  , bijoin
   ) where
 
-import Data.Functor (class Functor, map, (<$>))
+import Data.Function (identity)
+import Data.Functor (class Functor, map, (<$>), class Bifunctor, bimap, (<<$>>))
 import Data.Unit (Unit, unit)
+import Data.Tuple (fst, snd)
 
 -----------------------------------------------------------------------------
 -- | Applicative typeclass
@@ -221,9 +230,7 @@ unless :: forall m. Monad m => Boolean -> m () -> m ()
 unless b m = if b then pure () else m
 
 join :: forall m a. Monad m => m (m a) -> m a
-join mma = do
-  ma <- mma
-  ma
+join x = x >>= identity
 
 filterM :: forall m a. Monad m => (a -> m Boolean) -> [a] -> m [a]
 filterM f [] = pure []
@@ -238,4 +245,30 @@ foldM f i [x|xs] = do
   r <- f i x
   foldM f r xs
 
+class Bifunctor f => Biapplicative f where
+  bipure :: forall a b. a -> b -> f a b
+  biapply :: forall a b c d.
+    f (a -> b) (c -> d) -> f a c -> f b d
 
+infixl 4 biapply as <<*>>
+
+instance Biapplicative Tuple2 where
+  bipure x y = (x, y)
+  biapply (f, g) (x, y) = (f x, g y)
+
+class (Biapplicative m, Biapplicative n) => Bimonad m n where
+  bibind :: forall a b c d. (m a b, n a b) -> ((a -> m c d), (b -> n c d)) -> (m c d, n c d)
+
+bijoin :: forall m n a b. Bimonad m n =>
+  (m (m a b) (n a b), n (m a b) (n a b)) -> (m a b, n a b)
+bijoin p = bibind p (identity, identity)
+
+infixl 4 bibind as >>==
+
+bijoin_ :: forall a b. (Tuple2 (Tuple2 a b) (Tuple2 a b), Tuple2 (Tuple2 a b) (Tuple2 a b)) -> (Tuple2 a b, Tuple2 a b)
+bijoin_ = bimap fst snd
+instance Bimonad Tuple2 Tuple2 where
+  bibind (mab, nab) (f, g) = bijoin_ ((bimap f g, bimap f g) <<*>> (mab, nab))
+
+bilift :: forall f a b c d. Biapplicative f => (a -> b) -> (c -> d) -> f a c -> f b d
+bilift f g = biapply (bipure f g)

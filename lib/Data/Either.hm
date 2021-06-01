@@ -25,7 +25,7 @@ module Data.Either
 
 import Control.Monad (class Applicative, class Monad, pure, liftA1)
 import Data.Monoid (mempty)
-import Data.Functor (class Functor, map)
+import Data.Functor (class Functor, map, class Bifunctor)
 import Data.Foldable (class Foldable)
 import Data.Traversable (class Traversable)
 import Data.Function (error, const)
@@ -43,6 +43,10 @@ data Either a b = Left a | Right b
 instance Functor (Either e) where
   map fn (Right x) = Right (fn x)
   map _  (Left e)  = Left e
+
+instance Bifunctor Either where
+  bimap f _ (Left  x) = Left  (f x)
+  bimap _ g (Right y) = Right (g y)
 
 instance Applicative (Either e) where
   apply (Right fn) x = map fn x

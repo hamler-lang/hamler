@@ -1,0 +1,57 @@
+module Control.Monad.Gen.Gen where
+
+import Control.Monad.Identity
+import Control.Monad.Trans
+import Control.Monad.State.State
+import Control.Monad.State.Class
+import Control.Monad.Reader.Reader
+import Control.Monad.Reader.Class
+import Data.Functor
+import Control.Monad
+import Data.Function
+import Data.Enum
+
+newtype Succ a = Succ (a -> a)
+unSucc :: forall a. Succ a -> a -> a
+unSucc (Succ x) = x
+
+newtype GenT e m a = GenT (ReaderT (Succ e) (StateT e m) a)
+unGenT :: forall e m a. GenT e m a -> ReaderT (Succ e) (StateT e m) a
+unGenT (GenT x) = x
+
+instance Functor f => Functor (GenT e f) where
+  map f x = GenT $ ReaderT \r -> ST \s -> (map $ mapSnd f)
+    let ReaderT x' = unGenT x
+        ST xs = x' r
+    in xs s
+
+instance (Functor f, Monad f) => Applicative (GenT e f) where
+  pure x = GenT (pure x)
+  apply (GenT f) (GenT x) = GenT $ f <*> x
+
+instance Monad m => Monad (GenT e m) where
+  bind (GenT x) k = GenT $ x >>= \a -> unGenT (k a)
+
+instance MonadPlus m => MonadPlus (GenT e m) where
+  mzero = GenT mzero
+  mplus (GenT m) (GenT n) = GenT (mplus m n)
+
+instance MonadPlus m => Alternative (GenT e m) where
+  empty = mzero
+  append = mplus
+
+type Gen e = GenT e Identity
+
+instance MonadTrans (GenT e) where
+  lift x = GenT $ lift $ lift x
+
+instance MonadState s m => MonadState s (GenT e m) where
+  get = GenT $ lift $ lift get
+  put x = GenT $ lift $ lift $ put x
+
+instance MonadReader r m => MonadReader r (GenT e m) where
+  ask = GenT $ lift ask
+  local f x = GenT $ ask >>= \s -> lift $ local f $ unReaderT (unGenT x) s
+
+enumSucc :: forall a. Enum a => Succ a
+enumSucc = Succ succ
