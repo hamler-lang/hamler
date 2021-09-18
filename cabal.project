@@ -3,7 +3,7 @@ packages:.
 source-repository-package
   type: git
   location: https://github.com/hamler-lang/Erlang.git
-  tag: 7753fe33436022c63d432b3a462ffaf787b2cb31
+  tag: 0c52ac500d9206ffd9d54f7063c0a0c0926762c9
 
 source-repository-package
   type: git
