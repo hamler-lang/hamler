@@ -55,10 +55,6 @@ jobs:
           with:
             ghc-version: ${{ matrix.ghc }}
             cabal-version: ${{ matrix.cabal }}
-        - name: install alex
-          run: |
-            cabal update
-            cabal install alex
         - name: make hamler
           env:
             HAMLER_HOME: /usr/lib/hamler
@@ -157,10 +153,6 @@ jobs:
           wget -nv --no-check-certificate https://get-ghcup.haskell.org -O ghcup.sh
           chmod +x ghcup.sh
           ./ghcup.sh
-      - name: install alex
-        run: |
-          cabal update
-          cabal install alex
       - name: make
         run: |
           make pkg
@@ -267,13 +259,6 @@ jobs:
           wget -nv --no-check-certificate https://get-ghcup.haskell.org -O ghcup.sh
           chmod +x ghcup.sh
           ./ghcup.sh
-      - name: install alex
-        run: |
-          . /opt/rh/devtoolset-8/enable
-          gcc -v
-          cabal update
-          cabal install alex
-          cabal install --lib cryptonite -f -use_target_attributes
       - name: make
         run: |
           . /opt/rh/devtoolset-8/enable
@@ -356,10 +341,6 @@ jobs:
           wget -nv --no-check-certificate https://get-ghcup.haskell.org -O ghcup.sh
           chmod +x ghcup.sh
           ./ghcup.sh
-      - name: install alex
-        run: |
-          cabal update
-          cabal install alex
       - name: make hamler
         env:
           HAMLER_HOME: /usr/local/lib/hamler
