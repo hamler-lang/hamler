@@ -35,7 +35,7 @@ jobs:
             sudo locale-gen en_US.UTF-8
             echo "LC_ALL=en_US.UTF-8" >> $GITHUB_ENV
         - name: install library
-          run: sudo apt update && sudo apt install -y libtinfo-dev
+          run: sudo apt update && sudo apt install -y libtinfo-dev zlib1g-dev
         - uses: actions/cache@v2
           with:
             path: |
