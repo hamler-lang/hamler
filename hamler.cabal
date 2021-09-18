@@ -71,8 +71,7 @@ library
       TupleSections
       ViewPatterns
   ghc-options: -Wall -O2
-  build-tools:
-      happy
+  build-tool-depends: happy:happy
   build-depends:
       Cabal >=2.2 && <3.3
 
@@ -137,8 +136,7 @@ executable hamler
   hs-source-dirs:
       app
   ghc-options: -Wall -O2
-  build-tools:
-      happy
+  build-tool-depends: happy:happy
   build-depends:
       Cabal >=2.2 && <3.3
     , CoreErlang
@@ -204,8 +202,7 @@ test-suite tests
       LambdaCase
       OverloadedStrings
   ghc-options: -Wall
-  build-tools:
-      happy
+  build-tool-depends: happy:happy
   build-depends:
       Cabal >=2.2 && <3.3
     , CoreErlang
