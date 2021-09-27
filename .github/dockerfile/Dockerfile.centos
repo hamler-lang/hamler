@@ -1,0 +1,34 @@
+FROM centos:7
+
+ARG OTP_VERSION=23.0
+ARG GHC_VERSION=8.10.4
+ARG CABAL_VERSION=3.4.0.0
+
+ENV LC_ALL=en_US.UTF-8
+
+RUN yum groupinstall -y "Development Tools" \
+    && yum install -y rpmbuild curl wget git autoconf make gcc openssl-devel automake ncurses-devel procps
+
+RUN wget -nv --no-check-certificate -O /usr/bin/kerl https://raw.githubusercontent.com/kerl/kerl/master/kerl \ 
+    && chmod +x /usr/bin/kerl
+
+RUN kerl update releases \
+    && kerl build $OTP_VERSION \
+    && kerl install $OTP_VERSION $HOME/.kerl/$OTP_VERSION \
+    && echo ". $HOME/.kerl/$OTP_VERSION/activate" >> ~/.bashrc
+
+ENV PATH="/root/.kerl/$OTP_VERSION/bin:$PATH"
+
+RUN yum install -y gmp gmp-devel make ncurses xz perl \
+    && yum install -y centos-release-scl-rh \
+    && yum install -y devtoolset-8-gcc devtoolset-8-gcc-c++
+
+ENV BOOTSTRAP_HASKELL_NONINTERACTIVE=1
+ENV BOOTSTRAP_HASKELL_GHC_VERSION=$GHC_VERSION
+ENV BOOTSTRAP_HASKELL_CABAL_VERSION=$CABAL_VERSION
+
+RUN wget -nv --no-check-certificate https://get-ghcup.haskell.org -O ghcup.sh \
+    && chmod +x ghcup.sh \
+    && ./ghcup.sh
+
+ENV PATH="/root/.ghcup/bin:/root/.cabal/bin:/root/.local/bin:$PATH"

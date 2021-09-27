@@ -1,0 +1,43 @@
+FROM debian:10
+
+ARG OTP_VERSION=23.0
+ARG GHC_VERSION=8.10.4
+ARG CABAL_VERSION=3.4.0.0
+
+RUN apt update \
+    && apt install -y locales \
+    && rm -rf /var/lib/apt/lists/* \
+    && echo "LC_ALL=en_US.UTF-8" >> /etc/environment \
+    && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
+    && echo "LANG=en_US.UTF-8" > /etc/locale.conf \
+    && locale-gen en_US.UTF-8
+
+ENV LC_ALL=en_US.UTF-8
+
+RUN apt update \
+    && apt install -y debhelper curl wget git autoconf make libssl-dev libncurses5-dev libhdf5-dev libgmp10 libzstd1 gcc procps \
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -s /usr/lib/x86_64-linux-gnu/libgmp.so.10 /usr/lib/x86_64-linux-gnu/libgmp.so \
+    && ln -s /usr/lib/x86_64-linux-gnu/libzstd.so.1 /usr/lib/x86_64-linux-gnu/libzstd.so
+
+RUN wget -O /usr/bin/kerl https://raw.githubusercontent.com/kerl/kerl/master/kerl \ 
+    && chmod +x /usr/bin/kerl
+
+RUN kerl update releases \
+    && kerl build $OTP_VERSION \
+    && kerl install $OTP_VERSION $HOME/.kerl/$OTP_VERSION \
+    && echo ". $HOME/.kerl/$OTP_VERSION/activate" >> ~/.bashrc
+
+ENV PATH="/root/.kerl/$OTP_VERSION/bin:$PATH"
+
+RUN apt update && apt install -y libtinfo-dev && rm -rf /var/lib/apt/lists/*
+
+ENV BOOTSTRAP_HASKELL_NONINTERACTIVE=1
+ENV BOOTSTRAP_HASKELL_GHC_VERSION=$GHC_VERSION
+ENV BOOTSTRAP_HASKELL_CABAL_VERSION=$CABAL_VERSION
+
+RUN wget -nv --no-check-certificate https://get-ghcup.haskell.org -O ghcup.sh \
+    && chmod +x ghcup.sh \
+    && ./ghcup.sh
+
+ENV PATH="/root/.ghcup/bin:/root/.cabal/bin:/root/.local/bin:$PATH"
