@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        otp: ['23.0']
+        otp: ['24.0']
         ghc: ['8.10.4']
         cabal: ['3.4.0.0']
 
@@ -75,7 +75,7 @@ jobs:
 
     strategy:
       matrix:
-        otp: ['23.0']
+        otp: ['24.0']
         ghc: ['8.10.4']
         cabal: ['3.4.0.0']
 
@@ -148,7 +148,7 @@ jobs:
 
     strategy:
       matrix:
-        otp: ['23.0']
+        otp: ['24.0']
         ghc: ['8.10.4']
         cabal: ['3.4.0.0']
 
@@ -218,9 +218,9 @@ jobs:
     - uses: actions/checkout@v1
     - name: prepare
       run: |
-        brew install gnu-sed erlang@23
+        brew install gnu-sed erlang@24
         ln -s /usr/local/bin/gsed /usr/local/bin/sed
-        echo "/usr/local/opt/erlang@23/bin" >> $GITHUB_PATH
+        echo "/usr/local/opt/erlang@24/bin" >> $GITHUB_PATH
         echo "/usr/local/lib/hamler/bin" >> $GITHUB_PATH
         echo "/usr/local/bin" >> $GITHUB_PATH
     - uses: actions/cache@v2
