@@ -47,13 +47,21 @@ import           System.FilePath (replaceExtension)
 import           Language.PureScript.Make.BuildPlan
 import qualified Language.PureScript.Make.BuildPlan as BuildPlan
 import           Language.Hamler.Make.Actions as Actions
+import qualified Prelude as P
+import qualified Text.Pretty.Simple as TPS
+import qualified Data.Text.Lazy as DTL
+import Language.PureScript.InlinePossibleDict
+import Data.Bifunctor (second, first)
+import qualified Data.Set as S
+import qualified Language.PureScript.CST.Types as CF
+import Language.PureScript.CoreFn.Optimizer
 
 -- | Rebuild a single module.
 --
 -- This function is used for fast-rebuild workflows (PSCi and psc-ide are examples).
 rebuildModule
   :: forall m
-   . (Monad m, MonadBaseControl IO m, MonadError MultipleErrors m, MonadWriter MultipleErrors m)
+   . (Monad m, MonadIO m, MonadBaseControl IO m, MonadError MultipleErrors m, MonadWriter MultipleErrors m)
   => MakeActions m
   -> [ExternsFile]
   -> Module
@@ -62,9 +70,22 @@ rebuildModule actions externs m = do
   env <- fmap fst . runWriterT $ foldM externsEnv primEnv externs
   rebuildModule' actions env externs m
 
+
+
+extraExternsFile :: ExternsFile -> (ObjAccs, Objs)
+extraExternsFile ExternsFile{..} =  
+   ( fmap (first (flip mkQualified efModuleName)) objAccs
+   , fmap (first (flip mkQualified efModuleName)) objs)
+
+extraExternsFiles :: [ExternsFile] -> (ObjAccMap, ObjMap)
+extraExternsFiles ls = 
+  let unionFun a b = a `M.union` (M.fromList b)
+      makeDumpMap a =  M.fromList (fmap (second (M.fromList)) a)
+  in foldl' (\(l,r) (ll,rr) -> (unionFun l ll ,  r `M.union` (makeDumpMap rr))) (M.empty, M.empty) $ fmap extraExternsFile ls
+
 rebuildModule'
   :: forall m
-   . (Monad m, MonadBaseControl IO m, MonadError MultipleErrors m, MonadWriter MultipleErrors m)
+   . (Monad m, MonadIO m ,  MonadBaseControl IO m, MonadError MultipleErrors m, MonadWriter MultipleErrors m)
   => MakeActions m
   -> Env
   -> [ExternsFile]
@@ -91,7 +112,27 @@ rebuildModule' MakeActions{..} exEnv externs m@(Module _ _ moduleName _ _) = do
       corefn = CF.moduleToCoreFn env' mod'
       optimized = CF.optimizeCoreFn corefn
       [renamed] = renameInModules [optimized]
-      exts = moduleToExternsFile mod' env'
+      ------create two map 
+      (objAccMap, objMap) = extraExternsFiles externs
+
+      (objAccs,objs) = fromBinds (CF.moduleDecls renamed)
+      
+      objs' =  fmap (first (flip mkQualified moduleName) . second (M.fromList . unObj)) objs
+
+      -- insert self objAccs objs
+      newObjAccMap = foldl' (\objmap (k,v) -> M.insert k v objmap) objAccMap $ fmap (first (flip mkQualified moduleName) . second unObjAcc) objAccs
+      newObjMap = foldl' (\objmap (k,v) -> M.insert k v objmap) objMap objs'
+
+
+      exts = moduleToExternsFile (fmap (second unObjAcc) objAccs) (fmap (second unObj) objs) mod' env'
+      oldExports = S.fromList $ CF.moduleExports renamed
+      getIdent (Qualified (Just mn) a) | mn == moduleName = [a]
+      getIdent _ = []
+      detalExports = concat $ concatMap (fmap (getIdent . snd) . unObj . snd) objs
+      newExports = S.union oldExports (S.fromList detalExports)
+
+      renamedNewExports = renamed{CF.moduleExports = (S.toList newExports)}
+      renamedOptimize = optimizeCoreFn' newObjAccMap newObjMap renamedNewExports
   ffiCodegen renamed
 
   -- It may seem more obvious to write `docs <- Docs.convertModule m env' here,
@@ -107,14 +148,14 @@ rebuildModule' MakeActions{..} exEnv externs m@(Module _ _ moduleName _ _) = do
                  ++ "; details:\n" ++ prettyPrintMultipleErrors defaultPPEOptions errs
                Right d -> d
 
-  evalSupplyT nextVar' $ codegen renamed docs exts
+  evalSupplyT nextVar' $ codegen renamedOptimize docs exts
   return exts
 
 -- | Compiles in "make" mode, compiling each module separately to a @.js@ file and an @externs.json@ file.
 --
 -- If timestamps or hashes have not changed, existing externs files can be used to provide upstream modules' types without
 -- having to typecheck those modules again.
-make :: forall m. (Monad m, MonadBaseControl IO m, MonadError MultipleErrors m, MonadWriter MultipleErrors m)
+make :: forall m. (Monad m, MonadIO m, MonadBaseControl IO m, MonadError MultipleErrors m, MonadWriter MultipleErrors m)
      => MakeActions m
      -> [CST.PartialResult Module]
      -> m [ExternsFile]
@@ -197,7 +238,7 @@ make ma@MakeActions{..} ms = do
   inOrderOf :: (Ord a) => [a] -> [a] -> [a]
   inOrderOf xs ys = let s = S.fromList xs in filter (`S.member` s) ys
 
-  buildModule :: BuildPlan -> ModuleName -> FilePath -> Either (NEL.NonEmpty CST.ParserError) Module -> [ModuleName] -> m ()
+  buildModule :: MonadIO m => BuildPlan -> ModuleName -> FilePath -> Either (NEL.NonEmpty CST.ParserError) Module -> [ModuleName] -> m ()
   buildModule buildPlan moduleName fp mres deps = do
     result <- flip catchError (return . BuildJobFailed) $ do
       m <- CST.unwrapParserError fp mres
