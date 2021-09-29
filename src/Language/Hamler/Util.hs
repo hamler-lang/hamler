@@ -202,8 +202,7 @@ clauseFalse resExpr actExpr
                             ))
   where ctrue = ann $ Clause [ann $ PLiteral $ ann $ LAtom atomTrue]
                 (ann $ Expr $ ann $ ELit $ ann $ LAtom atomTrue)
-                (ann $ Expr $ ann $ EDo (ann $ Expr $ timeout)
-                  (ann $ Expr $ isAtom actExpr))
+                (ann $ Expr $ isAtom actExpr)
         cfalse = annText "[\'dialyzer_ignore\']" $ Clause [ann $ PLiteral $ ann $ LAtom atomFalse]
                 (ann $ Expr $ ann $ ELit $ ann $ LAtom atomTrue)
                 (ann $ Expr $ annText "[\'dialyzer_ignore\']" $ EApp (ann $ Expr $ ann $ EFunN recv0) [])
@@ -222,6 +221,6 @@ recFunDef eCase etExpr actExpr = FunDef recv0 (ann $ Fun [] (ann $ Expr $ letin)
         letin = ann $ ELet [varfun 2, varfun 0] (ann $ Expr $ recvPeekMessage) (ann $ Expr caseExpr)
 
 recvExpr :: [Clause Text] -> Expr Text -> Expr Text -> Expr Text
-recvExpr eCase etExpr actExpr = annText "[\'letrec_goto\']" $ ELetRec [recFunDef eCase etExpr actExpr]
+recvExpr eCase etExpr actExpr = annText "[\'letrec_goto\',\'no_inline\']" $ ELetRec [recFunDef eCase etExpr actExpr]
                                      (ann $ Expr $ annText "[\'dialyzer_ignore\']" $ EApp (ann $ Expr $ ann $ EFunN recv0) [])
 
