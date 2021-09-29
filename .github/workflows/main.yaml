@@ -37,6 +37,7 @@ jobs:
         mkdir -p $HAMLER_HOME/bin
         cabal update
         cabal run hamler build -- -l -e
+        cabal run hamler testDev
         cabal install --overwrite-policy=always
         cp ~/.cabal/bin/hamler /usr/bin/
         cp ~/.cabal/bin/hamler $HAMLER_HOME/bin
@@ -252,6 +253,7 @@ jobs:
       run: |
         sudo mkdir -p $HAMLER_HOME/bin
         cabal run hamler build -- -l -e
+        cabal run hamler testDev
         cabal install --overwrite-policy=always
         sudo cp ~/.cabal/bin/hamler /usr/local/bin
         sudo cp ~/.cabal/bin/hamler $HAMLER_HOME/bin
