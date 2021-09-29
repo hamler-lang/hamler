@@ -16,7 +16,7 @@ jobs:
           - debian
           - centos
         otp:
-          - "23.0"
+          - "24.0"
         ghc:
           - "8.10.4"
         cabal:
