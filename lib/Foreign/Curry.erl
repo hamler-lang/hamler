@@ -26,6 +26,8 @@
 
 -include("./Curry.hrl").
 
+curryIO(Fun) -> ?IO(curry(Fun)).
+
 applyIO(Fun, Args) ->
   apply(?RunIO(Fun), Args).
 

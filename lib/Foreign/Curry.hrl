@@ -3,8 +3,6 @@
 
 -include("../Foreign.hrl").
 
-curryIO(Fun) -> ?IO(curry(Fun)).
-
 %% Curry a function
 curry(Fun) -> curry(Fun, arity(Fun)).
 
