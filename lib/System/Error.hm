@@ -19,6 +19,7 @@ import Data.Functor (map)
 import Data.Either (Either(..))
 import Data.Show (class Show)
 import Data.Void (Void)
+import Data.Function (const)
 
 -- IO Exception
 foreign import data Error :: Type
@@ -49,3 +50,13 @@ foreign import name :: Error -> String
 foreign import throwException :: forall e. e -> IO Void
 
 foreign import catchException :: forall a e. IO a -> (e -> IO a) -> IO a
+
+foreign import bracket :: forall a b c. IO a -> (a -> IO b) -> (a -> IO c) -> IO c
+
+bracket_ :: forall a b c. IO a -> IO b -> IO c -> IO c
+bracket_ before end thing = bracket before (const end) (const thing)
+
+foreign import bracketOnError :: forall a b c. IO a -> (a -> IO b) -> (a -> IO c) -> IO c
+
+foreign import finally :: forall a b. IO a -> IO b -> IO a
+foreign import onException :: forall a b. IO a -> IO b -> IO a
