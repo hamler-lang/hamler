@@ -3,6 +3,7 @@ module Test.System.Error where
 import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
 import Prelude
 import System.Error as E
+import Data.Atomics as A
 
 propCatchE1 :: IO Bool
 propCatchE1 = do
@@ -25,8 +26,55 @@ propTryThrow = do
   r <- (E.try errorFun2 :: IO (Either Integer Void))
   pure $ r == Left 2
 
+atomicClean :: A.AtomicsRef -> IO A.AtomicsRef
+atomicClean m = do
+  A.put m 2 1
+  pure m
+
+testAtomic1 :: A.AtomicsRef -> IO A.AtomicsRef
+testAtomic1 m = do
+  A.put m 1 1
+  pure m
+
+testAtomic2 :: A.AtomicsRef -> IO A.AtomicsRef
+testAtomic2 m = do
+  A.put m 1 (1 / 0)
+  pure m
+
+propbracket1 :: IO Bool
+propbracket1 = do
+  atomic <- E.bracket (A.new 2 false) atomicClean testAtomic1
+  i1 <- A.get atomic 1
+  i2 <- A.get atomic 2
+  pure $ i1 == 1 && i2 == 1
+
+propbracket2 :: IO Bool
+propbracket2 = do
+  atomic <- E.bracket (A.new 2 false) atomicClean testAtomic2
+  i1 <- A.get atomic 1
+  i2 <- A.get atomic 2
+  pure $ i1 == 0 && i2 == 1
+
+propbracketOnError1 :: IO Bool
+propbracketOnError1 = do
+  atomic <- E.bracketOnError (A.new 2 false) atomicClean testAtomic1
+  i1 <- A.get atomic 1
+  i2 <- A.get atomic 2
+  pure $ i1 == 1 && i2 == 0
+
+propbracketOnError2 :: IO Bool
+propbracketOnError2 = do
+  atomic <- E.bracketOnError (A.new 2 false) atomicClean testAtomic2
+  i1 <- A.get atomic 1
+  i2 <- A.get atomic 2
+  pure $ i1 == 0 && i2 == 1
+
 test :: TestGroup (Integer -> IO TestResult)
 test = Exe [ quickCheck1 "catchE1" propCatchE1
            , quickCheck1 "catchE2" propCatchE2
            , quickCheck1 "try catch" propTryThrow
+           , quickCheck1 "bracket without error" propbracket1
+           , quickCheck1 "bracket with error" propbracket2
+           , quickCheck1 "bracketOnError without error" propbracketOnError1
+           , quickCheck1 "bracketOnError with error" propbracketOnError2
            ]

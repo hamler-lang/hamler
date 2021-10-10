@@ -20,6 +20,10 @@
 
 -export([ throwException/1
         , catchException/2
+        , bracket/3
+        , bracketOnError/3
+        , finally/2
+        , onException/2
         ]).
 
 showErrorImpl(Error) ->
@@ -34,3 +38,37 @@ catchException(X, Y) -> try X() of
                           error:_Error -> Y(_Error);
                           exit:_Exit   -> Y(_Exit)
                         end.
+
+bracket(Before, After, Thing) ->
+    Resource = ?RunIO(Before),
+    try
+        ?EvalIO(Thing(Resource))
+    catch _:_ ->
+            ?EvalIO(After(Resource))
+    after
+        ?EvalIO(After(Resource))
+    end.
+
+bracketOnError(Before, After, Thing) ->
+    Resource = ?RunIO(Before),
+    try
+        ?EvalIO(Thing(Resource))
+    catch _:_ ->
+            ?EvalIO(After(Resource))
+    end.
+
+finally(First, Second) ->
+    try
+        ?EvalIO(First)
+    catch _:_ ->
+            ?EvalIO(Second)
+    after
+        ?EvalIO(Second)
+    end.
+
+onException(First, Second) ->
+    try
+        ?EvalIO(First)
+    catch _:_ ->
+            ?EvalIO(Second)
+    end.

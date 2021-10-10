@@ -19,6 +19,8 @@
 
 -define(RunIO(IO), (IO)()).
 
+-define(EvalIO(IO), 'Control.Monad':pureImpl(?RunIO(IO))).
+
 -include("./Foreign/Maybe.hrl").
 
 -endif.
