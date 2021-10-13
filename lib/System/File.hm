@@ -23,6 +23,9 @@ module System.File
   , close
   , sync
   , module System.IO.Types
+  , class IsFileName
+  , toFileName
+  , FileName
   ) where
 
 import Control.Monad (IO)
@@ -33,6 +36,23 @@ import System.IO.Types
   , IOMode(..)
   , SeekMode(..)
   )
+import Unsafe.Coerce (unsafeCoerce)
+import Foreign (class IsFFI)
+import Data.Term (toTerm, Term)
+
+class IsFileName a where
+  toFileName :: a -> FileName
+
+instance IsFileName [Char] where
+  toFileName = unsafeCoerce
+
+instance IsFileName Binary where
+  toFileName = unsafeCoerce
+
+instance IsFFI FileName Term where
+  toFFI = toTerm
+
+foreign import data FileName :: Type
 
 foreign import open :: FilePath -> IOMode -> IO IODevice
 

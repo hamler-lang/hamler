@@ -41,3 +41,6 @@ foreign import ffiIO4 :: forall a b c d e. Mod -> Fun -> a -> b -> c -> d -> IO 
 foreign import ffiIO5 :: forall a b c d e f. Mod -> Fun -> a -> b -> c -> d -> e IO f
 foreign import ffiIO6 :: forall a b c d e f g. Mod -> Fun -> a -> b -> c -> d -> e -> f -> IO g
 foreign import ffiIO7 :: forall a b c d e f g h. Mod -> Fun -> a -> b -> c -> d -> e -> f -> g -> IO h
+
+class IsFFI a b | a -> b where
+  toFFI :: a -> b

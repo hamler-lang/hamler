@@ -17,7 +17,8 @@ module Network.Inet where
 import Control.Monad (IO)
 import Data.Int (UInt8, UInt16)
 import Data.Unit (Unit)
-import Foreign (ffiIO1)
+import Foreign (ffiIO1, class IsFFI)
+import Data.Term(toTerm, Term)
 
 -- | Host name
 type Hostname = String
@@ -30,6 +31,10 @@ data IpAddress
   = Ip4Address (UInt8, UInt8, UInt8, UInt8)
   | Ip6Address (UInt16, UInt16, UInt16, UInt16, UInt16, UInt16, UInt16, UInt16)
 
+instance IsFFI IpAddress Term where
+  toFFI (Ip4Address addr) = toTerm addr
+  toFFI (Ip6Address addr) = toTerm addr
+
 data StatOption
   = RecvCnt
   | RecvMax
@@ -41,6 +46,24 @@ data StatOption
   | SendAvg
   | SendOct
   | SendPend
+
+data Family
+ = Inet
+ | Inet6
+ | Local
+
+instance IsFFI Family Atom where
+  toFFI Inet = :inet
+  toFFI Inet6 = :inet6
+  toFFI Local = :local
+
+data Backend
+  = InetBackend
+  | SocketBackend
+
+instance IsFFI Backend Atom where
+  toFFI InetBackend = :inet
+  toFFI SocketBackend = :socket
 
 -- | The inet Socket.
 foreign import data Socket :: Type

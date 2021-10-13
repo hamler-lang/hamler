@@ -1,0 +1,60 @@
+module Test.Network.TCP where
+
+import Prelude (IO, Unit, bind, discard, pure, spawn, unit, ($), (==), (>>=))
+import Network.TCP ( listen, ListenOption(..), accept, connect
+                    , send, recv, close, Option(..), TcpOption(..), Mode(..), PacketHeader(..))
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
+import Network.Inet (IpAddress(..))
+import Control.Process (timerSleep)
+import Data.Timeout (Timeout(..))
+--import Foreign
+
+echoSvr :: Integer -> IO ()
+echoSvr port = do
+  --ffiIO2 :io :format ">>>> start server ~n" []
+  listenSock <- listen port [ TcpOption $ Option $ Active false
+                            , TcpOption $ Option $ Mode List
+                            , TcpOption $ Option $ Packet $ RawHeader
+                            , Backlog 100 ]
+  sock <- accept listenSock
+  --ffiIO2 :io :format ">>>> accept socket ~p ~n" [sock]
+  recvLoop listenSock sock
+ where
+   recvLoop lisSock sock = do
+     packet <- recv sock 0
+     --ffiIO2 :io :format ">>>> server received: ~ts ~n" [packet]
+     case packet of
+       "close" -> do
+          close sock
+          close lisSock
+       otherwise -> do
+          send sock packet
+          --ffiIO2 :io :format ">>>> server echo: ~ts ~n" [packet]
+          recvLoop lisSock sock
+
+start :: IO ()
+start = do
+  spawn $ echoSvr 8000
+  timerSleep 100
+  pure ()
+
+client :: IO Boolean
+client = do
+  --ffiIO2 :io :format ">>>> start client ~n" []
+  sock <- connect (Ip4Address (127, 0, 0, 1)) 8000
+                  [ Option $ Active false
+                  , Option $ Packet $ RawHeader
+                  , Option $ Mode List
+                  , Option $ SendTimeout $ Timeout 5000]
+  send sock "hello"
+  --ffiIO2 :io :format ">>>> client send hello ~n" []
+  recvPacket <- recv sock 0
+  --ffiIO2 :io :format ">>>> client received: ~ts ~n" [recvPacket]
+  send sock "close"
+  timerSleep 100
+  close sock
+  pure $ recvPacket == "hello"
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [ quickCheck1 "TCP: simple echo server" (start >>= \_ -> client)
+           ]
