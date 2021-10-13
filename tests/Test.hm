@@ -42,6 +42,7 @@ import Test.System.Error as Error
 import Test.Control.Process as Proc
 import Test.Database.ETS as ETS
 import Test.Network.UDP as UDP
+import Test.Network.TCP as TCP
 import Test.Database.Mnesia as Mnesia
 import Test.System.IO as IO
 
@@ -117,6 +118,7 @@ main = runTest $ TxG "lib"
                     , TxG "Mnesia" [Mnesia.test]
                     ],
      TxG "Network"  [ TxG "UDP"   [UDP.test]
+                    , TxG "TCP"   [TCP.test]
                     ],
      TxG "Text"     [ TxG "Parsec" [Parsec.test]
                     , TxG "Json"   [Json.test]

@@ -14,17 +14,178 @@
 -----------------------------------------------------------------------------
 module Network.TCP where
 
-import Control.Monad (IO)
-import Network.Inet (IpAddress, PortNumber, Socket)
-import Data.Unit (Unit)
-import Foreign (ffiIO1)
+import Prelude
+import Network.Inet (IpAddress, PortNumber, Socket, Family, Backend)
+import Foreign (ffiIO1, class IsFFI, toFFI)
+import Data.Int (Int16, UInt16)
+import System.File (FileName)
+import Data.Timeout (Timeout)
+import Data.Term (Term, toTerm)
 
 type Length = Integer
-type Timeout = Integer
 
--- TODO: Fixme later
-foreign import data Options :: Type
-foreign import data Packet :: Type
+data Option
+  = Active Bool
+  | ActiveN Int16
+  | Buffer Integer
+  | DelaySend Bool
+  | Deliver Term
+  | DontRoute Bool
+  | ExitOnClose Bool
+  | Header Integer
+  | HighMsgqWatermark Integer
+  | HighWatermark Integer
+  | Keepalive Bool
+  | Linger Bool Integer
+  | LowMsgqWatermark Integer
+  | LowWatermark Integer
+  | Mode Mode
+  | NoDelay Bool
+  | Packet PacketHeader
+  | PacketSize Integer
+  | Priority Integer
+  | Raw Integer Integer Binary
+  | RecBuf Integer
+  | Reuseaddr Bool
+  | SendTimeout Timeout
+  | SendTimeoutClose Bool
+  | ShowEConnReset Bool
+  | SndBuf Integer
+  | TOS Integer
+  | TClass Integer
+  | TTL Integer
+  | RecvTOS Bool
+  | RecvTClass Bool
+  | RecvTTL Bool
+  | Ipv6Only Bool
+  | Backend Backend
+
+instance IsFFI Option Term where
+  toFFI (Active val) = toTerm (:active, val)
+  toFFI (ActiveN num) = toTerm (:active, num)
+  toFFI (Buffer num) = toTerm (:buffer, num)
+  toFFI (DelaySend val) = toTerm (:delay_send, val)
+  toFFI (Deliver term) = toTerm (:deliver, term)
+  toFFI (DontRoute val) = toTerm (:dontroute, val)
+  toFFI (ExitOnClose val) = toTerm (:exit_on_close, val)
+  toFFI (Header val) = toTerm val
+  toFFI (HighMsgqWatermark num) = toTerm (:high_msgq_watermark, num)
+  toFFI (HighWatermark num) = toTerm (:hight_watermark, num)
+  toFFI (Keepalive val) = toTerm (:keepalive, val)
+  toFFI (Linger val num) = toTerm (:linger, (val, num))
+  toFFI (LowMsgqWatermark num) = toTerm (:low_msgq_watermark, num)
+  toFFI (LowWatermark num) = toTerm (:low_watermark, num)
+  toFFI (Mode m) = toTerm $ toFFI m
+  toFFI (NoDelay val) = toTerm (:nodelay, val)
+  toFFI (Packet p) = toTerm (:packet, toFFI p)
+  toFFI (PacketSize num) = toTerm (:packet_size, num)
+  toFFI (Priority num) = toTerm (:priority, num)
+  toFFI (Raw proto option val) = toTerm (:raw, proto, option, val)
+  toFFI (RecBuf num) = toTerm (:recbuf, num)
+  toFFI (Reuseaddr val) = toTerm (:reuseaddr, val)
+  toFFI (SendTimeout val) = toTerm (:send_timeout, toFFI val)
+  toFFI (SendTimeoutClose val) = toTerm (:send_timeout_close, val)
+  toFFI (ShowEConnReset val) = toTerm (:show_econnreset, val)
+  toFFI (SndBuf num) = toTerm (:sndbuf, num)
+  toFFI (TOS num) = toTerm (:tos, num)
+  toFFI (TClass num) = toTerm (:tclas, num)
+  toFFI (TTL num) = toTerm (:ttl, num)
+  toFFI (RecvTOS val) = toTerm (:recvtos, val)
+  toFFI (RecvTClass val) = toTerm (:recvtclass, val)
+  toFFI (RecvTTL val) = toTerm (:recvttl, val)
+  toFFI (Ipv6Only val) = toTerm (:ipv6_v6only, val)
+  toFFI (Backend backend) = toTerm $ toFFI backend
+
+data PacketHeader
+ = Header0
+ | Header1
+ | Header2
+ | Header4
+ | RawHeader
+ | Sunrm
+ | ASN1
+ | CDR
+ | FCGI
+ | Line
+ | TPKT
+ | HTTP
+ | HTTPH
+ | HTTPBin
+ | HTTPHBin
+
+instance IsFFI PacketHeader Term where
+  toFFI Header0 = toTerm 0
+  toFFI Header1 = toTerm 1
+  toFFI Header2 = toTerm 2
+  toFFI Header4 = toTerm 4
+  toFFI RawHeader = toTerm :raw
+  toFFI Sunrm = toTerm :sumrm
+  toFFI ASN1 = toTerm :asn1
+  toFFI CDR = toTerm :cdr
+  toFFI FCGI = toTerm :fcgi
+  toFFI Line = toTerm :line
+  toFFI TPKT = toTerm :tpkt
+  toFFI HTTP = toTerm :http
+  toFFI HTTPH = toTerm :httph
+  toFFI HTTPBin = toTerm :http_bin
+  toFFI HTTPHBin = toTerm :httph_bin
+
+data Mode
+  = List
+  | Binary
+
+instance IsFFI Mode Atom where
+  toFFI List = :list
+  toFFI Binary = :binary
+
+data TcpOption
+  = Option Option
+  | IP IpAddress
+  | FD Integer
+  | IfAddr IpAddress
+  | Family Family
+  | Port UInt16
+  | TcpModule Atom
+  | Netns FileName
+  | BindToDevice Binary
+
+instance IsFFI TcpOption Term where
+  toFFI (Option opt) = toFFI opt
+  toFFI (IP addr) = toTerm (:ip, toFFI addr)
+  toFFI (FD num) = toTerm (:fd, num)
+  toFFI (IfAddr addr) = toTerm (:ifadr, toFFI addr)
+  toFFI (Family family) = toTerm (toFFI family)
+  toFFI (Port port) = toTerm (:port, port)
+  toFFI (TcpModule mod) = toTerm (:tcp_module, mod)
+  toFFI (Netns fileName) = toFFI fileName
+  toFFI (BindToDevice bin) = toTerm (:bind_to_device, bin)
+
+data ListenOption
+  = TcpOption TcpOption
+  | Backlog Integer
+
+instance IsFFI ListenOption Term where
+  toFFI (TcpOption opt) = toFFI opt
+  toFFI (Backlog num) = toTerm (:backlog, num)
+
+data ShutdownMethod
+  = Read
+  | Write
+  | ReadWrite
+
+instance IsFFI ShutdownMethod Atom where
+  toFFI Read = :read
+  toFFI Write = :write
+  toFFI ReadWrite = :read_write
+
+type ConnectOptions = [TcpOption]
+type ListenOptions = [ListenOption]
+
+class IsPacket a
+
+instance IsPacket [Char]
+
+instance IsPacket Binary
 
 foreign import accept :: Socket -> IO (Socket)
 
@@ -34,18 +195,18 @@ close :: Socket -> IO ()
 close = ffiIO1 :gen_tcp :close
 
 foreign import connect
-  :: IpAddress -> PortNumber -> Options -> IO Socket
+  :: IpAddress -> PortNumber -> ConnectOptions -> IO Socket
 
 foreign import connectTimeout
-  :: IpAddress -> PortNumber -> Options -> Timeout -> IO Socket
+  :: IpAddress -> PortNumber -> ConnectOptions -> Timeout -> IO Socket
 
-foreign import listen :: PortNumber -> Options -> IO Socket
+foreign import listen :: PortNumber -> ListenOptions -> IO Socket
 
-foreign import recv :: Socket -> Length -> IO Packet
+foreign import recv :: forall a. IsPacket a => Socket -> Length -> IO a
 
 foreign import recvTimeout
-  :: Socket -> Length -> Timeout -> IO Packet
+  :: forall a. IsPacket a => Socket -> Length -> Timeout ->  IO a
 
-foreign import send :: Socket -> Packet -> IO ()
+foreign import send :: forall a. (IsPacket a) => Socket -> a -> IO ()
 
-foreign import shutdown :: Socket -> Atom -> IO ()
+foreign import shutdown :: Socket -> ShutdownMethod -> IO ()

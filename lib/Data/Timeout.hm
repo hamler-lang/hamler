@@ -21,9 +21,15 @@ import Data.Show (class Show, show)
 import Data.Read (class Read, read)
 import Data.Function (error)
 import Data.List ((++))
+import Foreign (class IsFFI)
+import Data.Term (Term, toTerm)
 
 -- | The Erlang Timeout.
 data Timeout = Infinity | Timeout Integer
+
+instance IsFFI Timeout Term where
+  toFFI Infinity = toTerm :infinity
+  toFFI (Timeout num) = toTerm num
 
 instance Show Timeout where
   show Infinity = "Infinity"

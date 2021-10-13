@@ -21,38 +21,44 @@
         , connect/3
         , connectTimeout/4
         , listen/2
-        , recv/2
+        , recv/3
         , recvTimeout/3
-        , send/2
+        , send/3
         , shutdown/2
         ]).
 
+-define(HMod, 'Network.TCP').
+
 accept(LSocket) ->
-  ?IO(return(gen_tcp:accept(LSocket))).
+    ?IO(return(gen_tcp:accept(LSocket))).
 
 acceptTimeout(LSocket, Timeout) ->
-  ?IO(return(gen_tcp:accept(LSocket, Timeout))).
+    ?IO(return(gen_tcp:accept(LSocket, Timeout))).
 
 connect(Address, Port, Options) ->
-  ?IO(return(gen_tcp:connect(unwrap(Address), Port, Options))).
+    Opts = ?TOFFIs(?HMod, isffiTcpOptionTerm, Options),
+    ?IO(return(gen_tcp:connect(unwrap(Address), Port, Opts))).
 
 connectTimeout(Address, Port, Options, Timeout) ->
-  ?IO(return(gen_tcp:connect(unwrap(Address), Port, Options, Timeout))).
+    Opts = ?TOFFIs(?HMod, isffiTcpOptionTerm, Options),
+    ?IO(return(gen_tcp:connect(unwrap(Address), Port, Opts, Timeout))).
 
 listen(Port, Options) ->
-  ?IO(return(gen_tcp:listen(Port, Options))).
+    Opts = ?TOFFIs(?HMod, isffiListenOptionTerm, Options),
+    ?IO(return(gen_tcp:listen(Port, Opts))).
 
-recv(Socket, Length) ->
-  ?IO(return(gen_tcp:recv(Socket, Length))).
+recv(_, Socket, Length) ->
+    ?IO(return(gen_tcp:recv(Socket, Length))).
 
 recvTimeout(Socket, Length, Timeout) ->
-  ?IO(return(gen_tcp:recv(Socket, Length, Timeout))).
+    ?IO(return(gen_tcp:recv(Socket, Length, Timeout))).
 
-send(Socket, Packet) ->
-  ?IO(return(gen_tcp:send(Socket, Packet))).
+send(_, Socket, Packet) ->
+    ?IO(return(gen_tcp:send(Socket, Packet))).
 
-shutdown(Socket, How) ->
-  ?IO(return(gen_tcp:shutdown(Socket, How))).
+shutdown(Socket, Method) ->
+    How = ?TOFFI(?HMod, isffiShutdownMethodAtom, Method),
+    ?IO(return(gen_tcp:shutdown(Socket, How))).
 
 unwrap({'Ip4Address', Addr}) -> Addr;
 unwrap({'Ip6Address', Addr}) -> Addr.
