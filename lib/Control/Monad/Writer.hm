@@ -1,34 +1,13 @@
-module Control.Monad.Writer where
+module Control.Monad.Writer (
+  module Control.Monad.Writer.Writer,
+  module Control.Monad.Writer.Class
+) where
 
-import Data.Unit (Unit, unit)
-import Data.Semigroup ((<>))
-import Data.Monoid (class Monoid, mempty)
-import Data.Functor (class Functor)
-import Control.Monad (class Applicative, class Monad)
-
-data Writer w a = Writer (a, w)
-
-runWriter :: forall w a. Writer w a -> (a, w)
-runWriter (Writer x) = x
-
-instance Functor (Writer w) where
-  map f (Writer (a, w)) = Writer (f a, w)
-
-instance Monoid w => Applicative (Writer w) where
-  pure a = Writer (a, mempty)
-  apply (Writer (f, u)) (Writer (a, v)) =
-    Writer (f a, u <> v)
-
-instance Monoid w => Monad (Writer w) where
-  bind (Writer (a, u)) f =
-    let (Writer (b, v)) = f a in 
-    Writer (b, u <> v)
-
-tell :: forall w. w -> Writer w ()
-tell w = Writer ((), w)
-
-listen :: forall w a. Writer w a -> Writer w (a, w)
-listen (Writer (a, w)) = Writer ((a, w), w)
-
-pass :: forall w a. Writer w (a, w -> w) -> Writer w a
-pass (Writer ((a, f), w)) = Writer (a, f w)
+import Control.Monad.Writer.Writer ( WriterT, unWriterT
+                                   , writerT, runWriterT
+                                   , execWriterT, mapWriterT
+                                   , Writer, runWriter
+                                   , execWriter, mapWriter )
+import Control.Monad.Writer.Class ( class MonadWriter
+                                  , writer, listen, pass
+                                  , tell, listens, censor )

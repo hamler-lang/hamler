@@ -1,0 +1,60 @@
+module Control.Monad.Writer.Class where
+
+import Data.Semigroup ((<>))
+import Control.Monad (class Monad, map, pure, bind)
+import Data.Monoid (class Monoid)
+import Data.Unit (Unit, unit)
+import Data.Functor ((<$>), mapSnd)
+import Data.Function (($), identity)
+import Control.Monad.Writer.Writer (WriterT(..), runWriterT, writerT)
+import Control.Monad.State.State (StateT(..))-- TODO.
+import Control.Monad.Trans (lift)
+import Control.Monad.Reader.Reader (ReaderT, mapReaderT)
+import Data.Either (Either(..))
+import Control.Monad.Error.Either (EitherT, mapEitherT)
+
+class (Monoid w, Monad m) => MonadWriter w m | m -> w where
+  writer :: forall a. (a, w) -> m a
+  listen :: forall a. m a -> m (a, w)
+  pass :: forall a. m (a, w -> w) -> m a
+
+tell :: forall w m. MonadWriter w m => w -> m ()
+tell w = writer ((), w)
+
+listens :: forall w m a b. MonadWriter w m =>
+  (w -> b) -> m a -> m (a, b)
+listens f x = map (mapSnd f) (listen x)
+
+censor :: forall w m a. MonadWriter w m =>
+  (w -> w) -> m a -> m a
+censor f x = pass $ map (\a -> (a, f)) x
+
+instance (Monoid w, Monad m) => MonadWriter w (WriterT w m) where
+  writer aw = writerT (pure aw)
+  listen xs = WriterT \w -> (\(a, w') -> ((a, w'), w <> w')) <$> runWriterT xs -- TODO: simpl.
+  pass xs = WriterT \w -> (\((a, f), w') -> (a, w <> f w')) <$> runWriterT xs
+
+instance MonadWriter w m => MonadWriter w (StateT s m) where
+  writer x = lift (writer x)
+  listen (ST x) = ST \s -> do
+    ((s', a), w) <- listen (x s)
+    pure (s', (a, w))
+  pass (ST x) = ST \s -> pass $ do
+    (s', (a, f)) <- x s
+    pure ((s', a), f)
+
+instance MonadWriter w m => MonadWriter w (ReaderT r m) where
+  writer xs = lift (writer xs)
+  listen xs = mapReaderT listen xs
+  pass   xs = mapReaderT pass   xs
+
+instance MonadWriter w m => MonadWriter w (EitherT e m) where
+  writer xs = lift (writer xs)
+  listen = mapEitherT \x -> do
+    (e, w) <- listen x
+    pure $ map (\a -> (a, w)) e
+  pass = mapEitherT \x -> pass $ do
+    a <- x
+    case a of
+      Right (r, f) -> pure (Right r, f)
+      Left l -> pure (Left l, identity)

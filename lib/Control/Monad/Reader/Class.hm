@@ -1,0 +1,39 @@
+module Control.Monad.Reader.Class where
+
+import Control.Monad (class Monad, bind, map, pure)
+import Control.Monad.Trans (lift)
+import Data.Function (flip, ($))
+import Control.Monad.Reader.Reader (ReaderT(..))
+import Control.Monad.State.State (StateT, mapStateT)
+import Control.Monad.Error.Either (EitherT, mapEitherT)
+import Control.Monad.Writer.Writer (WriterT(..))
+
+class Monad m => MonadReader s m | m -> s where
+  ask :: m s
+  local :: forall a. (s -> s) -> m a -> m a
+
+reader :: forall s m a. MonadReader s m =>
+  (s -> a) -> m a
+reader f = do
+  r <- ask
+  pure (f r)
+
+asks :: forall s m a. MonadReader s m =>
+  (s -> a) -> m a
+asks = flip map ask
+
+instance Monad m => MonadReader s (ReaderT s m) where
+  ask = ReaderT $ \s -> pure s
+  local f (ReaderT act) = ReaderT $ \s -> act (f s)
+
+instance MonadReader r m => MonadReader r (StateT s m) where
+  ask = lift ask
+  local f = mapStateT (local f)
+
+instance MonadReader r m => MonadReader r (EitherT e m) where
+  ask = lift ask
+  local x = mapEitherT (local x)
+
+instance MonadReader r m => MonadReader r (WriterT w m) where
+  ask = lift ask
+  local f (WriterT x) = WriterT \w -> local f (x w)

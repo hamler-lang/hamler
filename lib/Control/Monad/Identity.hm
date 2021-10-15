@@ -1,0 +1,52 @@
+module Control.Monad.Identity where
+
+import Control.Monad (class Applicative, class Monad, liftA1)
+import Data.Monoid (class Monoid, mempty)
+import Data.Traversable (class Traversable)
+import Data.Functor (class Functor, (<$>))
+import Data.Show (class Show, show)
+import Data.Foldable (class Foldable)
+import Data.Semigroup (class Semigroup, (<>))
+import Data.Ord (class Ord, compare)
+import Data.Eq (class Eq, eq)
+import Data.Function (($))
+
+data Identity x = Id x
+runIdentity :: forall a. Identity a -> a
+runIdentity (Id x) = x
+
+instance Functor Identity where
+  map f (Id x) = Id $ f x
+
+instance Applicative Identity where
+  pure = Id
+  apply (Id f) (Id x) = Id $ f x
+
+join_ :: forall a. Identity (Identity a) -> Identity a
+join_ (Id xs) = xs
+instance Monad Identity where
+  bind ma f = join_ $ f <$> ma
+
+instance Show a => Show (Identity a) where
+  show (Id x) = show x
+
+instance Eq a => Eq (Identity a) where
+  eq (Id x) (Id y) = x `eq` y
+
+instance Ord a => Ord (Identity a) where
+  compare (Id x) (Id y) = x `compare` y
+
+instance Semigroup a => Semigroup (Identity a) where
+  append x y = Id (runIdentity x <> runIdentity y)
+
+instance Monoid a => Monoid (Identity a) where
+  mempty = Id mempty
+
+instance Foldable Identity where
+  foldl f i (Id x) = f i x
+  foldr f i (Id x) = f x i
+  foldMap f (Id x) = f x
+
+instance Traversable Identity where
+  traverse f (Id x) = liftA1 Id (f x)
+  sequence (Id x)   = liftA1 Id x
