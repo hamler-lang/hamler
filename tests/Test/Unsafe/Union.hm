@@ -1,0 +1,47 @@
+module Test.Unsafe.Union where
+
+import Test.QuickCheck (TestGroup(..), TestResult, quickCheck1)
+import Prelude (Bool, (==), IO)
+import Unsafe.Union (class IsOfUnion, tagOfUnion)
+import Data.Proxy (Proxy(..))
+import Data.Eq(class Eq)
+
+data InetOpt
+
+data TcpOpt
+  = TcpOptInt Integer
+  | TcpOptStr String
+
+data UdpOpt
+  = UdpOptInt Integer
+  | UdpOptStr String
+
+data Tag
+  = TcpOpt
+  | UdpOpt
+
+derive instance Eq Tag
+
+instance IsOfUnion InetOpt TcpOpt Tag where
+  tagOfUnion _ _ = TcpOpt
+
+instance IsOfUnion InetOpt UdpOpt Tag where
+  tagOfUnion _ _ = UdpOpt
+
+checkUnionType :: forall a. IsOfUnion InetOpt a Tag => a -> Tag
+checkUnionType = tagOfUnion (Proxy :: Proxy InetOpt)
+
+unionTypeTest :: forall a. IsOfUnion InetOpt a Tag => a -> Tag -> Bool
+unionTypeTest a typeTag = typeTag == (checkUnionType a)
+
+unionTypeTestTcp :: Bool
+unionTypeTestTcp = unionTypeTest (TcpOptInt 12) TcpOpt
+
+unionTypeTestUdp :: Bool
+unionTypeTestUdp = unionTypeTest (UdpOptStr "Str") UdpOpt
+
+test :: TestGroup (Integer -> IO TestResult)
+test = Exe [
+    quickCheck1 "TCP Option" unionTypeTestTcp
+    , quickCheck1 "UDP Option" unionTypeTestUdp
+]

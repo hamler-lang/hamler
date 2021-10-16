@@ -57,8 +57,10 @@ import Test.System.Timer as Timer
 import Test.Text.Parsec as Parsec
 import Test.Text.Json as Json
 
+import Test.Unsafe.Union as Union
+
 main :: IO ()
-main = runTest $ TxG "lib" 
+main = runTest $ TxG "lib"
    [ TxG "Data" [
                    TxG "Map"      [M.test]
                  , TxG "String"   [S.test]
@@ -122,6 +124,7 @@ main = runTest $ TxG "lib"
                     ],
      TxG "Text"     [ TxG "Parsec" [Parsec.test]
                     , TxG "Json"   [Json.test]
+                    ],
+     TxG "Unsafe"   [ TxG "Union" [Union.test]
                     ]
    ]
-
