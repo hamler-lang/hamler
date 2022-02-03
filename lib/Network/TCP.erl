@@ -22,7 +22,7 @@
         , connectTimeout/4
         , listen/2
         , recv/3
-        , recvTimeout/3
+        , recvTimeout/4
         , send/3
         , shutdown/2
         ]).
@@ -50,8 +50,8 @@ listen(Port, Options) ->
 recv(_, Socket, Length) ->
     ?IO(return(gen_tcp:recv(Socket, Length))).
 
-recvTimeout(Socket, Length, Timeout) ->
-    ?IO(return(gen_tcp:recv(Socket, Length, Timeout))).
+recvTimeout(_, Socket, Length, Timeout) ->
+     ?IO(return(gen_tcp:recv(Socket, Length, unwrap(Timeout)))).
 
 send(_, Socket, Packet) ->
     ?IO(return(gen_tcp:send(Socket, Packet))).
@@ -61,8 +61,13 @@ shutdown(Socket, Method) ->
     ?IO(return(gen_tcp:shutdown(Socket, How))).
 
 unwrap({'Ip4Address', Addr}) -> Addr;
-unwrap({'Ip6Address', Addr}) -> Addr.
+unwrap({'Ip6Address', Addr}) -> Addr;
+unwrap({'Infinity'}) -> infinity;
+unwrap({'Timeout', I}) -> I.
 
 return(ok) -> ok;
 return({ok, Result}) -> Result;
 return({error, Reason}) -> error(Reason).
+
+
+
